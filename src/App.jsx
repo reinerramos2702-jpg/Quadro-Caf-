@@ -185,13 +185,33 @@ const EQUIPO = [
 
 const ACADEMIA = [
   { id: "a1", titulo: "Leer una etiqueta de lote", min: 4,
-    puntos: ["Origen y altura definen acidez", "El proceso define dulzor y cuerpo", "La fecha de tueste manda sobre todo lo demás"] },
+    puntos: ["Origen y altura definen acidez", "El proceso define dulzor y cuerpo", "La fecha de tueste manda sobre todo lo demás"],
+    quiz: [
+      { q: "¿Qué define la acidez de un café, según la etiqueta del lote?", opciones: ["El logo de la marca", "Origen y altura", "El precio impreso"], correcta: 1 },
+      { q: "Verdadero o falso: el proceso de beneficio es lo que define el dulzor y el cuerpo del café.", opciones: ["Verdadero", "Falso"], correcta: 0 },
+      { q: "De estos datos de una etiqueta, ¿cuál manda sobre todos los demás?", opciones: ["El precio", "El logo de la marca", "La fecha de tueste"], correcta: 2 },
+    ] },
   { id: "a2", titulo: "Molienda: por qué el clic importa", min: 6,
-    puntos: ["Más fino, más superficie, más extracción", "Los finos ahogan el lecho y amargan", "Ajusta molienda antes que tiempo"] },
+    puntos: ["Más fino, más superficie, más extracción", "Los finos ahogan el lecho y amargan", "Ajusta molienda antes que tiempo"],
+    quiz: [
+      { q: "Si un shot sale agrio y sub-extraído, ¿hacia qué lado ajustas la molienda?", opciones: ["Más gruesa", "No se toca la molienda", "Más fina"], correcta: 2 },
+      { q: "Verdadero o falso: demasiados finos en la molienda ahogan el lecho y producen amargor.", opciones: ["Verdadero", "Falso"], correcta: 0 },
+      { q: "Para corregir una extracción, ¿qué se ajusta primero?", opciones: ["El tiempo de preparación", "La molienda", "La cantidad de tazas servidas"], correcta: 1 },
+    ] },
   { id: "a3", titulo: "Geometría del vertido", min: 7,
-    puntos: ["La espiral reparte, el centro concentra", "Los pulsos estabilizan la temperatura", "La turbulencia es sabor, no adorno"] },
+    puntos: ["La espiral reparte, el centro concentra", "Los pulsos estabilizan la temperatura", "La turbulencia es sabor, no adorno"],
+    quiz: [
+      { q: "¿Qué patrón de vertido concentra el agua en vez de repartirla por el lecho?", opciones: ["La espiral continua", "El vertido al centro", "Ambos reparten igual"], correcta: 1 },
+      { q: "Verdadero o falso: verter por pulsos ayuda a estabilizar la temperatura.", opciones: ["Verdadero", "Falso"], correcta: 0 },
+      { q: "Según la lección, ¿qué es la turbulencia del vertido?", opciones: ["Un error que siempre hay que evitar", "Solo un efecto visual, sin impacto en sabor", "Parte del sabor, no solo adorno"], correcta: 2 },
+    ] },
   { id: "a4", titulo: "Catación y vocabulario de barra", min: 5,
-    puntos: ["Describe con comida, no con adjetivos vacíos", "Primero dulzor, luego acidez, luego cuerpo", "El cliente compra lo que entiende"] },
+    puntos: ["Describe con comida, no con adjetivos vacíos", "Primero dulzor, luego acidez, luego cuerpo", "El cliente compra lo que entiende"],
+    quiz: [
+      { q: "¿Cómo se recomienda describir un café en catación?", opciones: ["Con adjetivos vacíos como \"rico\"", "Con referencias de comida (caramelo, panela, etc.)", "Solo con el puntaje SCA"], correcta: 1 },
+      { q: "¿En qué orden se cata un café, según la lección?", opciones: ["Cuerpo, acidez, dulzor", "Acidez, cuerpo, dulzor", "Dulzor, acidez, cuerpo"], correcta: 2 },
+      { q: "Verdadero o falso: el cliente compra lo que entiende, por eso el vocabulario claro importa al vender.", opciones: ["Verdadero", "Falso"], correcta: 0 },
+    ] },
 ];
 
 const CLUB_NIVELES = [
@@ -786,9 +806,34 @@ function Laboratorio({ onBack }) {
 
 function Academia({ taza, setTaza, onBack }) {
   const { C } = useTheme();
-  const [hechos, setHechos] = useState([]);
-  const toggle = (id) => setHechos((h) => h.includes(id) ? h.filter((x) => x !== id) : [...h, id]);
+
+  const [estado, setEstado] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("qc-academia"));
+      return saved && typeof saved === "object" ? saved : {};
+    } catch { return {}; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem("qc-academia", JSON.stringify(estado)); } catch { /* noop */ }
+  }, [estado]);
+
+  const [abierta, setAbierta] = useState(null);
+
+  const hechos = ACADEMIA.filter((a) => estado[a.id]?.done).map((a) => a.id);
   const pct = Math.round((hechos.length / ACADEMIA.length) * 100);
+  const insigniaLista = hechos.length === ACADEMIA.length;
+
+  const responder = (leccionId, qIdx, opIdx) => {
+    setEstado((prev) => {
+      const leccion = ACADEMIA.find((a) => a.id === leccionId);
+      const actual = prev[leccionId] || { respuestas: [] };
+      if (actual.done) return prev;
+      const respuestas = [...actual.respuestas];
+      respuestas[qIdx] = opIdx;
+      const done = respuestas.length === leccion.quiz.length && respuestas.every((r) => r !== undefined && r !== null);
+      return { ...prev, [leccionId]: { respuestas, done } };
+    });
+  };
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
@@ -804,27 +849,102 @@ function Academia({ taza, setTaza, onBack }) {
         </div>
       </div>
 
+      {insigniaLista && (
+        <div className="pop" style={{
+          margin: "0 20px 18px", background: C.brand, color: C.onBrand, borderRadius: 18,
+          padding: 15, display: "flex", gap: 12, alignItems: "center",
+        }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 12, flexShrink: 0, display: "grid", placeItems: "center",
+            background: `${C.onBrand}22`,
+          }}>
+            <Award size={20} />
+          </div>
+          <div>
+            <div className="disp" style={{ fontSize: 16, lineHeight: 1.1 }}>Insignia desbloqueada</div>
+            <div className="mono" style={{ fontSize: 10, opacity: .85, marginTop: 4, lineHeight: 1.5 }}>
+              Logro dentro de la app · completaste las 4 lecciones de Academia
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ padding: "0 20px" }}>
         {ACADEMIA.map((a, i) => {
-          const done = hechos.includes(a.id);
+          const info = estado[a.id] || { respuestas: [] };
+          const done = !!info.done;
+          const abierto = abierta === a.id;
+          const aciertos = info.respuestas.filter((r, qi) => r === a.quiz[qi]?.correcta).length;
           return (
-            <button key={a.id} onClick={() => toggle(a.id)} className="press tapfx rise" style={{
-              animationDelay: `${i * 55}ms`, width: "100%", textAlign: "left", cursor: "pointer",
-              background: C.card, border: `1px solid ${done ? C.brand : C.line}`, borderRadius: 16,
-              padding: 15, marginBottom: 10, color: C.text,
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span className="disp" style={{ fontSize: 15 }}>{a.titulo}</span>
-                <span style={{
-                  width: 22, height: 22, borderRadius: 7, display: "grid", placeItems: "center",
-                  border: `1px solid ${done ? C.brand : C.line}`, background: done ? C.brand : "transparent", color: C.onBrand,
-                }}>{done && <Check size={13} />}</span>
-              </div>
-              <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 5 }}>{a.min} min de lectura</div>
-              <ul style={{ margin: "10px 0 0", padding: "0 0 0 16px", color: C.textMuted, fontSize: 12.5, lineHeight: 1.6 }}>
-                {a.puntos.map((p) => <li key={p}>{p}</li>)}
-              </ul>
-            </button>
+            <div key={a.id} className="rise" style={{ animationDelay: `${i * 55}ms`, marginBottom: 10 }}>
+              <button onClick={() => setAbierta(abierto ? null : a.id)} className="press tapfx" style={{
+                width: "100%", textAlign: "left", cursor: "pointer",
+                background: C.card, border: `1px solid ${done ? C.brand : C.line}`,
+                borderRadius: abierto ? "16px 16px 0 0" : 16, padding: 15, color: C.text,
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span className="disp" style={{ fontSize: 15 }}>{a.titulo}</span>
+                  <span style={{
+                    width: 22, height: 22, borderRadius: 7, display: "grid", placeItems: "center",
+                    border: `1px solid ${done ? C.brand : C.line}`, background: done ? C.brand : "transparent", color: C.onBrand,
+                  }}>{done && <Check size={13} />}</span>
+                </div>
+                <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 5 }}>
+                  {a.min} min de lectura{done ? ` · ${aciertos}/${a.quiz.length} correctas` : ""}
+                </div>
+                <ul style={{ margin: "10px 0 0", padding: "0 0 0 16px", color: C.textMuted, fontSize: 12.5, lineHeight: 1.6 }}>
+                  {a.puntos.map((p) => <li key={p}>{p}</li>)}
+                </ul>
+              </button>
+
+              {abierto && (
+                <div className="slide" style={{
+                  background: C.card, border: `1px solid ${done ? C.brand : C.line}`, borderTop: "none",
+                  borderRadius: "0 0 16px 16px", padding: 15,
+                }}>
+                  <div className="mono" style={{ fontSize: 10, letterSpacing: ".14em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 12 }}>
+                    Comprueba lo que leíste
+                  </div>
+                  {a.quiz.map((qz, qi) => {
+                    const resp = info.respuestas[qi];
+                    const respondido = resp !== undefined && resp !== null;
+                    return (
+                      <div key={qi} style={{ marginBottom: qi === a.quiz.length - 1 ? 0 : 16 }}>
+                        <div style={{ fontSize: 13, color: C.text, marginBottom: 8, lineHeight: 1.4 }}>{qz.q}</div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                          {qz.opciones.map((op, oi) => {
+                            const elegido = resp === oi;
+                            const esCorrecta = oi === qz.correcta;
+                            let borde = C.line, color2 = C.textMuted;
+                            if (respondido && (elegido || esCorrecta)) {
+                              const tono = esCorrecta ? C.brand : C.warn;
+                              borde = tono; color2 = tono;
+                            }
+                            return (
+                              <button key={oi} onClick={() => responder(a.id, qi, oi)} disabled={respondido}
+                                className={respondido ? "" : "press"} style={{
+                                  textAlign: "left", padding: "9px 11px", borderRadius: 10, fontSize: 12.5,
+                                  border: `1px solid ${borde}`, background: "transparent", color: color2,
+                                  cursor: respondido ? "default" : "pointer",
+                                  display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8,
+                                }}>
+                                <span>{op}</span>
+                                {respondido && elegido && (esCorrecta ? <Check size={13} /> : <X size={13} />)}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {respondido && (
+                          <div className="mono" style={{ fontSize: 10.5, marginTop: 6, color: resp === qz.correcta ? C.brand : C.warn }}>
+                            {resp === qz.correcta ? "Correcto." : `Incorrecto — la respuesta era: ${qz.opciones[qz.correcta]}`}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
