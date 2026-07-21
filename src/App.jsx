@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useContext, createContext } from "react";
 import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
-  Plus, Minus, X, Play, Pause, Check, ChevronRight, MapPin, Instagram,
+  Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon,
 } from "lucide-react";
 
@@ -555,11 +555,47 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
 
 /* ============================ FINCAS + AVATAR ============================ */
 
+function FichaLote({ lote, compact, titulo }) {
+  const { C } = useTheme();
+  const dulzor = Math.round(lote.score - 12);
+  const acidez = Math.round(lote.altura / 26);
+  const cuerpo = lote.proceso.includes("Honey") ? 80 : 58;
+  return (
+    <div style={{
+      flex: compact ? 1 : "initial", minWidth: 0, background: C.card, border: `1px solid ${C.line}`,
+      borderRadius: compact ? 14 : 18, padding: compact ? 12 : 16,
+    }}>
+      {titulo && (
+        <div className="disp" style={{ fontSize: 14, lineHeight: 1.15, marginBottom: 8 }}>{titulo}</div>
+      )}
+      <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: compact ? 8 : 12 }}>Ficha del lote</div>
+      <div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "1fr 1fr", gap: compact ? 8 : 14 }}>
+        {[
+          ["Altura", `${lote.altura} msnm`], ["Varietal", lote.varietal],
+          ["Proceso", lote.proceso], ["Puntaje", `${lote.score} SCA`],
+        ].map(([k, v]) => (
+          <div key={k}>
+            <div className="mono" style={{ fontSize: 9.5, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{k}</div>
+            <div className="disp" style={{ fontSize: compact ? 13 : 16, lineHeight: 1.15, marginTop: 3 }}>{v}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: compact ? 12 : 16 }}>
+        <Meter label="Dulzor" value={dulzor} tone={C.brandAlt} />
+        <Meter label="Acidez" value={acidez} />
+        <Meter label="Cuerpo" value={cuerpo} tone={C.purple} />
+      </div>
+    </div>
+  );
+}
+
 function Fincas({ lote, setLote, onBack }) {
   const { C, tema } = useTheme();
   const [linea, setLinea] = useState(0);
   const [reproduciendo, setRepro] = useState(false);
   const [transcripcion, setTrans] = useState(false);
+  const [comparar, setComparar] = useState(false);
+  const [comparados, setComparados] = useState([FINCAS[0].id, FINCAS[1].id]);
   const timer = useRef(null);
 
   useEffect(() => { setLinea(0); setRepro(false); }, [lote.id]);
@@ -573,97 +609,122 @@ function Fincas({ lote, setLote, onBack }) {
 
   const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
 
+  const toggleComparado = (id) => {
+    setComparados((sel) => {
+      if (sel.includes(id)) return sel.filter((x) => x !== id);
+      if (sel.length >= 2) return [sel[1], id];
+      return [...sel, id];
+    });
+  };
+
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <Header sub="Origen" titulo="Fincas" onBack={onBack} />
-      <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 16px", overflowX: "auto" }}>
-        {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
-      </div>
+      <Header sub="Origen" titulo="Fincas" onBack={onBack}
+        right={<Chip active={comparar} onClick={() => setComparar((v) => !v)} tone={C.purple} onTone={C.surface}>Comparar</Chip>} />
 
-      <div className="pop" key={lote.id} style={{
-        margin: "0 20px", borderRadius: 22, overflow: "hidden",
-        border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
-      }}>
-        <div style={{ position: "relative", height: 216, display: "grid", placeItems: "center" }}>
-          <svg viewBox="0 0 320 160" style={{ position: "absolute", bottom: 0, width: "100%", opacity: .35 }}>
-            <path d="M0 160 L60 78 L104 122 L156 44 L212 118 L262 70 L320 160 Z" fill={C.surface} />
-          </svg>
-          <div style={{ position: "relative", textAlign: "center" }}>
-            <div className={reproduciendo ? "pulse" : ""} style={{
-              width: 92, height: 92, borderRadius: "50%", margin: "0 auto",
-              display: "grid", placeItems: "center", background: C.surface,
-              border: `2px solid ${reproduciendo ? C.brand : C.brandAlt}`,
-            }}>
-              <span className="disp" style={{ fontSize: 34, color: reproduciendo ? C.brand : C.brandAlt }}>{lote.avatar.inicial}</span>
-            </div>
-            {reproduciendo && [0, .5, 1].map((d) => (
-              <span key={d} className="steam" style={{
-                position: "absolute", left: `${42 + d * 8}%`, top: -6, width: 3, height: 16,
-                borderRadius: 99, background: C.brand, animationDelay: `${d}s`,
-              }} />
-            ))}
-            <div className="disp" style={{ fontSize: 16, marginTop: 12 }}>{lote.avatar.nombre}</div>
-            <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{lote.avatar.rol}</div>
+      {!comparar ? (
+        <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 16px", overflowX: "auto" }}>
+          {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+        </div>
+      ) : (
+        <div style={{ padding: "0 20px 16px" }}>
+          <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 8 }}>
+            Elige 2 fincas para comparar
+          </div>
+          <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto" }}>
+            {FINCAS.map((f) => <Chip key={f.id} active={comparados.includes(f.id)} onClick={() => toggleComparado(f.id)} tone={C.purple} onTone={C.surface}>{f.finca}</Chip>)}
           </div>
         </div>
+      )}
 
-        <div style={{ background: C.surface, padding: "14px 16px", minHeight: 86 }}>
-          <p key={linea} className="slide" style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5 }}>
-            {lote.guion[linea]}
-          </p>
-          <div style={{ display: "flex", gap: 4, marginTop: 12 }}>
-            {lote.guion.map((_, i) => (
-              <span key={i} style={{
-                flex: 1, height: 2, borderRadius: 99,
-                background: i <= linea ? C.brand : C.line, transition: "background .3s",
-              }} />
-            ))}
+      {!comparar && (
+        <div className="pop" key={lote.id} style={{
+          margin: "0 20px", borderRadius: 22, overflow: "hidden",
+          border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
+        }}>
+          <div style={{ position: "relative", height: 216, display: "grid", placeItems: "center" }}>
+            <svg viewBox="0 0 320 160" style={{ position: "absolute", bottom: 0, width: "100%", opacity: .35 }}>
+              <path d="M0 160 L60 78 L104 122 L156 44 L212 118 L262 70 L320 160 Z" fill={C.surface} />
+            </svg>
+            <div style={{ position: "relative", textAlign: "center" }}>
+              <div className={reproduciendo ? "pulse" : ""} style={{
+                width: 92, height: 92, borderRadius: "50%", margin: "0 auto",
+                display: "grid", placeItems: "center", background: C.surface,
+                border: `2px solid ${reproduciendo ? C.brand : C.brandAlt}`,
+              }}>
+                <span className="disp" style={{ fontSize: 34, color: reproduciendo ? C.brand : C.brandAlt }}>{lote.avatar.inicial}</span>
+              </div>
+              {reproduciendo && [0, .5, 1].map((d) => (
+                <span key={d} className="steam" style={{
+                  position: "absolute", left: `${42 + d * 8}%`, top: -6, width: 3, height: 16,
+                  borderRadius: 99, background: C.brand, animationDelay: `${d}s`,
+                }} />
+              ))}
+              <div className="disp" style={{ fontSize: 16, marginTop: 12 }}>{lote.avatar.nombre}</div>
+              <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{lote.avatar.rol}</div>
+            </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
-            <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="press"
-              style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 15px", borderRadius: 99, border: "none", background: C.brand, color: C.onBrand, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
-              {reproduciendo ? <Pause size={14} /> : <Play size={14} />}
-              {reproduciendo ? "Pausar" : linea === 0 ? "Reproducir inducción" : "Continuar"}
-            </button>
-            <button onClick={() => setTrans(!transcripcion)} className="press mono" style={{
-              fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", background: "none",
-              border: `1px solid ${C.line}`, color: C.textMuted, padding: "8px 12px", borderRadius: 99, cursor: "pointer",
-            }}>
-              Transcripción
-            </button>
-          </div>
-          {transcripcion && (
-            <div className="pop" style={{ marginTop: 12, borderTop: `1px solid ${C.line}`, paddingTop: 10 }}>
-              {lote.guion.map((g, i) => (
-                <p key={i} onClick={() => setLinea(i)} style={{
-                  fontSize: 12.5, lineHeight: 1.5, margin: "0 0 7px", cursor: "pointer",
-                  color: i === linea ? C.text : C.textMuted,
-                }}>{g}</p>
+
+          <div style={{ background: C.surface, padding: "14px 16px", minHeight: 86 }}>
+            <p key={linea} className="slide" style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5 }}>
+              {lote.guion[linea]}
+            </p>
+            <div style={{ display: "flex", gap: 4, marginTop: 12 }}>
+              {lote.guion.map((_, i) => (
+                <span key={i} style={{
+                  flex: 1, height: 2, borderRadius: 99,
+                  background: i <= linea ? C.brand : C.line, transition: "background .3s",
+                }} />
               ))}
             </div>
-          )}
-        </div>
-      </div>
-
-      <div style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 16 }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 12 }}>Ficha del lote</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-          {[
-            ["Altura", `${lote.altura} msnm`], ["Varietal", lote.varietal],
-            ["Proceso", lote.proceso], ["Puntaje", `${lote.score} SCA`],
-          ].map(([k, v]) => (
-            <div key={k}>
-              <div className="mono" style={{ fontSize: 9.5, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{k}</div>
-              <div className="disp" style={{ fontSize: 16, marginTop: 3 }}>{v}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
+              <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="press"
+                style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 15px", borderRadius: 99, border: "none", background: C.brand, color: C.onBrand, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+                {reproduciendo ? <Pause size={14} /> : <Play size={14} />}
+                {reproduciendo ? "Pausar" : linea === 0 ? "Reproducir inducción" : "Continuar"}
+              </button>
+              <button onClick={() => setTrans(!transcripcion)} className="press mono" style={{
+                fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", background: "none",
+                border: `1px solid ${C.line}`, color: C.textMuted, padding: "8px 12px", borderRadius: 99, cursor: "pointer",
+              }}>
+                Transcripción
+              </button>
             </div>
-          ))}
+            {transcripcion && (
+              <div className="pop" style={{ marginTop: 12, borderTop: `1px solid ${C.line}`, paddingTop: 10 }}>
+                {lote.guion.map((g, i) => (
+                  <p key={i} onClick={() => setLinea(i)} style={{
+                    fontSize: 12.5, lineHeight: 1.5, margin: "0 0 7px", cursor: "pointer",
+                    color: i === linea ? C.text : C.textMuted,
+                  }}>{g}</p>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-        <div style={{ marginTop: 16 }}>
-          <Meter label="Dulzor" value={Math.round(lote.score - 12)} tone={C.brandAlt} />
-          <Meter label="Acidez" value={Math.round(lote.altura / 26)} />
-          <Meter label="Cuerpo" value={lote.proceso.includes("Honey") ? 80 : 58} tone={C.purple} />
+      )}
+
+      {!comparar ? (
+        <div style={{ margin: "16px 20px 0" }}>
+          <FichaLote lote={lote} />
         </div>
-      </div>
+      ) : (
+        <div style={{ display: "flex", gap: 10, margin: "16px 20px 0", alignItems: "stretch" }}>
+          {[0, 1].map((slot) => {
+            const id = comparados[slot];
+            const f = id && FINCAS.find((x) => x.id === id);
+            return f ? (
+              <FichaLote key={id} lote={f} compact titulo={f.finca} />
+            ) : (
+              <div key={`vacio-${slot}`} style={{
+                flex: 1, minWidth: 0, border: `1px dashed ${C.line}`, borderRadius: 14,
+                display: "grid", placeItems: "center", padding: 18, color: C.textMuted,
+                fontSize: 11.5, textAlign: "center", lineHeight: 1.4,
+              }}>Elige otra finca arriba</div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -1002,9 +1063,48 @@ function Academia({ taza, setTaza, onBack }) {
 
 /* ============================ ESTUDIO MULTIMEDIA ============================ */
 
+function EstudioLightbox({ medio, total, index, cerrar, mover }) {
+  const { C } = useTheme();
+  return (
+    <div onClick={cerrar} style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.92)", zIndex: 45, display: "flex", flexDirection: "column" }}>
+      <div onClick={(e) => e.stopPropagation()} className="pop" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px" }}>
+          <span className="mono" style={{
+            fontSize: 10, color: C.textMuted, letterSpacing: ".1em", background: C.card,
+            border: `1px solid ${C.line}`, borderRadius: 99, padding: "5px 10px",
+          }}>{index + 1} / {total}</span>
+          <button onClick={cerrar} className="press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
+        </div>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 14px", position: "relative", minHeight: 0 }}>
+          {total > 1 && (
+            <button onClick={() => mover(-1)} className="press" aria-label="Foto anterior" style={{
+              ...btnMiniStyle(C), position: "absolute", left: 6, borderRadius: "50%", width: 34, height: 34, background: C.card,
+            }}><ChevronLeft size={17} /></button>
+          )}
+          <img key={medio.id} src={medio.url} alt={medio.nombre} className="pop" style={{
+            maxWidth: "100%", maxHeight: "100%", borderRadius: 14, objectFit: "contain", border: `1px solid ${C.line}`,
+          }} />
+          {total > 1 && (
+            <button onClick={() => mover(1)} className="press" aria-label="Foto siguiente" style={{
+              ...btnMiniStyle(C), position: "absolute", right: 6, borderRadius: "50%", width: 34, height: 34, background: C.card,
+            }}><ChevronRight size={17} /></button>
+          )}
+        </div>
+        <div style={{ margin: "0 16px 20px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, padding: "12px 16px", textAlign: "center" }}>
+          <div className="disp" style={{ fontSize: 15, color: C.text }}>{medio.nombre}</div>
+          <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 4, letterSpacing: ".1em", textTransform: "uppercase" }}>{medio.destino}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Estudio({ medios, setMedios, onBack }) {
   const { C } = useTheme();
   const input = useRef(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [seleccionando, setSeleccionando] = useState(false);
+  const [seleccionados, setSeleccionados] = useState([]);
 
   const cargar = (files) => {
     const nuevos = Array.from(files).slice(0, 30).map((f) => ({
@@ -1014,24 +1114,71 @@ function Estudio({ medios, setMedios, onBack }) {
     setMedios((m) => [...nuevos, ...m]);
   };
 
+  const toggleSeleccionando = () => {
+    setSeleccionando((v) => !v);
+    setSeleccionados([]);
+  };
+  const toggleSeleccionado = (id) => {
+    setSeleccionados((sel) => sel.includes(id) ? sel.filter((x) => x !== id) : [...sel, id]);
+  };
+  const bulkReasignar = (destino) => {
+    setMedios((arr) => arr.map((x) => seleccionados.includes(x.id) ? { ...x, destino } : x));
+  };
+  const bulkEliminar = () => {
+    setMedios((arr) => arr.filter((x) => !seleccionados.includes(x.id)));
+    setSeleccionados([]);
+  };
+
   return (
+    <>
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <Header sub="Producción" titulo="Estudio" onBack={onBack} />
+      <Header sub="Producción" titulo="Estudio" onBack={onBack}
+        right={medios.length > 0 ? (
+          <Chip active={seleccionando} onClick={toggleSeleccionando}>{seleccionando ? "Cancelar" : "Seleccionar"}</Chip>
+        ) : null} />
       <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
         Fotos y videos reales del local. Sube más y asigna cada archivo a su lugar en la app.
       </p>
 
-      <div style={{ padding: "0 20px" }}>
-        <button onClick={() => input.current?.click()} className="press tapfx" style={{
-          width: "100%", padding: "26px 16px", borderRadius: 18, cursor: "pointer",
-          border: `1px dashed ${C.brandAlt}`, background: C.card, color: C.text,
+      {!seleccionando && (
+        <div style={{ padding: "0 20px" }}>
+          <button onClick={() => input.current?.click()} className="press tapfx" style={{
+            width: "100%", padding: "26px 16px", borderRadius: 18, cursor: "pointer",
+            border: `1px dashed ${C.brandAlt}`, background: C.card, color: C.text,
+          }}>
+            <Upload size={20} color={C.brandAlt} />
+            <div className="disp" style={{ fontSize: 15, marginTop: 10 }}>Subir multimedia</div>
+            <div className="mono" style={{ fontSize: 10.5, color: C.textMuted, marginTop: 4 }}>Fotos de granos, máquinas, menús y paleta</div>
+          </button>
+          <input ref={input} type="file" accept="image/*,video/*" multiple hidden onChange={(e) => cargar(e.target.files)} />
+        </div>
+      )}
+
+      {seleccionando && (
+        <div className="pop" style={{
+          margin: "0 20px 16px", display: "flex", gap: 8, alignItems: "center",
+          background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, padding: 10,
         }}>
-          <Upload size={20} color={C.brandAlt} />
-          <div className="disp" style={{ fontSize: 15, marginTop: 10 }}>Subir multimedia</div>
-          <div className="mono" style={{ fontSize: 10.5, color: C.textMuted, marginTop: 4 }}>Fotos de granos, máquinas, menús y paleta</div>
-        </button>
-        <input ref={input} type="file" accept="image/*,video/*" multiple hidden onChange={(e) => cargar(e.target.files)} />
-      </div>
+          <span className="mono" style={{ fontSize: 10.5, color: C.textMuted, flexShrink: 0 }}>
+            {seleccionados.length} seleccionada{seleccionados.length === 1 ? "" : "s"}
+          </span>
+          <select value="" aria-label="Reasignar destino de las seleccionadas" disabled={seleccionados.length === 0}
+            onChange={(e) => { if (e.target.value) bulkReasignar(e.target.value); }}
+            className="mono" style={{
+              flex: 1, fontSize: 10, background: C.surface, color: C.text,
+              border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 7px",
+              opacity: seleccionados.length === 0 ? .5 : 1,
+            }}>
+            <option value="">Reasignar a…</option>
+            {DESTINOS.map((d) => <option key={d} value={d}>{d}</option>)}
+          </select>
+          <button onClick={bulkEliminar} disabled={seleccionados.length === 0} className="press" aria-label="Eliminar seleccionadas" style={{
+            ...btnMiniStyle(C), color: C.warn, borderColor: C.warn, opacity: seleccionados.length === 0 ? .5 : 1,
+          }}>
+            <Trash2 size={14} />
+          </button>
+        </div>
+      )}
 
       {medios.length === 0 ? (
         <div style={{ margin: "18px 20px 0", padding: 20, border: `1px solid ${C.line}`, borderRadius: 16, textAlign: "center" }}>
@@ -1042,29 +1189,55 @@ function Estudio({ medios, setMedios, onBack }) {
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "18px 20px 0" }}>
-          {medios.map((m, i) => (
-            <div key={m.id} className="pop" style={{ animationDelay: `${i * 40}ms`, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.line}`, background: C.card }}>
-              <div style={{ height: 108, background: C.surface, display: "grid", placeItems: "center", overflow: "hidden" }}>
-                <img src={m.url} alt={m.nombre} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              </div>
-              <div style={{ padding: 10 }}>
-                <select value={m.destino} aria-label="Destino del archivo"
-                  onChange={(e) => setMedios((arr) => arr.map((x) => x.id === m.id ? { ...x, destino: e.target.value } : x))}
-                  className="mono" style={{
-                    width: "100%", fontSize: 10, background: C.surface, color: C.text,
-                    border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 7px",
+          {medios.map((m, i) => {
+            const marcado = seleccionados.includes(m.id);
+            return (
+              <div key={m.id} className="pop" style={{
+                animationDelay: `${i * 40}ms`, borderRadius: 14, overflow: "hidden",
+                border: `1px solid ${marcado ? C.brand : C.line}`, background: C.card,
+              }}>
+                <button
+                  onClick={() => seleccionando ? toggleSeleccionado(m.id) : setLightboxIndex(i)}
+                  className="press" aria-label={seleccionando ? `Seleccionar ${m.nombre}` : `Ver ${m.nombre} en grande`}
+                  style={{
+                    position: "relative", display: "block", width: "100%", height: 108, padding: 0,
+                    background: C.surface, border: "none", cursor: "pointer", overflow: "hidden",
                   }}>
-                  {DESTINOS.map((d) => <option key={d}>{d}</option>)}
-                </select>
-                <button onClick={() => setMedios((arr) => arr.filter((x) => x.id !== m.id))} className="press mono" style={{
-                  marginTop: 7, display: "flex", alignItems: "center", gap: 5, fontSize: 10,
-                  background: "none", border: "none", color: C.textMuted, cursor: "pointer", padding: 0,
-                }}>
-                  <Trash2 size={11} /> Quitar
+                  <img src={m.url} alt={m.nombre} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  {seleccionando && (
+                    <span style={{
+                      position: "absolute", top: 6, right: 6, width: 22, height: 22, borderRadius: 7,
+                      display: "grid", placeItems: "center",
+                      background: marcado ? C.brand : "rgba(5,8,7,.5)",
+                      border: `1px solid ${marcado ? C.brand : C.card}`, color: C.onBrand,
+                    }}>{marcado && <Check size={13} />}</span>
+                  )}
                 </button>
+                {seleccionando ? (
+                  <div className="mono" style={{ padding: "8px 10px", fontSize: 10, color: C.textMuted, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {m.destino}
+                  </div>
+                ) : (
+                  <div style={{ padding: 10 }}>
+                    <select value={m.destino} aria-label="Destino del archivo"
+                      onChange={(e) => setMedios((arr) => arr.map((x) => x.id === m.id ? { ...x, destino: e.target.value } : x))}
+                      className="mono" style={{
+                        width: "100%", fontSize: 10, background: C.surface, color: C.text,
+                        border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 7px",
+                      }}>
+                      {DESTINOS.map((d) => <option key={d}>{d}</option>)}
+                    </select>
+                    <button onClick={() => setMedios((arr) => arr.filter((x) => x.id !== m.id))} className="press mono" style={{
+                      marginTop: 7, display: "flex", alignItems: "center", gap: 5, fontSize: 10,
+                      background: "none", border: "none", color: C.textMuted, cursor: "pointer", padding: 0,
+                    }}>
+                      <Trash2 size={11} /> Quitar
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -1082,6 +1255,16 @@ function Estudio({ medios, setMedios, onBack }) {
         ))}
       </div>
     </div>
+    {lightboxIndex !== null && medios[lightboxIndex] && (
+      <EstudioLightbox
+        medio={medios[lightboxIndex]}
+        total={medios.length}
+        index={lightboxIndex}
+        cerrar={() => setLightboxIndex(null)}
+        mover={(d) => setLightboxIndex((i) => (i + d + medios.length) % medios.length)}
+      />
+    )}
+    </>
   );
 }
 
