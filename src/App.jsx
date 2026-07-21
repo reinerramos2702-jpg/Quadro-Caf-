@@ -1,154 +1,197 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useContext, createContext } from "react";
 import {
-  Coffee, Mountain, ShoppingBag, GraduationCap, Sliders, Award,
-  Plus, Minus, X, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
-  Mail, Lock, Sparkles, Star, ArrowLeft, Play
+  Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
+  Plus, Minus, X, Play, Pause, Check, ChevronRight, MapPin, Instagram,
+  Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon,
 } from "lucide-react";
 
 import logo from "./assets/logo.png";
-import loteVillaNueva from "./assets/lote-villa-nueva.jpg";
 import loteBourbon from "./assets/lote-bourbon.jpg";
 import menuPostres from "./assets/menu-postres.jpg";
 import clubBox from "./assets/club-box.jpg";
 import heroDispenser from "./assets/hero-dispenser.jpg";
 import menuIced from "./assets/menu-iced.jpg";
+import estudioLocal from "./assets/estudio/local-barra.jpg";
+import estudioPourover from "./assets/estudio/pourover-barra.jpg";
 
 /* ============================================================
-   QUADRO CAFÉ — v2
-   Branding oficial: verde #1F4D3D · hueso #EDE9E0 · negro #101311
-   Datos reales: menú, lotes, fincas, caficultores, dirección, IG
+   QUADRO CAFÉ — v3
+   Dos temas, mismos datos reales.
+   claro   verde #1F4D3D · hueso #EDE9E0 · dorado #B08B4F   (branding oficial)
+   oscuro  ink #0B0F0D · mocoties #1E5C4A · latón #C9873A · nebulosa #5B2E8C · alien #7FE3C0
    ============================================================ */
 
-const T = {
-  verde: "#1F4D3D", verdeOsc: "#153a2d", hueso: "#EDE9E0", crema: "#F7F5EF",
-  ink: "#101311", dorado: "#B08B4F", linea: "#DCD6C8", tenue: "#7A8580",
-  blanco: "#FFFFFF",
+const PALETAS = {
+  claro: {
+    id: "claro", shell: "#07100D",
+    surface: "#F7F5EF", card: "#FFFFFF", line: "#DCD6C8",
+    text: "#101311", textMuted: "#7A8580",
+    brand: "#1F4D3D", onBrand: "#F7F5EF",
+    brandAlt: "#B08B4F", onBrandAlt: "#101311",
+    purple: "#7C5CA6", amarillo: "#C79A3B", warn: "#B5502E",
+  },
+  oscuro: {
+    id: "oscuro", shell: "#07100D",
+    surface: "#0B0F0D", card: "#131A17", line: "#243029",
+    text: "#F2EDE3", textMuted: "#8AA096",
+    brand: "#7FE3C0", onBrand: "#0B0F0D",
+    brandAlt: "#C9873A", onBrandAlt: "#0B0F0D",
+    purple: "#A47BE0", amarillo: "#E0C24B", warn: "#E08C6B",
+  },
+};
+
+const FINCA_TINTS = {
+  claro: ["#7C5CA6", "#1F4D3D", "#B08B4F"],
+  oscuro: ["#5B2E8C", "#1E5C4A", "#C9873A"],
 };
 
 const FONTS = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 `;
 
-const css = `
+function buildCss(C) {
+  return `
 ${FONTS}
 *{box-sizing:border-box}
-.qc{font-family:'Archivo',system-ui,sans-serif;color:${T.ink};background:${T.crema}}
-.disp{font-family:'Fraunces',serif;letter-spacing:-.01em}
+.qc{font-family:'Archivo',system-ui,sans-serif;color:${C.text};background:${C.surface}}
+.disp{font-family:'Cormorant Garamond',serif;font-weight:700;letter-spacing:.01em}
+.script{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600}
 .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
 .qc-scroll::-webkit-scrollbar{width:0;height:0}
 @keyframes qc-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes qc-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes qc-slide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
 @keyframes qc-sheet{from{transform:translateY(100%)}to{transform:none}}
-@keyframes qc-pulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes qc-drip{0%{transform:translateY(-6px);opacity:0}20%{opacity:1}100%{transform:translateY(26px);opacity:0}}
+@keyframes qc-pulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.9;transform:scale(1.06)}}
+@keyframes qc-steam{0%{transform:translateY(0) scaleX(1);opacity:0}30%{opacity:.55}100%{transform:translateY(-22px) scaleX(1.5);opacity:0}}
 @keyframes qc-bar{from{width:0}}
 .rise{animation:qc-rise .45s cubic-bezier(.2,.8,.2,1) both}
 .pop{animation:qc-pop .35s cubic-bezier(.2,.8,.2,1) both}
+.slide{animation:qc-slide .4s cubic-bezier(.2,.8,.2,1) both}
 .sheet{animation:qc-sheet .34s cubic-bezier(.2,.9,.2,1) both}
 .press{transition:transform .12s ease, background .2s ease, border-color .2s ease}
 .press:active{transform:scale(.96)}
+.tapfx{transition:all .2s cubic-bezier(.2,.8,.2,1)}
+.tapfx:hover{transform:translateY(-2px)}
+.drip{animation:qc-drip 1.6s linear infinite}
+.steam{animation:qc-steam 2.6s ease-out infinite}
 .pulse{animation:qc-pulse 2.4s ease-in-out infinite}
 .bar{animation:qc-bar .8s cubic-bezier(.2,.8,.2,1) both}
-:focus-visible{outline:2px solid ${T.verde};outline-offset:2px;border-radius:6px}
+:focus-visible{outline:2px solid ${C.brand};outline-offset:2px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
 `;
+}
 
 /* ============================ DATOS REALES ============================ */
 
 const FINCAS = [
   {
-    id: "agua-fria",
-    finca: "Agua Fría",
-    zona: "Venezuela",
-    caficultor: "José Tomás Carrillo Batalla",
-    inicial: "J",
-    trayectoria: "Más de 100 años de trayectoria familiar",
-    detalle: "Tercera generación de caficultores. Su finca alcanzó premios en Europa a inicios del siglo XX. Modernizó los lotes con variedades como Tabí, Borbón Rosado, Geisha y Monte Claro.",
-    variedad: "Bourbon Ají", altura: 1250, proceso: "Lavado", score: null,
+    id: "mocoties",
+    finca: "Triángulo de Mocotíes",
+    zona: "Bailadores, Mérida",
+    altura: 2200, varietal: "Catuai", proceso: "Lavado", score: 86.5,
+    notas: ["Caramelo", "Floral", "Té verde"],
+    avatar: { nombre: "Elio", rol: "Tostador de altura", inicial: "E" },
     guion: [
-      "Bienvenido a Agua Fría. Soy José Tomás Carrillo Batalla, tercera generación de mi familia en este oficio.",
-      "Llevamos más de 100 años cultivando café. A inicios del siglo XX ya ganábamos premios en Europa.",
-      "Hoy trabajo variedades como Tabí, Borbón Rosado, Geisha y Monte Claro, a 1.250 metros.",
-      "Este lote, Bourbon Ají, se procesa lavado, seleccionado a mano y secado sobre camas africanas.",
-      "En taza vas a encontrar parchita, piña, durazno, ciruela — acidez media-alta, cuerpo sedoso.",
+      "Bienvenido. Soy Elio, del Triángulo de Mocotíes, en Bailadores.",
+      "Sembramos a 2.200 metros. El frío alarga la maduración del fruto y concentra el azúcar.",
+      "Este lote es Catuai lavado: despulpado el mismo día, fermentado 18 horas, secado en marquesina.",
+      "En taza vas a encontrar caramelo primero, luego floral, y un cierre a té verde.",
+      "Puntaje SCA: 86,5. Fue el grano del Campeonato AeroPress Venezuela 2023.",
+      "Si lo preparas en AeroPress, invertido y 2 minutos. No lo ahogues en agua caliente.",
     ],
-    color: T.verde,
   },
   {
-    id: "santa-anita",
-    finca: "Santa Anita",
-    zona: "Mérida, Venezuela",
-    caficultor: "Anacelis Dávila Alessandrello",
-    inicial: "A",
-    trayectoria: "Tercera generación, desde los 19 años",
-    detalle: "Desde los 19 años cultiva su propio café desde el semillero — Catuai amarillo, Caturra rojo, INIA 01, a 1.380 msnm en La Ranchería, Santa Cruz de Mora. Continúa el legado de su esposo, Óscar Alessandrello.",
-    variedad: "Villa Nueva", altura: 1750, proceso: "Lavado", score: null,
+    id: "vct",
+    finca: "Santa Cruz de Mora",
+    zona: "Mérida · VCT",
+    altura: 1400, varietal: "Arábica", proceso: "Lavado", score: 83.0,
+    notas: ["Panela", "Nuez", "Cítrico suave"],
+    avatar: { nombre: "Rosa", rol: "Beneficiadora", inicial: "R" },
     guion: [
-      "Soy Anacelis Dávila Alessandrello. Cultivo café desde los 19 años, desde el semillero.",
-      "Trabajo Catuai amarillo, Caturra rojo e INIA 01 en La Ranchería, Santa Cruz de Mora.",
-      "Este lote, Villa Nueva, se selecciona a mano y se seca sobre cama africana a 1.750 metros.",
-      "Para mí no es ningún trabajo, porque hago lo que me gusta. Continúo el legado de mi esposo, Óscar.",
+      "Soy Rosa. Trabajo el beneficio húmedo en Santa Cruz de Mora.",
+      "Café verde lavado, humedad entre 11 y 12 por ciento, empacado en GrainPro.",
+      "Screen 16/18 en el 95 por ciento del lote. Menos de 20 defectos por muestra de 300 gramos.",
+      "Es un café de cuerpo medio, dulce a panela. Aguanta leche sin desaparecer.",
+      "Puntaje 83. Es nuestro café de todos los días, el que sostiene la barra.",
     ],
-    color: "#8C6242",
   },
   {
-    id: "los-naranjos",
-    finca: "Los Naranjos",
-    zona: "Mérida, Venezuela",
-    caficultor: "Falsir Dúran",
-    inicial: "F",
-    trayectoria: "99 hectáreas, 415.800 plantas",
-    detalle: "Inició con 2.000 matas de Villa Nueva y hoy cuenta con 415.800 plantas de Castilla, Caturra y Villa Nueva en 99 hectáreas. Trabaja junto a su familia y comunidad por la innovación y sostenibilidad del sector.",
-    variedad: "Castilla / Caturra", altura: null, proceso: "—", score: null,
+    id: "lamina",
+    finca: "La Mina",
+    zona: "Colombia · 1000 Cups",
+    altura: 1800, varietal: "Yellow Bourbon", proceso: "Honey · fermentación",
+    score: 87.5,
+    notas: ["Choco dulce", "Fruto amarillo", "Floral"],
+    avatar: { nombre: "Mina", rol: "Curadora de lote", inicial: "M" },
     guion: [
-      "Soy Falsir Dúran, propietario de Finca Los Naranjos, en Mérida.",
-      "Empecé con 2.000 matas de Villa Nueva. Hoy tengo 415.800 plantas en 99 hectáreas.",
-      "Trabajo Castilla, Caturra y Villa Nueva junto a mi familia y mi comunidad.",
-      "Nuestro compromiso es innovación y sostenibilidad — pensando en la próxima generación de caficultores.",
+      "La Mina. Yellow Bourbon a 1.800 metros, fermentación honey controlada.",
+      "El mucílago se queda en el grano durante el secado. Por eso el dulzor es tan espeso.",
+      "Chocolate dulce al frente, fruta amarilla en el medio, floral al enfriarse.",
+      "Puntaje 87,5. Es el lote más caro de la barra y el que más se defiende solo.",
+      "Filtrado. Si lo pasas por espresso, pierdes la parte floral.",
     ],
-    color: "#4A6741",
   },
-  {
-    id: "shady",
-    finca: "Finca de Shady Ramírez",
-    zona: "Venezuela",
-    caficultor: "Shady Ramírez",
-    inicial: "S",
-    trayectoria: "Primera generación, tecnificación del cultivo",
-    detalle: "Caficultor de primera generación, dedicado al conocimiento y la tecnificación de la caficultura. Quiere heredarle ese amor por el café a sus hijos, para que continúen el legado.",
-    variedad: "—", altura: null, proceso: "—", score: null,
-    guion: [
-      "Soy Shady Ramírez. Soy caficultor de primera generación.",
-      "Me dediqué a estudiar y tecnificar el cultivo, para hacer cada vez un mejor café.",
-      "Quiero heredarle ese amor por el café a mis hijos, para que el legado continúe.",
-    ],
-    color: T.dorado,
-  },
-];
-
-const LOTES = [
-  { id: "villa-nueva", nombre: "Villa Nueva", finca: "Finca Santa Anita — Mérida", caficultor: "Anacelis Dávila Alessandrello", altura: 1750, proceso: "Lavado", origen: "Venezuela", notas: "Selección a mano · secado sobre cama africana" },
-  { id: "catuai", nombre: "Catuai", finca: "—", caficultor: "—", altura: null, proceso: "—", origen: "Venezuela", notas: "Dispensador en barra" },
-  { id: "bourbon-a", nombre: "Bourbon A Competencia", finca: "—", caficultor: "—", altura: 1950, proceso: "Lavado", origen: "Colombia", notas: "Flores, caramelo, maracuyá, naranja, frutos amarillos" },
-];
-
-const MENU = [
-  { cat: "Café", items: ["Espresso", "Americano", "Macchiato", "Cortado", "Latte", "Capuccino", "Flat White"] },
-  { cat: "Que te Quadre", items: ["Latte vainilla", "Latte caramelo", "Latte pistacho", "Mocaccino", "Chocolate caliente", "Affogato", "Affogato Pistacho"], destacado: "Latte Pistacho" },
-  { cat: "Filtrados", items: ["V60", "Orea", "Origami", "Chemex", "Aeropress", "Prensa francesa", "Sifón japonés"] },
-  { cat: "Matcha", items: ["Matcha Latte", "GreenBerry Matcha", "Affogato Matcha"] },
-  { cat: "Bebidas naturales", items: ["Fresa", "Parchita", "Mora", "Guanábana", "Melocotón", "Limonada de fresa", "Durazno"] },
-  { cat: "Iced Quadro", items: ["Frapuccino", "Frapuccino Oreo", "Frapuccino Caramelo", "Frapuccino Nutella", "Frapuccino Baileys", "ColdBrew", "Iced Latte"] },
-  { cat: "Postres", items: ["Brownie", "Brownie con helado", "Marquesas", "Tiramisu", "Cheesecake", "Muffin"] },
-  { cat: "Tortas", items: ["Zanahoria", "ChocoPistacho", "CoffeeCake", "Manzana", "Redvelvet", "Marmoleada"] },
-  { cat: "Croissant", items: ["Clásico", "Tradicional", "Mediterráneo", "Campestre Cherry", "Pica Croiss"] },
-  { cat: "Cachitos", items: ["Tocineta y queso amarillo", "Pavo y queso crema", "Jamón", "Mortadela pistacho con queso crema"] },
 ];
 
 const GEOMETRIAS = [
-  { id: "espiral", nombre: "Espiral continua", metodo: "V60 · vertido continuo", efecto: { extraccion: 82, cuerpo: 38, acidez: 78, dulzor: 66 }, lectura: "Moja todo el lecho por igual. Sube acidez y claridad, baja cuerpo." },
-  { id: "centro", nombre: "Punto central", metodo: "AeroPress invertida", efecto: { extraccion: 68, cuerpo: 84, acidez: 46, dulzor: 74 }, lectura: "Agua concentrada al centro. Extracción más lenta, cuerpo denso." },
-  { id: "pulsos", nombre: "Espiral por pulsos", metodo: "Kalita · 3 pulsos", efecto: { extraccion: 76, cuerpo: 58, acidez: 64, dulzor: 82 }, lectura: "Cada pulso reinicia la turbulencia. La ruta más estable al dulzor." },
-  { id: "sifon", nombre: "Inmersión con vacío", metodo: "Sifón japonés", efecto: { extraccion: 88, cuerpo: 72, acidez: 70, dulzor: 60 }, lectura: "Temperatura sostenida y agitación total. Extrae más, perdona menos." },
+  { id: "espiral", nombre: "Espiral continua", vueltas: 4.2, pasos: 260, radio: 1, metodo: "V60 · vertido continuo",
+    efecto: { extraccion: 82, cuerpo: 38, acidez: 78, dulzor: 66 },
+    lectura: "Moja todo el lecho por igual. Sube acidez y claridad, baja cuerpo." },
+  { id: "centro", nombre: "Punto central", vueltas: 0.6, pasos: 120, radio: 0.35, metodo: "AeroPress invertida",
+    efecto: { extraccion: 68, cuerpo: 84, acidez: 46, dulzor: 74 },
+    lectura: "Agua concentrada al centro. Extracción más lenta, cuerpo denso y dulce." },
+  { id: "pulsos", nombre: "Espiral por pulsos", vueltas: 2.4, pasos: 200, radio: .85, metodo: "Kalita · 3 pulsos",
+    efecto: { extraccion: 76, cuerpo: 58, acidez: 64, dulzor: 82 },
+    lectura: "Cada pulso reinicia la turbulencia. Es la ruta más estable al dulzor." },
+  { id: "inmersion", nombre: "Inmersión con vacío", vueltas: 6, pasos: 300, radio: .95, metodo: "Sifón",
+    efecto: { extraccion: 88, cuerpo: 72, acidez: 70, dulzor: 60 },
+    lectura: "Temperatura sostenida y agitación total. Extrae más, perdona menos." },
+];
+
+const TAZAS = [
+  { id: "blanca", nombre: "Blanca", hex: "#F2EDE3", pct: 0, efecto: "Referencia. Percepción neutra de dulzor y amargor." },
+  { id: "azul", nombre: "Azul Alpine", hex: "#5E93A8", pct: 18, efecto: "Se percibe más dulce. Baja la lectura de amargor." },
+  { id: "roja", nombre: "Roja Sunset", hex: "#B2483A", pct: -12, efecto: "Realza cuerpo e intensidad. Sube el amargor percibido." },
+  { id: "verde", nombre: "Verde Mocotíes", hex: "#1E5C4A", pct: 8, efecto: "Acentúa las notas vegetales y de té verde." },
+  { id: "barro", nombre: "Barro Barrel", hex: "#8C6242", pct: 4, efecto: "Suaviza la acidez. Alarga el retrogusto." },
+];
+
+const MENU = [
+  { id: "m1", cat: "Filtrado", nombre: "V60 de origen", precio: 4.5, desc: "60° C de servicio, 15 g, 250 ml. Elige finca.", finca: true, geo: "espiral", tag: "Firma" },
+  { id: "m2", cat: "Filtrado", nombre: "AeroPress campeonato", precio: 5.0, desc: "Receta del Campeonato AeroPress Venezuela 2023.", finca: true, geo: "centro", tag: "86.5" },
+  { id: "m3", cat: "Filtrado", nombre: "Sifón a la mesa", precio: 7.0, desc: "Extracción por vacío, servida frente al cliente.", finca: true, geo: "inmersion", tag: "Show" },
+  { id: "m4", cat: "Espresso", nombre: "Espresso doble", precio: 2.5, desc: "18 g dentro, 36 g fuera, 28 segundos.", finca: false },
+  { id: "m5", cat: "Espresso", nombre: "Cortado", precio: 3.0, desc: "Espresso doble con 60 ml de leche texturizada.", finca: false },
+  { id: "m6", cat: "Espresso", nombre: "Latte de cascarilla", precio: 4.2, desc: "Con Coffee Husk Syrup orgánico de la casa.", finca: false, tag: "Casa" },
+  { id: "m7", cat: "Frío", nombre: "Cold brew 18 h", precio: 4.0, desc: "Inmersión larga en frío. Servido sobre hielo prensado.", finca: true },
+  { id: "m8", cat: "Frío", nombre: "Tónica de cascarilla", precio: 4.8, desc: "Cascarilla, tónica y cítrico. Sin alcohol.", finca: false },
+  { id: "m9", cat: "Panadería", nombre: "Croissant de mantequilla", precio: 2.8, desc: "Laminado de 3 días. Horneado a las 7:00.", finca: false },
+  { id: "m10", cat: "Panadería", nombre: "Pan de masa madre", precio: 5.5, desc: "Pieza de 800 g. Fermentación de 24 horas.", finca: false },
+  { id: "m11", cat: "Postres", nombre: "Tarta de café y nuez", precio: 4.6, desc: "Con espresso del lote Santa Cruz de Mora.", finca: false },
+  { id: "m12", cat: "Postres", nombre: "Cheesecake de cascarilla", precio: 4.9, desc: "Base de galleta, sirope de cascarilla.", finca: false, tag: "Nuevo" },
+];
+
+const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
+const CAT_IMG = { Filtrado: loteBourbon, Frío: menuIced, Postres: menuPostres };
+
+const EQUIPO = [
+  { nombre: "Comandante C40", detalle: "Nitro Blade · Alpine Lagoon y Sunset", uso: "Molienda de barra y competencia", clicks: "18–24 clics para filtrado" },
+  { nombre: "AeroPress", detalle: "Presión de aire + microfiltro", uso: "Recetas de campeonato", clicks: "Invertida, 2:00 min" },
+  { nombre: "Sifón de vacío", detalle: "Balón, mechero, filtro de tela", uso: "Servicio a la mesa", clicks: "93 °C sostenidos" },
+  { nombre: "Copas de perfil", detalle: "Pinot · Aroma · Barrel", uso: "Catación y cierre de venta", clicks: "Cambian el aroma percibido" },
+];
+
+const ACADEMIA = [
+  { id: "a1", titulo: "Leer una etiqueta de lote", min: 4,
+    puntos: ["Origen y altura definen acidez", "El proceso define dulzor y cuerpo", "La fecha de tueste manda sobre todo lo demás"] },
+  { id: "a2", titulo: "Molienda: por qué el clic importa", min: 6,
+    puntos: ["Más fino, más superficie, más extracción", "Los finos ahogan el lecho y amargan", "Ajusta molienda antes que tiempo"] },
+  { id: "a3", titulo: "Geometría del vertido", min: 7,
+    puntos: ["La espiral reparte, el centro concentra", "Los pulsos estabilizan la temperatura", "La turbulencia es sabor, no adorno"] },
+  { id: "a4", titulo: "Catación y vocabulario de barra", min: 5,
+    puntos: ["Describe con comida, no con adjetivos vacíos", "Primero dulzor, luego acidez, luego cuerpo", "El cliente compra lo que entiende"] },
 ];
 
 const CLUB_NIVELES = [
@@ -158,149 +201,323 @@ const CLUB_NIVELES = [
   { nombre: "Q Circle", desde: 600, beneficio: "Cata privada trimestral con el equipo Quadro" },
 ];
 
-/* ============================ UI BASE ============================ */
+const DESTINOS = ["Galería del local", "Foto de lote", "Máquina en acción", "Avatar de finca", "Menú impreso", "Paleta de color"];
+const MEDIOS_INICIALES = [
+  { id: "seed-local", nombre: "Barra — Quadro Café", url: estudioLocal, destino: "Galería del local" },
+  { id: "seed-pourover", nombre: "Filtrado en barra", url: estudioPourover, destino: "Máquina en acción" },
+];
 
-const Marca = ({ size = 28, ring = false }) => (
-  <div style={{
-    width: size, height: size, borderRadius: "50%", overflow: "hidden",
-    display: "grid", placeItems: "center", position: "relative", flexShrink: 0,
-    boxShadow: ring ? `0 0 0 1.5px ${T.crema}` : "none",
-  }}>
-    <img src={logo} alt="Quadro Café" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-  </div>
-);
+/* ============================ UTILES ============================ */
 
-const btnMini = {
-  display: "grid", placeItems: "center", border: `1px solid ${T.linea}`,
-  background: T.blanco, color: T.ink, cursor: "pointer",
-};
+const money = (n) => `$${n.toFixed(2)}`;
 
-const Chip = ({ children, on }) => (
-  <span className="mono" style={{
-    fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase",
-    padding: "4px 9px", borderRadius: 99, border: `1px solid ${on ? T.verde : T.linea}`,
-    background: on ? T.verde : "transparent", color: on ? T.crema : T.tenue,
-  }}>{children}</span>
-);
+function spiralPath(vueltas, pasos, radioMax, size = 200, prog = 1) {
+  const cx = size / 2, cy = size / 2;
+  const max = Math.max(2, Math.floor(pasos * prog));
+  let d = "";
+  for (let i = 0; i < max; i++) {
+    const t = i / pasos;
+    const ang = t * vueltas * Math.PI * 2;
+    const r = t * (size / 2 - 14) * radioMax;
+    const x = cx + Math.cos(ang) * r;
+    const y = cy + Math.sin(ang) * r;
+    d += (i === 0 ? "M" : "L") + x.toFixed(2) + " " + y.toFixed(2) + " ";
+  }
+  return d;
+}
 
-/* ============================ PANTALLAS ============================ */
+/* ============================ TEMA ============================ */
 
-function Inicio({ ir }) {
+const ThemeCtx = createContext(null);
+const useTheme = () => useContext(ThemeCtx);
+
+function ThemeToggle() {
+  const { tema, setTema, C } = useTheme();
+  const oscuro = tema === "oscuro";
   return (
-    <div className="qc-scroll" style={{ height: "100%", overflowY: "auto", padding: "8px 20px 100px" }}>
-      <div className="rise" style={{
-        marginTop: 6, borderRadius: 20, padding: "26px 22px", color: T.crema,
-        position: "relative", overflow: "hidden",
-        backgroundImage: `linear-gradient(180deg, rgba(21,58,45,.55), rgba(16,19,17,.88)), url(${heroDispenser})`,
-        backgroundSize: "cover", backgroundPosition: "center",
-      }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", opacity: .8 }}>Coffee · sustantivo</div>
-        <div className="disp" style={{ fontSize: 24, fontWeight: 600, marginTop: 8, maxWidth: 240, lineHeight: 1.25 }}>
-          El líquido que huele a cielo recién molido.
-        </div>
-        <button onClick={() => ir("menu")} className="press" style={{
-          marginTop: 18, background: T.crema, color: T.verde, border: "none", borderRadius: 99,
-          padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer",
-          display: "inline-flex", alignItems: "center", gap: 6,
-        }}>Ver la carta <ChevronRight size={15} /></button>
-      </div>
+    <button onClick={() => setTema(oscuro ? "claro" : "oscuro")} className="press" aria-label="Cambiar tema" style={{
+      display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 11,
+      border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer",
+    }}>
+      {oscuro ? <Sun size={16} /> : <Moon size={16} />}
+    </button>
+  );
+}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 18 }}>
-        {[
-          { t: "Fincas", d: "Conoce al caficultor", i: Mountain, k: "fincas" },
-          { t: "Quadro Club", d: "Tu fidelidad, tus puntos", i: Award, k: "club" },
-          { t: "Lab", d: "Geometría de extracción", i: Sliders, k: "lab" },
-          { t: "Aula", d: "Aprende a catar", i: GraduationCap, k: "aula" },
-        ].map((x) => (
-          <button key={x.k} onClick={() => ir(x.k)} className="press" style={{
-            textAlign: "left", background: T.blanco, border: `1px solid ${T.linea}`, borderRadius: 16,
-            padding: "16px 14px", cursor: "pointer",
-          }}>
-            <x.i size={20} color={T.verde} />
-            <div className="disp" style={{ fontSize: 15, fontWeight: 600, marginTop: 10 }}>{x.t}</div>
-            <div style={{ fontSize: 11.5, color: T.tenue, marginTop: 2 }}>{x.d}</div>
-          </button>
-        ))}
-      </div>
+/* ============================ PIEZAS ============================ */
 
-      <div style={{ marginTop: 20, borderTop: `1px solid ${T.linea}`, paddingTop: 16, display: "flex", gap: 14, alignItems: "center" }}>
-        <img src={loteVillaNueva} alt="Bolsa de café Villa Nueva" style={{
-          width: 56, height: 56, borderRadius: 12, objectFit: "cover", flexShrink: 0, border: `1px solid ${T.linea}`,
-        }} />
-        <div>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: T.tenue, textTransform: "uppercase" }}>Lote del día</div>
-          <div className="disp" style={{ fontSize: 19, fontWeight: 600, marginTop: 4 }}>Villa Nueva</div>
-          <div style={{ fontSize: 12.5, color: T.tenue, marginTop: 2 }}>Finca Santa Anita, Mérida · 1.750 msnm · Lavado</div>
-        </div>
-      </div>
+function Chip({ children, active, onClick, tone, onTone }) {
+  const { C } = useTheme();
+  const bg = tone || C.brand;
+  const fg = onTone || C.onBrand;
+  return (
+    <button onClick={onClick} className="press mono" style={{
+      padding: "7px 13px", borderRadius: 999, fontSize: 11, letterSpacing: ".08em",
+      textTransform: "uppercase", whiteSpace: "nowrap", cursor: "pointer",
+      border: `1px solid ${active ? bg : C.line}`,
+      background: active ? bg : "transparent",
+      color: active ? fg : C.textMuted, fontWeight: 600,
+    }}>
+      {children}
+    </button>
+  );
+}
 
-      <div style={{ marginTop: 22, display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: T.tenue }}>
-        <MapPin size={14} /> 4ª Av. de Los Palos Grandes, Edif. Los Eucaliptos · Lun–Dom 8am–8pm
+function Meter({ label, value, tone, delay = 0 }) {
+  const { C } = useTheme();
+  const t = tone || C.brand;
+  return (
+    <div style={{ marginBottom: 10 }}>
+      <div className="mono" style={{ display: "flex", justifyContent: "space-between", fontSize: 10, letterSpacing: ".1em", color: C.textMuted, marginBottom: 5, textTransform: "uppercase" }}>
+        <span>{label}</span><span style={{ color: t }}>{value}</span>
       </div>
-      <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: T.tenue }}>
-        <Instagram size={14} /> @quadro.cafe
+      <div style={{ height: 4, background: C.line, borderRadius: 99, overflow: "hidden" }}>
+        <div className="bar" style={{ height: "100%", width: `${value}%`, background: t, borderRadius: 99, animationDelay: `${delay}ms`, transition: "width .5s cubic-bezier(.2,.8,.2,1)" }} />
       </div>
     </div>
   );
 }
-const CATEGORIA_IMG = {
-  "Iced Quadro": menuIced,
-  "Filtrados": loteBourbon,
-  "Postres": menuPostres,
-  "Tortas": menuPostres,
-  "Croissant": menuPostres,
-  "Cachitos": menuPostres,
-};
 
-function Menu({ carrito, add }) {
-  const [cat, setCat] = useState(MENU[0].cat);
-  const activa = MENU.find((m) => m.cat === cat);
-  const imgCategoria = CATEGORIA_IMG[cat];
+function Header({ titulo, sub, right }) {
+  const { C } = useTheme();
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <div className="qc-scroll" style={{ display: "flex", gap: 8, overflowX: "auto", padding: "10px 20px" }}>
-        {MENU.map((m) => (
-          <button key={m.cat} onClick={() => setCat(m.cat)} className="press" style={{
-            flexShrink: 0, padding: "8px 14px", borderRadius: 99, cursor: "pointer",
-            border: `1px solid ${cat === m.cat ? T.verde : T.linea}`,
-            background: cat === m.cat ? T.verde : T.blanco, color: cat === m.cat ? T.crema : T.ink,
-            fontSize: 12.5, fontWeight: 600,
-          }}>{m.cat}</button>
+    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "22px 20px 14px" }}>
+      <div>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6 }}>{sub}</div>
+        <h1 className="disp" style={{ fontSize: 30, lineHeight: .95, margin: 0 }}>{titulo}</h1>
+      </div>
+      {right}
+    </div>
+  );
+}
+
+function Marca({ size = 28, ring = false }) {
+  const { C } = useTheme();
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: "50%", overflow: "hidden",
+      display: "grid", placeItems: "center", flexShrink: 0,
+      boxShadow: ring ? `0 0 0 1.5px ${C.text}` : "none",
+    }}>
+      <img src={logo} alt="Quadro Café" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+    </div>
+  );
+}
+
+function btnMiniStyle(C) {
+  return {
+    width: 30, height: 30, borderRadius: 9, display: "grid", placeItems: "center",
+    background: "transparent", border: `1px solid ${C.line}`, color: C.text, cursor: "pointer",
+  };
+}
+
+/* ============================ INICIO ============================ */
+
+function Inicio({ ir, lote }) {
+  const { C, tema } = useTheme();
+  const [prog, setProg] = useState(0);
+  const [geo, setGeo] = useState(GEOMETRIAS[0]);
+  useEffect(() => {
+    let raf, t0 = performance.now();
+    const loop = (t) => {
+      const p = ((t - t0) / 3600) % 1;
+      setProg(p);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [geo]);
+
+  const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
+
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
+      <div className="rise" style={{
+        position: "relative", padding: "26px 20px 8px", overflow: "hidden",
+        backgroundImage: `linear-gradient(180deg, ${C.surface}CC, ${C.surface}), url(${heroDispenser})`,
+        backgroundSize: "cover", backgroundPosition: "center",
+      }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
+          Barra abierta · 7:00 a 20:00
+        </div>
+        <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
+          El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
+        </h1>
+        <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
+          Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
+        </p>
+      </div>
+
+      <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
+        <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          <svg width={132} height={132} viewBox="0 0 200 200" style={{ flexShrink: 0 }}>
+            <circle cx="100" cy="100" r="92" fill="none" stroke={C.line} strokeWidth="1" />
+            <circle cx="100" cy="100" r="62" fill="none" stroke={C.line} strokeWidth="1" strokeDasharray="3 5" />
+            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
+            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="2.6" strokeLinecap="round" />
+            <circle r="4" fill={C.brandAlt}
+              cx={100 + Math.cos(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)}
+              cy={100 + Math.sin(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)} />
+          </svg>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="mono" style={{ fontSize: 10, color: C.brandAlt, letterSpacing: ".16em", textTransform: "uppercase" }}>{geo.metodo}</div>
+            <div className="disp" style={{ fontSize: 19, margin: "4px 0 10px" }}>{geo.nombre}</div>
+            <Meter label="Extracción" value={geo.efecto.extraccion} />
+            <Meter label="Cuerpo" value={geo.efecto.cuerpo} tone={C.brandAlt} />
+            <Meter label="Acidez" value={geo.efecto.acidez} tone={C.purple} />
+          </div>
+        </div>
+        <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.5, margin: "12px 0 12px" }}>{geo.lectura}</p>
+        <div style={{ display: "flex", gap: 7, overflowX: "auto" }} className="qc-scroll">
+          {GEOMETRIAS.map((g) => (
+            <Chip key={g.id} active={g.id === geo.id} onClick={() => setGeo(g)}>{g.nombre}</Chip>
+          ))}
+        </div>
+      </div>
+
+      <div className="slide" style={{ margin: "16px 20px 0" }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".2em", color: C.textMuted, textTransform: "uppercase", marginBottom: 8 }}>Lote en barra hoy</div>
+        <button onClick={() => ir("fincas")} className="press tapfx" style={{
+          width: "100%", textAlign: "left", cursor: "pointer", border: `1px solid ${C.line}`,
+          borderRadius: 18, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div className="disp" style={{ fontSize: 20 }}>{lote.finca}</div>
+              <div className="mono" style={{ fontSize: 11, color: C.textMuted, marginTop: 3 }}>{lote.zona} · {lote.altura} msnm</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div className="disp" style={{ fontSize: 24, color: C.brand }}>{lote.score}</div>
+              <div className="mono" style={{ fontSize: 9, color: C.textMuted, letterSpacing: ".1em" }}>SCA</div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
+            {lote.notas.map((n) => (
+              <span key={n} className="mono" style={{ fontSize: 10, padding: "4px 9px", borderRadius: 99, border: `1px solid ${C.line}`, color: C.text }}>{n}</span>
+            ))}
+          </div>
+          <div className="mono" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 12, fontSize: 11, color: C.brand }}>
+            Escuchar la inducción de la finca <ChevronRight size={13} />
+          </div>
+        </button>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "14px 20px 0" }}>
+        {[
+          { k: "menu", t: "Pedir ahora", s: "Café, pan y postres", i: <ShoppingBag size={17} /> },
+          { k: "maquinas", t: "Laboratorio", s: "Geometrías y espirales", i: <Waves size={17} /> },
+          { k: "fincas", t: "Fincas", s: "Inducción con avatar", i: <Mountain size={17} /> },
+          { k: "academia", t: "Academia", s: "Formación de barra", i: <GraduationCap size={17} /> },
+          { k: "club", t: "Quadro Club", s: "Tu fidelidad, tus puntos", i: <Award size={17} /> },
+        ].map((c, i) => (
+          <button key={c.k} onClick={() => ir(c.k)} className="press tapfx rise" style={{
+            animationDelay: `${120 + i * 60}ms`, textAlign: "left", cursor: "pointer",
+            background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14, color: C.text,
+          }}>
+            <span style={{ color: C.brandAlt }}>{c.i}</span>
+            <div className="disp" style={{ fontSize: 14, marginTop: 10 }}>{c.t}</div>
+            <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 3 }}>{c.s}</div>
+          </button>
         ))}
       </div>
-      <div className="qc-scroll" style={{ flex: 1, overflowY: "auto", padding: "6px 20px 100px" }}>
+
+      <div style={{ margin: "20px 20px 0", display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: C.textMuted }}>
+          <MapPin size={14} /> 4ª Av. de Los Palos Grandes, Edif. Los Eucaliptos · Lun–Dom 8am–8pm
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: C.textMuted }}>
+          <Instagram size={14} /> @quadro.cafe
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================ MENÚ ============================ */
+
+function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza }) {
+  const { C } = useTheme();
+  const [cat, setCat] = useState("Filtrado");
+  const [abierto, setAbierto] = useState(null);
+  const items = MENU.filter((m) => m.cat === cat);
+  const imgCategoria = CAT_IMG[cat];
+
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
+      <Header sub="Carta viva" titulo="Pedir en barra" />
+      <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 14px", overflowX: "auto" }}>
+        {CATS.map((c) => <Chip key={c} active={c === cat} onClick={() => setCat(c)}>{c}</Chip>)}
+      </div>
+
+      <div style={{ padding: "0 20px" }}>
         {imgCategoria && (
-          <img key={cat} src={imgCategoria} alt={activa.cat} className="rise" style={{
-            width: "100%", height: 130, objectFit: "cover", borderRadius: 14, marginBottom: 12,
+          <img key={cat} src={imgCategoria} alt={cat} className="rise" style={{
+            width: "100%", height: 120, objectFit: "cover", borderRadius: 14, marginBottom: 12,
           }} />
         )}
-        {activa.destacado && (
-          <div style={{
-            marginBottom: 12, padding: "12px 14px", borderRadius: 14, background: T.verde, color: T.crema,
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-          }}>
-            <div>
-              <div className="mono" style={{ fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", opacity: .8 }}>El sello de ellos</div>
-              <div className="disp" style={{ fontSize: 17, fontWeight: 600 }}>{activa.destacado}</div>
-            </div>
-            <Star size={18} fill={T.dorado} color={T.dorado} />
-          </div>
-        )}
-        {activa.items.map((it) => {
-          const enCarrito = carrito.filter((c) => c === it).length;
+        {items.map((m, i) => {
+          const n = carrito.filter((x) => x.id === m.id).length;
+          const open = abierto === m.id;
           return (
-            <div key={it} className="rise" style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "13px 0", borderBottom: `1px solid ${T.linea}`,
+            <div key={m.id} className="rise" style={{
+              animationDelay: `${i * 45}ms`, background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
+              borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
             }}>
-              <span style={{ fontSize: 14.5 }}>{it}</span>
-              <button onClick={() => add(it)} className="press" style={{
-                ...btnMini, width: 30, height: 30, borderRadius: 9,
-                borderColor: enCarrito ? T.verde : T.linea, background: enCarrito ? T.verde : T.blanco,
-                color: enCarrito ? T.crema : T.ink,
-              }}>
-                {enCarrito ? <span className="mono" style={{ fontSize: 12, fontWeight: 700 }}>{enCarrito}</span> : <Plus size={15} />}
-              </button>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
+                    {m.tag && <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>}
+                  </div>
+                  <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
+                {m.finca ? (
+                  <button onClick={() => setAbierto(open ? null : m.id)} className="press mono" style={{
+                    fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: C.brand,
+                    background: "none", border: "none", cursor: "pointer", padding: 0,
+                  }}>
+                    {open ? "Ocultar opciones" : "Elegir finca y taza"}
+                  </button>
+                ) : <span />}
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {n > 0 && (
+                    <>
+                      <button onClick={() => quitar(m.id)} className="press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={14} /></button>
+                      <span className="mono" style={{ width: 16, textAlign: "center", fontSize: 13 }}>{n}</span>
+                    </>
+                  )}
+                  <button onClick={() => add(m)} className="press" aria-label={`Agregar ${m.nombre}`} style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                    <Plus size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {open && (
+                <div className="pop" style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
+                  <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 8 }}>Finca</div>
+                  <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
+                    {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+                  </div>
+                  <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", margin: "14px 0 8px" }}>Taza</div>
+                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                    {TAZAS.map((t) => (
+                      <button key={t.id} onClick={() => setTaza(t)} className="press" aria-label={`Taza ${t.nombre}`} style={{
+                        width: 30, height: 30, borderRadius: 8, background: t.hex, cursor: "pointer",
+                        border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
+                      }} />
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 12, color: C.textMuted, marginTop: 10, lineHeight: 1.45 }}>
+                    <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
+                  </p>
+                </div>
+              )}
             </div>
           );
         })}
@@ -309,228 +526,504 @@ function Menu({ carrito, add }) {
   );
 }
 
-function Fincas({ activa, setActiva }) {
-  const [modo, setModo] = useState("slider"); // slider | ambiente
-  if (modo === "ambiente" && activa) return <FincaAmbiente finca={activa} volver={() => setModo("slider")} />;
+/* ============================ FINCAS + AVATAR ============================ */
 
-  return (
-    <div className="qc-scroll" style={{ height: "100%", overflowY: "auto", padding: "12px 20px 100px" }}>
-      <div className="disp" style={{ fontSize: 20, fontWeight: 600 }}>Nuestros caficultores</div>
-      <div style={{ fontSize: 12.5, color: T.tenue, marginTop: 3, marginBottom: 16 }}>Toca una tarjeta para conocer su finca</div>
-      <div style={{ display: "grid", gap: 12 }}>
-        {FINCAS.map((f) => (
-          <button key={f.id} onClick={() => { setActiva(f); setModo("ambiente"); }} className="press tapfx" style={{
-            textAlign: "left", cursor: "pointer", border: `1px solid ${T.linea}`, borderRadius: 18,
-            padding: 16, background: T.blanco, display: "flex", gap: 14, alignItems: "center",
-          }}>
-            {f.id === "santa-anita" ? (
-              <img src={loteVillaNueva} alt="Bolsa de café Villa Nueva, Finca Santa Anita" style={{
-                width: 52, height: 52, borderRadius: 14, objectFit: "cover", flexShrink: 0,
-              }} />
-            ) : (
-              <div style={{
-                width: 52, height: 52, borderRadius: 14, background: f.color, color: T.crema,
-                display: "grid", placeItems: "center", flexShrink: 0,
-              }}><span className="disp" style={{ fontSize: 20, fontWeight: 700 }}>{f.inicial}</span></div>
-            )}
-            <div style={{ flex: 1 }}>
-              <div className="disp" style={{ fontSize: 16, fontWeight: 600 }}>{f.finca}</div>
-              <div style={{ fontSize: 11.5, color: T.tenue }}>{f.caficultor} · {f.zona}</div>
-              <div style={{ fontSize: 11, color: T.verde, marginTop: 3, fontWeight: 600 }}>{f.trayectoria}</div>
-            </div>
-            <ChevronRight size={18} color={T.tenue} />
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FincaAmbiente({ finca, volver }) {
+function Fincas({ lote, setLote }) {
+  const { C, tema } = useTheme();
   const [linea, setLinea] = useState(0);
-  const [reproduciendo, setReproduciendo] = useState(false);
+  const [reproduciendo, setRepro] = useState(false);
+  const [transcripcion, setTrans] = useState(false);
+  const timer = useRef(null);
+
+  useEffect(() => { setLinea(0); setRepro(false); }, [lote.id]);
 
   useEffect(() => {
-    if (!reproduciendo) return;
-    if (linea >= finca.guion.length - 1) { setReproduciendo(false); return; }
-    const t = setTimeout(() => setLinea((l) => l + 1), 3400);
-    return () => clearTimeout(t);
-  }, [reproduciendo, linea, finca]);
+    if (!reproduciendo) { clearTimeout(timer.current); return; }
+    if (linea >= lote.guion.length - 1) { setRepro(false); return; }
+    timer.current = setTimeout(() => setLinea((l) => l + 1), 3400);
+    return () => clearTimeout(timer.current);
+  }, [reproduciendo, linea, lote]);
+
+  const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
 
   return (
-    <div className="pop" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <div style={{
-        flex: 1, position: "relative", background: `linear-gradient(180deg, ${finca.color}, ${T.ink})`,
-        display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20, overflow: "hidden",
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      <Header sub="Origen" titulo="Fincas" />
+      <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 16px", overflowX: "auto" }}>
+        {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+      </div>
+
+      <div className="pop" key={lote.id} style={{
+        margin: "0 20px", borderRadius: 22, overflow: "hidden",
+        border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
       }}>
-        <button onClick={volver} className="press" style={{
-          position: "absolute", top: 16, left: 16, ...btnMini, width: 34, height: 34, borderRadius: 10,
-          background: "rgba(255,255,255,.15)", border: "1px solid rgba(255,255,255,.3)", color: T.crema,
-        }}><ArrowLeft size={16} /></button>
-
-        <div style={{ color: T.crema }}>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", opacity: .75 }}>{finca.zona}</div>
-          <div className="disp" style={{ fontSize: 26, fontWeight: 700, marginTop: 2 }}>{finca.finca}</div>
-          <div style={{ fontSize: 12.5, opacity: .85, marginTop: 2 }}>{finca.caficultor}</div>
+        <div style={{ position: "relative", height: 216, display: "grid", placeItems: "center" }}>
+          <svg viewBox="0 0 320 160" style={{ position: "absolute", bottom: 0, width: "100%", opacity: .35 }}>
+            <path d="M0 160 L60 78 L104 122 L156 44 L212 118 L262 70 L320 160 Z" fill={C.surface} />
+          </svg>
+          <div style={{ position: "relative", textAlign: "center" }}>
+            <div className={reproduciendo ? "pulse" : ""} style={{
+              width: 92, height: 92, borderRadius: "50%", margin: "0 auto",
+              display: "grid", placeItems: "center", background: C.surface,
+              border: `2px solid ${reproduciendo ? C.brand : C.brandAlt}`,
+            }}>
+              <span className="disp" style={{ fontSize: 34, color: reproduciendo ? C.brand : C.brandAlt }}>{lote.avatar.inicial}</span>
+            </div>
+            {reproduciendo && [0, .5, 1].map((d) => (
+              <span key={d} className="steam" style={{
+                position: "absolute", left: `${42 + d * 8}%`, top: -6, width: 3, height: 16,
+                borderRadius: 99, background: C.brand, animationDelay: `${d}s`,
+              }} />
+            ))}
+            <div className="disp" style={{ fontSize: 16, marginTop: 12 }}>{lote.avatar.nombre}</div>
+            <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{lote.avatar.rol}</div>
+          </div>
         </div>
 
-        {/* Avatar placeholder — reemplazar por render Higgsfield */}
-        <div style={{
-          marginTop: 16, borderRadius: 16, background: "rgba(0,0,0,.28)", border: "1px solid rgba(255,255,255,.2)",
-          padding: 14, display: "flex", gap: 12, alignItems: "flex-start",
-        }}>
-          <button onClick={() => setReproduciendo((r) => !r)} className="press" style={{
-            width: 40, height: 40, borderRadius: "50%", flexShrink: 0, border: "none", cursor: "pointer",
-            background: T.crema, color: finca.color, display: "grid", placeItems: "center",
-          }}><Play size={16} fill={finca.color} /></button>
-          <p key={linea} className="rise" style={{ color: T.crema, fontSize: 13.5, lineHeight: 1.5, margin: 0 }}>
-            {finca.guion[linea]}
+        <div style={{ background: C.surface, padding: "14px 16px", minHeight: 86 }}>
+          <p key={linea} className="slide" style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5 }}>
+            {lote.guion[linea]}
           </p>
-        </div>
-        <div style={{ display: "flex", gap: 4, marginTop: 10 }}>
-          {finca.guion.map((_, i) => (
-            <div key={i} style={{ height: 3, flex: 1, borderRadius: 99, background: i <= linea ? T.crema : "rgba(255,255,255,.25)" }} />
-          ))}
+          <div style={{ display: "flex", gap: 4, marginTop: 12 }}>
+            {lote.guion.map((_, i) => (
+              <span key={i} style={{
+                flex: 1, height: 2, borderRadius: 99,
+                background: i <= linea ? C.brand : C.line, transition: "background .3s",
+              }} />
+            ))}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
+            <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="press"
+              style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 15px", borderRadius: 99, border: "none", background: C.brand, color: C.onBrand, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+              {reproduciendo ? <Pause size={14} /> : <Play size={14} />}
+              {reproduciendo ? "Pausar" : linea === 0 ? "Reproducir inducción" : "Continuar"}
+            </button>
+            <button onClick={() => setTrans(!transcripcion)} className="press mono" style={{
+              fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", background: "none",
+              border: `1px solid ${C.line}`, color: C.textMuted, padding: "8px 12px", borderRadius: 99, cursor: "pointer",
+            }}>
+              Transcripción
+            </button>
+          </div>
+          {transcripcion && (
+            <div className="pop" style={{ marginTop: 12, borderTop: `1px solid ${C.line}`, paddingTop: 10 }}>
+              {lote.guion.map((g, i) => (
+                <p key={i} onClick={() => setLinea(i)} style={{
+                  fontSize: 12.5, lineHeight: 1.5, margin: "0 0 7px", cursor: "pointer",
+                  color: i === linea ? C.text : C.textMuted,
+                }}>{g}</p>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="qc-scroll" style={{ padding: "16px 20px 100px", background: T.crema }}>
-        {finca.id === "santa-anita" && (
-          <img src={loteVillaNueva} alt="Bolsa de café Villa Nueva" style={{
-            width: "100%", maxHeight: 220, objectFit: "cover", objectPosition: "center 55%", borderRadius: 16, marginBottom: 14,
-          }} />
-        )}
-        <div className="disp" style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Sobre la finca</div>
-        <p style={{ fontSize: 13, color: T.ink, lineHeight: 1.55 }}>{finca.detalle}</p>
-        <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-          <Chip>{finca.variedad}</Chip>
-          {finca.altura && <Chip>{finca.altura} msnm</Chip>}
-          <Chip>{finca.proceso}</Chip>
+      <div style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 16 }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 12 }}>Ficha del lote</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          {[
+            ["Altura", `${lote.altura} msnm`], ["Varietal", lote.varietal],
+            ["Proceso", lote.proceso], ["Puntaje", `${lote.score} SCA`],
+          ].map(([k, v]) => (
+            <div key={k}>
+              <div className="mono" style={{ fontSize: 9.5, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{k}</div>
+              <div className="disp" style={{ fontSize: 16, marginTop: 3 }}>{v}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <Meter label="Dulzor" value={Math.round(lote.score - 12)} tone={C.brandAlt} />
+          <Meter label="Acidez" value={Math.round(lote.altura / 26)} />
+          <Meter label="Cuerpo" value={lote.proceso.includes("Honey") ? 80 : 58} tone={C.purple} />
         </div>
       </div>
     </div>
   );
 }
-function Laboratorio() {
-  const [geo, setGeo] = useState(GEOMETRIAS[0]);
-  return (
-    <div className="qc-scroll" style={{ height: "100%", overflowY: "auto", padding: "12px 20px 100px" }}>
-      <img src={heroDispenser} alt="Equipo de extracción Quadro Café" style={{
-        width: "100%", height: 130, objectFit: "cover", borderRadius: 14, marginBottom: 14,
-      }} />
-      <div className="disp" style={{ fontSize: 20, fontWeight: 600 }}>Geometría de extracción</div>
-      <div style={{ fontSize: 12.5, color: T.tenue, marginTop: 3, marginBottom: 14 }}>Cada trazo de agua cambia el sabor en taza</div>
 
-      <div className="qc-scroll" style={{ display: "flex", gap: 8, overflowX: "auto", marginBottom: 16 }}>
-        {GEOMETRIAS.map((g) => (
-          <button key={g.id} onClick={() => setGeo(g)} className="press" style={{
-            flexShrink: 0, padding: "9px 14px", borderRadius: 99, cursor: "pointer",
-            border: `1px solid ${geo.id === g.id ? T.verde : T.linea}`,
-            background: geo.id === g.id ? T.verde : T.blanco, color: geo.id === g.id ? T.crema : T.ink,
-            fontSize: 12, fontWeight: 600,
-          }}>{g.nombre}</button>
-        ))}
+/* ============================ LABORATORIO ============================ */
+
+function Slider({ label, value, min, max, step, onChange, suf }) {
+  const { C } = useTheme();
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div className="mono" style={{ display: "flex", justifyContent: "space-between", fontSize: 10, letterSpacing: ".1em", color: C.textMuted, textTransform: "uppercase", marginBottom: 6 }}>
+        <span>{label}</span><span style={{ color: C.text }}>{value}{suf}</span>
+      </div>
+      <input type="range" min={min} max={max} step={step} value={value} aria-label={label}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        style={{ width: "100%", accentColor: C.brand }} />
+    </div>
+  );
+}
+
+function Laboratorio() {
+  const { C } = useTheme();
+  const [geo, setGeo] = useState(GEOMETRIAS[0]);
+  const [vueltas, setVueltas] = useState(GEOMETRIAS[0].vueltas);
+  const [radio, setRadio] = useState(GEOMETRIAS[0].radio);
+  const [temp, setTemp] = useState(93);
+  const [molienda, setMolienda] = useState(22);
+  const [corriendo, setCorriendo] = useState(false);
+  const [prog, setProg] = useState(1);
+
+  useEffect(() => { setVueltas(geo.vueltas); setRadio(geo.radio); }, [geo]);
+
+  useEffect(() => {
+    if (!corriendo) return;
+    let raf, t0 = performance.now();
+    const loop = (t) => {
+      const p = Math.min(1, (t - t0) / 4200);
+      setProg(p);
+      if (p < 1) raf = requestAnimationFrame(loop); else setCorriendo(false);
+    };
+    setProg(0);
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [corriendo]);
+
+  const perfil = useMemo(() => {
+    const extraccion = Math.round(Math.min(98, 30 + vueltas * 7 + radio * 22 + (temp - 88) * 2.2 + (30 - molienda) * .8));
+    const cuerpo = Math.round(Math.max(12, 100 - radio * 46 - vueltas * 5 + (30 - molienda) * 1.1));
+    const acidez = Math.round(Math.min(96, 26 + radio * 40 + vueltas * 5 + (temp - 90) * 1.6));
+    const dulzor = Math.round(Math.max(20, 96 - Math.abs(extraccion - 78) * 1.5));
+    return { extraccion, cuerpo, acidez, dulzor };
+  }, [vueltas, radio, temp, molienda]);
+
+  const veredicto = perfil.extraccion > 88 ? "Sobreextraído. Amargo seco al final."
+    : perfil.extraccion < 62 ? "Subextraído. Ácido punzante y hueco."
+    : "Rango dulce. Aquí es donde se vende la taza.";
+
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      <img src={heroDispenser} alt="Equipo de extracción Quadro Café" style={{
+        width: "calc(100% - 40px)", margin: "0 20px", height: 120, objectFit: "cover", borderRadius: 14, display: "block",
+      }} />
+      <Header sub="Geometría de extracción" titulo="Laboratorio" />
+      <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
+        Mueve la ruta del agua y mira cómo se desplaza el perfil. Lo mismo que hace la máquina, en tu mano.
+      </p>
+
+      <div style={{ margin: "0 20px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
+        <div style={{ display: "grid", placeItems: "center", position: "relative" }}>
+          <svg width={210} height={210} viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="lecho">
+                <stop offset="0%" stopColor={C.brandAlt} stopOpacity=".25" />
+                <stop offset="100%" stopColor={C.brandAlt} stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="92" fill="url(#lecho)" stroke={C.line} />
+            <circle cx="100" cy="100" r="60" fill="none" stroke={C.line} strokeDasharray="2 6" />
+            <circle cx="100" cy="100" r="30" fill="none" stroke={C.line} strokeDasharray="2 6" />
+            <path d={spiralPath(vueltas, 280, radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
+            <path d={spiralPath(vueltas, 280, radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="3" strokeLinecap="round" />
+            <circle r="5" fill={C.brandAlt}
+              cx={100 + Math.cos(prog * vueltas * Math.PI * 2) * (86 * radio * prog)}
+              cy={100 + Math.sin(prog * vueltas * Math.PI * 2) * (86 * radio * prog)} />
+          </svg>
+          {corriendo && <span className="drip" style={{ position: "absolute", top: 6, width: 3, height: 12, borderRadius: 99, background: C.brand }} />}
+        </div>
+
+        <button onClick={() => setCorriendo(true)} className="press" style={{
+          width: "100%", marginTop: 12, padding: "12px", borderRadius: 12, border: `1px solid ${C.brand}`,
+          background: corriendo ? C.brand : "transparent", color: corriendo ? C.onBrand : C.brand,
+          cursor: "pointer", fontWeight: 600, fontSize: 13,
+        }}>
+          {corriendo ? "Vertiendo…" : "Simular vertido"}
+        </button>
+
+        <div style={{ marginTop: 18 }}>
+          <Slider label="Vueltas de espiral" value={vueltas} min={.4} max={8} step={.2} onChange={setVueltas} suf="v" />
+          <Slider label="Radio de cobertura" value={radio} min={.2} max={1} step={.05} onChange={setRadio} suf="" />
+          <Slider label="Temperatura" value={temp} min={82} max={98} step={1} onChange={setTemp} suf=" °C" />
+          <Slider label="Molienda (clics C40)" value={molienda} min={12} max={30} step={1} onChange={setMolienda} suf=" clics" />
+        </div>
       </div>
 
-      <div style={{ background: T.blanco, border: `1px solid ${T.linea}`, borderRadius: 18, padding: 18 }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".14em", color: T.tenue, textTransform: "uppercase" }}>{geo.metodo}</div>
-        <p style={{ fontSize: 13, marginTop: 8, lineHeight: 1.5 }}>{geo.lectura}</p>
-        <div style={{ marginTop: 16, display: "grid", gap: 10 }}>
-          {Object.entries(geo.efecto).map(([k, v]) => (
-            <div key={k}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, marginBottom: 4, textTransform: "capitalize" }}>
-                <span>{k}</span><span className="mono">{v}</span>
+      <div style={{ margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 12 }}>Perfil resultante</div>
+        <Meter label="Extracción" value={perfil.extraccion} />
+        <Meter label="Cuerpo" value={perfil.cuerpo} tone={C.brandAlt} />
+        <Meter label="Acidez" value={perfil.acidez} tone={C.purple} />
+        <Meter label="Dulzor" value={perfil.dulzor} tone={C.amarillo} />
+        <p style={{ fontSize: 13, lineHeight: 1.5, margin: "12px 0 0", color: perfil.extraccion > 88 || perfil.extraccion < 62 ? C.warn : C.brand }}>
+          {veredicto}
+        </p>
+      </div>
+
+      <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "14px 20px 0", overflowX: "auto" }}>
+        {GEOMETRIAS.map((g) => <Chip key={g.id} active={g.id === geo.id} onClick={() => setGeo(g)}>{g.nombre}</Chip>)}
+      </div>
+
+      <div style={{ margin: "16px 20px 0" }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.textMuted, textTransform: "uppercase", marginBottom: 10 }}>Equipo en barra</div>
+        {EQUIPO.map((e, i) => (
+          <div key={e.nombre} className="rise" style={{
+            animationDelay: `${i * 50}ms`, background: C.card, border: `1px solid ${C.line}`,
+            borderRadius: 14, padding: 13, marginBottom: 8,
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span className="disp" style={{ fontSize: 14 }}>{e.nombre}</span>
+              <span className="mono" style={{ fontSize: 10, color: C.brand }}>{e.clicks}</span>
+            </div>
+            <div className="mono" style={{ fontSize: 10.5, color: C.textMuted, marginTop: 4 }}>{e.detalle} · {e.uso}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================ ACADEMIA + TAZAS ============================ */
+
+function Academia({ taza, setTaza }) {
+  const { C } = useTheme();
+  const [hechos, setHechos] = useState([]);
+  const toggle = (id) => setHechos((h) => h.includes(id) ? h.filter((x) => x !== id) : [...h, id]);
+  const pct = Math.round((hechos.length / ACADEMIA.length) * 100);
+
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      <Header sub="Formación de barra" titulo="Academia" />
+
+      <div style={{ margin: "0 20px 18px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <span className="mono" style={{ fontSize: 10, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase" }}>Tu avance</span>
+          <span className="disp" style={{ fontSize: 24, color: C.brand }}>{pct}%</span>
+        </div>
+        <div style={{ height: 5, background: C.line, borderRadius: 99, marginTop: 10, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${pct}%`, background: C.brand, borderRadius: 99, transition: "width .5s cubic-bezier(.2,.8,.2,1)" }} />
+        </div>
+      </div>
+
+      <div style={{ padding: "0 20px" }}>
+        {ACADEMIA.map((a, i) => {
+          const done = hechos.includes(a.id);
+          return (
+            <button key={a.id} onClick={() => toggle(a.id)} className="press tapfx rise" style={{
+              animationDelay: `${i * 55}ms`, width: "100%", textAlign: "left", cursor: "pointer",
+              background: C.card, border: `1px solid ${done ? C.brand : C.line}`, borderRadius: 16,
+              padding: 15, marginBottom: 10, color: C.text,
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span className="disp" style={{ fontSize: 15 }}>{a.titulo}</span>
+                <span style={{
+                  width: 22, height: 22, borderRadius: 7, display: "grid", placeItems: "center",
+                  border: `1px solid ${done ? C.brand : C.line}`, background: done ? C.brand : "transparent", color: C.onBrand,
+                }}>{done && <Check size={13} />}</span>
               </div>
-              <div style={{ height: 6, borderRadius: 99, background: T.linea, overflow: "hidden" }}>
-                <div key={geo.id + k} className="bar" style={{ height: "100%", width: `${v}%`, borderRadius: 99, background: T.verde }} />
+              <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 5 }}>{a.min} min de lectura</div>
+              <ul style={{ margin: "10px 0 0", padding: "0 0 0 16px", color: C.textMuted, fontSize: 12.5, lineHeight: 1.6 }}>
+                {a.puntos.map((p) => <li key={p}>{p}</li>)}
+              </ul>
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={{ margin: "20px 20px 0" }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6 }}>Estudio de color</div>
+        <h2 className="disp" style={{ fontSize: 20, margin: "0 0 6px" }}>La taza también sabe</h2>
+        <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.5, margin: "0 0 14px" }}>
+          El color del recipiente desplaza el dulzor percibido antes del primer sorbo. Toca una taza y compara.
+        </p>
+
+        <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 18 }}>
+          <div style={{ display: "grid", placeItems: "center", marginBottom: 16 }}>
+            <div key={taza.id} className="pop" style={{ position: "relative" }}>
+              <div style={{
+                width: 94, height: 78, borderRadius: "10px 10px 40px 40px",
+                background: taza.hex, border: `2px solid ${C.line}`,
+              }} />
+              <div style={{
+                position: "absolute", top: 8, left: 10, right: 10, height: 16,
+                borderRadius: 99, background: "#2B1A10",
+              }} />
+              {[0, .6, 1.2].map((d) => (
+                <span key={d} className="steam" style={{
+                  position: "absolute", left: `${34 + d * 14}%`, top: -14, width: 3, height: 16,
+                  borderRadius: 99, background: C.textMuted, animationDelay: `${d}s`,
+                }} />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 10, justifyContent: "center", marginBottom: 16 }}>
+            {TAZAS.map((t) => (
+              <button key={t.id} onClick={() => setTaza(t)} className="press" aria-label={`Taza ${t.nombre}`} style={{
+                width: 34, height: 34, borderRadius: 10, background: t.hex, cursor: "pointer",
+                border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
+              }} />
+            ))}
+          </div>
+
+          <div className="slide" key={taza.id + "d"}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span className="disp" style={{ fontSize: 17 }}>{taza.nombre}</span>
+              <span className="mono" style={{ fontSize: 13, color: taza.pct >= 0 ? C.brand : C.warn }}>
+                {taza.pct >= 0 ? "+" : ""}{taza.pct}% dulzor percibido
+              </span>
+            </div>
+            <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.5, margin: "8px 0 0" }}>{taza.efecto}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================ ESTUDIO MULTIMEDIA ============================ */
+
+function Estudio({ medios, setMedios }) {
+  const { C } = useTheme();
+  const input = useRef(null);
+
+  const cargar = (files) => {
+    const nuevos = Array.from(files).slice(0, 30).map((f) => ({
+      id: `${f.name}-${Date.now()}-${Math.random()}`,
+      nombre: f.name, url: URL.createObjectURL(f), destino: "Galería del local",
+    }));
+    setMedios((m) => [...nuevos, ...m]);
+  };
+
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      <Header sub="Producción" titulo="Estudio" />
+      <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
+        Fotos y videos reales del local. Sube más y asigna cada archivo a su lugar en la app.
+      </p>
+
+      <div style={{ padding: "0 20px" }}>
+        <button onClick={() => input.current?.click()} className="press tapfx" style={{
+          width: "100%", padding: "26px 16px", borderRadius: 18, cursor: "pointer",
+          border: `1px dashed ${C.brandAlt}`, background: C.card, color: C.text,
+        }}>
+          <Upload size={20} color={C.brandAlt} />
+          <div className="disp" style={{ fontSize: 15, marginTop: 10 }}>Subir multimedia</div>
+          <div className="mono" style={{ fontSize: 10.5, color: C.textMuted, marginTop: 4 }}>Fotos de granos, máquinas, menús y paleta</div>
+        </button>
+        <input ref={input} type="file" accept="image/*,video/*" multiple hidden onChange={(e) => cargar(e.target.files)} />
+      </div>
+
+      {medios.length === 0 ? (
+        <div style={{ margin: "18px 20px 0", padding: 20, border: `1px solid ${C.line}`, borderRadius: 16, textAlign: "center" }}>
+          <ImageIcon size={18} color={C.textMuted} />
+          <p style={{ fontSize: 13, color: C.textMuted, margin: "10px 0 0", lineHeight: 1.5 }}>
+            Todavía no hay archivos. Sube el primero y elige dónde vive dentro de la app.
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "18px 20px 0" }}>
+          {medios.map((m, i) => (
+            <div key={m.id} className="pop" style={{ animationDelay: `${i * 40}ms`, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.line}`, background: C.card }}>
+              <div style={{ height: 108, background: C.surface, display: "grid", placeItems: "center", overflow: "hidden" }}>
+                <img src={m.url} alt={m.nombre} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+              <div style={{ padding: 10 }}>
+                <select value={m.destino} aria-label="Destino del archivo"
+                  onChange={(e) => setMedios((arr) => arr.map((x) => x.id === m.id ? { ...x, destino: e.target.value } : x))}
+                  className="mono" style={{
+                    width: "100%", fontSize: 10, background: C.surface, color: C.text,
+                    border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 7px",
+                  }}>
+                  {DESTINOS.map((d) => <option key={d}>{d}</option>)}
+                </select>
+                <button onClick={() => setMedios((arr) => arr.filter((x) => x.id !== m.id))} className="press mono" style={{
+                  marginTop: 7, display: "flex", alignItems: "center", gap: 5, fontSize: 10,
+                  background: "none", border: "none", color: C.textMuted, cursor: "pointer", padding: 0,
+                }}>
+                  <Trash2 size={11} /> Quitar
+                </button>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      <div style={{ margin: "20px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 16 }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 10 }}>Siguiente entrega</div>
+        {[
+          "Video de la máquina extrayendo, para reemplazar la espiral animada",
+          "Avatar grabado por finca, con el guion que ya está en la app",
+          "Paleta de color final y menú impreso para ajustar precios",
+        ].map((s, i) => (
+          <div key={s} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 9 }}>
+            <span className="mono" style={{ fontSize: 10, color: C.brandAlt, marginTop: 2 }}>{String(i + 1).padStart(2, "0")}</span>
+            <span style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.45 }}>{s}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function Academia() {
-  return (
-    <div className="qc-scroll" style={{ height: "100%", overflowY: "auto", padding: "12px 20px 100px" }}>
-      <div className="disp" style={{ fontSize: 20, fontWeight: 600 }}>Aula Quadro</div>
-      <div style={{ fontSize: 12.5, color: T.tenue, marginTop: 3, marginBottom: 16 }}>Aprende a leer una taza de café</div>
-      {[
-        { t: "Cómo catar", d: "Aroma, acidez, cuerpo, dulzor y retrogusto — el orden en que se lee una taza." },
-        { t: "El color de la taza", d: "El color de la porcelana cambia la percepción de dulzor y amargor hasta en un 20%." },
-        { t: "De la cereza al grano", d: "Cosecha, despulpado, fermentación, secado — el viaje antes del tueste." },
-        { t: "Leer una etiqueta", d: "Finca, altura, proceso, puntaje SCA: lo que cada dato te dice del café." },
-      ].map((m) => (
-        <div key={m.t} style={{ background: T.blanco, border: `1px solid ${T.linea}`, borderRadius: 16, padding: 16, marginBottom: 10 }}>
-          <div className="disp" style={{ fontSize: 15, fontWeight: 600 }}>{m.t}</div>
-          <p style={{ fontSize: 12.5, color: T.ink, marginTop: 4, lineHeight: 1.5 }}>{m.d}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
+/* ============================ QUADRO CLUB ============================ */
 
-function Club({ email, setEmail }) {
+function Club({ email, setEmail, onBack }) {
+  const { C } = useTheme();
   const [enviado, setEnviado] = useState(!!email);
   const [valor, setValor] = useState(email || "");
   const puntos = enviado ? 40 : 0;
   const nivel = [...CLUB_NIVELES].reverse().find((n) => puntos >= n.desde) || CLUB_NIVELES[0];
 
   return (
-    <div className="qc-scroll" style={{ height: "100%", overflowY: "auto", padding: "12px 20px 100px" }}>
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      <Header sub="Fidelidad" titulo="Quadro Club" right={
+        <button onClick={onBack} className="press" aria-label="Volver a inicio" style={btnMiniStyle(C)}><ArrowLeft size={15} /></button>
+      } />
+
       <div style={{
-        color: T.crema, borderRadius: 20, padding: "20px 18px", position: "relative", overflow: "hidden",
-        backgroundImage: `linear-gradient(180deg, rgba(21,58,45,.6), rgba(16,19,17,.88)), url(${clubBox})`,
+        margin: "0 20px", color: C.onBrand, borderRadius: 20, padding: "20px 18px", position: "relative", overflow: "hidden",
+        backgroundImage: `linear-gradient(180deg, ${C.brand}CC, ${C.brand}), url(${clubBox})`,
         backgroundSize: "cover", backgroundPosition: "center",
       }}>
         <Award size={22} />
-        <div className="disp" style={{ fontSize: 21, fontWeight: 700, marginTop: 8 }}>Quadro Club</div>
+        <div className="disp" style={{ fontSize: 21, marginTop: 8 }}>Quadro Club</div>
         <div style={{ fontSize: 12.5, opacity: .85, marginTop: 2 }}>Tu fidelidad, en puntos y beneficios reales</div>
       </div>
 
       {!enviado ? (
-        <div className="rise" style={{ marginTop: 16, background: T.blanco, border: `1px solid ${T.linea}`, borderRadius: 16, padding: 18 }}>
-          <Lock size={18} color={T.verde} />
-          <div className="disp" style={{ fontSize: 15, fontWeight: 600, marginTop: 8 }}>Desbloquea tu ficha de cata</div>
-          <p style={{ fontSize: 12.5, color: T.tenue, marginTop: 4, lineHeight: 1.5 }}>
+        <div className="rise" style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
+          <Lock size={18} color={C.brand} />
+          <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Desbloquea tu ficha de cata</div>
+          <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
             Déjanos tu correo y te enviamos tu Guía de Cata Quadro — además te suma tu primer punto en el Club.
           </p>
           <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, border: `1px solid ${T.linea}`, borderRadius: 12, padding: "10px 12px" }}>
-              <Mail size={15} color={T.tenue} />
+            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
+              <Mail size={15} color={C.textMuted} />
               <input value={valor} onChange={(e) => setValor(e.target.value)} placeholder="tucorreo@email.com"
-                style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent" }} />
+                style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
             </div>
           </div>
           <button onClick={() => { if (valor.includes("@")) { setEmail(valor); setEnviado(true); } }} className="press" style={{
             marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", cursor: "pointer",
-            background: T.verde, color: T.crema, fontSize: 13.5, fontWeight: 700,
+            background: C.brand, color: C.onBrand, fontSize: 13.5, fontWeight: 700,
           }}>Quiero mi guía</button>
         </div>
       ) : (
         <>
-          <div className="pop" style={{ marginTop: 16, background: T.blanco, border: `1px solid ${T.linea}`, borderRadius: 16, padding: 18 }}>
+          <div className="pop" style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div className="mono" style={{ fontSize: 10, letterSpacing: ".12em", color: T.tenue, textTransform: "uppercase" }}>Nivel actual</div>
-                <div className="disp" style={{ fontSize: 18, fontWeight: 700 }}>{nivel.nombre}</div>
+                <div className="mono" style={{ fontSize: 10, letterSpacing: ".12em", color: C.textMuted, textTransform: "uppercase" }}>Nivel actual</div>
+                <div className="disp" style={{ fontSize: 18 }}>{nivel.nombre}</div>
               </div>
-              <div className="disp" style={{ fontSize: 26, fontWeight: 700, color: T.verde }}>{puntos}<span style={{ fontSize: 12, color: T.tenue, fontWeight: 400 }}> pts</span></div>
+              <div className="disp" style={{ fontSize: 26, color: C.brand }}>{puntos}<span style={{ fontSize: 12, color: C.textMuted, fontWeight: 400 }}> pts</span></div>
             </div>
-            <p style={{ fontSize: 12.5, marginTop: 8, color: T.ink }}>{nivel.beneficio}</p>
+            <p style={{ fontSize: 12.5, marginTop: 8, color: C.text }}>{nivel.beneficio}</p>
           </div>
-          <div style={{ marginTop: 14 }}>
+          <div style={{ margin: "14px 20px 0" }}>
             {CLUB_NIVELES.map((n) => (
-              <div key={n.nombre} style={{ display: "flex", gap: 10, padding: "10px 0", borderBottom: `1px solid ${T.linea}` }}>
+              <div key={n.nombre} style={{ display: "flex", gap: 10, padding: "10px 0", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{
                   width: 26, height: 26, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center",
-                  background: puntos >= n.desde ? T.verde : T.linea, color: puntos >= n.desde ? T.crema : T.tenue,
+                  background: puntos >= n.desde ? C.brand : C.line, color: puntos >= n.desde ? C.onBrand : C.textMuted,
                 }}>{puntos >= n.desde && <Check size={13} />}</div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700 }}>{n.nombre} <span className="mono" style={{ fontSize: 10, color: T.tenue, fontWeight: 400 }}>· {n.desde}+ pts</span></div>
-                  <div style={{ fontSize: 11.5, color: T.tenue }}>{n.beneficio}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700 }}>{n.nombre} <span className="mono" style={{ fontSize: 10, color: C.textMuted, fontWeight: 400 }}>· {n.desde}+ pts</span></div>
+                  <div style={{ fontSize: 11.5, color: C.textMuted }}>{n.beneficio}</div>
                 </div>
               </div>
             ))}
@@ -540,40 +1033,62 @@ function Club({ email, setEmail }) {
     </div>
   );
 }
-function Carrito({ carrito, cerrar, quitar, confirmar }) {
+
+/* ============================ CARRITO ============================ */
+
+function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
+  const { C } = useTheme();
+  const total = carrito.reduce((s, i) => s + i.precio, 0);
+  const agrupado = carrito.reduce((acc, i) => {
+    acc[i.id] = acc[i.id] ? { ...acc[i.id], n: acc[i.id].n + 1 } : { ...i, n: 1 };
+    return acc;
+  }, {});
+  const filas = Object.values(agrupado);
+
   return (
-    <div style={{ position: "absolute", inset: 0, zIndex: 40 }}>
-      <div onClick={cerrar} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.4)" }} />
-      <div className="sheet" style={{
-        position: "absolute", left: 0, right: 0, bottom: 0, maxHeight: "78%", background: T.crema,
-        borderRadius: "22px 22px 0 0", display: "flex", flexDirection: "column",
+    <div style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.72)", zIndex: 40, display: "flex", alignItems: "flex-end" }} onClick={cerrar}>
+      <div className="sheet" onClick={(e) => e.stopPropagation()} style={{
+        width: "100%", maxHeight: "84%", overflowY: "auto", background: C.card,
+        borderTop: `1px solid ${C.line}`, borderRadius: "24px 24px 0 0", padding: "18px 20px 26px",
       }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 20px 10px" }}>
-          <div className="disp" style={{ fontSize: 17, fontWeight: 700 }}>Tu pedido</div>
-          <button onClick={cerrar} className="press" style={{ ...btnMini, width: 30, height: 30, borderRadius: 9 }}><X size={15} /></button>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <h2 className="disp" style={{ fontSize: 22, margin: 0 }}>Tu pedido</h2>
+          <button onClick={cerrar} className="press" aria-label="Cerrar" style={btnMiniStyle(C)}><X size={15} /></button>
         </div>
-        {carrito.length === 0 ? (
-          <p style={{ padding: "0 20px 24px", fontSize: 13, color: T.tenue }}>Aún no agregaste nada de la carta.</p>
+
+        {filas.length === 0 ? (
+          <p style={{ fontSize: 13.5, color: C.textMuted, lineHeight: 1.5 }}>
+            Aún no has agregado nada. Empieza por el filtrado del lote en barra.
+          </p>
         ) : (
           <>
-            <div className="qc-scroll" style={{ flex: 1, overflowY: "auto", padding: "0 20px" }}>
-              {[...new Set(carrito)].map((it) => {
-                const n = carrito.filter((c) => c === it).length;
-                return (
-                  <div key={it} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${T.linea}` }}>
-                    <span style={{ fontSize: 13.5 }}>{it} <span className="mono" style={{ fontSize: 11, color: T.tenue }}>×{n}</span></span>
-                    <button onClick={() => quitar(it)} className="press" style={{ ...btnMini, width: 26, height: 26, borderRadius: 8 }}><Minus size={13} /></button>
-                  </div>
-                );
-              })}
+            {filas.map((f) => (
+              <div key={f.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 0", borderBottom: `1px solid ${C.line}` }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600 }}>{f.n}× {f.nombre}</div>
+                  {f.finca && <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 3 }}>{lote.finca} · taza {taza.nombre.toLowerCase()}</div>}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span className="mono" style={{ fontSize: 13 }}>{money(f.precio * f.n)}</span>
+                  <button onClick={() => quitar(f.id)} className="press" aria-label="Quitar" style={btnMiniStyle(C)}><Minus size={13} /></button>
+                </div>
+              </div>
+            ))}
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", margin: "18px 0 16px" }}>
+              <span className="mono" style={{ fontSize: 11, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase" }}>Total</span>
+              <span className="disp" style={{ fontSize: 30 }}>{money(total)}</span>
             </div>
-            <div style={{ padding: 20 }}>
-              <button onClick={confirmar} className="press" style={{
-                width: "100%", padding: "14px", borderRadius: 14, border: "none", cursor: "pointer",
-                background: T.verde, color: T.crema, fontSize: 14, fontWeight: 700,
-              }}>Confirmar pedido</button>
-              <p style={{ fontSize: 10.5, color: T.tenue, textAlign: "center", marginTop: 8 }}>Precios sujetos a confirmación en caja · Pago en app próximamente</p>
-            </div>
+
+            <button onClick={confirmar} className="press" style={{
+              width: "100%", padding: 15, borderRadius: 14, border: "none",
+              background: C.brand, color: C.onBrand, fontWeight: 700, fontSize: 15, cursor: "pointer",
+            }}>
+              Enviar a barra
+            </button>
+            <p className="mono" style={{ fontSize: 10, color: C.textMuted, textAlign: "center", marginTop: 10 }}>
+              Pago en caja o transferencia al retirar
+            </p>
           </>
         )}
       </div>
@@ -582,34 +1097,47 @@ function Carrito({ carrito, cerrar, quitar, confirmar }) {
 }
 
 function Ticket({ n, cerrar }) {
+  const { C } = useTheme();
   const [paso, setPaso] = useState(0);
   const pasos = ["Recibido en barra", "Moliendo", "Extrayendo", "Listo para retirar"];
   useEffect(() => {
     if (paso >= pasos.length - 1) return;
-    const t = setTimeout(() => setPaso((p) => p + 1), 2000);
+    const t = setTimeout(() => setPaso((p) => p + 1), 2200);
     return () => clearTimeout(t);
   }, [paso]);
 
   return (
-    <div style={{ position: "absolute", inset: 0, background: T.crema, zIndex: 50, padding: 24, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+    <div style={{ position: "absolute", inset: 0, background: C.surface, zIndex: 50, padding: 24, display: "flex", flexDirection: "column", justifyContent: "center" }}>
       <div className="pop" style={{ textAlign: "center" }}>
         <div style={{ display: "grid", placeItems: "center", marginBottom: 20 }}>
           <div className={paso < 3 ? "pulse" : ""} style={{
             width: 76, height: 76, borderRadius: "50%", display: "grid", placeItems: "center",
-            border: `2px solid ${T.verde}`,
-          }}>{paso === 3 ? <Check size={30} color={T.verde} /> : <Coffee size={28} color={T.verde} />}</div>
+            border: `2px solid ${paso === 3 ? C.brand : C.brandAlt}`,
+          }}>
+            {paso === 3 ? <Check size={30} color={C.brand} /> : <Coffee size={28} color={C.brandAlt} />}
+          </div>
         </div>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: T.dorado, textTransform: "uppercase" }}>Orden</div>
-        <div className="disp" style={{ fontSize: 48, lineHeight: 1, margin: "6px 0 20px", fontWeight: 700 }}>#{n}</div>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase" }}>Orden</div>
+        <div className="disp" style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px" }}>#{n}</div>
+
         <div style={{ textAlign: "left", maxWidth: 260, margin: "0 auto" }}>
           {pasos.map((p, i) => (
-            <div key={p} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, opacity: i <= paso ? 1 : .35 }}>
-              <span style={{ width: 20, height: 20, borderRadius: 6, display: "grid", placeItems: "center", background: i <= paso ? T.verde : "transparent", border: `1px solid ${i <= paso ? T.verde : T.linea}`, color: T.crema }}>{i <= paso && <Check size={12} />}</span>
+            <div key={p} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, opacity: i <= paso ? 1 : .35, transition: "opacity .4s" }}>
+              <span style={{
+                width: 20, height: 20, borderRadius: 6, display: "grid", placeItems: "center",
+                background: i <= paso ? C.brand : "transparent", border: `1px solid ${i <= paso ? C.brand : C.line}`, color: C.onBrand,
+              }}>{i <= paso && <Check size={12} />}</span>
               <span style={{ fontSize: 14, fontWeight: i === paso ? 700 : 400 }}>{p}</span>
             </div>
           ))}
         </div>
-        <button onClick={cerrar} className="press" style={{ marginTop: 22, padding: "13px 26px", borderRadius: 99, cursor: "pointer", border: `1px solid ${T.linea}`, background: "transparent", color: T.ink, fontSize: 14 }}>Volver a la carta</button>
+
+        <button onClick={cerrar} className="press" style={{
+          marginTop: 22, padding: "13px 26px", borderRadius: 99, cursor: "pointer",
+          border: `1px solid ${C.line}`, background: "transparent", color: C.text, fontSize: 14,
+        }}>
+          Volver a la carta
+        </button>
       </div>
     </div>
   );
@@ -618,91 +1146,123 @@ function Ticket({ n, cerrar }) {
 /* ============================ APP ============================ */
 
 export default function QuadroCafe() {
+  const [tema, setTema] = useState(() => {
+    try {
+      const saved = localStorage.getItem("qc-tema");
+      if (saved === "claro" || saved === "oscuro") return saved;
+    } catch { /* localStorage no disponible */ }
+    return typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "oscuro" : "claro";
+  });
+  useEffect(() => { try { localStorage.setItem("qc-tema", tema); } catch { /* noop */ } }, [tema]);
+  const C = PALETAS[tema];
+  const css = useMemo(() => buildCss(C), [C]);
+
   const [tab, setTab] = useState("inicio");
   const [carrito, setCarrito] = useState([]);
   const [verCarrito, setVerCarrito] = useState(false);
   const [ticket, setTicket] = useState(null);
-  const [fincaActiva, setFincaActiva] = useState(FINCAS[0]);
+  const [lote, setLote] = useState(FINCAS[0]);
+  const [taza, setTaza] = useState(TAZAS[1]);
+  const [medios, setMedios] = useState(MEDIOS_INICIALES);
   const [email, setEmail] = useState("");
   const [splash, setSplash] = useState(true);
 
-  useEffect(() => { const t = setTimeout(() => setSplash(false), 1500); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
 
-  const add = (it) => setCarrito((c) => [...c, it]);
-  const quitar = (it) => setCarrito((c) => { const i = c.findIndex((x) => x === it); if (i < 0) return c; const n = [...c]; n.splice(i, 1); return n; });
+  const add = (m) => setCarrito((c) => [...c, m]);
+  const quitar = (id) => setCarrito((c) => { const i = c.findIndex((x) => x.id === id); if (i < 0) return c; const n = [...c]; n.splice(i, 1); return n; });
 
   const TABS = [
     { k: "inicio", t: "Inicio", i: Coffee },
     { k: "menu", t: "Carta", i: ShoppingBag },
     { k: "fincas", t: "Fincas", i: Mountain },
-    { k: "club", t: "Club", i: Award },
-    { k: "lab", t: "Lab", i: Sliders },
+    { k: "maquinas", t: "Lab", i: Waves },
+    { k: "academia", t: "Aula", i: GraduationCap },
+    { k: "estudio", t: "Estudio", i: ImageIcon },
   ];
 
   return (
-    <div className="qc" style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: T.ink, padding: 0 }}>
-      <style>{css}</style>
-      <div style={{ position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940, background: T.crema, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        {splash && (
-          <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: T.verde, zIndex: 60 }}>
-            <div className="pop" style={{ textAlign: "center", color: T.crema }}>
-              <div style={{ display: "grid", placeItems: "center" }}>
-                <Marca size={72} ring />
+    <ThemeCtx.Provider value={{ tema, setTema, C }}>
+      <div className="qc" style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
+        <style>{css}</style>
+        <div style={{
+          position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940,
+          background: C.surface, overflow: "hidden", display: "flex", flexDirection: "column",
+        }}>
+          {splash ? (
+            <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: C.brand, zIndex: 60 }}>
+              <div className="pop" style={{ textAlign: "center", color: C.onBrand }}>
+                <div style={{ display: "grid", placeItems: "center" }}><Marca size={72} ring /></div>
+                <div className="disp" style={{ fontSize: 30, marginTop: 16, letterSpacing: ".02em" }}>Quadro Café</div>
+                <div className="mono" style={{ fontSize: 10, letterSpacing: ".3em", marginTop: 8, textTransform: "uppercase", opacity: .85 }}>Geometría del sabor</div>
               </div>
-              <div className="disp" style={{ fontSize: 26, marginTop: 14, fontWeight: 700 }}>QUADRO CAFÉ</div>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", marginTop: 6, textTransform: "uppercase", opacity: .8 }}>Los Palos Grandes · Caracas</div>
+            </div>
+          ) : null}
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px 0", flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <Marca size={26} />
+              <span className="disp" style={{ fontSize: 15 }}>Quadro Café</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <ThemeToggle />
+              <button onClick={() => setVerCarrito(true)} className="press" aria-label="Ver pedido" style={{
+                position: "relative", ...btnMiniStyle(C), width: 36, height: 36, borderRadius: 11,
+                borderColor: carrito.length ? C.brand : C.line,
+              }}>
+                <ShoppingBag size={16} />
+                {carrito.length > 0 && (
+                  <span className="mono pop" style={{
+                    position: "absolute", top: -6, right: -6, minWidth: 18, height: 18, padding: "0 4px",
+                    borderRadius: 99, background: C.brand, color: C.onBrand, fontSize: 10, fontWeight: 700,
+                    display: "grid", placeItems: "center",
+                  }}>{carrito.length}</span>
+                )}
+              </button>
             </div>
           </div>
-        )}
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px 0", flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <Marca size={26} />
-            <span className="disp" style={{ fontSize: 15, fontWeight: 700 }}>Quadro Café</span>
+          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+            <div key={tab} className="rise" style={{ height: "100%" }}>
+              {tab === "inicio" && <Inicio ir={setTab} lote={lote} />}
+              {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} />}
+              {tab === "fincas" && <Fincas lote={lote} setLote={setLote} />}
+              {tab === "maquinas" && <Laboratorio />}
+              {tab === "academia" && <Academia taza={taza} setTaza={setTaza} />}
+              {tab === "estudio" && <Estudio medios={medios} setMedios={setMedios} />}
+              {tab === "club" && <Club email={email} setEmail={setEmail} onBack={() => setTab("inicio")} />}
+            </div>
           </div>
-          <button onClick={() => setVerCarrito(true)} className="press" aria-label="Ver pedido" style={{
-            position: "relative", ...btnMini, width: 36, height: 36, borderRadius: 11,
-            borderColor: carrito.length ? T.verde : T.linea,
+
+          <div style={{
+            flexShrink: 0, display: "flex", justifyContent: "space-around",
+            borderTop: `1px solid ${C.line}`, background: C.card, padding: "9px 4px 12px",
           }}>
-            <ShoppingBag size={16} />
-            {carrito.length > 0 && (
-              <span className="mono pop" style={{ position: "absolute", top: -6, right: -6, minWidth: 18, height: 18, padding: "0 4px", borderRadius: 99, background: T.verde, color: T.crema, fontSize: 10, fontWeight: 700, display: "grid", placeItems: "center" }}>{carrito.length}</span>
-            )}
-          </button>
-        </div>
-
-        <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-          <div key={tab} className="rise" style={{ height: "100%" }}>
-            {tab === "inicio" && <Inicio ir={setTab} />}
-            {tab === "menu" && <Menu carrito={carrito} add={add} />}
-            {tab === "fincas" && <Fincas activa={fincaActiva} setActiva={setFincaActiva} />}
-            {tab === "club" && <Club email={email} setEmail={setEmail} />}
-            {tab === "lab" && <Laboratorio />}
-            {tab === "aula" && <Academia />}
+            {TABS.map((x) => {
+              const Icono = x.i, on = tab === x.k;
+              return (
+                <button key={x.k} onClick={() => setTab(x.k)} className="press" style={{
+                  background: "none", border: "none", cursor: "pointer", padding: "5px 8px",
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                  color: on ? C.brand : C.textMuted, transition: "color .2s",
+                }}>
+                  <Icono size={19} />
+                  <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase" }}>{x.t}</span>
+                  <span style={{ width: on ? 14 : 0, height: 2, borderRadius: 99, background: C.brand, transition: "width .25s" }} />
+                </button>
+              );
+            })}
           </div>
-        </div>
 
-        <div style={{ flexShrink: 0, display: "flex", justifyContent: "space-around", borderTop: `1px solid ${T.linea}`, background: T.blanco, padding: "9px 4px 12px" }}>
-          {TABS.map((x) => {
-            const Icono = x.i, on = tab === x.k;
-            return (
-              <button key={x.k} onClick={() => setTab(x.k)} className="press" style={{
-                background: "none", border: "none", cursor: "pointer", padding: "5px 8px",
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                color: on ? T.verde : T.tenue,
-              }}>
-                <Icono size={19} />
-                <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase" }}>{x.t}</span>
-                <span style={{ width: on ? 14 : 0, height: 2, borderRadius: 99, background: T.verde, transition: "width .25s" }} />
-              </button>
-            );
-          })}
+          {verCarrito && (
+            <Carrito carrito={carrito} lote={lote} taza={taza}
+              cerrar={() => setVerCarrito(false)} quitar={quitar}
+              confirmar={() => { setTicket(Math.floor(100 + Math.random() * 800)); setVerCarrito(false); setCarrito([]); }} />
+          )}
+          {ticket && <Ticket n={ticket} cerrar={() => setTicket(null)} />}
         </div>
-
-        {verCarrito && <Carrito carrito={carrito} cerrar={() => setVerCarrito(false)} quitar={quitar}
-          confirmar={() => { setTicket(Math.floor(100 + Math.random() * 800)); setVerCarrito(false); setCarrito([]); }} />}
-        {ticket && <Ticket n={ticket} cerrar={() => setTicket(null)} />}
       </div>
-    </div>
+    </ThemeCtx.Provider>
   );
 }
