@@ -278,13 +278,20 @@ function Meter({ label, value, tone, delay = 0 }) {
   );
 }
 
-function Header({ titulo, sub, right }) {
+function Header({ titulo, sub, right, onBack }) {
   const { C } = useTheme();
   return (
-    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "22px 20px 14px" }}>
-      <div>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6 }}>{sub}</div>
-        <h1 className="disp" style={{ fontSize: 30, lineHeight: .95, margin: 0 }}>{titulo}</h1>
+    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "22px 20px 14px", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 10, minWidth: 0 }}>
+        {onBack && (
+          <button onClick={onBack} className="press" aria-label="Volver a inicio" style={{ ...btnMiniStyle(C), flexShrink: 0, marginBottom: 3 }}>
+            <ArrowLeft size={15} />
+          </button>
+        )}
+        <div style={{ minWidth: 0 }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6 }}>{sub}</div>
+          <h1 className="disp" style={{ fontSize: 30, lineHeight: .95, margin: 0 }}>{titulo}</h1>
+        </div>
       </div>
       {right}
     </div>
@@ -435,7 +442,7 @@ function Inicio({ ir, lote }) {
 
 /* ============================ MENÚ ============================ */
 
-function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza }) {
+function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
   const { C } = useTheme();
   const [cat, setCat] = useState("Filtrado");
   const [abierto, setAbierto] = useState(null);
@@ -444,7 +451,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
-      <Header sub="Carta viva" titulo="Pedir en barra" />
+      <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} />
       <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 14px", overflowX: "auto" }}>
         {CATS.map((c) => <Chip key={c} active={c === cat} onClick={() => setCat(c)}>{c}</Chip>)}
       </div>
@@ -528,7 +535,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza }) {
 
 /* ============================ FINCAS + AVATAR ============================ */
 
-function Fincas({ lote, setLote }) {
+function Fincas({ lote, setLote, onBack }) {
   const { C, tema } = useTheme();
   const [linea, setLinea] = useState(0);
   const [reproduciendo, setRepro] = useState(false);
@@ -548,7 +555,7 @@ function Fincas({ lote, setLote }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <Header sub="Origen" titulo="Fincas" />
+      <Header sub="Origen" titulo="Fincas" onBack={onBack} />
       <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 16px", overflowX: "auto" }}>
         {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
       </div>
@@ -657,7 +664,7 @@ function Slider({ label, value, min, max, step, onChange, suf }) {
   );
 }
 
-function Laboratorio() {
+function Laboratorio({ onBack }) {
   const { C } = useTheme();
   const [geo, setGeo] = useState(GEOMETRIAS[0]);
   const [vueltas, setVueltas] = useState(GEOMETRIAS[0].vueltas);
@@ -699,7 +706,7 @@ function Laboratorio() {
       <img src={heroDispenser} alt="Equipo de extracción Quadro Café" style={{
         width: "calc(100% - 40px)", margin: "0 20px", height: 120, objectFit: "cover", borderRadius: 14, display: "block",
       }} />
-      <Header sub="Geometría de extracción" titulo="Laboratorio" />
+      <Header sub="Geometría de extracción" titulo="Laboratorio" onBack={onBack} />
       <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
         Mueve la ruta del agua y mira cómo se desplaza el perfil. Lo mismo que hace la máquina, en tu mano.
       </p>
@@ -777,7 +784,7 @@ function Laboratorio() {
 
 /* ============================ ACADEMIA + TAZAS ============================ */
 
-function Academia({ taza, setTaza }) {
+function Academia({ taza, setTaza, onBack }) {
   const { C } = useTheme();
   const [hechos, setHechos] = useState([]);
   const toggle = (id) => setHechos((h) => h.includes(id) ? h.filter((x) => x !== id) : [...h, id]);
@@ -785,7 +792,7 @@ function Academia({ taza, setTaza }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <Header sub="Formación de barra" titulo="Academia" />
+      <Header sub="Formación de barra" titulo="Academia" onBack={onBack} />
 
       <div style={{ margin: "0 20px 18px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -875,7 +882,7 @@ function Academia({ taza, setTaza }) {
 
 /* ============================ ESTUDIO MULTIMEDIA ============================ */
 
-function Estudio({ medios, setMedios }) {
+function Estudio({ medios, setMedios, onBack }) {
   const { C } = useTheme();
   const input = useRef(null);
 
@@ -889,7 +896,7 @@ function Estudio({ medios, setMedios }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <Header sub="Producción" titulo="Estudio" />
+      <Header sub="Producción" titulo="Estudio" onBack={onBack} />
       <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
         Fotos y videos reales del local. Sube más y asigna cada archivo a su lugar en la app.
       </p>
@@ -969,9 +976,7 @@ function Club({ email, setEmail, onBack }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <Header sub="Fidelidad" titulo="Quadro Club" right={
-        <button onClick={onBack} className="press" aria-label="Volver a inicio" style={btnMiniStyle(C)}><ArrowLeft size={15} /></button>
-      } />
+      <Header sub="Fidelidad" titulo="Quadro Club" onBack={onBack} />
 
       <div style={{
         margin: "0 20px", color: C.onBrand, borderRadius: 20, padding: "20px 18px", position: "relative", overflow: "hidden",
@@ -1159,17 +1164,43 @@ export default function QuadroCafe() {
   const css = useMemo(() => buildCss(C), [C]);
 
   const [tab, setTab] = useState("inicio");
-  const [carrito, setCarrito] = useState([]);
+  const [carrito, setCarrito] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("qc-carrito")) || []; } catch { return []; }
+  });
   const [verCarrito, setVerCarrito] = useState(false);
   const [ticket, setTicket] = useState(null);
   const [lote, setLote] = useState(FINCAS[0]);
   const [taza, setTaza] = useState(TAZAS[1]);
   const [medios, setMedios] = useState(MEDIOS_INICIALES);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    try { return localStorage.getItem("qc-email") || ""; } catch { return ""; }
+  });
   const [splash, setSplash] = useState(true);
 
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
+  useEffect(() => { try { localStorage.setItem("qc-carrito", JSON.stringify(carrito)); } catch { /* noop */ } }, [carrito]);
+  useEffect(() => { try { localStorage.setItem("qc-email", email); } catch { /* noop */ } }, [email]);
 
+  // Botón/gesto de retroceso del dispositivo: navega entre tabs y cierra
+  // el carrito o el ticket antes de salir de la app, como cualquier app nativa.
+  useEffect(() => {
+    window.history.replaceState({ tab: "inicio" }, "");
+    const onPop = (e) => {
+      if (ticket) { setTicket(null); return; }
+      if (verCarrito) { setVerCarrito(false); return; }
+      setTab(e.state?.tab || "inicio");
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [ticket, verCarrito]);
+
+  useEffect(() => {
+    if (window.history.state?.tab !== tab) window.history.pushState({ tab }, "");
+  }, [tab]);
+  useEffect(() => { if (verCarrito) window.history.pushState({ tab, modal: "carrito" }, ""); }, [verCarrito]);
+  useEffect(() => { if (ticket) window.history.pushState({ tab, modal: "ticket" }, ""); }, [ticket]);
+
+  const irInicio = () => setTab("inicio");
   const add = (m) => setCarrito((c) => [...c, m]);
   const quitar = (id) => setCarrito((c) => { const i = c.findIndex((x) => x.id === id); if (i < 0) return c; const n = [...c]; n.splice(i, 1); return n; });
 
@@ -1226,12 +1257,12 @@ export default function QuadroCafe() {
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
             <div key={tab} className="rise" style={{ height: "100%" }}>
               {tab === "inicio" && <Inicio ir={setTab} lote={lote} />}
-              {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} />}
-              {tab === "fincas" && <Fincas lote={lote} setLote={setLote} />}
-              {tab === "maquinas" && <Laboratorio />}
-              {tab === "academia" && <Academia taza={taza} setTaza={setTaza} />}
-              {tab === "estudio" && <Estudio medios={medios} setMedios={setMedios} />}
-              {tab === "club" && <Club email={email} setEmail={setEmail} onBack={() => setTab("inicio")} />}
+              {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} />}
+              {tab === "fincas" && <Fincas lote={lote} setLote={setLote} onBack={irInicio} />}
+              {tab === "maquinas" && <Laboratorio onBack={irInicio} />}
+              {tab === "academia" && <Academia taza={taza} setTaza={setTaza} onBack={irInicio} />}
+              {tab === "estudio" && <Estudio medios={medios} setMedios={setMedios} onBack={irInicio} />}
+              {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} />}
             </div>
           </div>
 
