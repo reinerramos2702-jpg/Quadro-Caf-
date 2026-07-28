@@ -52,3 +52,22 @@ Los tres agentes trabajaron en git worktrees aislados; dos de ellos notaron por 
 
 ### Pendiente (actualizado)
 Todo lo de la v3 sigue pendiente. Se suma: confirmar que el ícono/manifest de PWA se vea bien una vez instalado en un teléfono real, y decidir si el modo "Comparar" de Fincas necesita una versión de 3 fincas a la vez si el catálogo crece.
+
+## v4 — "BRIEF DE EJECUCIÓN v2 (ALTA GAMA)"
+
+El dueño mandó un brief de dirección de arte completo (7 bloques: tokens/tipografía/marco → assets → menú+pagos → carrito+pago → panel admin → geometrías → fincas), con instrucción explícita de **no encadenar los 7 bloques sin confirmar** entre uno y otro. Antes de tocar código se resolvieron 4 conflictos reales entre este brief y lo ya confirmado como "real" en sesiones anteriores:
+
+1. **Paleta**: el brief define tokens distintos a los oficiales de `HANDOFF.md` (`#3b574c`/`#e9d8c6` vs `#1F4D3D`/`#EDE9E0`). El dueño confirmó: **la del brief es la vigente ahora** — `HANDOFF.md` y `CLAUDE.md` actualizados, la paleta vieja queda como registro histórico.
+2. **Roster de fincas**: el brief describe el roster viejo de v2 (Agua Fría/Villa Nueva/Bourbon/Catuai), pero v3 ya había reemplazado eso por Elio/Rosa/Mina. El dueño confirmó: **ambos son reales, hay que fusionarlos** (no reemplazar uno por otro). Esto es trabajo del Bloque 7 (Fincas), todavía no ejecutado — queda pendiente explícitamente.
+3. **Curación de imágenes**: el brief pide integrar las ~54 imágenes de 3D-Assets "sin curar". El dueño confirmó: **se mantiene la curación** — no se muestran imágenes con el nombre de otra marca (Espressate, Caturral Beencia), sin importar la instrucción "sin curar".
+4. **Panel Admin (Supabase)**: no hay proyecto Supabase conectado a este repo. El dueño dijo que pasaría las credenciales — pendiente de recibirlas antes de tocar ese bloque.
+
+### Bloque 1 — Tokens, tipografía, marco Quadro (ejecutado)
+- `PALETAS.claro` actualizado a los tokens nuevos (ver `CLAUDE.md`). `PALETAS.oscuro` sin cambios (el brief no toca el tema oscuro).
+- Tipografía: Fraunces + Inter Tight reemplazan Cormorant Garamond + Archivo + IBM Plex Mono. Se redefinieron las clases `.disp`/`.mono` a nivel CSS (sin tocar los ~80 usos existentes en el JSX) y se agregó una escala nueva (`.disp-xl/l/m`, `.body-l`, `.label`, `.micro`) disponible para usos puntuales.
+- Nuevo componente visual de marca: `.quadro-frame` (clip-path que recorta la esquina inferior derecha, el "pico" del logo) — aplicado solo a tarjetas de producto (Menú), finca y ficha de lote (Fincas), nunca a navegación/modales/formularios, tal como pide el brief.
+- Secuencia de entrada del splash: el marco (cuadrado exterior → interior → pico) se dibuja con `stroke-dashoffset` (usando `pathLength="1"` para no depender de geometría exacta), luego revela el logo real y el texto — una sola vez por sesión, bajo 900ms la parte de dibujo.
+- No se tocó: el pipeline de assets WebP/AVIF+manifiesto (Bloque 2), el menú/categorías nuevas (Bloque 3), carrito/pago (Bloque 4), panel admin (Bloque 5), scroll-linked spiral drawing en Lab (Bloque 6, parte de "Geometrías"), ni la transición shared-element de Fincas (Bloque 7) — todos quedan para bloques siguientes, cada uno con su propio commit/push/verificación de Cloudflare antes de continuar, como pide el brief.
+
+### Pendiente (v4)
+Bloques 2–7 del brief, fusión del roster de fincas (punto 2 arriba), credenciales de Supabase para el panel admin, y confirmar con el dueño antes de avanzar al siguiente bloque tras cada checkpoint.

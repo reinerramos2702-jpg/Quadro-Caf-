@@ -19,14 +19,20 @@ A mobile-first web app for Quadro Café, a real coffee shop at 4ª Av. de Los Pa
 Two palettes, user-switchable (toggle in the header, persisted to `localStorage`, defaults to `prefers-color-scheme`):
 
 ```
-PALETAS.claro   — official light brand: verde #1F4D3D, hueso/crema #EDE9E0, negro #101311, dorado #B08B4F
+PALETAS.claro   — official brand (v4, "alta gama" brief): verde #3b574c, crema #e9d8c6, hueso/bone #f5efe6,
+                  terracota #b5613c (acento cálido — precios/badges), marino #243b57 (acento frío — filtrado/proceso),
+                  verde profundo #26382f (deep — capas superpuestas, fondo módulo Fincas), ink #1a1f1c
 PALETAS.oscuro  — dark theme ported from the owner's redesign: ink #0B0F0D, panel #131A17,
                   mocoties #1E5C4A, latón #C9873A, nebulosa #5B2E8C, alien #7FE3C0
 ```
 
+The `claro` palette above supersedes the earlier v3 tokens (`#1F4D3D`/`#EDE9E0`/`#B08B4F`) per the owner's "BRIEF DE EJECUCIÓN v2 (ALTA GAMA)" — those older values are preserved in `docs/HANDOFF.md` as history but are no longer current.
+
 Every component reads colors via `useTheme()` (a `ThemeCtx` React context) — never hardcode a hex value in a component; add it to `PALETAS` if a new color is needed in both themes.
 
-Typography: `Cormorant Garamond` for display/headers (`.disp`, `.script`), `Archivo` for body, `IBM Plex Mono` for labels. Cormorant is an approximation of quadrocafe.com's real logo lettering (tall serif wordmark + script "Coffee" accent) — swap in the real font file if the owner provides it.
+Typography: `Fraunces` (variable, opsz axis) for display/headers (`.disp`, `.script`, and the `.disp-xl`/`.disp-l`/`.disp-m` scale), `Inter Tight` for body and for labels (`.mono`/`.label`/`.micro` — uppercase, tracked; despite the class name `.mono` this is not monospace, kept for backwards compat with existing markup). This replaced Cormorant Garamond/Archivo/IBM Plex Mono in the v4 pass — still an approximation of quadrocafe.com's real logo lettering, swap in the real font file if the owner provides it.
+
+**Marco Quadro**: the brand's signature visual motif — a corner notch (`.quadro-frame` CSS class, `clip-path` cutting the bottom-right corner) echoing the mountain-peak notch in the real logo. Applied only to brand-content containers (product cards in Menu, finca/lote cards in Fincas) — never to system chrome (nav bar, modals, form fields, buttons). Don't apply it indiscriminately.
 
 ## Real-data policy
 

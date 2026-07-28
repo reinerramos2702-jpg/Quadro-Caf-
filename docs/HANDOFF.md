@@ -21,7 +21,9 @@ No hace falta pegar el historial de esta conversación — este documento resume
 - **Avatares fincas:** modelos 3D en Blender → animación en Higgsfield (aún no generados)
 - **Analítica:** Google Analytics
 
-## Brand tokens oficiales
+## Brand tokens oficiales (histórico — ver `memoria.md` para los actuales)
+
+> Superados por la paleta del "BRIEF DE EJECUCIÓN v2 (ALTA GAMA)" — ver `CLAUDE.md` § Theme system para los tokens vigentes (verde `#3b574c`, crema `#e9d8c6`, terracota `#b5613c`, marino `#243b57`). Se conserva esta sección tal cual como registro histórico de la v2/v3.
 
 ```
 Verde Quadro     #1F4D3D
@@ -30,7 +32,7 @@ Negro            #101311
 Dorado/oliva     (acento, logo lettering)
 ```
 
-Tipografía usada en v2: Fraunces (display) + Archivo (body) + IBM Plex Mono (labels/mono) — aproximación al lettering de quadrocafe.com; ajustar si el dueño provee las fuentes exactas del logo.
+Tipografía usada en v2: Fraunces (display) + Archivo (body) + IBM Plex Mono (labels/mono) — aproximación al lettering de quadrocafe.com; ajustar si el dueño provee las fuentes exactas del logo. (La v4 cambió a Fraunces + Inter Tight — ver `CLAUDE.md`.)
 
 ## Datos reales confirmados (no inventar más)
 

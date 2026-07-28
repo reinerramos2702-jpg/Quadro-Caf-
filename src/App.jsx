@@ -15,50 +15,57 @@ import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
 
 /* ============================================================
-   QUADRO CAFÉ — v3
+   QUADRO CAFÉ — v4 "alta gama"
    Dos temas, mismos datos reales.
-   claro   verde #1F4D3D · hueso #EDE9E0 · dorado #B08B4F   (branding oficial)
+   claro   verde #3b574c · crema #e9d8c6 · terracota #b5613c · marino #243b57   (branding oficial v4)
    oscuro  ink #0B0F0D · mocoties #1E5C4A · latón #C9873A · nebulosa #5B2E8C · alien #7FE3C0
    ============================================================ */
 
 const PALETAS = {
   claro: {
-    id: "claro", shell: "#07100D",
-    surface: "#F7F5EF", card: "#FFFFFF", line: "#DCD6C8",
-    text: "#101311", textMuted: "#7A8580",
-    brand: "#1F4D3D", onBrand: "#F7F5EF",
-    brandAlt: "#B08B4F", onBrandAlt: "#101311",
-    purple: "#7C5CA6", amarillo: "#C79A3B", warn: "#B5502E",
+    id: "claro", shell: "#1a1f1c",
+    surface: "#e9d8c6", card: "#f5efe6", line: "#d8c7ae",
+    text: "#1a1f1c", textMuted: "#6f6459",
+    brand: "#3b574c", onBrand: "#e9d8c6", deep: "#26382f",
+    brandAlt: "#b5613c", onBrandAlt: "#f5efe6",
+    purple: "#243b57", amarillo: "#c79a3b", warn: "#9c3b28",
   },
   oscuro: {
     id: "oscuro", shell: "#07100D",
     surface: "#0B0F0D", card: "#131A17", line: "#243029",
     text: "#F2EDE3", textMuted: "#8AA096",
-    brand: "#7FE3C0", onBrand: "#0B0F0D",
+    brand: "#7FE3C0", onBrand: "#0B0F0D", deep: "#050807",
     brandAlt: "#C9873A", onBrandAlt: "#0B0F0D",
     purple: "#A47BE0", amarillo: "#E0C24B", warn: "#E08C6B",
   },
 };
 
 const FINCA_TINTS = {
-  claro: ["#7C5CA6", "#1F4D3D", "#B08B4F"],
+  claro: ["#243b57", "#3b574c", "#b5613c"],
   oscuro: ["#5B2E8C", "#1E5C4A", "#C9873A"],
 };
 
 const FONTS = `
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap');
 `;
 
 function buildCss(C) {
   return `
 ${FONTS}
 *{box-sizing:border-box}
-.qc{font-family:'Archivo',system-ui,sans-serif;color:${C.text};background:${C.surface}}
-.disp{font-family:'Cormorant Garamond',serif;font-weight:700;letter-spacing:.01em}
-.script{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600}
-.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.qc{font-family:'Inter Tight',system-ui,sans-serif;color:${C.text};background:${C.surface}}
+.disp{font-family:'Fraunces',serif;font-weight:700;letter-spacing:-.01em;font-optical-sizing:auto}
+.script{font-family:'Fraunces',serif;font-style:italic;font-weight:600}
+.mono{font-family:'Inter Tight',system-ui,sans-serif;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.disp-xl{font-family:'Fraunces',serif;font-weight:600;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0}
+.disp-l{font-family:'Fraunces',serif;font-weight:600;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0}
+.disp-m{font-family:'Fraunces',serif;font-weight:500;font-size:22px;line-height:28px;margin:0}
+.body-l{font-family:'Inter Tight',sans-serif;font-weight:400;font-size:17px;line-height:26px}
+.label{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.micro{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase}
+.quadro-frame{clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
 .qc-scroll::-webkit-scrollbar{width:0;height:0}
-@keyframes qc-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes qc-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes qc-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 @keyframes qc-slide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
 @keyframes qc-sheet{from{transform:translateY(100%)}to{transform:none}}
@@ -66,6 +73,8 @@ ${FONTS}
 @keyframes qc-pulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.9;transform:scale(1.06)}}
 @keyframes qc-steam{0%{transform:translateY(0) scaleX(1);opacity:0}30%{opacity:.55}100%{transform:translateY(-22px) scaleX(1.5);opacity:0}}
 @keyframes qc-bar{from{width:0}}
+@keyframes qc-frame-square{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes qc-frame-fade{from{opacity:0}to{opacity:1}}
 .rise{animation:qc-rise .45s cubic-bezier(.2,.8,.2,1) both}
 .pop{animation:qc-pop .35s cubic-bezier(.2,.8,.2,1) both}
 .slide{animation:qc-slide .4s cubic-bezier(.2,.8,.2,1) both}
@@ -331,6 +340,23 @@ function Marca({ size = 28, ring = false }) {
   );
 }
 
+function SplashFrame({ size = 96 }) {
+  const { C } = useTheme();
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden style={{ position: "absolute", inset: 0 }}>
+      <rect x="4" y="4" width="92" height="92" rx="6" pathLength="1" fill="none" stroke={C.onBrand}
+        strokeWidth="2" strokeDasharray="1" strokeDashoffset="1"
+        style={{ animation: "qc-frame-square .4s cubic-bezier(.4,0,.2,1) forwards" }} />
+      <rect x="20" y="20" width="60" height="60" rx="3" pathLength="1" fill="none" stroke={C.onBrand}
+        strokeWidth="2" strokeDasharray="1" strokeDashoffset="1"
+        style={{ animation: "qc-frame-square .3s cubic-bezier(.4,0,.2,1) .25s forwards" }} />
+      <path d="M56 80 L68 62 L80 80 Z" pathLength="1" fill="none" stroke={C.onBrand}
+        strokeWidth="2" strokeLinejoin="round" strokeDasharray="1" strokeDashoffset="1"
+        style={{ animation: "qc-frame-square .25s cubic-bezier(.4,0,.2,1) .5s forwards" }} />
+    </svg>
+  );
+}
+
 function btnMiniStyle(C) {
   return {
     width: 30, height: 30, borderRadius: 9, display: "grid", placeItems: "center",
@@ -404,7 +430,7 @@ function Inicio({ ir, lote }) {
 
       <div className="slide" style={{ margin: "16px 20px 0" }}>
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".2em", color: C.textMuted, textTransform: "uppercase", marginBottom: 8 }}>Lote en barra hoy</div>
-        <button onClick={() => ir("fincas")} className="press tapfx" style={{
+        <button onClick={() => ir("fincas")} className="press tapfx quadro-frame" style={{
           width: "100%", textAlign: "left", cursor: "pointer", border: `1px solid ${C.line}`,
           borderRadius: 18, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
         }}>
@@ -486,7 +512,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
           const n = carrito.filter((x) => x.id === m.id).length;
           const open = abierto === m.id;
           return (
-            <div key={m.id} className="rise" style={{
+            <div key={m.id} className="rise quadro-frame" style={{
               animationDelay: `${i * 45}ms`, background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
               borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
             }}>
@@ -561,7 +587,7 @@ function FichaLote({ lote, compact, titulo }) {
   const acidez = Math.round(lote.altura / 26);
   const cuerpo = lote.proceso.includes("Honey") ? 80 : 58;
   return (
-    <div style={{
+    <div className="quadro-frame" style={{
       flex: compact ? 1 : "initial", minWidth: 0, background: C.card, border: `1px solid ${C.line}`,
       borderRadius: compact ? 14 : 18, padding: compact ? 12 : 16,
     }}>
@@ -638,7 +664,7 @@ function Fincas({ lote, setLote, onBack }) {
       )}
 
       {!comparar && (
-        <div className="pop" key={lote.id} style={{
+        <div className="pop quadro-frame" key={lote.id} style={{
           margin: "0 20px", borderRadius: 22, overflow: "hidden",
           border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
         }}>
@@ -1526,10 +1552,22 @@ export default function QuadroCafe() {
         }}>
           {splash ? (
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: C.brand, zIndex: 60 }}>
-              <div className="pop" style={{ textAlign: "center", color: C.onBrand }}>
-                <div style={{ display: "grid", placeItems: "center" }}><Marca size={72} ring /></div>
-                <div className="disp" style={{ fontSize: 30, marginTop: 16, letterSpacing: ".02em" }}>Quadro Café</div>
-                <div className="mono" style={{ fontSize: 10, letterSpacing: ".3em", marginTop: 8, textTransform: "uppercase", opacity: .85 }}>Geometría del sabor</div>
+              <div style={{ textAlign: "center", color: C.onBrand }}>
+                <div style={{ position: "relative", width: 96, height: 96, margin: "0 auto" }}>
+                  <SplashFrame size={96} />
+                  <div style={{
+                    position: "absolute", inset: 0, display: "grid", placeItems: "center",
+                    opacity: 0, animation: "qc-frame-fade .35s ease .68s forwards",
+                  }}><Marca size={62} /></div>
+                </div>
+                <div className="disp" style={{
+                  fontSize: 28, marginTop: 16, letterSpacing: "-.01em",
+                  opacity: 0, animation: "qc-frame-fade .35s ease .85s forwards",
+                }}>Quadro Café</div>
+                <div className="mono" style={{
+                  fontSize: 10, marginTop: 8, opacity: 0,
+                  animation: "qc-frame-fade .35s ease 1s forwards",
+                }}>Geometría del sabor</div>
               </div>
             </div>
           ) : null}
