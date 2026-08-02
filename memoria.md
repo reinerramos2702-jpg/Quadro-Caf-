@@ -71,3 +71,11 @@ El dueño mandó un brief de dirección de arte completo (7 bloques: tokens/tipo
 
 ### Pendiente (v4)
 Bloques 2–7 del brief, fusión del roster de fincas (punto 2 arriba), credenciales de Supabase para el panel admin, y confirmar con el dueño antes de avanzar al siguiente bloque tras cada checkpoint.
+
+## Limpieza de Home — Quadro Club a banner fijo
+
+Fuera de los 7 bloques del brief (pedido aparte del dueño, con plazo de 2 días para una entrega visible): el grid de accesos rápidos de Inicio repetía Pedir ahora/Laboratorio/Fincas/Academia, que ya están en la barra inferior de 6 tabs. Se quitó el grid completo y Quadro Club (el único sin tab propio) pasa a un banner fijo arriba del hero, siempre visible al entrar a Inicio, con acento en `C.brandAlt` para diferenciarlo. Verificado en ambos temas (claro/oscuro) con captura de pantalla en headless antes de pushear. Commit `fcef832` en `claude/quadro-cafe-v2-5uq32e`.
+
+**Decisión de plataforma para el plazo de 2 días** (confirmada con el dueño): seguir como PWA pulida — React Native/Expo + publicación en Google Play/App Store queda para una fase posterior, ya que la revisión de tiendas por sí sola no cabe en 2 días. Esto es consistente con "Out of scope" en `CLAUDE.md`.
+
+**Pendiente reportado por el dueño, aún sin material que integrar:** video real de la máquina extrayendo para reemplazar el espiral SVG animado (se decidió mejorar el SVG existente con animación ligada al vertido mientras no llega el video), y avatar grabado (Higgsfield) por finca con el guion que ya está en `FINCAS[].guion`. Ver también el checklist propio del tab Estudio en la app ("Siguiente entrega").
