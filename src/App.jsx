@@ -385,6 +385,22 @@ function Inicio({ ir, lote }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
+      <button onClick={() => ir("club")} className="press tapfx quadro-frame rise" style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+        width: "calc(100% - 40px)", margin: "12px 20px 0", textAlign: "left", cursor: "pointer",
+        border: `1px solid ${C.brandAlt}`, borderRadius: 16, padding: "13px 16px",
+        background: `linear-gradient(120deg, ${C.brandAlt}26, ${C.card})`, color: C.text,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
+          <span style={{ color: C.brandAlt }}><Award size={19} /></span>
+          <div>
+            <div className="disp" style={{ fontSize: 14 }}>Quadro Club</div>
+            <div className="mono" style={{ fontSize: 9.5, color: C.textMuted, marginTop: 2 }}>Tu fidelidad, tus puntos</div>
+          </div>
+        </div>
+        <ChevronRight size={16} color={C.textMuted} />
+      </button>
+
       <div className="rise" style={{
         position: "relative", padding: "26px 20px 8px", overflow: "hidden",
         backgroundImage: `linear-gradient(180deg, ${C.surface}CC, ${C.surface}), url(${heroDispenser})`,
@@ -453,25 +469,6 @@ function Inicio({ ir, lote }) {
             Escuchar la inducción de la finca <ChevronRight size={13} />
           </div>
         </button>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "14px 20px 0" }}>
-        {[
-          { k: "menu", t: "Pedir ahora", s: "Café, pan y postres", i: <ShoppingBag size={17} /> },
-          { k: "maquinas", t: "Laboratorio", s: "Geometrías y espirales", i: <Waves size={17} /> },
-          { k: "fincas", t: "Fincas", s: "Inducción con avatar", i: <Mountain size={17} /> },
-          { k: "academia", t: "Academia", s: "Formación de barra", i: <GraduationCap size={17} /> },
-          { k: "club", t: "Quadro Club", s: "Tu fidelidad, tus puntos", i: <Award size={17} /> },
-        ].map((c, i) => (
-          <button key={c.k} onClick={() => ir(c.k)} className="press tapfx rise" style={{
-            animationDelay: `${120 + i * 60}ms`, textAlign: "left", cursor: "pointer",
-            background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14, color: C.text,
-          }}>
-            <span style={{ color: C.brandAlt }}>{c.i}</span>
-            <div className="disp" style={{ fontSize: 14, marginTop: 10 }}>{c.t}</div>
-            <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 3 }}>{c.s}</div>
-          </button>
-        ))}
       </div>
 
       <div style={{ margin: "20px 20px 0", display: "flex", flexDirection: "column", gap: 6 }}>
