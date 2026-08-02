@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef, useMemo, useContext, createContext 
 import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
-  Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon,
+  Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon, Settings, LogOut,
 } from "lucide-react";
 
+import { supabase } from "./lib/supabase";
 import logo from "./assets/logo.png";
 import loteBourbon from "./assets/lote-bourbon.jpg";
 import menuPostres from "./assets/menu-postres.jpg";
@@ -1293,7 +1294,7 @@ function Estudio({ medios, setMedios, onBack }) {
 
 /* ============================ QUADRO CLUB ============================ */
 
-function Club({ email, setEmail, onBack }) {
+function Club({ email, setEmail, onBack, onAdmin }) {
   const { C } = useTheme();
   const [enviado, setEnviado] = useState(!!email);
   const [valor, setValor] = useState(email || "");
@@ -1302,7 +1303,11 @@ function Club({ email, setEmail, onBack }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <Header sub="Fidelidad" titulo="Quadro Club" onBack={onBack} />
+      <Header sub="Fidelidad" titulo="Quadro Club" onBack={onBack} right={
+        <button onClick={onAdmin} className="press" aria-label="Panel del dueño" style={{ ...btnMiniStyle(C), marginBottom: 3 }}>
+          <Settings size={15} />
+        </button>
+      } />
 
       <div style={{
         margin: "0 20px", color: C.onBrand, borderRadius: 20, padding: "20px 18px", position: "relative", overflow: "hidden",
@@ -1361,6 +1366,183 @@ function Club({ email, setEmail, onBack }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/* ============================ ADMIN ============================ */
+
+function AdminLogin({ onLogged }) {
+  const { C } = useTheme();
+  const [correo, setCorreo] = useState("");
+  const [clave, setClave] = useState("");
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
+
+  const entrar = async (e) => {
+    e.preventDefault();
+    setError(""); setCargando(true);
+    const { error: err } = await supabase.auth.signInWithPassword({ email: correo, password: clave });
+    setCargando(false);
+    if (err) setError("Correo o clave incorrectos.");
+    else onLogged();
+  };
+
+  return (
+    <form onSubmit={entrar} style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
+      <Lock size={18} color={C.brand} />
+      <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Entrar como dueño</div>
+      <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
+        Acceso privado para editar la carta. Pide tu usuario si no lo tienes.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
+          <Mail size={15} color={C.textMuted} />
+          <input type="email" required value={correo} onChange={(e) => setCorreo(e.target.value)} placeholder="dueño@quadrocafe.com"
+            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
+          <Lock size={15} color={C.textMuted} />
+          <input type="password" required value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Clave"
+            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
+        </div>
+      </div>
+      {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 8 }}>{error}</p>}
+      <button type="submit" disabled={cargando} className="press" style={{
+        marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", cursor: "pointer",
+        background: C.brand, color: C.onBrand, fontSize: 13.5, fontWeight: 700, opacity: cargando ? .6 : 1,
+      }}>{cargando ? "Entrando…" : "Entrar"}</button>
+    </form>
+  );
+}
+
+function AdminFila({ p, onCambio }) {
+  const { C } = useTheme();
+  const [precio, setPrecio] = useState(String(p.precio));
+  const [guardando, setGuardando] = useState(false);
+
+  const guardarPrecio = async () => {
+    const n = parseFloat(precio.replace(",", "."));
+    if (Number.isNaN(n) || n === p.precio) { setPrecio(String(p.precio)); return; }
+    setGuardando(true);
+    await onCambio({ precio: n });
+    setGuardando(false);
+  };
+
+  const toggleDisponible = async () => {
+    setGuardando(true);
+    await onCambio({ disponible: !p.disponible });
+    setGuardando(false);
+  };
+
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", gap: 10, padding: "12px 0",
+      borderBottom: `1px solid ${C.line}`, opacity: p.disponible ? 1 : .5,
+    }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13, fontWeight: 700 }}>{p.nombre}</div>
+        <div className="mono" style={{ fontSize: 10, color: C.textMuted, textTransform: "uppercase", letterSpacing: ".08em" }}>{p.cat}</div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 4, border: `1px solid ${C.line}`, borderRadius: 10, padding: "6px 8px" }}>
+        <span className="mono" style={{ fontSize: 12, color: C.textMuted }}>$</span>
+        <input value={precio} onChange={(e) => setPrecio(e.target.value)} onBlur={guardarPrecio}
+          inputMode="decimal" style={{
+            width: 44, border: "none", outline: "none", background: "transparent",
+            fontSize: 13, fontWeight: 700, color: C.text,
+          }} />
+      </div>
+      <button onClick={toggleDisponible} disabled={guardando} className="press" aria-label="Disponible hoy" style={{
+        width: 40, height: 24, borderRadius: 99, border: "none", cursor: "pointer", flexShrink: 0,
+        background: p.disponible ? C.brand : C.line, position: "relative", transition: "background .2s",
+      }}>
+        <span style={{
+          position: "absolute", top: 2, left: p.disponible ? 18 : 2, width: 20, height: 20, borderRadius: "50%",
+          background: C.card, transition: "left .2s",
+        }} />
+      </button>
+    </div>
+  );
+}
+
+function Admin({ onBack }) {
+  const { C } = useTheme();
+  const [sesion, setSesion] = useState(undefined); // undefined = cargando, null = sin sesión
+  const [productos, setProductos] = useState([]);
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!supabase) { setSesion(null); return; }
+    supabase.auth.getSession().then(({ data }) => setSesion(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSesion(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const cargarProductos = async () => {
+    setCargando(true); setError("");
+    const { data, error: err } = await supabase.from("productos").select("*").order("orden");
+    setCargando(false);
+    if (err) setError("No se pudo cargar la carta. Revisa la conexión con Supabase.");
+    else setProductos(data || []);
+  };
+
+  useEffect(() => { if (sesion) cargarProductos(); }, [sesion]);
+
+  const cambiarProducto = async (id, cambios) => {
+    setProductos((ps) => ps.map((p) => (p.id === id ? { ...p, ...cambios } : p)));
+    const { error: err } = await supabase.from("productos").update(cambios).eq("id", id);
+    if (err) setError("No se pudo guardar el cambio. Intenta de nuevo.");
+  };
+
+  if (!supabase) {
+    return (
+      <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+        <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
+        <p style={{ margin: "0 20px", fontSize: 13, color: C.textMuted, lineHeight: 1.5 }}>
+          Supabase no está configurado en este entorno (faltan las variables VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY).
+        </p>
+      </div>
+    );
+  }
+
+  if (sesion === undefined) {
+    return (
+      <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+        <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
+      </div>
+    );
+  }
+
+  if (!sesion) {
+    return (
+      <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+        <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
+        <AdminLogin onLogged={cargarProductos} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} right={
+        <button onClick={() => supabase.auth.signOut()} className="press" aria-label="Salir" style={{ ...btnMiniStyle(C), marginBottom: 3 }}>
+          <LogOut size={15} />
+        </button>
+      } />
+      <p style={{ margin: "0 20px 8px", fontSize: 12, color: C.textMuted }}>
+        Toca el precio para editarlo, usa el switch para marcar si hay hoy.
+      </p>
+      {error && <p style={{ margin: "0 20px 8px", fontSize: 12, color: C.warn }}>{error}</p>}
+      <div style={{ margin: "0 20px" }}>
+        {cargando && !productos.length ? (
+          <p style={{ fontSize: 12.5, color: C.textMuted, padding: "12px 0" }}>Cargando carta…</p>
+        ) : (
+          productos.map((p) => (
+            <AdminFila key={p.id} p={p} onCambio={(cambios) => cambiarProducto(p.id, cambios)} />
+          ))
+        )}
+      </div>
     </div>
   );
 }
@@ -1489,7 +1671,7 @@ export default function QuadroCafe() {
   const C = PALETAS[tema];
   const css = useMemo(() => buildCss(C), [C]);
 
-  const [tab, setTab] = useState("inicio");
+  const [tab, setTab] = useState(() => (typeof window !== "undefined" && window.location.hash === "#admin" ? "admin" : "inicio"));
   const [carrito, setCarrito] = useState(() => {
     try { return JSON.parse(localStorage.getItem("qc-carrito")) || []; } catch { return []; }
   });
@@ -1600,7 +1782,8 @@ export default function QuadroCafe() {
               {tab === "maquinas" && <Laboratorio onBack={irInicio} />}
               {tab === "academia" && <Academia taza={taza} setTaza={setTaza} onBack={irInicio} />}
               {tab === "estudio" && <Estudio medios={medios} setMedios={setMedios} onBack={irInicio} />}
-              {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} />}
+              {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} onAdmin={() => setTab("admin")} />}
+              {tab === "admin" && <Admin onBack={irInicio} />}
             </div>
           </div>
 

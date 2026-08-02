@@ -79,3 +79,18 @@ Fuera de los 7 bloques del brief (pedido aparte del dueño, con plazo de 2 días
 **Decisión de plataforma para el plazo de 2 días** (confirmada con el dueño): seguir como PWA pulida — React Native/Expo + publicación en Google Play/App Store queda para una fase posterior, ya que la revisión de tiendas por sí sola no cabe en 2 días. Esto es consistente con "Out of scope" en `CLAUDE.md`.
 
 **Pendiente reportado por el dueño, aún sin material que integrar:** video real de la máquina extrayendo para reemplazar el espiral SVG animado (se decidió mejorar el SVG existente con animación ligada al vertido mientras no llega el video), y avatar grabado (Higgsfield) por finca con el guion que ya está en `FINCAS[].guion`. Ver también el checklist propio del tab Estudio en la app ("Siguiente entrega").
+
+## Bloque 5 — Panel Admin (Supabase) ejecutado, Bloque 2 delegado
+
+El dueño confirmó las credenciales de Supabase del proyecto real (`wckufllomfmuwxptegvm.supabase.co`) y pidió arrancar Bloque 2 (pipeline de assets) en paralelo.
+
+**Módulo → Problema → Fix → Pendiente**
+
+- **Credenciales**: nunca se hardcodean. Van en `.env` (gitignored, verificado con `git check-ignore`) como `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY`; `.env.example` (sí commiteado) documenta las variables con placeholders y explica por qué la publishable key es segura de exponer en cliente (RLS es el límite real, no el secreto de la key).
+- **Cliente Supabase**: `src/lib/supabase.js` — único archivo fuera de `App.jsx` que se añadió (módulo de servicio, no componente UI; consistente con que `main.jsx`/`assets/` ya viven fuera del single-file). Exporta `supabase` como `null` si faltan las env vars, para no tumbar el build/la app si alguien clona el repo sin `.env`.
+- **Esquema**: `supabase/migrations/0001_init.sql` — tabla `productos` (espejo de `MENU`: cat/nombre/precio/descripcion/tag/geo/finca/disponible/orden), RLS activado (lectura pública, escritura solo autenticado), trigger de `actualizado_en`, semilla con los 12 items reales ya existentes en `MENU`. No hay CLI/MCP de Supabase en este entorno — el dueño debe correr este SQL manualmente en el SQL Editor de su dashboard, y crear al menos un usuario en Authentication → Users para poder entrar.
+- **Panel Admin**: pantalla nueva (`Admin` en `App.jsx`), fuera de la barra de tabs pública. Se llega por un ícono de engranaje en el header de Quadro Club, o directo por `#admin` en la URL. Login con Supabase Auth (email+clave). Una vez dentro: lista de productos por categoría, precio editable inline (input numérico, guarda `onBlur`), switch de "disponible hoy" (el uso diario que el brief marcó como prioritario). Sin roles adicionales — un solo dueño.
+- **Alcance explícito de este pase**: el panel edita la tabla `productos` en Supabase; el `MENU` público que ve el cliente todavía es la constante local en `App.jsx` (no lee de Supabase en vivo) — conectar la Carta pública a la tabla real es trabajo de Bloque 3 (Menú+pagos), no se adelantó para no mezclar alcance.
+- **PWA**: de paso se corrigió el `theme_color`/`background_color` del manifest en `vite.config.js`, que seguía en el verde viejo `#1F4D3D` — ahora usa el verde oficial v4 `#3b574c`.
+- **Bloque 2 (pipeline de assets)**: delegado a un agente en worktree aislado en paralelo (WebP/AVIF en 3 tamaños, manifiesto `.js` con color dominante, componente `ResponsiveImg`, placeholders sólidos sin blur) — todavía corriendo, se integra cuando termine.
+- **Pendiente**: Bloques 3/4/6/7, fusión del roster de fincas (Bloque 7), conectar la Carta pública a `productos` de Supabase, y confirmar con el dueño antes de encadenar el siguiente bloque.

@@ -14,8 +14,8 @@ export default defineConfig({
         short_name: "Quadro",
         description:
           "Quadro Café — 4ª Av. de Los Palos Grandes, Edif. Los Eucaliptos, Caracas.",
-        theme_color: "#1F4D3D",
-        background_color: "#1F4D3D",
+        theme_color: "#3b574c",
+        background_color: "#3b574c",
         display: "standalone",
         start_url: "/",
         scope: "/",
