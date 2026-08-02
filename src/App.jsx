@@ -6,12 +6,10 @@ import {
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
+import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
-import loteBourbon from "./assets/lote-bourbon.jpg";
-import menuPostres from "./assets/menu-postres.jpg";
 import clubBox from "./assets/club-box.jpg";
 import heroDispenser from "./assets/hero-dispenser.jpg";
-import menuIced from "./assets/menu-iced.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
 
@@ -184,7 +182,7 @@ const MENU = [
 ];
 
 const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
-const CAT_IMG = { Filtrado: loteBourbon, Frío: menuIced, Postres: menuPostres };
+const CAT_IMG = { Filtrado: "lote-bourbon", Frío: "menu-iced", Postres: "menu-postres" };
 
 const EQUIPO = [
   { nombre: "Comandante C40", detalle: "Nitro Blade · Alpine Lagoon y Sunset", uso: "Molienda de barra y competencia", clicks: "18–24 clics para filtrado" },
@@ -275,6 +273,31 @@ function ThemeToggle() {
 }
 
 /* ============================ PIEZAS ============================ */
+
+/* <picture> con WebP responsivo (480/900/1400w) + fallback JPG, con el color
+   dominante del asset pintado en el wrapper hasta que la imagen cargue (sin
+   blur — placeholder sólido). `eager` solo para imagen above-the-fold. */
+function ResponsiveImg({ id, alt = "", style = {}, className, eager = false }) {
+  const asset = ASSET_MANIFEST[id];
+  if (!asset) return null;
+  const { objectFit, objectPosition, ...wrapperStyle } = style;
+  return (
+    <picture className={className} style={{
+      display: "block", overflow: "hidden", background: asset.color,
+      aspectRatio: `${asset.width} / ${asset.height}`,
+      ...wrapperStyle,
+    }}>
+      <source type="image/webp"
+        srcSet={`${asset.webp480} 480w, ${asset.webp900} 900w, ${asset.webp1400} 1400w`}
+        sizes="(max-width: 430px) 100vw, 430px" />
+      <img src={asset.jpg} alt={alt} loading={eager ? "eager" : "lazy"} style={{
+        width: "100%", height: "100%", display: "block",
+        objectFit: objectFit || "cover",
+        ...(objectPosition ? { objectPosition } : {}),
+      }} />
+    </picture>
+  );
+}
 
 function Chip({ children, active, onClick, tone, onTone }) {
   const { C } = useTheme();
@@ -502,8 +525,8 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
 
       <div style={{ padding: "0 20px" }}>
         {imgCategoria && (
-          <img key={cat} src={imgCategoria} alt={cat} className="rise" style={{
-            width: "100%", height: 120, objectFit: "cover", borderRadius: 14, marginBottom: 12,
+          <ResponsiveImg key={cat} id={imgCategoria} alt={cat} className="rise" style={{
+            width: "100%", height: 120, borderRadius: 14, marginBottom: 12,
           }} />
         )}
         {items.map((m, i) => {
@@ -808,8 +831,8 @@ function Laboratorio({ onBack }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <img src={heroDispenser} alt="Equipo de extracción Quadro Café" style={{
-        width: "calc(100% - 40px)", margin: "0 20px", height: 120, objectFit: "cover", borderRadius: 14, display: "block",
+      <ResponsiveImg id="hero-dispenser" alt="Equipo de extracción Quadro Café" style={{
+        width: "calc(100% - 40px)", margin: "0 20px", height: 120, borderRadius: 14,
       }} />
       <Header sub="Geometría de extracción" titulo="Laboratorio" onBack={onBack} />
       <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
