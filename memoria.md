@@ -103,3 +103,13 @@ El dueño corrió la migración y creó su usuario; pidió conectar la Carta que
 
 ### Pendiente
 Bloques 4/6/7, fusión del roster de fincas (Bloque 7), y confirmar con el dueño antes de encadenar el siguiente bloque.
+
+## Bloque 3 — seguimiento: las env vars no llegaban al build de Cloudflare
+
+El dueño reportó que en el deploy real, `/#admin` decía "Supabase no está configurado" pese a que `.env` local sí las tiene. Causa: `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY` nunca se configuraron en el entorno de **build** de Cloudflare — Vite las necesita presentes durante `vite build` (se inlinan en el JS del bundle), no en runtime del Worker, así que un binding de Cloudflare (Settings → Bindings/"Variables and Secrets") no las alcanza a tiempo aunque exista.
+
+- **Confirmado que el repo no es la causa**: `wrangler.toml` no tiene `[vars]` ni nada que pise o filtre estas variables; `vite.config.js` no sobreescribe `envPrefix` (usa el default `VITE_`); no hay `.dev.vars` suelto. El problema está 100% del lado del dashboard de Cloudflare, no del código.
+- **Pasos documentados en `README.md`** (nueva sección "Deploy (Cloudflare Workers)"): dónde exactamente en el dashboard van las variables de **build** (Settings → Build → "Build variables and secrets"/"Environment variables" de esa pantalla) vs. las de **runtime** (Settings → Bindings, que no sirven para esto), tipo Plaintext (no hace falta Secret para una publishable key), y que hace falta un build nuevo (push o "Retry build") para que tomen efecto — no basta con guardarlas.
+- **Fallback ya no es silencioso**: `useCarta()` ahora llama a `console.warn` con el motivo exacto cada vez que cae al `MENU` local (Supabase no configurado / error de la consulta / tabla vacía / falla de red), siempre — en dev y en producción. Además, solo en dev (`import.meta.env.DEV`, se elimina del build de producción) se muestra un banner visible arriba de la Carta ("⚠ Modo dev: mostrando MENU local…"). En producción no hay banner visible al cliente (no tiene sentido exponerle un problema de infraestructura a alguien pidiendo un café), pero el `console.warn` sigue ahí para que el dueño lo revise si algo no cuadra.
+- **Verificado** con `npm run dev` (banner visible) y `npm run preview`/build de producción (sin banner, mismo fallback funcionando) vía Playwright local — screenshots confirmaron ambos casos, luego se limpiaron los artefactos de prueba.
+- **Pendiente de tu lado**: cargar las dos variables en el dashboard de Cloudflare siguiendo los pasos del README, y luego un "Retry build" o esperar al próximo push para que el deploy las recoja.

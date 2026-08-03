@@ -184,28 +184,45 @@ const MENU = [
 const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
 const CAT_IMG = { Filtrado: "lote-bourbon", Frío: "menu-iced", Postres: "menu-postres" };
 
+/* Aviso de "estamos usando el respaldo local" — nunca silencioso. En consola
+   siempre (el dueño puede revisarla en prod si algo no cuadra); en pantalla
+   solo en dev, para no asustar a un cliente real con un banner de deploy. */
+function avisarFallbackCarta(motivo) {
+  console.warn(`[Carta] Usando MENU local de respaldo — ${motivo}`);
+}
+
 /* Carta viva: lee la tabla `productos` de Supabase (la misma que edita el
    Panel Admin) y cae de vuelta a la constante MENU local si Supabase no está
    configurado, la consulta falla, o la tabla todavía está vacía — la app
    nunca debe quedarse sin carta que mostrar. */
 function useCarta() {
   const [items, setItems] = useState(MENU);
+  const [fuente, setFuente] = useState("local");
 
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase) {
+      avisarFallbackCarta("faltan VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY en esta build.");
+      return;
+    }
     let cancelado = false;
     supabase.from("productos").select("*").order("orden").then(({ data, error }) => {
-      if (cancelado || error || !data || !data.length) return;
+      if (cancelado) return;
+      if (error) { avisarFallbackCarta(`error de Supabase — ${error.message}`); return; }
+      if (!data || !data.length) { avisarFallbackCarta("la tabla productos está vacía."); return; }
       setItems(data.map((p) => ({
         id: p.id, cat: p.cat, nombre: p.nombre, precio: Number(p.precio),
         desc: p.descripcion, tag: p.tag || undefined, geo: p.geo || undefined,
         finca: p.finca, disponible: p.disponible,
       })));
-    }).catch(() => { /* sin red o Supabase caído: se queda con el MENU local */ });
+      setFuente("supabase");
+    }).catch((err) => {
+      if (cancelado) return;
+      avisarFallbackCarta(`fallo de red hacia Supabase — ${err?.message || err}`);
+    });
     return () => { cancelado = true; };
   }, []);
 
-  return items;
+  return { items, fuente };
 }
 
 const EQUIPO = [
@@ -537,13 +554,21 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
   const { C } = useTheme();
   const [cat, setCat] = useState("Filtrado");
   const [abierto, setAbierto] = useState(null);
-  const carta = useCarta();
+  const { items: carta, fuente } = useCarta();
   const items = carta.filter((m) => m.cat === cat);
   const imgCategoria = CAT_IMG[cat];
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
       <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} />
+      {import.meta.env.DEV && fuente === "local" && (
+        <div className="mono" style={{
+          margin: "0 20px 12px", padding: "8px 12px", borderRadius: 10, fontSize: 10.5,
+          letterSpacing: ".02em", background: C.warn, color: C.onBrandAlt,
+        }}>
+          ⚠ Modo dev: mostrando MENU local — Supabase no respondió. Revisa la consola.
+        </div>
+      )}
       <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 14px", overflowX: "auto" }}>
         {CATS.map((c) => <Chip key={c} active={c === cat} onClick={() => setCat(c)}>{c}</Chip>)}
       </div>
