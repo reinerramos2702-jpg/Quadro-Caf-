@@ -184,6 +184,30 @@ const MENU = [
 const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
 const CAT_IMG = { Filtrado: "lote-bourbon", Frío: "menu-iced", Postres: "menu-postres" };
 
+/* Carta viva: lee la tabla `productos` de Supabase (la misma que edita el
+   Panel Admin) y cae de vuelta a la constante MENU local si Supabase no está
+   configurado, la consulta falla, o la tabla todavía está vacía — la app
+   nunca debe quedarse sin carta que mostrar. */
+function useCarta() {
+  const [items, setItems] = useState(MENU);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let cancelado = false;
+    supabase.from("productos").select("*").order("orden").then(({ data, error }) => {
+      if (cancelado || error || !data || !data.length) return;
+      setItems(data.map((p) => ({
+        id: p.id, cat: p.cat, nombre: p.nombre, precio: Number(p.precio),
+        desc: p.descripcion, tag: p.tag || undefined, geo: p.geo || undefined,
+        finca: p.finca, disponible: p.disponible,
+      })));
+    }).catch(() => { /* sin red o Supabase caído: se queda con el MENU local */ });
+    return () => { cancelado = true; };
+  }, []);
+
+  return items;
+}
+
 const EQUIPO = [
   { nombre: "Comandante C40", detalle: "Nitro Blade · Alpine Lagoon y Sunset", uso: "Molienda de barra y competencia", clicks: "18–24 clics para filtrado" },
   { nombre: "AeroPress", detalle: "Presión de aire + microfiltro", uso: "Recetas de campeonato", clicks: "Invertida, 2:00 min" },
@@ -513,7 +537,8 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
   const { C } = useTheme();
   const [cat, setCat] = useState("Filtrado");
   const [abierto, setAbierto] = useState(null);
-  const items = MENU.filter((m) => m.cat === cat);
+  const carta = useCarta();
+  const items = carta.filter((m) => m.cat === cat);
   const imgCategoria = CAT_IMG[cat];
 
   return (
@@ -532,16 +557,22 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
         {items.map((m, i) => {
           const n = carrito.filter((x) => x.id === m.id).length;
           const open = abierto === m.id;
+          const agotado = m.disponible === false;
           return (
             <div key={m.id} className="rise quadro-frame" style={{
               animationDelay: `${i * 45}ms`, background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
               borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
+              opacity: agotado ? .55 : 1,
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
-                    {m.tag && <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>}
+                    {agotado ? (
+                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600 }}>Agotado hoy</span>
+                    ) : m.tag && (
+                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>
+                    )}
                   </div>
                   <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
                 </div>
@@ -551,7 +582,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
               </div>
 
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-                {m.finca ? (
+                {agotado ? <span /> : m.finca ? (
                   <button onClick={() => setAbierto(open ? null : m.id)} className="press mono" style={{
                     fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: C.brand,
                     background: "none", border: "none", cursor: "pointer", padding: 0,
@@ -559,20 +590,24 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
                     {open ? "Ocultar opciones" : "Elegir finca y taza"}
                   </button>
                 ) : <span />}
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {n > 0 && (
-                    <>
-                      <button onClick={() => quitar(m.id)} className="press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={14} /></button>
-                      <span className="mono" style={{ width: 16, textAlign: "center", fontSize: 13 }}>{n}</span>
-                    </>
-                  )}
-                  <button onClick={() => add(m)} className="press" aria-label={`Agregar ${m.nombre}`} style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
-                    <Plus size={14} />
-                  </button>
-                </div>
+                {agotado ? (
+                  <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Vuelve mañana</span>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {n > 0 && (
+                      <>
+                        <button onClick={() => quitar(m.id)} className="press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={14} /></button>
+                        <span className="mono" style={{ width: 16, textAlign: "center", fontSize: 13 }}>{n}</span>
+                      </>
+                    )}
+                    <button onClick={() => add(m)} className="press" aria-label={`Agregar ${m.nombre}`} style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {open && (
+              {open && !agotado && (
                 <div className="pop" style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
                   <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 8 }}>Finca</div>
                   <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
