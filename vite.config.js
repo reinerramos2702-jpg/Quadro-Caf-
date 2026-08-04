@@ -59,6 +59,23 @@ export default defineConfig({
               },
             },
           },
+          {
+            // El modelo 3D del dripper (public/models/) no está en el
+            // precache forzado (es de un tab que no todos abren) — se cachea
+            // recién en la primera vez que Lab o el hero de Inicio lo piden.
+            urlPattern: /\/models\/.*\.glb$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "quadro-modelos-3d",
+              expiration: {
+                maxEntries: 5,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
         ],
       },
       devOptions: {

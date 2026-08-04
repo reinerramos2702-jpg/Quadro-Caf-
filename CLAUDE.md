@@ -54,6 +54,8 @@ Current confirmed-real data inventory (as of the v3 pass):
 
 Full asset library (renders + real photos, ~80 files) lives in the Drive folder `1i6U98nzBDotKZYQTAH60VVChKLGgOdP1` — ask before re-pulling from it, folder structure is documented in `memoria.md`.
 
+`public/models/dripper.glb` is a real 3D asset — generated from a photo of the actual dripper, not a stock/generic model. Compressed with meshopt + WebP textures (7.2MB → 357KB, see `memoria.md` for why meshopt over Draco). Rendered with Three.js in `src/lib/espiral3d.jsx`, used as the fixed base of the Lab extraction simulator and as an orbiting decorative hero on Inicio.
+
 ## Out of scope / not yet built
 
 React Native migration, CRM export integration, Higgsfield avatar videos (would replace the text/audio induction player in Fincas). See `docs/HANDOFF.md` for the original list, though it's now stale on two points: Supabase is live (Admin Panel + real-time Carta, see `memoria.md`), and checkout has a payment-**method** picker (Efectivo/Pago móvil/Zelle/Transferencia, `METODOS_PAGO` in `App.jsx`) — the cart tells the barista how the customer intends to pay, it does not process a real charge. An actual payment gateway (Stripe or similar, with a real merchant account and PCI scope) is still out of scope — confirmed explicitly with the owner, not to be added without asking again.

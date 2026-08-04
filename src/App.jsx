@@ -12,9 +12,10 @@ import { ASSET_MANIFEST } from "./data/assetManifest";
 // three.js pesa varios cientos de KB — se carga solo cuando alguien abre
 // Laboratorio, no en el bundle inicial de toda la app (ver src/lib/espiral3d.js).
 const EspiralTubo3D = React.lazy(() => import("./lib/espiral3d.jsx"));
+// Mismo chunk que EspiralTubo3D (mismo import(), Vite lo deduplica) — three.js no se descarga dos veces.
+const DripperHero = React.lazy(() => import("./lib/espiral3d.jsx").then((m) => ({ default: m.DripperHero })));
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
-import heroDispenser from "./assets/hero-dispenser.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
 
@@ -504,18 +505,33 @@ function Inicio({ ir, lote }) {
 
       <div className="rise" style={{
         position: "relative", padding: "26px 20px 8px", overflow: "hidden",
-        backgroundImage: `linear-gradient(180deg, ${C.surface}CC, ${C.surface}), url(${heroDispenser})`,
-        backgroundSize: "cover", backgroundPosition: "center",
+        minHeight: 250, background: C.surface,
       }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
-          Barra abierta · 7:00 a 20:00
+        {/* El dripper es negro mate — sin este halo detrás, su silueta se
+            pierde contra un fondo de tema oscuro casi igual de oscuro. */}
+        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+          <div style={{
+            width: 300, height: 300, borderRadius: "50%",
+            background: `radial-gradient(circle, ${C.brand}5c, ${C.brandAlt}33 55%, transparent 74%)`,
+          }} />
         </div>
-        <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
-          El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
-        </h1>
-        <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
-          Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
-        </p>
+        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+          <React.Suspense fallback={null}>
+            <DripperHero width={390} height={250} />
+          </React.Suspense>
+        </div>
+        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${C.surface}82, ${C.surface})` }} />
+        <div style={{ position: "relative" }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
+            Barra abierta · 7:00 a 20:00
+          </div>
+          <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
+            El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
+          </h1>
+          <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
+            Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
+          </p>
+        </div>
       </div>
 
       <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
