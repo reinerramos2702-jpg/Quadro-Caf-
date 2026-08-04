@@ -279,6 +279,10 @@ const MEDIOS_INICIALES = [
 /* ============================ UTILES ============================ */
 
 const money = (n) => `$${n.toFixed(2)}`;
+const ACENTOS = { á: "a", é: "e", í: "i", ó: "o", ú: "u", ñ: "n", ü: "u" };
+const slugify = (s) => s.toLowerCase()
+  .replace(/[áéíóúñü]/g, (c) => ACENTOS[c])
+  .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 function spiralPath(vueltas, pasos, radioMax, size = 200, prog = 1) {
   const cx = size / 2, cy = size / 2;
@@ -1457,6 +1461,7 @@ function Club({ email, setEmail, onBack, onAdmin }) {
 
 function AdminLogin({ onLogged }) {
   const { C } = useTheme();
+  const [modo, setModo] = useState("login"); // "login" | "recuperar" | "enviado"
   const [correo, setCorreo] = useState("");
   const [clave, setClave] = useState("");
   const [error, setError] = useState("");
@@ -1471,12 +1476,40 @@ function AdminLogin({ onLogged }) {
     else onLogged();
   };
 
+  const enviarRecuperacion = async (e) => {
+    e.preventDefault();
+    setError(""); setCargando(true);
+    await supabase.auth.resetPasswordForEmail(correo, {
+      redirectTo: `${window.location.origin}${window.location.pathname}?admin=1`,
+    });
+    setCargando(false);
+    setModo("enviado"); // Supabase nunca confirma si el correo existe — el mensaje es siempre el mismo.
+  };
+
+  if (modo === "enviado") {
+    return (
+      <div style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
+        <Mail size={18} color={C.brand} />
+        <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Revisa tu correo</div>
+        <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
+          Si <strong style={{ color: C.text }}>{correo}</strong> tiene una cuenta, te enviamos un enlace para elegir una clave nueva.
+        </p>
+        <button onClick={() => setModo("login")} className="press mono" style={{
+          marginTop: 12, fontSize: 10.5, letterSpacing: ".08em", textTransform: "uppercase", color: C.brand,
+          background: "none", border: "none", cursor: "pointer", padding: 0,
+        }}>Volver a entrar</button>
+      </div>
+    );
+  }
+
+  const recuperando = modo === "recuperar";
+
   return (
-    <form onSubmit={entrar} style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
+    <form onSubmit={recuperando ? enviarRecuperacion : entrar} style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
       <Lock size={18} color={C.brand} />
-      <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Entrar como dueño</div>
+      <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>{recuperando ? "Recuperar clave" : "Entrar como dueño"}</div>
       <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
-        Acceso privado para editar la carta. Pide tu usuario si no lo tienes.
+        {recuperando ? "Te mandamos un enlace a tu correo para elegir una clave nueva." : "Acceso privado para editar la carta. Pide tu usuario si no lo tienes."}
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
@@ -1484,17 +1517,69 @@ function AdminLogin({ onLogged }) {
           <input type="email" required value={correo} onChange={(e) => setCorreo(e.target.value)} placeholder="dueño@quadrocafe.com"
             style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
-          <Lock size={15} color={C.textMuted} />
-          <input type="password" required value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Clave"
-            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
-        </div>
+        {!recuperando && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
+            <Lock size={15} color={C.textMuted} />
+            <input type="password" required value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Clave"
+              style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
+          </div>
+        )}
       </div>
       {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 8 }}>{error}</p>}
       <button type="submit" disabled={cargando} className="press" style={{
         marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", cursor: "pointer",
         background: C.brand, color: C.onBrand, fontSize: 13.5, fontWeight: 700, opacity: cargando ? .6 : 1,
-      }}>{cargando ? "Entrando…" : "Entrar"}</button>
+      }}>{cargando ? "Enviando…" : recuperando ? "Enviar enlace" : "Entrar"}</button>
+      <button type="button" onClick={() => { setModo(recuperando ? "login" : "recuperar"); setError(""); }} className="press mono" style={{
+        marginTop: 10, width: "100%", textAlign: "center", fontSize: 10.5, letterSpacing: ".06em", textTransform: "uppercase",
+        color: C.textMuted, background: "none", border: "none", cursor: "pointer", padding: 4,
+      }}>{recuperando ? "Volver a entrar" : "¿Olvidaste tu clave?"}</button>
+    </form>
+  );
+}
+
+function AdminNuevaClave({ onListo }) {
+  const { C } = useTheme();
+  const [clave, setClave] = useState("");
+  const [clave2, setClave2] = useState("");
+  const [error, setError] = useState("");
+  const [guardando, setGuardando] = useState(false);
+
+  const guardar = async (e) => {
+    e.preventDefault();
+    if (clave.length < 6) { setError("La clave debe tener al menos 6 caracteres."); return; }
+    if (clave !== clave2) { setError("Las claves no coinciden."); return; }
+    setGuardando(true); setError("");
+    const { error: err } = await supabase.auth.updateUser({ password: clave });
+    setGuardando(false);
+    if (err) setError("No se pudo actualizar la clave. Pide un enlace nuevo e intenta de nuevo.");
+    else onListo();
+  };
+
+  return (
+    <form onSubmit={guardar} style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
+      <Lock size={18} color={C.brand} />
+      <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Elige una clave nueva</div>
+      <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
+        Veniste desde el enlace de recuperación. Escribe tu clave nueva dos veces.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
+          <Lock size={15} color={C.textMuted} />
+          <input type="password" required value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Clave nueva"
+            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
+          <Lock size={15} color={C.textMuted} />
+          <input type="password" required value={clave2} onChange={(e) => setClave2(e.target.value)} placeholder="Repite la clave"
+            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
+        </div>
+      </div>
+      {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 8 }}>{error}</p>}
+      <button type="submit" disabled={guardando} className="press" style={{
+        marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", cursor: "pointer",
+        background: C.brand, color: C.onBrand, fontSize: 13.5, fontWeight: 700, opacity: guardando ? .6 : 1,
+      }}>{guardando ? "Guardando…" : "Guardar clave"}</button>
     </form>
   );
 }
@@ -1548,9 +1633,96 @@ function AdminFila({ p, onCambio }) {
   );
 }
 
+function AdminNuevoProducto({ siguienteOrden, onCreado }) {
+  const { C } = useTheme();
+  const [abierto, setAbierto] = useState(false);
+  const [nombre, setNombre] = useState("");
+  const [cat, setCat] = useState(CATS[0]);
+  const [precio, setPrecio] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [disponible, setDisponible] = useState(true);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState("");
+
+  const limpiar = () => {
+    setNombre(""); setCat(CATS[0]); setPrecio(""); setDescripcion(""); setDisponible(true);
+  };
+
+  const crear = async (e) => {
+    e.preventDefault();
+    const n = parseFloat(precio.replace(",", "."));
+    if (!nombre.trim() || Number.isNaN(n)) { setError("Nombre y precio son obligatorios."); return; }
+    setGuardando(true); setError("");
+
+    const base = slugify(nombre) || "producto";
+    let id = base;
+    let fila = null;
+    for (let intento = 0; intento < 5 && !fila; intento++) {
+      const { data, error: err } = await supabase.from("productos").insert({
+        id, cat, nombre: nombre.trim(), precio: n, descripcion: descripcion.trim(),
+        disponible, finca: false, orden: siguienteOrden,
+      }).select().single();
+      if (!err) { fila = data; break; }
+      if (err.code === "23505") { id = `${base}-${intento + 2}`; continue; } // id duplicado, prueba con sufijo
+      setError("No se pudo crear el producto. Intenta de nuevo.");
+      setGuardando(false);
+      return;
+    }
+    setGuardando(false);
+    if (fila) { onCreado(fila); limpiar(); setAbierto(false); }
+    else setError("No se pudo generar un id único para este nombre. Cámbialo e intenta de nuevo.");
+  };
+
+  if (!abierto) {
+    return (
+      <button onClick={() => setAbierto(true)} className="press mono" style={{
+        margin: "0 20px 14px", width: "calc(100% - 40px)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+        padding: "11px", borderRadius: 12, border: `1px dashed ${C.line}`, background: "none", cursor: "pointer",
+        color: C.brand, fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase",
+      }}><Plus size={14} /> Agregar producto</button>
+    );
+  }
+
+  return (
+    <form onSubmit={crear} style={{ margin: "0 20px 14px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="disp" style={{ fontSize: 15 }}>Producto nuevo</div>
+        <button type="button" onClick={() => { setAbierto(false); setError(""); }} className="press" aria-label="Cerrar" style={btnMiniStyle(C)}>
+          <X size={14} />
+        </button>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
+        <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre" required
+          style={{ border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", fontSize: 13, background: "transparent", color: C.text }} />
+        <select value={cat} onChange={(e) => setCat(e.target.value)}
+          style={{ border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", fontSize: 13, background: C.card, color: C.text }}>
+          {CATS.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px" }}>
+          <span className="mono" style={{ fontSize: 12, color: C.textMuted }}>$</span>
+          <input value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="0.00" inputMode="decimal" required
+            style={{ border: "none", outline: "none", flex: 1, fontSize: 13, background: "transparent", color: C.text }} />
+        </div>
+        <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} placeholder="Descripción" rows={2}
+          style={{ border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", fontSize: 13, background: "transparent", color: C.text, resize: "none", fontFamily: "inherit" }} />
+        <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.text }}>
+          <input type="checkbox" checked={disponible} onChange={(e) => setDisponible(e.target.checked)} />
+          Disponible desde ya
+        </label>
+      </div>
+      {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 8 }}>{error}</p>}
+      <button type="submit" disabled={guardando} className="press" style={{
+        marginTop: 12, width: "100%", padding: "11px", borderRadius: 12, border: "none", cursor: "pointer",
+        background: C.brand, color: C.onBrand, fontSize: 13, fontWeight: 700, opacity: guardando ? .6 : 1,
+      }}>{guardando ? "Creando…" : "Crear producto"}</button>
+    </form>
+  );
+}
+
 function Admin({ onBack }) {
   const { C } = useTheme();
   const [sesion, setSesion] = useState(undefined); // undefined = cargando, null = sin sesión
+  const [recuperando, setRecuperando] = useState(false);
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
@@ -1558,7 +1730,10 @@ function Admin({ onBack }) {
   useEffect(() => {
     if (!supabase) { setSesion(null); return; }
     supabase.auth.getSession().then(({ data }) => setSesion(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSesion(s));
+    const { data: sub } = supabase.auth.onAuthStateChange((evento, s) => {
+      setSesion(s);
+      if (evento === "PASSWORD_RECOVERY") setRecuperando(true);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
@@ -1578,6 +1753,9 @@ function Admin({ onBack }) {
     if (err) setError("No se pudo guardar el cambio. Intenta de nuevo.");
   };
 
+  const agregarProducto = (fila) => setProductos((ps) => [...ps, fila]);
+  const siguienteOrden = productos.reduce((m, p) => Math.max(m, p.orden || 0), 0) + 1;
+
   if (!supabase) {
     return (
       <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
@@ -1593,6 +1771,15 @@ function Admin({ onBack }) {
     return (
       <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
         <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
+      </div>
+    );
+  }
+
+  if (sesion && recuperando) {
+    return (
+      <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+        <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
+        <AdminNuevaClave onListo={() => setRecuperando(false)} />
       </div>
     );
   }
@@ -1617,6 +1804,7 @@ function Admin({ onBack }) {
         Toca el precio para editarlo, usa el switch para marcar si hay hoy.
       </p>
       {error && <p style={{ margin: "0 20px 8px", fontSize: 12, color: C.warn }}>{error}</p>}
+      <AdminNuevoProducto siguienteOrden={siguienteOrden} onCreado={agregarProducto} />
       <div style={{ margin: "0 20px" }}>
         {cargando && !productos.length ? (
           <p style={{ fontSize: 12.5, color: C.textMuted, padding: "12px 0" }}>Cargando carta…</p>
@@ -1754,7 +1942,14 @@ export default function QuadroCafe() {
   const C = PALETAS[tema];
   const css = useMemo(() => buildCss(C), [C]);
 
-  const [tab, setTab] = useState(() => (typeof window !== "undefined" && window.location.hash === "#admin" ? "admin" : "inicio"));
+  const [tab, setTab] = useState(() => {
+    if (typeof window === "undefined") return "inicio";
+    const { hash, search } = window.location;
+    // #admin: acceso directo. ?admin=1 y type=recovery: vuelta desde el enlace
+    // de "olvidé mi clave" de Supabase (que agrega su propio access_token al hash).
+    const esAdmin = hash === "#admin" || search.includes("admin=1") || hash.includes("type=recovery");
+    return esAdmin ? "admin" : "inicio";
+  });
   const [carrito, setCarrito] = useState(() => {
     try { return JSON.parse(localStorage.getItem("qc-carrito")) || []; } catch { return []; }
   });
