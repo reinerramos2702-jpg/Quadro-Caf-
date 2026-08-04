@@ -10,7 +10,7 @@ A mobile-first web app for Quadro Café, a real coffee shop at 4ª Av. de Los Pa
 
 - **Vite + React 18**, plain JS (no TypeScript), inline styles (no CSS framework/Tailwind)
 - Icons: `lucide-react`
-- Single-file component pattern: the entire app lives in `src/App.jsx` (mounted by `src/main.jsx`).
+- Single-file component pattern: the entire app lives in `src/App.jsx` (mounted by `src/main.jsx`). Two deliberate exceptions, both non-UI service modules rather than screens: `src/lib/supabase.js` (client init) and `src/lib/espiral3d.jsx` (the Lab tab's Three.js spiral tube — split out and lazy-loaded via `React.lazy()` so its ~530KB doesn't bloat the main bundle for the five tabs that never touch it).
 - Deploy: GitHub → Cloudflare Pages, auto-deploys on push to `claude/quadro-cafe-v2-5uq32e`
 - `npm run dev` / `npm run build` / `npm run preview`
 

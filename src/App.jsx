@@ -9,6 +9,9 @@ import {
 
 import { supabase } from "./lib/supabase";
 import { ASSET_MANIFEST } from "./data/assetManifest";
+// three.js pesa varios cientos de KB — se carga solo cuando alguien abre
+// Laboratorio, no en el bundle inicial de toda la app (ver src/lib/espiral3d.js).
+const EspiralTubo3D = React.lazy(() => import("./lib/espiral3d.jsx"));
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
 import heroDispenser from "./assets/hero-dispenser.jpg";
@@ -326,6 +329,7 @@ function spiralPath(vueltas, pasos, radioMax, size = 200, prog = 1) {
   }
   return d;
 }
+
 
 /* ============================ TEMA ============================ */
 
@@ -933,22 +937,10 @@ function Laboratorio({ onBack }) {
 
       <div style={{ margin: "0 20px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
         <div style={{ display: "grid", placeItems: "center", position: "relative" }}>
-          <svg width={210} height={210} viewBox="0 0 200 200">
-            <defs>
-              <radialGradient id="lecho">
-                <stop offset="0%" stopColor={C.brandAlt} stopOpacity=".25" />
-                <stop offset="100%" stopColor={C.brandAlt} stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle cx="100" cy="100" r="92" fill="url(#lecho)" stroke={C.line} />
-            <circle cx="100" cy="100" r="60" fill="none" stroke={C.line} strokeDasharray="2 6" />
-            <circle cx="100" cy="100" r="30" fill="none" stroke={C.line} strokeDasharray="2 6" />
-            <path d={spiralPath(vueltas, 280, radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
-            <path d={spiralPath(vueltas, 280, radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="3" strokeLinecap="round" />
-            <circle r="5" fill={C.brandAlt}
-              cx={100 + Math.cos(prog * vueltas * Math.PI * 2) * (86 * radio * prog)}
-              cy={100 + Math.sin(prog * vueltas * Math.PI * 2) * (86 * radio * prog)} />
-          </svg>
+          <React.Suspense fallback={<div style={{ width: 210, height: 210 }} />}>
+            <EspiralTubo3D vueltas={vueltas} radio={radio} prog={prog}
+              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
+          </React.Suspense>
           {corriendo && <span className="drip" style={{ position: "absolute", top: 6, width: 3, height: 12, borderRadius: 99, background: C.brand }} />}
         </div>
 
