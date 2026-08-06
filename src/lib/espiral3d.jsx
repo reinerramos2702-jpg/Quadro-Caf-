@@ -99,7 +99,10 @@ export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorB
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 1, 2000);
     // Ángulo 3/4 (ni cenital ni de perfil) para que se note el volumen del tubo.
-    camera.position.set(0, 130, 260);
+    // Distancia con margen: a radio=1 (tope del slider) la espiral llega a
+    // ESPIRAL_ESCALA=86 unidades de radio — esta posición deja aire alrededor
+    // sin recortar en ningún borde.
+    camera.position.set(0, 175, 340);
     camera.lookAt(0, -20, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });

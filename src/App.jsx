@@ -470,19 +470,6 @@ function btnMiniStyle(C) {
 
 function Inicio({ ir, lote }) {
   const { C, tema } = useTheme();
-  const [prog, setProg] = useState(0);
-  const [geo, setGeo] = useState(GEOMETRIAS[0]);
-  useEffect(() => {
-    let raf, t0 = performance.now();
-    const loop = (t) => {
-      const p = ((t - t0) / 3600) % 1;
-      setProg(p);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [geo]);
-
   const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
 
   return (
@@ -505,22 +492,22 @@ function Inicio({ ir, lote }) {
 
       <div className="rise" style={{
         position: "relative", padding: "26px 20px 8px", overflow: "hidden",
-        minHeight: 250, background: C.surface,
+        minHeight: 300, background: C.surface,
       }}>
         {/* El dripper es negro mate — sin este halo detrás, su silueta se
             pierde contra un fondo de tema oscuro casi igual de oscuro. */}
         <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
           <div style={{
-            width: 300, height: 300, borderRadius: "50%",
-            background: `radial-gradient(circle, ${C.brand}5c, ${C.brandAlt}33 55%, transparent 74%)`,
+            width: 340, height: 340, borderRadius: "50%",
+            background: `radial-gradient(circle, ${C.brand}66, ${C.brandAlt}38 55%, transparent 74%)`,
           }} />
         </div>
         <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
           <React.Suspense fallback={null}>
-            <DripperHero width={390} height={250} />
+            <DripperHero width={420} height={300} />
           </React.Suspense>
         </div>
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${C.surface}82, ${C.surface})` }} />
+        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${C.surface}66, ${C.surface})` }} />
         <div style={{ position: "relative" }}>
           <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
             Barra abierta · 7:00 a 20:00
@@ -531,33 +518,6 @@ function Inicio({ ir, lote }) {
           <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
             Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
           </p>
-        </div>
-      </div>
-
-      <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
-        <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          <svg width={132} height={132} viewBox="0 0 200 200" style={{ flexShrink: 0 }}>
-            <circle cx="100" cy="100" r="92" fill="none" stroke={C.line} strokeWidth="1" />
-            <circle cx="100" cy="100" r="62" fill="none" stroke={C.line} strokeWidth="1" strokeDasharray="3 5" />
-            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
-            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="2.6" strokeLinecap="round" />
-            <circle r="4" fill={C.brandAlt}
-              cx={100 + Math.cos(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)}
-              cy={100 + Math.sin(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)} />
-          </svg>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="mono" style={{ fontSize: 10, color: C.brandAlt, letterSpacing: ".16em", textTransform: "uppercase" }}>{geo.metodo}</div>
-            <div className="disp" style={{ fontSize: 19, margin: "4px 0 10px" }}>{geo.nombre}</div>
-            <Meter label="Extracción" value={geo.efecto.extraccion} />
-            <Meter label="Cuerpo" value={geo.efecto.cuerpo} tone={C.brandAlt} />
-            <Meter label="Acidez" value={geo.efecto.acidez} tone={C.purple} />
-          </div>
-        </div>
-        <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.5, margin: "12px 0 12px" }}>{geo.lectura}</p>
-        <div style={{ display: "flex", gap: 7, overflowX: "auto" }} className="qc-scroll">
-          {GEOMETRIAS.map((g) => (
-            <Chip key={g.id} active={g.id === geo.id} onClick={() => setGeo(g)}>{g.nombre}</Chip>
-          ))}
         </div>
       </div>
 
