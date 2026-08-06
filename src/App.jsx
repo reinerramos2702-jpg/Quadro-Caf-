@@ -12,6 +12,9 @@ import clubBox from "./assets/club-box.jpg";
 import heroDispenser from "./assets/hero-dispenser.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
+import violaFont from "./assets/fonts/VIOLA.otf";
+import nexaBoldFont from "./assets/fonts/Nexa-Bold.otf";
+import nexaLightFont from "./assets/fonts/Nexa-Light.otf";
 
 /* ============================================================
    QUADRO CAFÉ — v4 "alta gama"
@@ -44,26 +47,38 @@ const FINCA_TINTS = {
   oscuro: ["#5B2E8C", "#1E5C4A", "#C9873A"],
 };
 
+/* Tipografía real de marca (reemplaza las aproximaciones Fraunces/Inter
+   Tight de Google Fonts): VIOLA es el lettering real del logo quadrocafe.com
+   — se usa solo en display/headers, con Fraunces como fallback de glyph
+   (VIOLA no trae acentos, así que "café" cae a Fraunces solo para la é).
+   Nexa (Light 300 / Bold 700) es la sans de marca para cuerpo y labels. */
 const FONTS = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap');
+@font-face{font-family:'VIOLA';src:url(${violaFont}) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Nexa';src:url(${nexaLightFont}) format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'Nexa';src:url(${nexaBoldFont}) format('opentype');font-weight:700;font-style:normal;font-display:swap}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap');
 `;
 
 function buildCss(C) {
   return `
 ${FONTS}
 *{box-sizing:border-box}
-.qc{font-family:'Inter Tight',system-ui,sans-serif;color:${C.text};background:${C.surface}}
-.disp{font-family:'Fraunces',serif;font-weight:700;letter-spacing:-.01em;font-optical-sizing:auto}
+.qc{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:300;color:${C.text};background:${C.surface}}
+.disp{font-family:'VIOLA','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto}
 .script{font-family:'Fraunces',serif;font-style:italic;font-weight:600}
-.mono{font-family:'Inter Tight',system-ui,sans-serif;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
-.disp-xl{font-family:'Fraunces',serif;font-weight:600;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0}
-.disp-l{font-family:'Fraunces',serif;font-weight:600;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0}
-.disp-m{font-family:'Fraunces',serif;font-weight:500;font-size:22px;line-height:28px;margin:0}
-.body-l{font-family:'Inter Tight',sans-serif;font-weight:400;font-size:17px;line-height:26px}
-.label{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
-.micro{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase}
+.mono{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.disp-xl{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0}
+.disp-l{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0}
+.disp-m{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0}
+.body-l{font-family:'Nexa','Inter Tight',sans-serif;font-weight:300;font-size:17px;line-height:26px}
+.label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase}
 .quadro-frame{clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
 .qc-scroll::-webkit-scrollbar{width:0;height:0}
+@keyframes qc-spiral-enter{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes qc-spiral-spin{to{transform:rotate(360deg)}}
+.spiral-enter{animation:qc-spiral-enter .9s cubic-bezier(.2,.8,.2,1) both}
+.spiral-spin{transform-origin:100px 100px;animation:qc-spiral-spin 16s cubic-bezier(.45,0,.55,1) infinite}
 @keyframes qc-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes qc-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 @keyframes qc-slide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
@@ -437,18 +452,7 @@ function btnMiniStyle(C) {
 
 function Inicio({ ir, lote }) {
   const { C, tema } = useTheme();
-  const [prog, setProg] = useState(0);
   const [geo, setGeo] = useState(GEOMETRIAS[0]);
-  useEffect(() => {
-    let raf, t0 = performance.now();
-    const loop = (t) => {
-      const p = ((t - t0) / 3600) % 1;
-      setProg(p);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [geo]);
 
   const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
 
@@ -457,7 +461,7 @@ function Inicio({ ir, lote }) {
       <button onClick={() => ir("club")} className="press tapfx quadro-frame rise" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
         width: "calc(100% - 40px)", margin: "12px 20px 0", textAlign: "left", cursor: "pointer",
-        border: `1px solid ${C.brandAlt}`, borderRadius: 16, padding: "13px 16px",
+        border: `1px solid ${C.brandAlt}`, borderRadius: 16, borderBottomRightRadius: 0, padding: "13px 16px",
         background: `linear-gradient(120deg, ${C.brandAlt}26, ${C.card})`, color: C.text,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
@@ -488,14 +492,9 @@ function Inicio({ ir, lote }) {
 
       <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          <svg width={132} height={132} viewBox="0 0 200 200" style={{ flexShrink: 0 }}>
-            <circle cx="100" cy="100" r="92" fill="none" stroke={C.line} strokeWidth="1" />
-            <circle cx="100" cy="100" r="62" fill="none" stroke={C.line} strokeWidth="1" strokeDasharray="3 5" />
-            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
-            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="2.6" strokeLinecap="round" />
-            <circle r="4" fill={C.brandAlt}
-              cx={100 + Math.cos(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)}
-              cy={100 + Math.sin(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)} />
+          <svg key={geo.id} width={132} height={132} viewBox="0 0 200 200" style={{ flexShrink: 0 }} className="spiral-enter">
+            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, 1)} fill="none" stroke={C.brand}
+              strokeWidth="2.6" strokeLinecap="round" className="spiral-spin" />
           </svg>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="mono" style={{ fontSize: 10, color: C.brandAlt, letterSpacing: ".16em", textTransform: "uppercase" }}>{geo.metodo}</div>
@@ -517,7 +516,7 @@ function Inicio({ ir, lote }) {
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".2em", color: C.textMuted, textTransform: "uppercase", marginBottom: 8 }}>Lote en barra hoy</div>
         <button onClick={() => ir("fincas")} className="press tapfx quadro-frame" style={{
           width: "100%", textAlign: "left", cursor: "pointer", border: `1px solid ${C.line}`,
-          borderRadius: 18, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
+          borderRadius: 18, borderBottomRightRadius: 0, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
@@ -590,7 +589,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
           return (
             <div key={m.id} className="rise quadro-frame" style={{
               animationDelay: `${i * 45}ms`, background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
-              borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
+              borderRadius: 16, borderBottomRightRadius: 0, padding: 14, marginBottom: 10, transition: "border-color .25s",
               opacity: agotado ? .55 : 1,
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
@@ -674,7 +673,7 @@ function FichaLote({ lote, compact, titulo }) {
   return (
     <div className="quadro-frame" style={{
       flex: compact ? 1 : "initial", minWidth: 0, background: C.card, border: `1px solid ${C.line}`,
-      borderRadius: compact ? 14 : 18, padding: compact ? 12 : 16,
+      borderRadius: compact ? 14 : 18, borderBottomRightRadius: 0, padding: compact ? 12 : 16,
     }}>
       {titulo && (
         <div className="disp" style={{ fontSize: 14, lineHeight: 1.15, marginBottom: 8 }}>{titulo}</div>
@@ -750,7 +749,7 @@ function Fincas({ lote, setLote, onBack }) {
 
       {!comparar && (
         <div className="pop quadro-frame" key={lote.id} style={{
-          margin: "0 20px", borderRadius: 22, overflow: "hidden",
+          margin: "0 20px", borderRadius: 22, borderBottomRightRadius: 0, overflow: "hidden",
           border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
         }}>
           <div style={{ position: "relative", height: 216, display: "grid", placeItems: "center" }}>
@@ -895,9 +894,32 @@ function Laboratorio({ onBack }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <ResponsiveImg id="hero-dispenser" alt="Equipo de extracción Quadro Café" style={{
-        width: "calc(100% - 40px)", margin: "0 20px", height: 120, borderRadius: 14,
-      }} />
+      <div className="rise" style={{
+        width: "calc(100% - 40px)", margin: "0 20px", height: 260, borderRadius: 20,
+        background: C.card, border: `1px solid ${C.line}`, overflow: "hidden", position: "relative",
+      }}>
+        {/* eslint-disable-next-line react/no-unknown-property */}
+        <model-viewer
+          src="/models/espiral.glb"
+          alt="Espiral geométrica de vertido — modelo 3D Quadro Café"
+          camera-controls
+          disable-zoom
+          auto-rotate
+          rotation-per-second="16deg"
+          interaction-prompt="none"
+          shadow-intensity="1"
+          shadow-softness=".8"
+          exposure="1.15"
+          style={{
+            width: "100%", height: "100%", padding: 22,
+            "--poster-color": "transparent", backgroundColor: "transparent",
+          }}
+        />
+        <span className="mono" style={{
+          position: "absolute", bottom: 10, left: 16, fontSize: 9.5, letterSpacing: ".14em",
+          color: C.textMuted, pointerEvents: "none",
+        }}>Espiral · gira para explorar</span>
+      </div>
       <Header sub="Geometría de extracción" titulo="Laboratorio" onBack={onBack} />
       <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
         Mueve la ruta del agua y mira cómo se desplaza el perfil. Lo mismo que hace la máquina, en tu mano.
