@@ -3,6 +3,7 @@ import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon, Settings, LogOut,
+  Banknote, Smartphone, Landmark, DollarSign,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
@@ -283,6 +284,16 @@ const CLUB_NIVELES = [
   { nombre: "Tueste", desde: 100, beneficio: "10% off en filtrados de origen" },
   { nombre: "Barista", desde: 300, beneficio: "1 bebida gratis al mes + acceso anticipado a lotes nuevos" },
   { nombre: "Q Circle", desde: 600, beneficio: "Cata privada trimestral con el equipo Quadro" },
+];
+
+// Selección de método al confirmar el pedido — no cobra nada dentro de la
+// app, solo le avisa a la barra cómo va a pagar el cliente. Sin datos de
+// cuenta/banco: esos se confirman en caja, no se inventan aquí.
+const METODOS_PAGO = [
+  { id: "efectivo", nombre: "Efectivo", nota: "Paga en caja al retirar", icono: Banknote },
+  { id: "movil", nombre: "Pago móvil", nota: "Datos en caja al confirmar", icono: Smartphone },
+  { id: "zelle", nombre: "Zelle", nota: "Datos en caja al confirmar", icono: DollarSign },
+  { id: "transferencia", nombre: "Transferencia", nota: "Datos en caja al confirmar", icono: Landmark },
 ];
 
 const DESTINOS = ["Galería del local", "Foto de lote", "Máquina en acción", "Avatar de finca", "Menú impreso", "Paleta de color"];
@@ -1850,6 +1861,8 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
     return acc;
   }, {});
   const filas = Object.values(agrupado);
+  const [metodo, setMetodo] = useState(METODOS_PAGO[0].id);
+  const elegido = METODOS_PAGO.find((m) => m.id === metodo);
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.72)", zIndex: 40, display: "flex", alignItems: "flex-end" }} onClick={cerrar}>
@@ -1881,19 +1894,38 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
               </div>
             ))}
 
+            <div className="mono" style={{ fontSize: 10, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase", margin: "18px 0 8px" }}>
+              Cómo vas a pagar
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {METODOS_PAGO.map((m) => {
+                const Icono = m.icono, on = m.id === metodo;
+                return (
+                  <button key={m.id} onClick={() => setMetodo(m.id)} className="press" style={{
+                    display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: 12,
+                    border: `1px solid ${on ? C.brand : C.line}`, background: on ? `${C.brand}14` : "transparent",
+                    color: on ? C.brand : C.text, cursor: "pointer", textAlign: "left",
+                  }}>
+                    <Icono size={16} />
+                    <span style={{ fontSize: 12.5, fontWeight: 600 }}>{m.nombre}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", margin: "18px 0 16px" }}>
               <span className="mono" style={{ fontSize: 11, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase" }}>Total</span>
               <span className="disp" style={{ fontSize: 30 }}>{money(total)}</span>
             </div>
 
-            <button onClick={confirmar} className="press" style={{
+            <button onClick={() => confirmar(metodo)} className="press" style={{
               width: "100%", padding: 15, borderRadius: 14, border: "none",
               background: C.brand, color: C.onBrand, fontWeight: 700, fontSize: 15, cursor: "pointer",
             }}>
               Enviar a barra
             </button>
             <p className="mono" style={{ fontSize: 10, color: C.textMuted, textAlign: "center", marginTop: 10 }}>
-              Pago en caja o transferencia al retirar
+              {elegido.nota}
             </p>
           </>
         )}
@@ -1902,10 +1934,11 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
   );
 }
 
-function Ticket({ n, cerrar }) {
+function Ticket({ n, metodo, cerrar }) {
   const { C } = useTheme();
   const [paso, setPaso] = useState(0);
   const pasos = ["Recibido en barra", "Moliendo", "Extrayendo", "Listo para retirar"];
+  const elegido = METODOS_PAGO.find((m) => m.id === metodo);
   useEffect(() => {
     if (paso >= pasos.length - 1) return;
     const t = setTimeout(() => setPaso((p) => p + 1), 2200);
@@ -1925,6 +1958,11 @@ function Ticket({ n, cerrar }) {
         </div>
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase" }}>Orden</div>
         <div className="disp" style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px" }}>#{n}</div>
+        {elegido && (
+          <div className="mono" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 11, color: C.textMuted, marginTop: -12, marginBottom: 20 }}>
+            <elegido.icono size={13} /> {elegido.nombre}
+          </div>
+        )}
 
         <div style={{ textAlign: "left", maxWidth: 260, margin: "0 auto" }}>
           {pasos.map((p, i) => (
@@ -1977,6 +2015,7 @@ export default function QuadroCafe() {
   });
   const [verCarrito, setVerCarrito] = useState(false);
   const [ticket, setTicket] = useState(null);
+  const [metodoPago, setMetodoPago] = useState(null);
   const [lote, setLote] = useState(FINCAS[0]);
   const [taza, setTaza] = useState(TAZAS[1]);
   const [medios, setMedios] = useState(MEDIOS_INICIALES);
@@ -2110,9 +2149,9 @@ export default function QuadroCafe() {
           {verCarrito && (
             <Carrito carrito={carrito} lote={lote} taza={taza}
               cerrar={() => setVerCarrito(false)} quitar={quitar}
-              confirmar={() => { setTicket(Math.floor(100 + Math.random() * 800)); setVerCarrito(false); setCarrito([]); }} />
+              confirmar={(metodo) => { setMetodoPago(metodo); setTicket(Math.floor(100 + Math.random() * 800)); setVerCarrito(false); setCarrito([]); }} />
           )}
-          {ticket && <Ticket n={ticket} cerrar={() => setTicket(null)} />}
+          {ticket && <Ticket n={ticket} metodo={metodoPago} cerrar={() => setTicket(null)} />}
         </div>
       </div>
     </ThemeCtx.Provider>
