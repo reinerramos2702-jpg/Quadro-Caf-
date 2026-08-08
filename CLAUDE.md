@@ -43,7 +43,7 @@ Current confirmed-real data inventory (as of the v3 pass):
 - Menu (`MENU`): real prices, categories (Filtrado/Espresso/Frío/Panadería/Postres), tags.
 - Equipo (`EQUIPO`): Comandante C40, AeroPress, Sifón de vacío, Copas de perfil (Pinot/Aroma/Barrel).
 - Location/contact: address, hours, Instagram — from `docs/HANDOFF.md`, rendered on Inicio.
-- Still placeholder/unconfirmed: Quadro Club tier thresholds/points math, exact loyalty pricing, Academia lesson copy (plausible but not owner-verified), the geometry-simulator formula (a reasonable model, not lab-measured).
+- Still placeholder/unconfirmed: Quadro Club tier thresholds/points math, exact loyalty pricing, Academia lesson copy (plausible but not owner-verified), the geometry-simulator formula (a reasonable model, not lab-measured), and `METODOS_PAGO` (Efectivo/Pago móvil/Zelle/Transferencia) — a reasonable default list for a Venezuelan business, not owner-confirmed; no specific bank/phone/account data was invented for any of them (the cart just says "datos en caja al confirmar").
 
 ## Images
 
@@ -56,4 +56,4 @@ Full asset library (renders + real photos, ~80 files) lives in the Drive folder 
 
 ## Out of scope / not yet built
 
-React Native migration, Supabase (auth/orders/real email capture), real in-app payments, CRM export integration, Higgsfield avatar videos (would replace the text/audio induction player in Fincas). See `docs/HANDOFF.md` for the original list — still accurate.
+React Native migration, CRM export integration, Higgsfield avatar videos (would replace the text/audio induction player in Fincas). See `docs/HANDOFF.md` for the original list, though it's now stale on two points: Supabase is live (Admin Panel + real-time Carta, see `memoria.md`), and checkout has a payment-**method** picker (Efectivo/Pago móvil/Zelle/Transferencia, `METODOS_PAGO` in `App.jsx`) — the cart tells the barista how the customer intends to pay, it does not process a real charge. An actual payment gateway (Stripe or similar, with a real merchant account and PCI scope) is still out of scope — confirmed explicitly with the owner, not to be added without asking again.
