@@ -476,10 +476,10 @@ function Inicio({ ir, lote }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
-      <button onClick={() => ir("club")} className="press tapfx quadro-frame rise" style={{
+      <button onClick={() => ir("club")} className="press tapfx rise" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
         width: "calc(100% - 40px)", margin: "12px 20px 0", textAlign: "left", cursor: "pointer",
-        border: `1px solid ${C.brandAlt}`, borderRadius: 16, borderBottomRightRadius: 0, padding: "13px 16px",
+        border: `1px solid ${C.brandAlt}`, borderRadius: 16, padding: "13px 16px",
         background: `linear-gradient(120deg, ${C.brandAlt}26, ${C.card})`, color: C.text,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
