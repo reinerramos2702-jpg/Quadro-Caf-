@@ -935,57 +935,21 @@ function Laboratorio({ onBack }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <div className="rise" style={{
-        width: "calc(100% - 40px)", margin: "0 20px", height: 260, borderRadius: 20,
-        background: C.card, border: `1px solid ${C.line}`, overflow: "hidden", position: "relative",
-      }}>
-        {/* eslint-disable-next-line react/no-unknown-property */}
-        <model-viewer
-          src="/models/espiral.glb"
-          alt="Espiral geométrica de vertido — modelo 3D Quadro Café"
-          camera-controls
-          disable-zoom
-          auto-rotate
-          rotation-per-second="16deg"
-          interaction-prompt="none"
-          camera-orbit="0deg 75deg 115%"
-          shadow-intensity="1"
-          shadow-softness=".8"
-          exposure="1.15"
-          style={{
-            width: "100%", height: "100%", padding: 8,
-            "--poster-color": "transparent", backgroundColor: "transparent",
-          }}
-        />
-        <span className="mono" style={{
-          position: "absolute", bottom: 10, left: 16, fontSize: 9.5, letterSpacing: ".14em",
-          color: C.textMuted, pointerEvents: "none",
-        }}>Espiral · gira para explorar</span>
-      </div>
       <Header sub="Geometría de extracción" titulo="Laboratorio" onBack={onBack} />
       <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
         Mueve la ruta del agua y mira cómo se desplaza el perfil. Lo mismo que hace la máquina, en tu mano.
       </p>
 
+      {/* Un solo elemento 3D real (espiral.glb + tubo procedural que
+         responde a vueltas/radio/prog) — antes eran dos cosas separadas
+         (un <model-viewer> decorativo arriba, un SVG plano abajo con el
+         propio simulador); se fusionaron para eliminar la duplicación. */}
       <div style={{ margin: "0 20px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
-        <div style={{ display: "grid", placeItems: "center", position: "relative" }}>
-          <svg width={210} height={210} viewBox="0 0 200 200">
-            <defs>
-              <radialGradient id="lecho">
-                <stop offset="0%" stopColor={C.brandAlt} stopOpacity=".25" />
-                <stop offset="100%" stopColor={C.brandAlt} stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle cx="100" cy="100" r="92" fill="url(#lecho)" stroke={C.line} />
-            <circle cx="100" cy="100" r="60" fill="none" stroke={C.line} strokeDasharray="2 6" />
-            <circle cx="100" cy="100" r="30" fill="none" stroke={C.line} strokeDasharray="2 6" />
-            <path d={spiralPath(vueltas, 280, radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
-            <path d={spiralPath(vueltas, 280, radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="3" strokeLinecap="round" />
-            <circle r="5" fill={C.brandAlt}
-              cx={100 + Math.cos(prog * vueltas * Math.PI * 2) * (86 * radio * prog)}
-              cy={100 + Math.sin(prog * vueltas * Math.PI * 2) * (86 * radio * prog)} />
-          </svg>
-          {corriendo && <span className="drip" style={{ position: "absolute", top: 6, width: 3, height: 12, borderRadius: 99, background: C.brand }} />}
+        <div style={{ display: "grid", placeItems: "center" }}>
+          <Suspense fallback={<div style={{ width: 230, height: 230 }} />}>
+            <EspiralTubo3D vueltas={vueltas} radio={radio} prog={prog} tam={230}
+              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
+          </Suspense>
         </div>
 
         <button onClick={() => setCorriendo(true)} className="press" style={{
