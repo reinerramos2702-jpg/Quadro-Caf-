@@ -516,20 +516,48 @@ function Inicio({ ir, lote }) {
         <ChevronRight size={16} color={C.textMuted} />
       </button>
 
-      <div className="rise" style={{
-        position: "relative", padding: "26px 20px 8px", overflow: "hidden",
-        backgroundImage: `linear-gradient(180deg, ${C.surface}CC, ${C.surface}), url(${heroDispenser})`,
-        backgroundSize: "cover", backgroundPosition: "center",
-      }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
-          Barra abierta · 7:00 a 20:00
+      <div className="rise" style={{ position: "relative", padding: "26px 20px 8px", overflow: "hidden", minHeight: 300 }}>
+        {/* Hero 3D: mismo modelo que Lab (public/models/espiral.glb — el .glb
+           reenviado por el dueño resultó ser idéntico byte a byte al que ya
+           estaba en el repo, así que se reusa en vez de duplicar 7MB),
+           orbitando solo como fondo decorativo. Sin camera-controls a
+           propósito — "sin interacción" — reemplaza el JPG estático
+           hero-dispenser.jpg que había antes. No se tocó escala/posición
+           del modelo (nada que ajustar: model-viewer autoencuadra por
+           bounding sphere), solo se alejó un poco la cámara del encuadre
+           automático (mismo criterio que el fix de Lab) para no recortar
+           bordes mientras gira. */}
+        {/* eslint-disable-next-line react/no-unknown-property */}
+        <model-viewer
+          src="/models/espiral.glb"
+          alt=""
+          aria-hidden="true"
+          auto-rotate
+          rotation-per-second="9deg"
+          interaction-prompt="none"
+          camera-orbit="0deg 75deg 115%"
+          shadow-intensity="0.9"
+          exposure="1.1"
+          style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none",
+            "--poster-color": "transparent", backgroundColor: "transparent",
+          }}
+        />
+        <div aria-hidden style={{
+          position: "absolute", inset: 0,
+          background: `linear-gradient(180deg, ${C.surface}CC, ${C.surface})`,
+        }} />
+        <div style={{ position: "relative" }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
+            Barra abierta · 7:00 a 20:00
+          </div>
+          <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
+            El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
+          </h1>
+          <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
+            Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
+          </p>
         </div>
-        <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
-          El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
-        </h1>
-        <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
-          Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
-        </p>
       </div>
 
       <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
