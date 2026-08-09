@@ -8,6 +8,18 @@ Se detectó que la carpeta local de trabajo real (`C:\Users\RAI Agency\Documents
 
 Se configuró un hook global `PostToolUse` (`~/.claude/settings.json` → `~/.claude/hooks/auto-commit.sh`) que commitea localmente (sin push) cada archivo que Claude Code escribe/edita, en cualquier proyecto de esta máquina — documentado en `~/.claude/skills/auto-save-repo/SKILL.md`.
 
+## Ronda 2 del checklist — feedback de producción (2026-08-09)
+
+El dueño probó la preview del batch anterior y reportó 6 cosas a corregir, todo en `fix/checklist-batch`:
+
+- **Lab + comparador de rutas de Inicio, un solo elemento 3D real**: `three` se agregó como dependencia directa (reusando la entrada `three@0.183.2` que ya estaba resuelta en `package-lock.json` como peer de `@google/model-viewer` — sin `npm install`, sin inventar hashes). Nuevo `src/lib/espiral3d.jsx`: tubo procedural (misma fórmula que `spiralPath`, en 3D) + `espiral.glb` como base, cargado bajo demanda (`React.lazy`, chunk propio `espiral3d-*.js`, no infla el bundle principal). Reemplaza: el `<model-viewer>` decorativo + el SVG interactivo de Laboratorio (ahora un solo `EspiralTubo3D` respondiendo a vueltas/radio/prog), el SVG del comparador de rutas en Inicio (mismo componente, `prog=1`), y el hero de Inicio (`EspiralHero`, cámara orbitando + espiral encendida con colores de marca en vez del modelo solo apagado — directamente ataca el problema de contraste reportado). `@google/model-viewer` quedó sin uso — se sacó su import de `main.jsx` (el paquete queda declarado en package.json pero sin ejecutarse).
+- **Escala/posición del modelo**: a diferencia de un intento anterior (otra sesión, modelo distinto `dripper.glb`, nunca llegó a esta rama) que afinaba escala/posición a mano con Playwright, acá no hay navegador disponible — se implementó `encuadrarModelo()`: calcula la caja contenedora real del `.glb` cargado y lo centra/escala a un radio objetivo, así no depende de adivinar las unidades/pivote del archivo.
+- **Notch "pico de montaña" eliminado de toda la app**: se quitó `.quadro-frame` (la clase CSS) y sus 6 usos (`borderBottomRightRadius:0` + clip-path) — decisión explícita del dueño de retirar el motivo, documentada en `CLAUDE.md`.
+- **Bug de tildes/ñ en VIOLA — causa real identificada**: VIOLA es una fuente unicase (de logo) sin tildes/ñ; `.disp*` nunca forzaba `text-transform`, así que un acento en minúscula real ("café", "Triángulo de Mocotíes") caía a Fraunces en su minúscula real — de ahí que se viera "en otra tipografía" en medio de letras que ya se ven en caja alta. Fix: `text-transform:uppercase` en las 4 clases `.disp*` (sumado al `font-size-adjust:from-font` de la ronda anterior). `.mono/.label/.micro` (Nexa) ya tenían uppercase, no se tocaron más allá de lo ya hecho.
+- **Badges ovalados descentrados**: el patrón correcto ya existía en el propio código (badge del contador del carrito, `display:grid, placeItems:center`) — se aplicó el mismo patrón (`inline-grid`) a los 4 badges de texto que no lo tenían (tag de producto, "Agotado hoy", notas de finca, contador del lightbox de Estudio).
+
+**Verificado**: build de Cloudflare limpio (`npm install` resolvió `three` sin fricción — no fue necesario tocar más que el lockfile a mano), bundle principal bajó de ~1.5MB a ~460KB (three.js quedó en su propio chunk lazy, confirmado por separado). No se pudo verificar visualmente — sin navegador Chrome conectado en este entorno en ninguna de las dos rondas.
+
 ## v1 → v2 (scaffold + imágenes reales)
 
 - El repo empezó vacío (solo `README.md`); el componente `QuadroCafe` nunca había sido comiteado.
