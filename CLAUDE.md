@@ -32,7 +32,7 @@ Every component reads colors via `useTheme()` (a `ThemeCtx` React context) — n
 
 Typography: `Fraunces` (variable, opsz axis) for display/headers (`.disp`, `.script`, and the `.disp-xl`/`.disp-l`/`.disp-m` scale), `Inter Tight` for body and for labels (`.mono`/`.label`/`.micro` — uppercase, tracked; despite the class name `.mono` this is not monospace, kept for backwards compat with existing markup). This replaced Cormorant Garamond/Archivo/IBM Plex Mono in the v4 pass — still an approximation of quadrocafe.com's real logo lettering, swap in the real font file if the owner provides it.
 
-**Marco Quadro**: the brand's signature visual motif — a corner notch (`.quadro-frame` CSS class, `clip-path` cutting the bottom-right corner) echoing the mountain-peak notch in the real logo. Applied only to brand-content containers (product cards in Menu, finca/lote cards in Fincas) — never to system chrome (nav bar, modals, form fields, buttons). Don't apply it indiscriminately.
+**Marco Quadro (retired 2026-08-09)**: used to be a corner notch (`.quadro-frame` CSS class, `clip-path` cutting the bottom-right corner) applied to product/finca/lote cards, echoing the mountain-peak notch in the real logo. The owner asked to remove it everywhere — all cards now use plain, fully-rounded corners (`borderRadius` on all four corners, no `clip-path`, no `borderBottomRightRadius: 0` override). `.quadro-frame` no longer exists in the CSS; don't reintroduce it.
 
 ## Real-data policy
 
