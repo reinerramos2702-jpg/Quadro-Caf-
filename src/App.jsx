@@ -783,8 +783,8 @@ function Fincas({ lote, setLote, onBack }) {
       )}
 
       {!comparar && (
-        <div className="pop quadro-frame" key={lote.id} style={{
-          margin: "0 20px", borderRadius: 22, borderBottomRightRadius: 0, overflow: "hidden",
+        <div className="pop" key={lote.id} style={{
+          margin: "0 20px", borderRadius: 22, overflow: "hidden",
           border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
         }}>
           <div style={{ position: "relative", height: 216, display: "grid", placeItems: "center" }}>
