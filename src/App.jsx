@@ -949,11 +949,12 @@ function Laboratorio({ onBack }) {
           auto-rotate
           rotation-per-second="16deg"
           interaction-prompt="none"
+          camera-orbit="0deg 75deg 115%"
           shadow-intensity="1"
           shadow-softness=".8"
           exposure="1.15"
           style={{
-            width: "100%", height: "100%", padding: 22,
+            width: "100%", height: "100%", padding: 8,
             "--poster-color": "transparent", backgroundColor: "transparent",
           }}
         />
