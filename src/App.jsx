@@ -66,15 +66,29 @@ function buildCss(C) {
 ${FONTS}
 *{box-sizing:border-box}
 .qc{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:300;color:${C.text};background:${C.surface}}
-.disp{font-family:'VIOLA','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto}
+/* font-size-adjust:from-font en todas las clases con fallback (VIOLA→Fraunces,
+   Nexa→Inter Tight/system-ui): VIOLA y Nexa no traen tildes/ñ (ver comentario
+   arriba de @font-face), así que esos glifos puntuales caen al siguiente
+   font-family del stack. Sin esto, el navegador dibuja el glifo de fallback
+   a su propio x-height/cap-height — que no coincide con el de VIOLA/Nexa —
+   así que dentro de un texto en mayúscula (.mono/.label/.micro, o cualquier
+   .disp* forzado a uppercase) una tilde o ñ se ve chica y como fuera de
+   registro, casi como si no hubiera heredado el uppercase/tamaño del resto
+   (sí los hereda — text-transform y font-size son propiedades del elemento,
+   no de la fuente — es la métrica del glifo de reemplazo la que no calza).
+   from-font le pide al navegador reescalar el fallback para igualar el
+   tamaño percibido de la fuente principal. Soporte: Chromium/Firefox
+   recientes; en motores sin soporte no rompe nada, sigue el comportamiento
+   previo. */
+.disp{font-family:'VIOLA','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto;font-size-adjust:from-font}
 .script{font-family:'Fraunces',serif;font-style:italic;font-weight:600}
-.mono{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.disp-xl{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0}
-.disp-l{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0}
-.disp-m{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0}
-.body-l{font-family:'Nexa','Inter Tight',sans-serif;font-weight:300;font-size:17px;line-height:26px}
-.label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
-.micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase}
+.mono{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
+.disp-xl{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0;font-size-adjust:from-font}
+.disp-l{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0;font-size-adjust:from-font}
+.disp-m{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0;font-size-adjust:from-font}
+.body-l{font-family:'Nexa','Inter Tight',sans-serif;font-weight:300;font-size:17px;line-height:26px;font-size-adjust:from-font}
+.label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
+.micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;font-size-adjust:from-font}
 .quadro-frame{clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
 .qc-scroll::-webkit-scrollbar{width:0;height:0}
 @keyframes qc-spiral-enter{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
