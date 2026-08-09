@@ -549,9 +549,9 @@ function Inicio({ ir, lote }) {
 
       <div className="slide" style={{ margin: "16px 20px 0" }}>
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".2em", color: C.textMuted, textTransform: "uppercase", marginBottom: 8 }}>Lote en barra hoy</div>
-        <button onClick={() => ir("fincas")} className="press tapfx quadro-frame" style={{
+        <button onClick={() => ir("fincas")} className="press tapfx" style={{
           width: "100%", textAlign: "left", cursor: "pointer", border: `1px solid ${C.line}`,
-          borderRadius: 18, borderBottomRightRadius: 0, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
+          borderRadius: 18, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
