@@ -622,9 +622,9 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
           const open = abierto === m.id;
           const agotado = m.disponible === false;
           return (
-            <div key={m.id} className="rise quadro-frame" style={{
+            <div key={m.id} className="rise" style={{
               animationDelay: `${i * 45}ms`, background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
-              borderRadius: 16, borderBottomRightRadius: 0, padding: 14, marginBottom: 10, transition: "border-color .25s",
+              borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
               opacity: agotado ? .55 : 1,
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
