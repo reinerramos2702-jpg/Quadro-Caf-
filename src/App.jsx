@@ -11,7 +11,6 @@ import { supabase } from "./lib/supabase";
 import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
-import heroDispenser from "./assets/hero-dispenser.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
 import violaFont from "./assets/fonts/VIOLA.otf";
