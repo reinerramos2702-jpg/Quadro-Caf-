@@ -493,35 +493,22 @@ function Inicio({ ir, lote }) {
       </button>
 
       <div className="rise" style={{ position: "relative", padding: "26px 20px 8px", overflow: "hidden", minHeight: 300 }}>
-        {/* Hero 3D: mismo modelo que Lab (public/models/espiral.glb — el .glb
-           reenviado por el dueño resultó ser idéntico byte a byte al que ya
-           estaba en el repo, así que se reusa en vez de duplicar 7MB),
-           orbitando solo como fondo decorativo. Sin camera-controls a
-           propósito — "sin interacción" — reemplaza el JPG estático
-           hero-dispenser.jpg que había antes. No se tocó escala/posición
-           del modelo (nada que ajustar: model-viewer autoencuadra por
-           bounding sphere), solo se alejó un poco la cámara del encuadre
-           automático (mismo criterio que el fix de Lab) para no recortar
-           bordes mientras gira. */}
-        {/* eslint-disable-next-line react/no-unknown-property */}
-        <model-viewer
-          src="/models/espiral.glb"
-          alt=""
-          aria-hidden="true"
-          auto-rotate
-          rotation-per-second="9deg"
-          interaction-prompt="none"
-          camera-orbit="0deg 75deg 115%"
-          shadow-intensity="0.9"
-          exposure="1.1"
-          style={{
-            position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none",
-            "--poster-color": "transparent", backgroundColor: "transparent",
-          }}
-        />
+        {/* Hero 3D: mismo modelo que Lab (public/models/espiral.glb) más la
+           espiral encendida con los colores de marca, orbitando solo, sin
+           interacción, de fondo. Reemplaza el <model-viewer> de la primera
+           pasada — ese mostraba solo el modelo apagado y se perdía contra
+           el fondo en ambos temas; la espiral con brillo (igual que en Lab
+           y en el comparador de rutas de abajo, mismo componente) es lo
+           que le da presencia sin depender de afinar luces a ciegas. */}
+        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+          <Suspense fallback={null}>
+            <EspiralHero vueltas={4.2} radio={1} width={340} height={300}
+              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
+          </Suspense>
+        </div>
         <div aria-hidden style={{
           position: "absolute", inset: 0,
-          background: `linear-gradient(180deg, ${C.surface}CC, ${C.surface})`,
+          background: `linear-gradient(180deg, ${C.surface}99, ${C.surface})`,
         }} />
         <div style={{ position: "relative" }}>
           <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
