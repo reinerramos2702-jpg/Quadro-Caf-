@@ -1210,6 +1210,7 @@ function EstudioLightbox({ medio, total, index, cerrar, mover }) {
           <span className="mono" style={{
             fontSize: 10, color: C.textMuted, letterSpacing: ".1em", background: C.card,
             border: `1px solid ${C.line}`, borderRadius: 99, padding: "5px 10px",
+            display: "inline-grid", placeItems: "center",
           }}>{index + 1} / {total}</span>
           <button onClick={cerrar} className="press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
         </div>
