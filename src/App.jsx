@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useContext, createContext } from "react";
+import React, { useState, useEffect, useRef, useMemo, useContext, createContext, Suspense, lazy } from "react";
 import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
