@@ -2,6 +2,12 @@
 
 Registro corrido de decisiones y estado, para que cualquier sesión de Claude Code futura (o Reiner) pueda retomar sin releer todo el historial de chat.
 
+## Sistema anti-pérdida (2026-08-09)
+
+Se detectó que la carpeta local de trabajo real (`C:\Users\RAI Agency\Documents\RAI Agency\App's\Quadro Cafe`, con `.git`) es **distinta** de la ruta OneDrive que el dueño usa como referencia (`C:\Users\RAI Agency\OneDrive\Documentos\RAI Agency\App's\Quadro Cafe`, sin `.git` — solo contiene `_incoming/` con assets/checklist). Confirmado con `git rev-parse --show-toplevel`. Ver PR del batch de checklist para el detalle completo.
+
+Se configuró un hook global `PostToolUse` (`~/.claude/settings.json` → `~/.claude/hooks/auto-commit.sh`) que commitea localmente (sin push) cada archivo que Claude Code escribe/edita, en cualquier proyecto de esta máquina — documentado en `~/.claude/skills/auto-save-repo/SKILL.md`.
+
 ## v1 → v2 (scaffold + imágenes reales)
 
 - El repo empezó vacío (solo `README.md`); el componente `QuadroCafe` nunca había sido comiteado.
