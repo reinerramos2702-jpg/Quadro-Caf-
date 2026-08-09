@@ -706,9 +706,9 @@ function FichaLote({ lote, compact, titulo }) {
   const acidez = Math.round(lote.altura / 26);
   const cuerpo = lote.proceso.includes("Honey") ? 80 : 58;
   return (
-    <div className="quadro-frame" style={{
+    <div style={{
       flex: compact ? 1 : "initial", minWidth: 0, background: C.card, border: `1px solid ${C.line}`,
-      borderRadius: compact ? 14 : 18, borderBottomRightRadius: 0, padding: compact ? 12 : 16,
+      borderRadius: compact ? 14 : 18, padding: compact ? 12 : 16,
     }}>
       {titulo && (
         <div className="disp" style={{ fontSize: 14, lineHeight: 1.15, marginBottom: 8 }}>{titulo}</div>
