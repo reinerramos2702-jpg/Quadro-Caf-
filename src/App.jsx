@@ -538,10 +538,12 @@ function Inicio({ ir, lote }) {
 
       <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          <svg key={geo.id} width={132} height={132} viewBox="0 0 200 200" style={{ flexShrink: 0 }} className="spiral-enter">
-            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, 1)} fill="none" stroke={C.brand}
-              strokeWidth="2.6" strokeLinecap="round" className="spiral-spin" />
-          </svg>
+          <div key={geo.id} style={{ flexShrink: 0 }} className="spiral-enter">
+            <Suspense fallback={<div style={{ width: 132, height: 132 }} />}>
+              <EspiralTubo3D vueltas={geo.vueltas} radio={geo.radio} prog={1} tam={132}
+                colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
+            </Suspense>
+          </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="mono" style={{ fontSize: 10, color: C.brandAlt, letterSpacing: ".16em", textTransform: "uppercase" }}>{geo.metodo}</div>
             <div className="disp" style={{ fontSize: 19, margin: "4px 0 10px" }}>{geo.nombre}</div>
