@@ -15,6 +15,11 @@ import violaFont from "./assets/fonts/VIOLA.otf";
 import nexaBoldFont from "./assets/fonts/Nexa-Bold.otf";
 import nexaLightFont from "./assets/fonts/Nexa-Light.otf";
 
+// three.js pesa varios cientos de KB — se carga bajo demanda (chunk propio,
+// se descarga solo cuando alguien abre Inicio o Lab, no bloquea el resto).
+const EspiralTubo3D = lazy(() => import("./lib/espiral3d.jsx"));
+const EspiralHero = lazy(() => import("./lib/espiral3d.jsx").then((m) => ({ default: m.EspiralHero })));
+
 /* ============================================================
    QUADRO CAFÉ — v4 "alta gama"
    Dos temas, mismos datos reales.
