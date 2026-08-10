@@ -186,3 +186,54 @@ Además la cámara subió de ~27° a 50° de elevación: desde 27° se miraba el
 Sin extensión de Chrome disponible en este entorno, se manejó Chrome headless por CDP (driver propio, fuera del repo). Capturas de Inicio, Carta y Laboratorio en **ambos temas**, a 390×844 con `deviceScaleFactor` 2, más una hoja de prueba tipográfica a tres tamaños.
 
 `npm run build` **falla en local con un error del service worker de `vite-plugin-pwa`**: workbox escribe la ruta absoluta del proyecto sin escapar dentro de una cadena entre comillas simples, y la carpeta se llama `App's` — el apóstrofo rompe el `sw.js` generado. No tiene relación con estos cambios. Confirmado copiando el proyecto a una ruta sin apóstrofo: ahí el build termina en verde con `sw.js` y `workbox-*.js` incluidos. En Cloudflare no se da (el checkout no lleva apóstrofo). Si algún día molesta en local, la solución es renombrar la carpeta, no tocar el `vite.config.js`.
+
+## Compresión del .glb + contraste del hero en tema oscuro (2026-08-10) — rama `fix/checklist-batch`
+
+### 1. `espiral.glb`: 6,88 MB → 395 KB (17,8×)
+
+Quedaba pendiente del batch anterior. **Las texturas eran el peso, no la geometría**: 5,85 MB en cuatro mapas de 2048×2048 contra 1,04 MB de malla, para un modelo que se dibuja a 230 px en Lab, 132 px en la tarjeta de Inicio y 340 px en el hero — con DPR 2 son ~460 px físicos como máximo, o sea entre 4 y 16 veces menos de lo que la textura traía.
+
+`scripts/comprimir-espiral-glb.mjs` (`npm run modelo:comprimir`), con `@gltf-transform` + `sharp`:
+- Texturas a 512² en WebP. Los mapas de color con pérdida (calidad 82); quedaron en 7 KB y 4 KB porque además son casi uniformes.
+- `EXT_meshopt_compression` en la geometría (weld + cuantización + encode). Conteo de triángulos idéntico antes y después: **28.554 en ambos**.
+- `prune()` eliminó el `emissiveTexture`: se verificó que era **negro puro en todos sus píxeles** (min = max = 0 en los tres canales), así que no aportaba nada y quitarlo es exactamente equivalente. 65 KB menos.
+
+**Elección de calidad del normal map, medida y no a ojo.** Es el mapa que dibuja el relieve de las aristas, o sea el detalle que había que conservar, así que se compararon tres variantes contra el original midiendo diferencia por píxel **en 8 azimuts de cámara** — el hero orbita, y los artefactos de un normal map con pérdida se delatan al cambiar el ángulo de luz, no en una pose fija:
+
+| variante | tamaño | dif. media | dif. máx |
+|---|---|---|---|
+| WebP sin pérdida | 641 KB | 1,19/255 | 190 |
+| **WebP calidad 95** | **395 KB** | **1,97/255** | **194** |
+| WebP calidad 90 | 375 KB | 2,10/255 | 197 |
+
+Ninguna muestra bandeado ni facetas en ningún ángulo. La diferencia de fondo (~1/255) ya la ponen los mapas de color y la cuantización, no el normal map. Se eligió calidad 95: 0,8/255 extra sobre el lossless, muy por debajo del umbral perceptible, a cambio de 246 KB menos en el asset de la primera pantalla. Constante `NORMAL_CALIDAD` en el script si alguna vez hay que ser conservador.
+
+**Dos cosas a no romper:**
+- Hubo que registrar `EXT_texture_webp` en el `NodeIO`, si no el `.glb` sale con imágenes WebP sin declarar la extensión que las habilita — fuera de spec.
+- El loader ahora **necesita** `setMeshoptDecoder` (`three/examples/jsm/libs/meshopt_decoder.module.js`): la extensión va declarada como *required*, sin el decoder el modelo no carga. Meshopt y no Draco por la razón ya documentada en el repo: el decoder de Draco de three.js referencia sus `.wasm`/`.js` con `new URL(..., import.meta.url)` y Vite los empaqueta duplicados (~1 MB muerto que el service worker precachea); el de meshopt lleva el WASM embebido (~29 KB).
+
+Costo real medido en el bundle: el chunk `espiral3d` pasa de 613,78 kB a 643,63 kB (**+29,85 kB**, el decoder) contra **−6,5 MB** de modelo.
+
+### 2. El cono del hero de Inicio no se distinguía en tema oscuro
+
+**Por qué no bastaba con `material.color`.** En three.js ese color **multiplica** al `baseColorTexture`, y la textura de este cono es un gris casi uniforme y muy oscuro: promedio **31/255**, máximo 95. Multiplicar solo puede oscurecer — ningún color habría aclarado el modelo mientras el mapa siguiera puesto. Por eso `tenirModelo()` quita `map` y deja que el color se aplique sobre blanco. **No se pierde relieve**: el volumen lo dibujan el normal map y el metallic-roughness, que no se tocan, y el baseColor que se quita era casi plano de todos modos (rango 5–95) — aportaba tono, no detalle.
+
+Tokens nuevos en `PALETAS` (nada hardcodeado en componentes):
+- `modelo` — tinte del cono. `claro: null` (sin tinte: sobre fondo crema ya contrasta de sobra), `oscuro: "#CFC3AE"`, un crema deliberadamente más apagado que `text` (#F2EDE3) porque el cono es fondo detrás del titular y no debe competir.
+- `veloHero` — fuerza del velo que separa cono y titular, `claro: "cc"` / `oscuro: "b3"`. **Los dos temas tienen el problema opuesto**: en claro un modelo oscuro sobre fondo claro es el caso de MÁS contraste y el velo tiene que ser fuerte; en oscuro el cono apenas se despega del fondo y taparlo al 80 % lo borraba. Con `cc` fijo en ambos (como quedó el batch anterior) el tema oscuro se comía el arreglo.
+
+El tinte se pasa como prop (`colorModelo`) desde `App.jsx`, respetando que `espiral3d.jsx` recibe todos los colores por props y nunca toca `ThemeCtx`. Solo lo usa el hero de Inicio: el simulador de Lab y la tarjeta comparadora viven sobre `C.card`, donde el cono negro ya contrasta.
+
+**Medición de contraste** (luminancia en la franja del hero, percentiles; p20 ≈ fondo liso, p60 ≈ cono, p95 ≈ titular):
+
+| | fondo (p20) | cono (p60) | titular (p95) |
+|---|---|---|---|
+| oscuro antes | 14,0 | **17,0** | 237,3 |
+| oscuro después | 14,0 | **51,1** | 237,3 |
+| claro antes | 187,8 | 206,1 | 219,2 |
+| claro después | 186,9 | 206,1 | 219,2 |
+
+En oscuro el cono pasa de 3 niveles sobre el fondo (relación 1,02:1, invisible) a 37 (1,29:1, legible) **sin mover un solo nivel del titular**. En claro no cambia nada, que era la condición. Se descartó de paso una variante con velo `b3` en ambos temas: en claro hundía el fondo de 187,8 a 171,8 y el cono empezaba a competir con "EL SABOR / TIENE UNA".
+
+### Verificación
+Capturas headless de Inicio y Lab en ambos temas, comparación A/B del modelo original contra el comprimido a 230 y 340 px, y el barrido de 8 azimuts descrito arriba. `npm run build` termina en verde con `sw.js` (desde ruta sin apóstrofo — ver la nota del batch anterior sobre `App's`). Los archivos temporales de prueba (`public/__ab-*`, `scripts/__*-tmp.mjs`) se eliminaron.
