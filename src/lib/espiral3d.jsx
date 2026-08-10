@@ -393,7 +393,7 @@ export function EspiralHero({ vueltas = 4.2, radio = 1, colorLinea, colorBrand, 
       const ang = ((t - t0) % HERO_VUELTA_MS) / HERO_VUELTA_MS * Math.PI * 2;
       const r = Math.cos(CAM_ELEVACION) * CAM_DISTANCIA;
       camera.position.set(Math.sin(ang) * r, Math.sin(CAM_ELEVACION) * CAM_DISTANCIA, Math.cos(ang) * r);
-      camera.lookAt(0, 0, 0);
+      camera.lookAt(0, CAM_MIRA_Y, 0);
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
     };
