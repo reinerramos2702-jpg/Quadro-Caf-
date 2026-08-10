@@ -11,10 +11,21 @@
        a solid placeholder background while the image loads
      - width / height: native pixel dimensions of the source JPEG
 
-   Regenerate the *.webp files with the sharp-based script used for
-   this pass (see git history) if the source JPGs ever change —
-   this file only wires up the already-generated outputs, it does
-   not generate them.
+   Regenerate the *.webp variants with `npm run assets:generar <archivo>`
+   whenever a source image changes or a new one arrives — that script
+   emits the three WebP widths, reads the dominant color and prints the
+   entry to paste here. This file only wires up already-generated
+   outputs, it does not generate them.
+
+   RESERVED SLOTS (`placeholder: true`)
+   An entry may instead reserve a slot that has no artwork yet: it
+   declares only `color` + `width`/`height` (the intended box), no image
+   sources. <ResponsiveImg> then paints a solid block of exactly the
+   final geometry, so layout is already correct and dropping the real
+   image in later changes nothing else. To fill one: add the imports,
+   swap `placeholder: true` for the four source fields, and set
+   width/height to the file's native size. Nothing at the call sites
+   changes.
    ============================================================ */
 
 import heroDispenserJpg from "../assets/hero-dispenser.jpg";
