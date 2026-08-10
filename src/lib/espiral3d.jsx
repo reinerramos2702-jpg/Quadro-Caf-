@@ -142,8 +142,11 @@ class EspiralCurve extends THREE.Curve {
 }
 
 function crearLuces(scene, { contraluz = false } = {}) {
-  const ambiental = new THREE.AmbientLight(0xffffff, 0.7);
-  const sol = new THREE.DirectionalLight(0xffffff, 1.05);
+  // Ambiental baja a propósito: el relleno ahora lo pone el entorno IBL
+  // (montarEntorno). Con la ambiental que había antes, sumada al entorno,
+  // todo quedaba sobreexpuesto.
+  const ambiental = new THREE.AmbientLight(0xffffff, 0.25);
+  const sol = new THREE.DirectionalLight(0xffffff, 0.8);
   sol.position.set(70, 150, 90);
   scene.add(ambiental, sol);
   if (contraluz) {
