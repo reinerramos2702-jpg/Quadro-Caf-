@@ -36,9 +36,10 @@ const PALETAS = {
     brand: "#3b574c", onBrand: "#e9d8c6", deep: "#26382f",
     brandAlt: "#b5613c", onBrandAlt: "#f5efe6",
     purple: "#243b57", amarillo: "#c79a3b", warn: "#9c3b28",
-    // Tinte del cono 3D del hero de Inicio. `null` = sin tinte: el modelo
-    // conserva su propia textura, que sobre el fondo crema del tema claro ya
-    // contrasta de sobra. Ver `modelo` en el tema oscuro.
+    // Tinte del cono 3D dondequiera que aparezca (hero y comparador de
+    // Inicio, simulador de Lab). `null` = sin tinte: el modelo conserva su
+    // propia textura, que sobre los fondos claros de este tema ya contrasta
+    // de sobra. Ver `modelo` en el tema oscuro.
     modelo: null,
     // Opacidad (alfa hex, mismo idioma que el resto del archivo) del velo que
     // separa ese cono del titular. Aquí hace falta fuerte: modelo oscuro sobre
