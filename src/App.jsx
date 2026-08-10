@@ -12,6 +12,7 @@ import clubBox from "./assets/club-box.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
 import violaFont from "./assets/fonts/VIOLA.otf";
+import violaAcentosFont from "./assets/fonts-derivados/VIOLA-Acentos.otf";
 import nexaBoldFont from "./assets/fonts/Nexa-Bold.otf";
 import nexaLightFont from "./assets/fonts/Nexa-Light.otf";
 
