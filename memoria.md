@@ -270,3 +270,26 @@ El dueño pidió el mismo tinte condicional por tema que ya tenía el hero de In
 | claro (nunca tinteado) | 1,82:1 |
 
 O sea: el cono gana presencia y deja de fundirse con el fondo, pero la espiral —que es el dato del simulador— pierde separación contra él. **Queda en 1,60:1, prácticamente donde el tema claro ha estado siempre (1,82:1)**, así que no introduce un caso peor que el ya aceptado: empareja los dos temas en vez de dejar el oscuro mejor. Se le reportó el número al dueño con las opciones (tinte más apagado solo para el cono, o dejar Lab sin tinte) por si prefiere priorizar la legibilidad de la espiral sobre la consistencia.
+
+## Tinte del cono: de crema a topo medio (2026-08-10) — rama `fix/checklist-batch`
+
+El dueño eligió la opción de tinte más apagado tras ver que el crema `#CFC3AE` hundía la espiral. Objetivo: espiral-vs-cono por encima de 3:1 sin perder la separación cono-vs-fondo.
+
+**Se eligió con datos, no a ojo.** Se armó un banco (`public/__tinte.html`, temporal) que replica la escena exacta del simulador de Lab —mismas constantes, mismo IBL, misma cámara— con seis tintes, y mide las dos relaciones que compiten entre sí: subir el cono lo despega del fondo pero se come la espiral, que es el dato del simulador.
+
+| tinte | espiral/cono | cono/fondo |
+|---|---|---|
+| `#CFC3AE` (crema anterior) | 1,09 | 10,58 |
+| `#B3A695` | 1,47 | 7,85 |
+| `#9A8E80` | 1,98 | 5,77 |
+| `#877C70` | 2,55 | 4,46 |
+| **`#746A5F`** | **3,27** | **3,45** |
+| `#615950` | 4,51 | 2,48 |
+
+`#746A5F` es el único con ambas por encima de 3. Confirmado después en la app real (mismo criterio, recortando el canvas por su rect leído del DOM): **espiral/cono 3,17:1 · cono/fondo 3,47:1**.
+
+**Error de medición corregido en el camino.** Las cifras del pase anterior (1,60:1 en oscuro, 1,82:1 en claro) salieron de recortar el screenshot por una ventana estimada a ojo que caía FUERA del canvas: incluía el título "LABORATORIO" en crema (contado como cono) y el párrafo en `textMuted`, que es verdoso (contado como espiral). Además, al agregar el banner del Lab el layout bajó 120px y la ventana quedó aún más desplazada. Ahora la región se obtiene del `getBoundingClientRect()` del canvas. Con el método corregido, el crema medía **1,19:1**, no 1,60 — o sea era peor de lo reportado, y peor que el tema claro. La decisión del dueño de cambiarlo era aún más correcta de lo que sugerían los números que se le dieron.
+
+**`veloHero` (oscuro) bajó de `b3` a `8c`.** El topo llega al hero de Inicio ya atenuado por el velo, así que con `b3` la separación cono-vs-fondo caía a 1,21:1. A `8c` vuelve a **1,38:1**, sin tocar el titular: su luminancia es 237,3 en todas las variantes medidas — el velo solo mueve el cono. El tema claro no se toca (`modelo: null`, `veloHero: "cc"`).
+
+Resumen del hero de Inicio: 1,02:1 sin tinte → 1,53:1 con crema → **1,38:1 con topo**. Se cede un poco ahí, que es el precio de recuperar 3:1 en el simulador, donde la espiral es información y no decoración.
