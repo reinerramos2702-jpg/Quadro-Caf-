@@ -387,6 +387,23 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false }) {
   const asset = ASSET_MANIFEST[id];
   if (!asset) return null;
   const { objectFit, objectPosition, ...wrapperStyle } = style;
+
+  /* Slot reservado: el manifiesto declara la caja pero todavía no hay
+     imagen (ver el encabezado de assetManifest.js). Se pinta el bloque de
+     color con la geometría final para que el layout ya sea el definitivo;
+     cuando el asset entre, este componente vuelve solo al camino de
+     <picture> sin tocar el punto de uso. `role="presentation"` porque un
+     bloque de color no comunica nada — no debe anunciarse como imagen. */
+  if (asset.placeholder) {
+    return (
+      <div className={className} role="presentation" style={{
+        display: "block", overflow: "hidden", background: asset.color,
+        aspectRatio: `${asset.width} / ${asset.height}`,
+        ...wrapperStyle,
+      }} />
+    );
+  }
+
   return (
     <picture className={className} style={{
       display: "block", overflow: "hidden", background: asset.color,
