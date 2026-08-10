@@ -58,6 +58,11 @@ const PALETAS = {
     // más apagado que `text` (#F2EDE3) a propósito: el cono es fondo detrás
     // del titular, no debe competir con él.
     modelo: "#CFC3AE",
+    // Velo más suave que en claro: aquí el problema es el inverso — el cono
+    // apenas se despega del fondo, así que taparlo al 80% lo borraba. Con el
+    // tinte de arriba el titular sigue destacando igual (se midió: su
+    // luminancia no cambia, solo sube la del cono).
+    veloHero: "b3",
   },
 };
 
