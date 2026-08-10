@@ -477,6 +477,56 @@ function btnMiniStyle(C) {
 
 /* ============================ INICIO ============================ */
 
+/* Encoge el tamaño de fuente hasta que el texto quepa en UNA sola línea
+   dentro del ancho de su contenedor. Existe por el titular de Inicio:
+   "geometría." en Fraunces itálica a 44px no entra en un teléfono angosto
+   y se cortaba contra el borde derecho. Partirlo en dos líneas no es
+   opción (es la palabra que remata la frase), así que se reduce el cuerpo.
+
+   El ancho del texto es lineal respecto al font-size, así que basta con
+   medirlo una vez a `max` y escalar por la razón que falte — no hace falta
+   iterar. Se vuelve a medir cuando cambia el ancho (ResizeObserver, o sea
+   también al rotar el teléfono) y cuando terminan de cargar las webfonts,
+   porque medir con la fuente de fallback da un ancho distinto. */
+function UnaLinea({ children, max, min = 20, className, style }) {
+  const ref = useRef(null);
+  const [size, setSize] = useState(max);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const cont = el?.parentElement;
+    if (!el || !cont) return;
+
+    const medir = () => {
+      const disponible = cont.clientWidth;
+      if (!disponible) return;
+      el.style.fontSize = `${max}px`;
+      const natural = el.scrollWidth;
+      const ajustado = natural > disponible
+        ? Math.max(min, Math.floor(max * (disponible / natural)))
+        : max;
+      // Se reescribe el estilo en vez de limpiarlo: si el valor calculado
+      // no cambia, React no re-renderiza y limpiarlo dejaría el elemento
+      // sin tamaño hasta el próximo render.
+      el.style.fontSize = `${ajustado}px`;
+      setSize(ajustado);
+    };
+
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(cont);
+    document.fonts?.ready.then(medir).catch(() => {});
+    return () => ro.disconnect();
+  }, [children, max, min]);
+
+  return (
+    <span ref={ref} className={className}
+      style={{ ...style, fontSize: size, display: "inline-block", whiteSpace: "nowrap", maxWidth: "100%" }}>
+      {children}
+    </span>
+  );
+}
+
 function Inicio({ ir, lote }) {
   const { C, tema } = useTheme();
   const [geo, setGeo] = useState(GEOMETRIAS[0]);
