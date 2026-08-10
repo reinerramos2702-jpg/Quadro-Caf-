@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>body{margin:0;background:#111;display:flex;flex-wrap:wrap}canvas{border:1px solid #333}</style></head>
+<body>
+<script type="module">
+import * as THREE from '/node_modules/three/build/three.module.js';
+import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from '/node_modules/three/examples/jsm/environments/RoomEnvironment.js';
+
+const gltf = await new GLTFLoader().loadAsync('/models/espiral.glb');
+const box = new THREE.Box3().setFromObject(gltf.scene);
+const size = box.getSize(new THREE.Vector3());
+const center = box.getCenter(new THREE.Vector3());
+window.__info = { size: size.toArray(), center: center.toArray() };
+
+// 6 vistas: 3 elevaciones x (con IBL / sin IBL)
+const views = [
+  { el: 15, ibl: true }, { el: 35, ibl: true }, { el: 55, ibl: true }, { el: 80, ibl: true },
+  { el: 55, ibl: false }, { el: 80, ibl: false },
+];
+for (const v of views) {
+  const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  r.setSize(240, 240);
+  r.toneMapping = THREE.ACESFilmicToneMapping;
+  r.toneMappingExposure = 1.15;
+  document.body.appendChild(r.domElement);
+  const sc = new THREE.Scene();
+  if (v.ibl) {
+    const pmrem = new THREE.PMREMGenerator(r);
+    sc.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  }
+  sc.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.05); sun.position.set(70, 150, 90); sc.add(sun);
+  const m = gltf.scene.clone(true);
+  m.position.sub(center);
+  sc.add(m);
+  const cam = new THREE.PerspectiveCamera(38, 1, .01, 100);
+  const d = Math.max(size.x, size.y, size.z) * 2.1;
+  const rad = v.el * Math.PI / 180;
+  cam.position.set(0, Math.sin(rad) * d, Math.cos(rad) * d);
+  cam.lookAt(0, 0, 0);
+  r.render(sc, cam);
+}
+window.__done = true;
+</script>
+</body></html>
