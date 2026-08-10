@@ -65,7 +65,7 @@ const MODELO_URL = "/models/espiral.glb";
 // perfil y esconde la boca, que es donde vive la espiral; ~50° es el
 // ángulo desde el que se ve el recorrido completo dentro del cono.
 const CAM_ELEVACION = (50 * Math.PI) / 180;
-const CAM_DISTANCIA = 330;
+const CAM_DISTANCIA = 365;
 
 function cargadorEspiral() {
   return new GLTFLoader();
