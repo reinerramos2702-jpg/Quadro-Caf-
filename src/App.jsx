@@ -1043,6 +1043,12 @@ function Laboratorio({ onBack }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      {/* Banner superior, con la misma geometría que los de Carta (3.25:1).
+         Aquí los 20px laterales van en el propio componente, no heredados de
+         un wrapper con padding. `eager`: es lo primero de la pantalla. */}
+      <ResponsiveImg id="hero-dispenser" alt="Equipo de extracción Quadro Café" eager style={{
+        width: "calc(100% - 40px)", margin: "0 20px", height: 120, borderRadius: 14,
+      }} />
       <Header sub="Geometría de extracción" titulo="Laboratorio" onBack={onBack} />
       <p style={{ padding: "0 20px", fontSize: 13.5, color: C.textMuted, lineHeight: 1.5, margin: "0 0 16px" }}>
         Mueve la ruta del agua y mira cómo se desplaza el perfil. Lo mismo que hace la máquina, en tu mano.
