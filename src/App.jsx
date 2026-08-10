@@ -573,8 +573,14 @@ function Inicio({ ir, lote }) {
           <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
             Barra abierta · 7:00 a 20:00
           </div>
-          <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
-            El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
+          {/* lineHeight .88 apretaba tanto las líneas que la itálica de
+             "geometría" (ascendentes largas) chocaba con "tiene una"; el
+             tracking negativo que hereda .disp además pegaba las letras
+             entre sí. Aquí se sueltan las dos cosas. El remate va en
+             <UnaLinea> porque a 44px se salía del ancho del teléfono. */}
+          <h1 className="disp" style={{ fontSize: 44, lineHeight: 1.02, letterSpacing: ".012em", margin: "10px 0 4px" }}>
+            El sabor<br />tiene una<br />
+            <UnaLinea className="script" max={44} min={24} style={{ color: C.brand }}>geometría.</UnaLinea>
           </h1>
           <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
             Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
