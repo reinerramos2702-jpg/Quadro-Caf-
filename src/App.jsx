@@ -36,6 +36,10 @@ const PALETAS = {
     brand: "#3b574c", onBrand: "#e9d8c6", deep: "#26382f",
     brandAlt: "#b5613c", onBrandAlt: "#f5efe6",
     purple: "#243b57", amarillo: "#c79a3b", warn: "#9c3b28",
+    // Tinte del cono 3D del hero de Inicio. `null` = sin tinte: el modelo
+    // conserva su propia textura, que sobre el fondo crema del tema claro ya
+    // contrasta de sobra. Ver `modelo` en el tema oscuro.
+    modelo: null,
   },
   oscuro: {
     id: "oscuro", shell: "#07100D",
