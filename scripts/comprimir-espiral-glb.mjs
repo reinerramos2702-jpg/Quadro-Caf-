@@ -31,7 +31,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { NodeIO } from "@gltf-transform/core";
-import { EXTMeshoptCompression, KHRTextureBasisu } from "@gltf-transform/extensions";
+import { EXTMeshoptCompression, EXTTextureWebP } from "@gltf-transform/extensions";
 import { meshopt, textureCompress, dedup, prune } from "@gltf-transform/functions";
 import { MeshoptEncoder } from "meshoptimizer";
 import sharp from "sharp";
