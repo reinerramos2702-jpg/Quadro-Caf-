@@ -581,7 +581,7 @@ function Inicio({ ir, lote }) {
            titular en tema claro. */}
         <div aria-hidden style={{
           position: "absolute", inset: 0,
-          background: `linear-gradient(180deg, ${C.surface}cc, ${C.surface})`,
+          background: `linear-gradient(180deg, ${C.surface}b3, ${C.surface})`,
         }} />
         <div style={{ position: "relative" }}>
           <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
