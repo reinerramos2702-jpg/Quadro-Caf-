@@ -237,3 +237,36 @@ En oscuro el cono pasa de 3 niveles sobre el fondo (relación 1,02:1, invisible)
 
 ### Verificación
 Capturas headless de Inicio y Lab en ambos temas, comparación A/B del modelo original contra el comprimido a 230 y 340 px, y el barrido de 8 azimuts descrito arriba. `npm run build` termina en verde con `sw.js` (desde ruta sin apóstrofo — ver la nota del batch anterior sobre `App's`). Los archivos temporales de prueba (`public/__ab-*`, `scripts/__*-tmp.mjs`) se eliminaron.
+
+## Contenedores de imagen reservados + tinte del cono en Lab (2026-08-10) — rama `fix/checklist-batch`
+
+### Slots reservados: un mecanismo, no tres parches
+
+El dueño pidió contenedor de imagen para Espresso y Panadería en Carta y restaurar el banner de Laboratorio, con **placeholder de color sólido** hasta que él genere las fotos definitivas.
+
+En vez de maquetar tres divs sueltos, `assetManifest.js` ahora admite entradas con `placeholder: true` que declaran solo `color` + `width`/`height` (la caja pretendida) y ningún archivo. `ResponsiveImg` detecta esa marca y pinta un bloque sólido con la geometría final. **El punto de uso es idéntico al de una imagen real**, así que rellenar un slot no toca JSX: se agregan los imports, se cambia `placeholder: true` por los cuatro campos de fuente y listo. Los tres slots comparten la constante `BANNER = { width: 390, height: 120 }`, que es la caja real medida (columna 430 − 40 de padding).
+
+- `menu-espresso` (#6f4b32) y `menu-panaderia` (#b08b58): entradas nuevas; `CAT_IMG` pasa de 3 a 5 categorías, o sea todas tienen banner.
+- `hero-dispenser`: **se convirtió de entrada real a slot reservado**. El JPG de 1400x1011 sigue en `src/assets/` sin usar — es vertical y en una caja de 3.25:1 perdía el 78% de la imagen, así que se reemplaza por una foto encuadrada a medida en vez de recortar aquella. No rompió nada porque ningún componente lo consumía (estaba solo declarado en el manifiesto desde que se quitó el banner de Lab en `14acf93`).
+- El banner de Lab vuelve con la spec exacta de `68ab232` (`width: calc(100% - 40px)`, `margin: 0 20px`, `height: 120`, `borderRadius: 14`), antes del `<Header>`, con `eager` porque es lo primero de la pantalla.
+- El placeholder va con `role="presentation"`: un bloque de color no comunica nada y no debe anunciarse como imagen.
+
+Verificado en el navegador: los seis banners (5 categorías + Lab) miden **334x120 a viewport 390** (390x120 al tope de 430), mismo ratio, `border-radius: 14px`, `padding: 0`.
+
+**`scripts/generar-asset.mjs` (`npm run assets:generar <archivo>`)** — agregado porque el pipeline de assets se corrió una sola vez y nunca quedó script en el repo (el manifiesto se integró a mano en el Bloque 2). Emite las tres variantes WebP sin sobre-escalar, lee el color dominante y **imprime los imports y la entrada listos para pegar**; además avisa cuánto recortaría `cover` si la fuente no viene en 3.25:1. Sin esto, cada imagen nueva obligaba a reconstruir a ojo cuatro imports y una entrada.
+
+### Tinte del cono también en Lab (y en el comparador de Inicio)
+
+El dueño pidió el mismo tinte condicional por tema que ya tenía el hero de Inicio, "para consistencia visual entre ambos módulos". Se aplicó a **los dos usos de `EspiralTubo3D`** —el simulador de Lab y la tarjeta comparadora de Inicio— no solo a Lab: si el hero de Inicio va tinteado y la tarjeta que está 400px más abajo no, la inconsistencia se ve dentro del propio módulo Inicio. Ahora el cono se lee igual en las tres apariciones.
+
+**El tinte tuvo que volverse reversible.** `EspiralHero` se reconstruye entero al cambiar de tema (el tema está en sus deps), pero `EspiralTubo3D` no: su efecto de montaje solo depende de `tam`, para no rehacer la escena WebGL en cada toggle. Así que el mismo material tiene que poder volver a su estado original: `tenirModelo()` guarda `map` y `color` de origen en `material.userData.qcOriginal` la primera vez que lo toca, y con `color` nulo restaura. Se aplica desde el efecto de colores, y el `.glb` puede llegar después de un cambio de tema, así que el valor vigente se lee por referencia (`modeloRef`) en el callback de carga — con el valor del montaje se habría quedado con el tinte viejo.
+
+**Contraste medido** (espiral de menta contra el cono, aislando el cono del fondo de la tarjeta por rango de luminancia y saturación):
+
+| | espiral vs cono |
+|---|---|
+| oscuro, antes del tinte | 3,65:1 |
+| **oscuro, con tinte** | **1,60:1** |
+| claro (nunca tinteado) | 1,82:1 |
+
+O sea: el cono gana presencia y deja de fundirse con el fondo, pero la espiral —que es el dato del simulador— pierde separación contra él. **Queda en 1,60:1, prácticamente donde el tema claro ha estado siempre (1,82:1)**, así que no introduce un caso peor que el ya aceptado: empareja los dos temas en vez de dejar el oscuro mejor. Se le reportó el número al dueño con las opciones (tinte más apagado solo para el cono, o dejar Lab sin tinte) por si prefiere priorizar la legibilidad de la espiral sobre la consistencia.
