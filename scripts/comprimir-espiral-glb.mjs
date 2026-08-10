@@ -115,5 +115,5 @@ console.log(`espiral.glb  ${kb(antes)} → ${kb(despues)}  (${(100 - (despues / 
 
 for (const tex of doc.getRoot().listTextures()) {
   const img = tex.getImage();
-  console.log(`  ${tex.getName() || "(sin nombre)"}  ${tex.getMimeType()}  ${kb(img.byteLength)}${normales.has(tex) ? "  [normal, sin pérdida]" : ""}`);
+  console.log(`  ${tex.getName() || "(sin nombre)"}  ${tex.getMimeType()}  ${kb(img.byteLength)}${normales.has(tex) ? `  [normal, calidad ${NORMAL_CALIDAD}]` : ""}`);
 }
