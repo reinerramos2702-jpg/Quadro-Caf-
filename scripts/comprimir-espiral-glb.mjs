@@ -47,8 +47,11 @@ const LADO = 512;
 
 await MeshoptEncoder.ready;
 
+// EXT_texture_webp hay que registrarlo o el .glb sale con imágenes WebP sin
+// declarar la extensión que las habilita: fuera de spec, y un loader
+// estricto no sabría leerlas.
 const io = new NodeIO()
-  .registerExtensions([EXTMeshoptCompression, KHRTextureBasisu])
+  .registerExtensions([EXTMeshoptCompression, EXTTextureWebP])
   .registerDependencies({ "meshopt.encoder": MeshoptEncoder });
 
 const antes = fs.statSync(MODELO).size;
