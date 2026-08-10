@@ -40,6 +40,11 @@ const PALETAS = {
     // conserva su propia textura, que sobre el fondo crema del tema claro ya
     // contrasta de sobra. Ver `modelo` en el tema oscuro.
     modelo: null,
+    // Opacidad (alfa hex, mismo idioma que el resto del archivo) del velo que
+    // separa ese cono del titular. Aquí hace falta fuerte: modelo oscuro sobre
+    // fondo claro es el caso de MÁS contraste, y sin velo el cono compite con
+    // "EL SABOR / TIENE UNA".
+    veloHero: "cc",
   },
   oscuro: {
     id: "oscuro", shell: "#07100D",
