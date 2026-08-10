@@ -91,10 +91,14 @@ function disponerObjeto3D(obj) {
    renderer y se devuelve para poder liberarlo al desmontar. */
 function montarEntorno(renderer, scene) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = 1;
   const pmrem = new THREE.PMREMGenerator(renderer);
   const entorno = pmrem.fromScene(new RoomEnvironment(), 0.04);
   scene.environment = entorno.texture;
+  // A intensidad plena el entorno convierte el cono negro mate en plata
+  // pulida y le lava el verde al tubo. .4 deja el reflejo justo en las
+  // aristas, que es lo que le devuelve el relieve sin cambiarle el color.
+  scene.environmentIntensity = .4;
   pmrem.dispose();
   return entorno;
 }
