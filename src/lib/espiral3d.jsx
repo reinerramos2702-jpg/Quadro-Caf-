@@ -21,9 +21,8 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
       negro plano — que es exactamente lo que se veía. La versión buena
       pasaba por <model-viewer>, que SIEMPRE monta un entorno IBL neutro
       más tone mapping; aquí eso hay que pedirlo explícitamente
-      (PMREMGenerator + RoomEnvironment, ACESFilmic, exposición 1.15 — la
-      misma que tenía el <model-viewer>). Es lo que devuelve el relieve y
-      los brillos de las aristas del cono.
+      (PMREMGenerator + RoomEnvironment + ACESFilmic). Es lo que devuelve
+      el relieve y los brillos de las aristas del cono.
 
    2) ENCUADRE. Antes se escalaba el modelo por su dimensión MAYOR y se
       centraba en el origen, con la espiral en y=0: como el cono es mucho
@@ -50,7 +49,7 @@ const MODELO_RADIO = 92;
 // Radio máximo de la espiral. Tiene que ser menor que el radio del cono a
 // la altura ESPIRAL_Y para que la ruta quede DENTRO de la boca y no la
 // desborde ni al tope del slider de radio.
-const ESPIRAL_ESCALA = 68;
+const ESPIRAL_ESCALA = 58;
 // Altura del plano de la espiral, como fracción de la media altura del
 // modelo: 0 = centro del cono (donde estaba, y por eso la ruta salía por
 // las paredes), 1 = borde de la boca. .75 la apoya dentro de la boca, con
@@ -65,7 +64,7 @@ const MODELO_URL = "/models/espiral.glb";
 // perfil y esconde la boca, que es donde vive la espiral; ~50° es el
 // ángulo desde el que se ve el recorrido completo dentro del cono.
 const CAM_ELEVACION = (50 * Math.PI) / 180;
-const CAM_DISTANCIA = 365;
+const CAM_DISTANCIA = 320;
 
 function cargadorEspiral() {
   return new GLTFLoader();
