@@ -56,6 +56,8 @@ const MODELO = path.join(raiz, "public/models/espiral.glb");
 // está siempre en movimiento o de fondo: 512 no muestra diferencia a ojo y
 // divide el peso por ~16 respecto a 2048.
 const LADO = 512;
+// Calidad WebP del normal map — ver la medición en el encabezado.
+const NORMAL_CALIDAD = 95;
 
 await MeshoptEncoder.ready;
 
