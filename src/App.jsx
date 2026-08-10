@@ -68,10 +68,12 @@ const PALETAS = {
     //   #615950  espiral/cono 4.51  ·  cono/fondo  2.48
     modelo: "#746A5F",
     // Velo más suave que en claro: aquí el problema es el inverso — el cono
-    // apenas se despega del fondo, así que taparlo al 80% lo borraba. Con el
-    // tinte de arriba el titular sigue destacando igual (se midió: su
-    // luminancia no cambia, solo sube la del cono).
-    veloHero: "b3",
+    // apenas se despega del fondo, así que taparlo al 80% lo borraba.
+    // Bajó de b3 a 8c al oscurecer `modelo`: el topo llega al hero ya
+    // atenuado por este velo, y con b3 la separación contra el fondo caía a
+    // 1.21:1. A 8c vuelve a 1.38:1 sin tocar el titular — su luminancia no
+    // cambia (p95 = 237 en las tres variantes medidas), solo sube la del cono.
+    veloHero: "8c",
   },
 };
 
