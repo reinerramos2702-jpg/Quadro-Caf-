@@ -286,10 +286,13 @@ export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorB
     );
     scene.add(gota);
 
-    // Últimos valores de los sliders, para poder rearmar la curva cuando
-    // el .glb termine de cargar (llega asíncrono, después de este efecto).
+    // Últimos valores de los sliders y del tinte, para aplicarlos cuando el
+    // .glb termine de cargar (llega asíncrono, después de este efecto — y
+    // puede llegar incluso después de un cambio de tema, así que leerlos por
+    // referencia evita quedarse con el valor del montaje).
     const vueltasRef = { current: vueltas };
     const radioRef = { current: radio };
+    const modeloRef = { current: colorModelo };
 
     const loader = cargadorEspiral();
     let modelo = null;
@@ -297,6 +300,7 @@ export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorB
       if (cancelado) return;
       modelo = gltf.scene;
       const mediaAltura = encuadrarModelo(modelo, MODELO_RADIO);
+      if (modeloRef.current) tenirModelo(modelo, modeloRef.current);
       scene.add(modelo);
       st.modelo = modelo;
       // Ahora sí se conoce la boca del cono: sube todo lo procedural a ese
