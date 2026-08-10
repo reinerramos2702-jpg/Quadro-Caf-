@@ -235,7 +235,7 @@ function geometriaRuta(curva) {
  * procedural que se reconstruye con vueltas/radio y se revela con `prog`
  * (0→1), dibujado dentro de la boca del cono.
  */
-export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorBrand, colorAcento, tam = 210 }) {
+export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorBrand, colorAcento, colorModelo = null, tam = 210 }) {
   const wrapRef = useRef(null);
   const stateRef = useRef(null);
   const progRef = useRef(prog);
