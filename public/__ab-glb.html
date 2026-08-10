@@ -1,7 +1,7 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><style>
 body{margin:0;background:#0B0F0D;font:11px system-ui;color:#8AA096}
-.row{display:flex;gap:2px;align-items:flex-start}
+.row{display:flex;gap:2px;align-items:flex-start;flex-wrap:wrap}
 figure{margin:0}figcaption{text-align:center;padding:2px}
 canvas{display:block;background:#0B0F0D}
 </style></head>
@@ -14,13 +14,13 @@ import { MeshoptDecoder } from '/node_modules/three/examples/jsm/libs/meshopt_de
 import { RoomEnvironment } from '/node_modules/three/examples/jsm/environments/RoomEnvironment.js';
 
 const MODELO_RADIO = 92, CAM_ELEVACION = 50 * Math.PI / 180, CAM_DISTANCIA = 320, CAM_MIRA_Y = 14;
+const TAM = 340; // el uso más grande (hero); si aquí no se distingue, menos aún en Lab/tarjeta
 
 function encuadrar(o, r) {
   const caja = new THREE.Box3().setFromObject(o);
   const c = caja.getCenter(new THREE.Vector3()), t = caja.getSize(new THREE.Vector3());
   const s = r / (Math.max(t.x, t.z) / 2 || 1);
   o.scale.setScalar(s); o.position.set(-c.x * s, -c.y * s, -c.z * s);
-  return { verts: t, escala: s };
 }
 
 async function cargar(url) {
@@ -28,49 +28,67 @@ async function cargar(url) {
   return (await l.loadAsync(url)).scene;
 }
 
-// Mismos tamaños reales de uso en la app: Lab 230, hero 340, tarjeta 132.
-const TAMS = [230, 340];
-const modelos = {
-  original: await cargar('/__ab-original.glb'),
-  comprimido: await cargar('/models/espiral.glb'),
+const fuentes = {
+  original: '/__ab-original.glb',
+  'lossless (actual)': '/models/espiral.glb',
+  'q95': '/__ab-q95.glb',
+  'q90': '/__ab-q90.glb',
 };
 
-let tris = {};
-for (const [k, m] of Object.entries(modelos)) {
-  let n = 0; m.traverse(o => { if (o.geometry) n += o.geometry.index ? o.geometry.index.count / 3 : 0; });
-  tris[k] = n;
-}
-window.__info = tris;
-
 const row = document.getElementById('row');
-for (const tam of TAMS) {
-  for (const [nombre, base] of Object.entries(modelos)) {
-    const fig = document.createElement('figure');
-    const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    r.setSize(tam, tam); r.setPixelRatio(2);
-    r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1;
-    fig.appendChild(r.domElement);
-    const cap = document.createElement('figcaption');
-    cap.textContent = `${nombre} @${tam}`;
-    fig.appendChild(cap);
-    row.appendChild(fig);
+const pixeles = {};
 
-    const sc = new THREE.Scene();
-    const pm = new THREE.PMREMGenerator(r);
-    sc.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
-    sc.environmentIntensity = .4;
-    sc.add(new THREE.AmbientLight(0xffffff, .25));
-    const sol = new THREE.DirectionalLight(0xffffff, .8); sol.position.set(70, 150, 90); sc.add(sol);
+for (const [nombre, url] of Object.entries(fuentes)) {
+  const base = await cargar(url);
+  const fig = document.createElement('figure');
+  const r = new THREE.WebGLRenderer({ antialias: false, alpha: false, preserveDrawingBuffer: true });
+  r.setSize(TAM, TAM); r.setPixelRatio(2);
+  r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1;
+  r.setClearColor(0x0B0F0D, 1);
+  fig.appendChild(r.domElement);
+  const cap = document.createElement('figcaption'); cap.textContent = nombre; fig.appendChild(cap);
+  row.appendChild(fig);
 
-    const m = base.clone(true);
-    encuadrar(m, MODELO_RADIO);
-    sc.add(m);
-    const cam = new THREE.PerspectiveCamera(38, 1, 1, 2000);
-    cam.position.set(0, Math.sin(CAM_ELEVACION) * CAM_DISTANCIA, Math.cos(CAM_ELEVACION) * CAM_DISTANCIA);
-    cam.lookAt(0, CAM_MIRA_Y, 0);
-    r.render(sc, cam);
-  }
+  const sc = new THREE.Scene();
+  const pm = new THREE.PMREMGenerator(r);
+  sc.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+  sc.environmentIntensity = .4;
+  sc.add(new THREE.AmbientLight(0xffffff, .25));
+  const sol = new THREE.DirectionalLight(0xffffff, .8); sol.position.set(70, 150, 90); sc.add(sol);
+  encuadrar(base, MODELO_RADIO); sc.add(base);
+  const cam = new THREE.PerspectiveCamera(38, 1, 1, 2000);
+  cam.position.set(0, Math.sin(CAM_ELEVACION) * CAM_DISTANCIA, Math.cos(CAM_ELEVACION) * CAM_DISTANCIA);
+  cam.lookAt(0, CAM_MIRA_Y, 0);
+  r.render(sc, cam);
+
+  const w = TAM * 2, h = TAM * 2;
+  const buf = new Uint8Array(w * h * 4);
+  r.readRenderTargetPixels ? null : null;
+  const gl = r.getContext();
+  gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  pixeles[nombre] = buf;
 }
+
+// Diferencia contra el original: media y máximo por canal, en niveles 0-255.
+const ref = pixeles['original'];
+const dif = {};
+for (const [nombre, buf] of Object.entries(pixeles)) {
+  if (nombre === 'original') continue;
+  let suma = 0, max = 0, n = 0, distintos = 0;
+  for (let i = 0; i < buf.length; i += 4) {
+    for (let c = 0; c < 3; c++) {
+      const d = Math.abs(buf[i + c] - ref[i + c]);
+      suma += d; if (d > max) max = d; n++;
+      if (d > 2) distintos++;
+    }
+  }
+  dif[nombre] = {
+    mediaDif: +(suma / n).toFixed(3),
+    maxDif: max,
+    pctCanalesConDif_mayor2: +(distintos / n * 100).toFixed(2),
+  };
+}
+window.__info = dif;
 window.__done = true;
 </script>
 </body></html>
