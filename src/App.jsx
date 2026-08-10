@@ -75,32 +75,29 @@ function buildCss(C) {
 ${FONTS}
 *{box-sizing:border-box}
 .qc{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:300;color:${C.text};background:${C.surface}}
-/* Fallback de acentos/ñ en VIOLA y Nexa — dos problemas distintos, dos fixes:
-   1) VIOLA/Nexa no traen tildes/ñ (ver @font-face abajo), así que esos
-      glifos puntuales caen al siguiente font-family del stack (Fraunces /
-      Inter Tight). El glifo de fallback no comparte x-height/cap-height con
-      VIOLA/Nexa — font-size-adjust:from-font le pide al navegador
-      reescalarlo para igualar el tamaño percibido.
-   2) Específico de VIOLA: es una fuente unicase (de logo/lettering) — TODO
-      el texto se ve "en mayúscula" sin importar el case real de origen
-      ("Quadro" ya se dibuja con esa forma bloque/caps). Pero .disp* nunca
-      forzaba text-transform, así que un acento en minúscula real dentro del
-      string ("café", "Triángulo de Mocotíes") cae a Fraunces en SU minúscula
-      real — una é/í/á chica y de otro estilo en medio de letras que se ven
-      todas en caja alta. No es que no herede el uppercase/tamaño (sí los
-      hereda, son propiedades del elemento) — es que nunca había uppercase
-      que heredar en ese acento. Fix: forzar text-transform:uppercase en
-      .disp* (VIOLA no cambia de forma visible al ser unicase; el fallback
-      sí, ahora cae en la Á/É/Í/Ó/Ú/Ñ mayúscula de Fraunces, de cap-height
-      mucho más parecido). .mono/.label/.micro (Nexa) ya tenían
-      text-transform:uppercase de por sí, así que ahí el fallback ya caía en
-      mayúscula — from-font (tamaño) era lo único que les faltaba. */
-.disp{font-family:'VIOLA','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto;font-size-adjust:from-font;text-transform:uppercase}
+/* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
+   VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
+   Á/É/Í/Ó de "TRIÁNGULO", "SIFÓN", "CAFÉ" caía a Fraunces: otra tipografía
+   dentro de la misma palabra. text-transform:uppercase arregló el caso
+   (antes caía en minúscula real) y font-size-adjust:from-font igualó el
+   tamaño, pero ninguno de los dos podía igualar lo que se nota de verdad,
+   que es el CARÁCTER del glifo — Fraunces no se parece a VIOLA.
+   Fix real: 'VIOLA Acentos', una fuente derivada donde cada glifo es la
+   letra base real de VIOLA con el acento compuesto encima (ver
+   scripts/generar-acentos-viola.mjs). Va segunda en el stack, así que
+   solo entra en los codepoints que VIOLA no cubre, con el mismo upem,
+   la misma altura de mayúscula y el mismo ancho de avance que la base:
+   la palabra se dibuja entera con la misma letra.
+   Fraunces queda de tercera, ya solo como red de seguridad.
+   Nexa (.mono/.label/.micro) sí trae los acentos completos — ahí nunca
+   hubo fallback, from-font se mantiene por los glifos sueltos que no
+   cubra (símbolos raros). */
+.disp{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto;font-size-adjust:from-font;text-transform:uppercase}
 .script{font-family:'Fraunces',serif;font-style:italic;font-weight:600}
 .mono{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
-.disp-xl{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0;font-size-adjust:from-font;text-transform:uppercase}
-.disp-l{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0;font-size-adjust:from-font;text-transform:uppercase}
-.disp-m{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0;font-size-adjust:from-font;text-transform:uppercase}
+.disp-xl{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0;font-size-adjust:from-font;text-transform:uppercase}
+.disp-l{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0;font-size-adjust:from-font;text-transform:uppercase}
+.disp-m{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0;font-size-adjust:from-font;text-transform:uppercase}
 .body-l{font-family:'Nexa','Inter Tight',sans-serif;font-weight:300;font-size:17px;line-height:26px;font-size-adjust:from-font}
 .label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
 .micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;font-size-adjust:from-font}
