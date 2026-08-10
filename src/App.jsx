@@ -48,6 +48,11 @@ const PALETAS = {
     brand: "#7FE3C0", onBrand: "#0B0F0D", deep: "#050807",
     brandAlt: "#C9873A", onBrandAlt: "#0B0F0D",
     purple: "#A47BE0", amarillo: "#E0C24B", warn: "#E08C6B",
+    // Tinte del cono 3D del hero de Inicio. El modelo es negro (su baseColor
+    // promedia 31/255) y contra `surface` #0B0F0D desaparecía. Este crema es
+    // más apagado que `text` (#F2EDE3) a propósito: el cono es fondo detrás
+    // del titular, no debe competir con él.
+    modelo: "#CFC3AE",
   },
 };
 
