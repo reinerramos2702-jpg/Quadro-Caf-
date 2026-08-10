@@ -418,6 +418,7 @@ export function EspiralHero({ vueltas = 4.2, radio = 1, colorLinea, colorBrand, 
       if (cancelado) return;
       modelo = gltf.scene;
       const mediaAltura = encuadrarModelo(modelo, MODELO_RADIO);
+      if (colorModelo) tenirModelo(modelo, colorModelo);
       scene.add(modelo);
       // El tubo del hero también sube al plano de la boca.
       const altura = mediaAltura * ESPIRAL_Y_REL;
