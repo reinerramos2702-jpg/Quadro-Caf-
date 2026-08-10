@@ -1,0 +1,76 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>
+body{margin:0;background:#0B0F0D;font:11px system-ui;color:#8AA096}
+.row{display:flex;gap:2px;align-items:flex-start}
+figure{margin:0}figcaption{text-align:center;padding:2px}
+canvas{display:block;background:#0B0F0D}
+</style></head>
+<body>
+<div class="row" id="row"></div>
+<script type="module">
+import * as THREE from '/node_modules/three/build/three.module.js';
+import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from '/node_modules/three/examples/jsm/libs/meshopt_decoder.module.js';
+import { RoomEnvironment } from '/node_modules/three/examples/jsm/environments/RoomEnvironment.js';
+
+const MODELO_RADIO = 92, CAM_ELEVACION = 50 * Math.PI / 180, CAM_DISTANCIA = 320, CAM_MIRA_Y = 14;
+
+function encuadrar(o, r) {
+  const caja = new THREE.Box3().setFromObject(o);
+  const c = caja.getCenter(new THREE.Vector3()), t = caja.getSize(new THREE.Vector3());
+  const s = r / (Math.max(t.x, t.z) / 2 || 1);
+  o.scale.setScalar(s); o.position.set(-c.x * s, -c.y * s, -c.z * s);
+  return { verts: t, escala: s };
+}
+
+async function cargar(url) {
+  const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder);
+  return (await l.loadAsync(url)).scene;
+}
+
+// Mismos tamaños reales de uso en la app: Lab 230, hero 340, tarjeta 132.
+const TAMS = [230, 340];
+const modelos = {
+  original: await cargar('/__ab-original.glb'),
+  comprimido: await cargar('/models/espiral.glb'),
+};
+
+let tris = {};
+for (const [k, m] of Object.entries(modelos)) {
+  let n = 0; m.traverse(o => { if (o.geometry) n += o.geometry.index ? o.geometry.index.count / 3 : 0; });
+  tris[k] = n;
+}
+window.__info = tris;
+
+const row = document.getElementById('row');
+for (const tam of TAMS) {
+  for (const [nombre, base] of Object.entries(modelos)) {
+    const fig = document.createElement('figure');
+    const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    r.setSize(tam, tam); r.setPixelRatio(2);
+    r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1;
+    fig.appendChild(r.domElement);
+    const cap = document.createElement('figcaption');
+    cap.textContent = `${nombre} @${tam}`;
+    fig.appendChild(cap);
+    row.appendChild(fig);
+
+    const sc = new THREE.Scene();
+    const pm = new THREE.PMREMGenerator(r);
+    sc.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+    sc.environmentIntensity = .4;
+    sc.add(new THREE.AmbientLight(0xffffff, .25));
+    const sol = new THREE.DirectionalLight(0xffffff, .8); sol.position.set(70, 150, 90); sc.add(sol);
+
+    const m = base.clone(true);
+    encuadrar(m, MODELO_RADIO);
+    sc.add(m);
+    const cam = new THREE.PerspectiveCamera(38, 1, 1, 2000);
+    cam.position.set(0, Math.sin(CAM_ELEVACION) * CAM_DISTANCIA, Math.cos(CAM_ELEVACION) * CAM_DISTANCIA);
+    cam.lookAt(0, CAM_MIRA_Y, 0);
+    r.render(sc, cam);
+  }
+}
+window.__done = true;
+</script>
+</body></html>
