@@ -326,7 +326,7 @@ export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorB
       },
     };
     stateRef.current = st;
-    st.refs = { vueltasRef, radioRef };
+    st.refs = { vueltasRef, radioRef, modeloRef };
 
     const segIdx = ESPIRAL_RADIAL * 6; // índices por segmento tubular (ver TubeGeometry)
     let raf;
