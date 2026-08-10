@@ -57,10 +57,16 @@ const PALETAS = {
     // Tinte del cono 3D dondequiera que aparezca (hero y comparador de
     // Inicio, simulador de Lab): un mismo objeto de marca no puede leerse
     // distinto según el módulo. El modelo es negro (su baseColor promedia
-    // 31/255) y contra los fondos de este tema desaparecía. Este crema es más
-    // apagado que `text` (#F2EDE3) a propósito: en el hero es fondo detrás del
-    // titular y no debe competir con él.
-    modelo: "#CFC3AE",
+    // 31/255) y contra los fondos de este tema desaparecía.
+    //
+    // Topo medio, no crema: el valor sale de barrer seis tonos midiendo las
+    // DOS relaciones que compiten entre sí — subir el cono lo despega del
+    // fondo pero se come la espiral, que es el dato del simulador.
+    //   #CFC3AE  espiral/cono 1.09  ·  cono/fondo 10.58
+    //   #9A8E80  espiral/cono 1.98  ·  cono/fondo  5.77
+    //   #746A5F  espiral/cono 3.27  ·  cono/fondo  3.45   <- único con ambas >3
+    //   #615950  espiral/cono 4.51  ·  cono/fondo  2.48
+    modelo: "#746A5F",
     // Velo más suave que en claro: aquí el problema es el inverso — el cono
     // apenas se despega del fondo, así que taparlo al 80% lo borraba. Con el
     // tinte de arriba el titular sigue destacando igual (se midió: su
