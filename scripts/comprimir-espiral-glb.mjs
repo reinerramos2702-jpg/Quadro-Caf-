@@ -81,7 +81,7 @@ await doc.transform(
     targetFormat: "webp",
     resize: [LADO, LADO],
     lossless: true,
-    slots: "normalTexture",
+    slots: /^normalTexture$/,
   }),
   // Geometría: weld + cuantización + EXT_meshopt_compression en un paso.
   meshopt({ encoder: MeshoptEncoder, level: "high" }),
