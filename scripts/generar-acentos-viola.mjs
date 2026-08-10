@@ -59,8 +59,11 @@ const BANDA_ALTO = ASC - BANDA_Y - 25;                  // ~240
 // una didone, coherente con el contraste de VIOLA.
 function acute() {
   const h = BANDA_ALTO;
-  const grosorAbajo = ASTA * 0.45;
-  const grosorArriba = ASTA * 0.78;
+  // Contraste grueso-arriba / fino-abajo como el resto de la fuente, pero
+  // no tan fino que el acento desaparezca a 14-19px (el tamaño real del
+  // header y de los nombres de producto).
+  const grosorAbajo = ASTA * 0.58;
+  const grosorArriba = ASTA * 0.92;
   const inclinacion = h * 0.62;
   const ancho = inclinacion + grosorArriba;
   const x0 = -ancho / 2;
