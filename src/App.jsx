@@ -565,9 +565,13 @@ function Inicio({ ir, lote }) {
               colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
           </Suspense>
         </div>
+        {/* Velo sobre el 3D del hero. Subió de 99 a cc de opacidad al
+           arreglar la iluminación del modelo: con el entorno IBL el cono ya
+           no es una silueta apagada y, sin más velo, competía con el
+           titular en tema claro. */}
         <div aria-hidden style={{
           position: "absolute", inset: 0,
-          background: `linear-gradient(180deg, ${C.surface}99, ${C.surface})`,
+          background: `linear-gradient(180deg, ${C.surface}cc, ${C.surface})`,
         }} />
         <div style={{ position: "relative" }}>
           <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
