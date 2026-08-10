@@ -54,11 +54,17 @@ const FINCA_TINTS = {
 
 /* Tipografía real de marca (reemplaza las aproximaciones Fraunces/Inter
    Tight de Google Fonts): VIOLA es el lettering real del logo quadrocafe.com
-   — se usa solo en display/headers, con Fraunces como fallback de glyph
-   (VIOLA no trae acentos, así que "café" cae a Fraunces solo para la é).
-   Nexa (Light 300 / Bold 700) es la sans de marca para cuerpo y labels. */
+   — se usa solo en display/headers. Nexa (Light 300 / Bold 700) es la sans
+   de marca para cuerpo y labels.
+
+   'VIOLA Acentos' es un derivado generado por scripts/generar-acentos-viola.mjs:
+   VIOLA no trae ninguna vocal acentuada ni Ñ/Ü, así que esos glifos son la
+   letra base REAL de VIOLA con el acento compuesto encima. Va justo después
+   de 'VIOLA' en el stack para que el navegador lo use solo en los codepoints
+   que faltan — ver el bloque de .disp más abajo. */
 const FONTS = `
 @font-face{font-family:'VIOLA';src:url(${violaFont}) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'VIOLA Acentos';src:url(${violaAcentosFont}) format('opentype');font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:'Nexa';src:url(${nexaLightFont}) format('opentype');font-weight:300;font-style:normal;font-display:swap}
 @font-face{font-family:'Nexa';src:url(${nexaBoldFont}) format('opentype');font-weight:700;font-style:normal;font-display:swap}
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap');
