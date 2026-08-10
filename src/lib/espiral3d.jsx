@@ -228,6 +228,11 @@ export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorB
     );
     scene.add(gota);
 
+    // Últimos valores de los sliders, para poder rearmar la curva cuando
+    // el .glb termine de cargar (llega asíncrono, después de este efecto).
+    const vueltasRef = { current: vueltas };
+    const radioRef = { current: radio };
+
     const loader = cargadorEspiral();
     let modelo = null;
     loader.load(MODELO_URL, (gltf) => {
@@ -242,9 +247,6 @@ export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorB
       st.reconstruir(vueltasRef.current, radioRef.current);
       anillos.forEach((a) => { a.position.y = st.altura; });
     });
-
-    const vueltasRef = { current: vueltas };
-    const radioRef = { current: radio };
 
     const st = {
       scene, camera, renderer, curva, tuboGuia, tuboActivo, ruta, matRuta,
