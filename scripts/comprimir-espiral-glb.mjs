@@ -68,6 +68,10 @@ for (const material of doc.getRoot().listMaterials()) {
 
 await doc.transform(
   dedup(),
+  // prune() además pliega texturas de color uniforme al factor del material.
+  // Aquí eso elimina el emissiveTexture, que se verificó negro puro en todos
+  // sus píxeles (min = max = 0 en los tres canales): no aportaba nada, así
+  // que quitarlo es exactamente equivalente y ahorra 65 KB.
   prune(),
   // Mapas de color (base, emisivo, metallic-roughness): WebP con pérdida.
   textureCompress({
