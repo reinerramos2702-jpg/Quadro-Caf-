@@ -375,7 +375,7 @@ const HERO_VUELTA_MS = 17000; // 17s por vuelta de cámara
    revelada (con brillo de marca, no solo el modelo apagado) orbitando
    sola, sin sliders ni interacción. Mismo encuadre e iluminación que el
    simulador, solo cambia que la cámara gira. */
-export function EspiralHero({ vueltas = 4.2, radio = 1, colorLinea, colorBrand, colorAcento, width = 320, height = 300 }) {
+export function EspiralHero({ vueltas = 4.2, radio = 1, colorLinea, colorBrand, colorAcento, colorModelo = null, width = 320, height = 300 }) {
   const wrapRef = useRef(null);
 
   useEffect(() => {
