@@ -139,3 +139,50 @@ Dos features pedidas fuera del Bloque 5 original, con "Agregar producto" prioriz
 - **Agregar producto** (`AdminNuevoProducto`): botón "+ Agregar producto" arriba de la lista que despliega un formulario (nombre, categoría, precio, descripción, disponible sí/no). Al crear, genera un `id` con `slugify(nombre)` (minúsculas, sin tildes, guiones) para no chocar con el patrón `m1`..`m12` existente; si el id ya existe (choque de nombre repetido, error `23505` de Postgres), reintenta con un sufijo numérico hasta 5 veces. `finca`/`tag`/`geo` no se pidieron en el formulario, así que quedan en sus valores por defecto (`false`/`null`/`null`) — no se inventó UI para eso. El `orden` nuevo se calcula como el mayor `orden` existente + 1, así el producto nuevo aparece al final de la lista tanto en el Panel Admin como en la Carta pública (que ya lee de la misma tabla desde el Bloque 3).
 - **Recuperar clave**: enlace "¿Olvidaste tu clave?" en el login del Admin, usando el flujo nativo de Supabase Auth (`resetPasswordForEmail` + `updateUser`), no una implementación propia. El mensaje después de enviar es siempre el mismo genérico ("si ese correo tiene una cuenta…") porque Supabase mismo nunca confirma si un correo existe, por diseño anti-enumeración. El `redirectTo` apunta a `?admin=1` (no a `#admin`) porque Supabase agrega su propio `access_token`/`type=recovery` como fragmento hash al volver, y dos hashes no pueden coexistir en una URL — así que se separó el "llévame al Admin" a query string. Se amplió la detección de tab inicial (antes solo miraba `#admin`) para reconocer también `?admin=1` y cualquier hash con `type=recovery`, si no el evento `PASSWORD_RECOVERY` de Supabase nunca se escucharía (el listener vive dentro de `Admin`, que solo monta si el tab inicial ya es "admin"). Al llegar por ese enlace, `Admin` detecta el evento `PASSWORD_RECOVERY` del listener de auth y muestra `AdminNuevaClave` (clave nueva x2, mínimo 6 caracteres) en vez del dashboard normal, hasta que se guarda.
 - **Verificación**: sin red real a Supabase desde este entorno, se probaron ambos flujos con Playwright contra `npm run preview`: (1) recuperar clave, interceptando `auth/v1/recover` y confirmando que se ve la pantalla "revisa tu correo"; (2) crear producto, con una sesión falsa inyectada en `localStorage` (mismo formato que guarda el SDK de Supabase) e interceptando `rest/v1/productos` — el producto nuevo apareció correctamente en la lista con sus datos. En el camino se encontró y corrigió un bug del propio mock de prueba (devolvía un array en vez de un objeto pelado para `.single()`, ignorando el header `Accept: vnd.pgrst.object+json` que si respeta el backend real de PostgREST) — no era un bug de la app.
+
+## Batch de 3 bugs reportados con capturas (2026-08-10) — rama `fix/checklist-batch`
+
+### 1. Acentos en VIOLA: por qué el fix anterior no alcanzaba
+
+Diagnóstico real (medido, no supuesto): se parseó la tabla `cmap` de las tres fuentes de marca. **VIOLA tiene 76 glifos y ninguna vocal acentuada, ni `Ñ` ni `Ü` ni marcas combinantes.** Nexa Light/Bold sí traen el juego español completo — o sea el bug nunca estuvo en Nexa, solo en los estilos `.disp*`.
+
+El pase anterior había atacado los síntomas: `text-transform:uppercase` (para que el fallback no cayera en minúscula) y `font-size-adjust:from-font` (para igualar el tamaño). Ambos siguen siendo correctos, pero ninguno puede igualar lo único que de verdad se nota — el **carácter del glifo**: la `Á` la seguía dibujando Fraunces, una serif que no se parece a VIOLA, en medio de una palabra en VIOLA. Por eso reaparecía "ahora también en mayúsculas".
+
+Fix: `scripts/generar-acentos-viola.mjs` (`npm run fuente:acentos`) genera `src/assets/fonts-derivados/VIOLA-Acentos.otf` con opentype.js — 7 glifos (`Á É Í Ó Ú Ü Ñ`, cada uno mapeado también a su codepoint minúsculo porque VIOLA es unicase). Cada glifo es **el contorno base real de VIOLA más un acento compuesto encima**, con el mismo upem (2048), la misma altura de mayúscula (1612) y el mismo ancho de avance que la letra sin acento. Los acentos se dibujan con medidas tomadas de la propia fuente, no inventadas: el asta de la `I` (269 u) da el trazo grueso y la diéresis reutiliza el círculo del `period` escalado, así que el contraste didone de VIOLA se mantiene. La fuente entra segunda en el stack (`'VIOLA','VIOLA Acentos','Fraunces'`), o sea el navegador solo la toca en los codepoints que faltan; Fraunces queda de última como red de seguridad. Pesa 2,8 KB y Vite la inlinea como data URI, así que no agrega ni una petición.
+
+`src/assets/fonts/` es carpeta protegida: **VIOLA.otf no se tocó**, el derivado vive aparte en `src/assets/fonts-derivados/`.
+
+Verificado con capturas headless a 30/19/14 px comparando cada palabra acentuada contra `AEIOUN SIN ACENTO`: mismas formas de letra en ambas líneas.
+
+### 2. Hero de Inicio
+
+Tres cosas distintas en el mismo titular:
+- **"GEOMETRÍA" cortada**: nuevo componente `UnaLinea` en `App.jsx`. Mide el texto a su tamaño máximo y, si no entra en el ancho del contenedor, baja el `font-size` por la razón que falte (el ancho es lineal respecto al cuerpo, así que una medición basta — no itera). Vuelve a medir con `ResizeObserver` (rotación de pantalla) y con `document.fonts.ready`, porque medir con la fuente de fallback da otro ancho. En un teléfono de 390 px cae de 44 a 29 px y entra completa, sin partir la palabra. `min` de 24 px por si algún día el contenedor es absurdamente angosto.
+- **Interletrado apretado**: el `letter-spacing:-.01em` que hereda `.disp` pegaba las letras de "EL SABOR / TIENE UNA"; el `h1` ahora lo pisa con `.012em`.
+- **Solape entre líneas**: `lineHeight` pasó de `.88` a `1.02` — con `.88` las ascendentes de la itálica de "geometría" chocaban con la línea de arriba.
+
+De paso, el velo sobre el hero 3D subió de `99` a `cc` de opacidad: al arreglar la iluminación del modelo (punto 3) el cono dejó de ser una silueta apagada y, sin más velo, competía con el titular en tema claro.
+
+### 3. El .glb del Lab — qué se había perdido y qué NO existía
+
+Se revisó el historial completo (`main`, `claude/quadro-cafe-v2-5uq32e`, `claude/quadro-cafe-v2-fixes-q1r0fx`, `fix/barra-dashboard`, `cloudflare/workers-autoconfig`) y las cuatro versiones históricas del componente. Hallazgos:
+
+- **`espiral.glb` es SOLO el cono negro.** Se le parseó el JSON chunk: una malla, un material PBR, cuatro texturas. No trae ninguna espiral ni puntos incorporados — la espiral siempre fue procedural. Se renderizó aislado desde 6 ángulos para confirmarlo.
+- **Los "puntitos blancos" no salen de ningún commit anterior tal cual.** Lo que sí existía y el último pase borró son los **anillos guía en línea discontinua** (`LineDashedMaterial`, color de línea) que estaban en `956d57e`/`566dc05`. Se restauran, y además la ruta completa de la espiral se dibuja ahora como línea punteada por encima del tubo, que es lo que se lee como los puntos claros corriendo a lo largo del recorrido en la captura de referencia.
+- Nota: el `dripper.glb` que referenciaba `566dc05` **nunca existió en este repo** (el propio comentario del archivo lo decía). No hay una versión anterior "buena" que copiar literalmente; se reprodujo el resultado visual.
+
+Las tres causas del "pequeño, empujado hacia abajo, casi saliéndose del cono":
+
+1. **Sin entorno de iluminación.** El material del `.glb` es PBR con `metallicRoughness` real: con luces direccionales y nada que reflejar, se apaga hasta quedar negro plano. La versión buena pasaba por `<model-viewer>`, que **siempre** monta un IBL neutro más tone mapping; en three.js hay que pedirlo explícitamente. Ahora `montarEntorno()` arma `PMREMGenerator` + `RoomEnvironment` + `ACESFilmicToneMapping`, con `scene.environmentIntensity = .4` y la ambiental bajada de `.7` a `.25` (a intensidad plena el cono negro mate se volvía plata pulida y al tubo se le lavaba el verde). Esto es lo que devuelve el relieve y los brillos de las aristas.
+2. **Encuadre mal derivado.** `encuadrarModelo` escalaba por la dimensión **mayor** del modelo; como el cono es mucho más ancho (1.90) que alto (1.24), quedaba chico. Ahora escala por el **radio horizontal** y devuelve la media altura, de donde salen todas las demás medidas.
+3. **La espiral estaba en el centro del cono, no en la boca.** Con la ruta en `y = 0` — media altura del cono, donde el cono ya se cerró — la espiral quedaba abrazándolo por fuera cerca de la punta. Ahora se dibuja en `ESPIRAL_Y_REL = .75` de la media altura (dentro de la boca) y su radio máximo (58 u contra 92 u del modelo) cabe con pared de sobra incluso con el slider de radio al tope.
+
+Además la cámara subió de ~27° a 50° de elevación: desde 27° se miraba el cono casi de perfil y la boca —que es justo donde vive la espiral— quedaba escondida.
+
+**Pendiente, no bloqueante**: `espiral.glb` pesa **7,2 MB sin comprimir**. En las pruebas headless tarda varios segundos y durante ese rato se ve la espiral flotando sin cono. Comprimirlo (Draco o meshopt, como estaba planteado para el `dripper.glb` que nunca llegó) lo dejaría en cientos de KB. Requiere reemplazar el archivo en `public/models/` (carpeta protegida) — hace falta el visto bueno del dueño.
+
+### Verificación
+
+Sin extensión de Chrome disponible en este entorno, se manejó Chrome headless por CDP (driver propio, fuera del repo). Capturas de Inicio, Carta y Laboratorio en **ambos temas**, a 390×844 con `deviceScaleFactor` 2, más una hoja de prueba tipográfica a tres tamaños.
+
+`npm run build` **falla en local con un error del service worker de `vite-plugin-pwa`**: workbox escribe la ruta absoluta del proyecto sin escapar dentro de una cadena entre comillas simples, y la carpeta se llama `App's` — el apóstrofo rompe el `sw.js` generado. No tiene relación con estos cambios. Confirmado copiando el proyecto a una ruta sin apóstrofo: ahí el build termina en verde con `sw.js` y `workbox-*.js` incluidos. En Cloudflare no se da (el checkout no lleva apóstrofo). Si algún día molesta en local, la solución es renombrar la carpeta, no tocar el `vite.config.js`.
