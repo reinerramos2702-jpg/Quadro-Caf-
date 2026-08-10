@@ -449,7 +449,7 @@ export function EspiralHero({ vueltas = 4.2, radio = 1, colorLinea, colorBrand, 
       wrap.removeChild(renderer.domElement);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [width, height, vueltas, radio, colorLinea, colorBrand, colorAcento]);
+  }, [width, height, vueltas, radio, colorLinea, colorBrand, colorAcento, colorModelo]);
 
   return <div ref={wrapRef} style={{ width, height }} aria-hidden="true" />;
 }
