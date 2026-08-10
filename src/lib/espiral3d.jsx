@@ -82,9 +82,8 @@ function cargadorEspiral() {
   return loader;
 }
 
-/* Tiñe el modelo cargado. Solo lo usa el hero de Inicio y solo cuando el
-   tema pide tinte (`PALETAS[tema].modelo`); en el resto de los usos el
-   modelo conserva su material tal cual viene del .glb.
+/* Tiñe el modelo cargado según el tema (`PALETAS[tema].modelo`), o lo
+   devuelve a su material original si `color` viene nulo.
 
    Por qué no basta con `material.color`: en three.js ese color MULTIPLICA al
    baseColorTexture, y la textura de este cono es un gris casi uniforme y muy
@@ -94,15 +93,24 @@ function cargadorEspiral() {
 
    No se pierde relieve: el volumen de las aristas lo dibujan el normal map y
    el metallic-roughness, que no se tocan — y el baseColor que se quita era
-   casi plano de todos modos (rango 5–95), aportaba tono, no detalle. */
+   casi plano de todos modos (rango 5–95), aportaba tono, no detalle.
+
+   Es reversible porque el simulador de Lab NO reconstruye su escena al
+   cambiar de tema (su efecto de montaje solo depende de `tam`): el mismo
+   material tiene que poder volver a su estado original, así que el mapa y el
+   color de origen se guardan la primera vez que se toca el material. */
 function tenirModelo(objeto, color) {
   objeto.traverse((hijo) => {
     if (!hijo.material) return;
     const mats = Array.isArray(hijo.material) ? hijo.material : [hijo.material];
     mats.forEach((m) => {
       if (!m.color) return;
-      m.map = null;
-      m.color.set(color);
+      if (!m.userData.qcOriginal) {
+        m.userData.qcOriginal = { map: m.map, color: m.color.clone() };
+      }
+      const original = m.userData.qcOriginal;
+      m.map = color ? null : original.map;
+      m.color.copy(color ? new THREE.Color(color) : original.color);
       m.needsUpdate = true;
     });
   });
