@@ -17,10 +17,22 @@
  * aparte. Este razonamiento ya estaba documentado en el repo para el
  * `dripper.glb` de una sesión anterior; se mantiene.
  *
- * El normal map se trata aparte del resto: es el que más se nota si se
- * degrada (son las aristas del cono, justo el detalle que se quiere
- * conservar), así que va en WebP sin pérdida. Los mapas de color van con
- * pérdida, que en ellos no se distingue a este tamaño en pantalla.
+ * El normal map se trata aparte del resto: es el que dibuja las aristas del
+ * cono, o sea justo el detalle que hay que conservar. Se probaron tres
+ * variantes contra el original, midiendo la diferencia por píxel en 8
+ * azimuts de cámara (el hero orbita, y los artefactos de un normal map con
+ * pérdida se delatan al cambiar el ángulo de luz, no en una sola pose):
+ *
+ *     normal WebP sin pérdida  → 641 KB, diferencia media 1,19/255
+ *     normal WebP calidad 95   → 395 KB, diferencia media 1,97/255
+ *     normal WebP calidad 90   → 375 KB, diferencia media 2,10/255
+ *
+ * Ninguna muestra bandeado ni facetas en ningún ángulo; la diferencia de
+ * fondo (~1/255) ya la ponen los mapas de color y la cuantización de
+ * geometría, no el normal map. Se eligió calidad 95: 0,8/255 de diferencia
+ * extra sobre el lossless — muy por debajo del umbral perceptible — a cambio
+ * de 246 KB menos en el asset que carga la primera pantalla. Si alguna vez
+ * hay que ser conservador, subir NORMAL_CALIDAD a `lossless`.
  *
  * El original siempre es recuperable desde el historial de git.
  *
