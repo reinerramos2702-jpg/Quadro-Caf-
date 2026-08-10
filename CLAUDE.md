@@ -56,6 +56,18 @@ Current confirmed-real data inventory (as of the v3 pass):
 
 Full asset library (renders + real photos, ~80 files) lives in the Drive folder `1i6U98nzBDotKZYQTAH60VVChKLGgOdP1` — ask before re-pulling from it, folder structure is documented in `memoria.md`.
 
+## The 3D model (`public/models/espiral.glb`)
+
+The cone of the real dripper — **one mesh, one PBR material, no spiral of its own**: the spiral in Lab/Inicio is procedural (`TubeGeometry` in `src/lib/espiral3d.jsx`), it never came from the model. Don't go looking for it in the file.
+
+**Compressed since 2026-08-10: 6.88 MB → 395 KB** (17.8×) by `scripts/comprimir-espiral-glb.mjs` (`npm run modelo:comprimir`) — textures were the weight (5.85 MB of 2048² maps for something drawn at ≤460 physical px), not geometry. Now: 512² WebP + `EXT_meshopt_compression`. The uncompressed original is recoverable from git history.
+
+Two consequences to respect:
+- **The loader must call `setMeshoptDecoder`** — `EXT_meshopt_compression` is declared *required*, so without it the model doesn't load at all. Meshopt and not Draco on purpose: three.js's Draco decoder references its `.wasm`/`.js` via `new URL(..., import.meta.url)`, which Vite bundles as duplicated assets (~1 MB of dead weight the service worker then precaches); meshopt's decoder inlines its WASM in the module (~29 KB).
+- **Re-running the script on the already-compressed file would re-encode it.** It's meant to run against the original.
+
+Its material is genuinely dark (baseColor averages 31/255), which is why in the dark theme the Inicio hero tints it — see `PALETAS[].modelo` / `veloHero` and `tenirModelo()`. A `material.color` alone can't lighten it: in three.js that value *multiplies* the baseColor texture, so it can only darken; the tint works by dropping `map` and letting the color apply over white. The relief is unaffected — it lives in the normal map.
+
 ## Out of scope / not yet built
 
 React Native migration, Supabase (auth/orders/real email capture), real in-app payments, CRM export integration, Higgsfield avatar videos (would replace the text/audio induction player in Fincas). See `docs/HANDOFF.md` for the original list — still accurate.
