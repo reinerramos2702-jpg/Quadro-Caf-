@@ -116,9 +116,14 @@ function encuadrarModelo(objeto, radioObjetivo) {
   return (tam.y * escala) / 2;
 }
 
+// El cono se abre hacia arriba, así que su masa visible queda por encima
+// del origen: mirar un poco más alto lo baja en cuadro y lo deja centrado
+// dentro del contenedor en vez de pegado al borde superior.
+const CAM_MIRA_Y = 14;
+
 function ubicarCamara(camera, distancia = CAM_DISTANCIA) {
   camera.position.set(0, Math.sin(CAM_ELEVACION) * distancia, Math.cos(CAM_ELEVACION) * distancia);
-  camera.lookAt(0, 0, 0);
+  camera.lookAt(0, CAM_MIRA_Y, 0);
 }
 
 /* Misma fórmula que spiralPath en App.jsx (ángulo y radio lineales en t)
