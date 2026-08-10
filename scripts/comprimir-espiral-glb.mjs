@@ -95,13 +95,12 @@ await doc.transform(
     quality: 82,
     slots: /^(?!normalTexture).*$/,
   }),
-  // Normal map: WebP sin pérdida. Es el que dibuja el relieve de las
-  // aristas — comprimirlo con pérdida se ve como facetas sucias.
+  // Normal map: calidad alta y aparte del resto, por lo medido arriba.
   textureCompress({
     encoder: sharp,
     targetFormat: "webp",
     resize: [LADO, LADO],
-    lossless: true,
+    quality: NORMAL_CALIDAD,
     slots: /^normalTexture$/,
   }),
   // Geometría: weld + cuantización + EXT_meshopt_compression en un paso.
