@@ -67,8 +67,19 @@ const MODELO_URL = "/models/espiral.glb";
 const CAM_ELEVACION = (50 * Math.PI) / 180;
 const CAM_DISTANCIA = 320;
 
+/* El .glb va comprimido con EXT_meshopt_compression (ver
+   scripts/comprimir-espiral-glb.mjs): sin este decoder el archivo no carga,
+   porque la extensión está declarada como *required*.
+
+   Meshopt y no Draco a propósito: el decoder de Draco de three.js referencia
+   sus .wasm/.js con `new URL(..., import.meta.url)`, patrón que Vite empaqueta
+   como assets propios y duplicados en build time — ~1 MB de peso muerto que
+   además el service worker precachea. El de meshopt lleva el WASM embebido en
+   el propio módulo (~29 KB), sin asset aparte. */
 function cargadorEspiral() {
-  return new GLTFLoader();
+  const loader = new GLTFLoader();
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  return loader;
 }
 
 // El modelo trae su propio material — nunca se le toca color/emissive, solo
