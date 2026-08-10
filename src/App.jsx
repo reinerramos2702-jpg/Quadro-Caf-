@@ -571,7 +571,8 @@ function Inicio({ ir, lote }) {
         <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
           <Suspense fallback={null}>
             <EspiralHero vueltas={4.2} radio={1} width={340} height={300}
-              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
+              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
+              colorModelo={C.modelo} />
           </Suspense>
         </div>
         {/* Velo sobre el 3D del hero. Subió de 99 a cc de opacidad al
