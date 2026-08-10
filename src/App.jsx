@@ -642,7 +642,8 @@ function Inicio({ ir, lote }) {
           <div key={geo.id} style={{ flexShrink: 0 }} className="spiral-enter">
             <Suspense fallback={<div style={{ width: 132, height: 132 }} />}>
               <EspiralTubo3D vueltas={geo.vueltas} radio={geo.radio} prog={1} tam={132}
-                colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
+                colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
+                colorModelo={C.modelo} />
             </Suspense>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
