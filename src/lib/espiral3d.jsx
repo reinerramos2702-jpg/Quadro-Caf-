@@ -376,7 +376,12 @@ export default function EspiralTubo3D({ vueltas, radio, prog, colorLinea, colorB
     st.matActivo.emissive.set(colorBrand);
     st.gota.material.color.set(colorAcento);
     st.gota.material.emissive.set(colorAcento);
-  }, [colorLinea, colorBrand, colorAcento]);
+    // El modelo también: aquí la escena no se reconstruye al cambiar de tema,
+    // así que el tinte se aplica (o se revierte) sobre el material ya cargado.
+    // Si el .glb todavía no llegó, lo toma la referencia al terminar de cargar.
+    st.refs.modeloRef.current = colorModelo;
+    if (st.modelo) tenirModelo(st.modelo, colorModelo);
+  }, [colorLinea, colorBrand, colorAcento, colorModelo]);
 
   return <div ref={wrapRef} style={{ width: tam, height: tam }} aria-hidden="true" />;
 }
