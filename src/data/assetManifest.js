@@ -28,11 +28,6 @@
    changes.
    ============================================================ */
 
-import heroDispenserJpg from "../assets/hero-dispenser.jpg";
-import heroDispenser480 from "../assets/hero-dispenser-480.webp";
-import heroDispenser900 from "../assets/hero-dispenser-900.webp";
-import heroDispenser1400 from "../assets/hero-dispenser-1400.webp";
-
 import clubBoxJpg from "../assets/club-box.jpg";
 import clubBox480 from "../assets/club-box-480.webp";
 import clubBox900 from "../assets/club-box-900.webp";
