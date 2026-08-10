@@ -53,15 +53,34 @@ import loteVillaNueva480 from "../assets/lote-villa-nueva-480.webp";
 import loteVillaNueva900 from "../assets/lote-villa-nueva-900.webp";
 import loteVillaNueva1400 from "../assets/lote-villa-nueva-1400.webp";
 
+/* Caja real de los banners de 3.25:1 (Carta y Laboratorio), en px CSS a su
+   ancho máximo: la columna de la app llega a 430 y el wrapper le quita 40 de
+   padding lateral. Sirve como `width`/`height` de los slots reservados para
+   que la caja sólida ya tenga la geometría final. */
+const BANNER = { width: 390, height: 120 };
+
 export const ASSET_MANIFEST = {
+  /* Slot reservado — banner superior de Laboratorio.
+     Antes existía un `hero-dispenser.jpg` real de 1400x1011 (sigue en
+     src/assets/, sin usar): era vertical y en esta caja de 3.25:1 perdía el
+     78% de la imagen, así que se reemplaza por una foto encuadrada a medida
+     en vez de recortar aquella. */
   "hero-dispenser": {
-    jpg: heroDispenserJpg,
-    webp480: heroDispenser480,
-    webp900: heroDispenser900,
-    webp1400: heroDispenser1400,
+    placeholder: true,
     color: "#4e4c3e",
-    width: 1400,
-    height: 1011,
+    ...BANNER,
+  },
+  /* Slots reservados — banners de categoría de Carta que hasta ahora no
+     tenían imagen (ver CAT_IMG en App.jsx). */
+  "menu-espresso": {
+    placeholder: true,
+    color: "#6f4b32",
+    ...BANNER,
+  },
+  "menu-panaderia": {
+    placeholder: true,
+    color: "#b08b58",
+    ...BANNER,
   },
   "club-box": {
     jpg: clubBoxJpg,
