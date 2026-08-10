@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "fuente:acentos": "node scripts/generar-acentos-viola.mjs",
-    "modelo:comprimir": "node scripts/comprimir-espiral-glb.mjs"
+    "modelo:comprimir": "node scripts/comprimir-espiral-glb.mjs",
+    "assets:generar": "node scripts/generar-asset.mjs"
   },
   "dependencies": {
     "@google/model-viewer": "^4.3.1",
