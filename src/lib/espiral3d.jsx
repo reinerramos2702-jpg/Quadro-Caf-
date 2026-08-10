@@ -82,8 +82,34 @@ function cargadorEspiral() {
   return loader;
 }
 
-// El modelo trae su propio material — nunca se le toca color/emissive, solo
-// se libera memoria al desmontar.
+/* Tiñe el modelo cargado. Solo lo usa el hero de Inicio y solo cuando el
+   tema pide tinte (`PALETAS[tema].modelo`); en el resto de los usos el
+   modelo conserva su material tal cual viene del .glb.
+
+   Por qué no basta con `material.color`: en three.js ese color MULTIPLICA al
+   baseColorTexture, y la textura de este cono es un gris casi uniforme y muy
+   oscuro (promedio 31/255, máximo 95). Multiplicar solo puede oscurecer, así
+   que ningún color aclararía el modelo mientras el mapa siga puesto. Por eso
+   se quita `map` y el color pasa a aplicarse sobre blanco.
+
+   No se pierde relieve: el volumen de las aristas lo dibujan el normal map y
+   el metallic-roughness, que no se tocan — y el baseColor que se quita era
+   casi plano de todos modos (rango 5–95), aportaba tono, no detalle. */
+function tenirModelo(objeto, color) {
+  objeto.traverse((hijo) => {
+    if (!hijo.material) return;
+    const mats = Array.isArray(hijo.material) ? hijo.material : [hijo.material];
+    mats.forEach((m) => {
+      if (!m.color) return;
+      m.map = null;
+      m.color.set(color);
+      m.needsUpdate = true;
+    });
+  });
+}
+
+// El modelo trae su propio material — solo se le toca el color cuando el tema
+// lo pide (ver tenirModelo); al desmontar se libera memoria.
 function disponerObjeto3D(obj) {
   obj.traverse((hijo) => {
     if (hijo.geometry) hijo.geometry.dispose();
