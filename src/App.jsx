@@ -1062,7 +1062,8 @@ function Laboratorio({ onBack }) {
         <div style={{ display: "grid", placeItems: "center" }}>
           <Suspense fallback={<div style={{ width: 230, height: 230 }} />}>
             <EspiralTubo3D vueltas={vueltas} radio={radio} prog={prog} tam={230}
-              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt} />
+              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
+              colorModelo={C.modelo} />
           </Suspense>
         </div>
 
