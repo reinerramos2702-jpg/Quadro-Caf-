@@ -52,9 +52,10 @@ const MODELO_RADIO = 92;
 // desborde ni al tope del slider de radio.
 const ESPIRAL_ESCALA = 68;
 // Altura del plano de la espiral, como fracción de la media altura del
-// modelo: 0 = centro del cono, 1 = boca. .56 la deja claramente adentro,
-// vista desde arriba, sin pegarse al borde.
-const ESPIRAL_Y_REL = 0.56;
+// modelo: 0 = centro del cono (donde estaba, y por eso la ruta salía por
+// las paredes), 1 = borde de la boca. .75 la apoya dentro de la boca, con
+// pared de sobra alrededor incluso con el slider de radio al tope.
+const ESPIRAL_Y_REL = 0.75;
 
 // public/models/espiral.glb — el cono real del dripper (una sola malla
 // texturizada, sin espiral propia: la espiral siempre fue procedural).
