@@ -243,7 +243,16 @@ const MENU = [
 ];
 
 const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
-const CAT_IMG = { Filtrado: "lote-bourbon", Frío: "menu-iced", Postres: "menu-postres" };
+/* Banner de cada categoría de Carta. Ahora las cinco tienen slot: `menu-espresso`
+   y `menu-panaderia` son slots reservados en el manifiesto (bloque de color
+   sólido) hasta que lleguen las fotos definitivas. */
+const CAT_IMG = {
+  Filtrado: "lote-bourbon",
+  Espresso: "menu-espresso",
+  Frío: "menu-iced",
+  Panadería: "menu-panaderia",
+  Postres: "menu-postres",
+};
 
 /* Aviso de "estamos usando el respaldo local" — nunca silencioso. En consola
    siempre (el dueño puede revisarla en prod si algo no cuadra); en pantalla
