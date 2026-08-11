@@ -11,16 +11,22 @@
        a solid placeholder background while the image loads
      - width / height: native pixel dimensions of the source JPEG
 
-   Regenerate the *.webp files with the sharp-based script used for
-   this pass (see git history) if the source JPGs ever change —
-   this file only wires up the already-generated outputs, it does
-   not generate them.
-   ============================================================ */
+   Regenerate the *.webp variants with `npm run assets:generar <archivo>`
+   whenever a source image changes or a new one arrives — that script
+   emits the three WebP widths, reads the dominant color and prints the
+   entry to paste here. This file only wires up already-generated
+   outputs, it does not generate them.
 
-import heroDispenserJpg from "../assets/hero-dispenser.jpg";
-import heroDispenser480 from "../assets/hero-dispenser-480.webp";
-import heroDispenser900 from "../assets/hero-dispenser-900.webp";
-import heroDispenser1400 from "../assets/hero-dispenser-1400.webp";
+   RESERVED SLOTS (`placeholder: true`)
+   An entry may instead reserve a slot that has no artwork yet: it
+   declares only `color` + `width`/`height` (the intended box), no image
+   sources. <ResponsiveImg> then paints a solid block of exactly the
+   final geometry, so layout is already correct and dropping the real
+   image in later changes nothing else. To fill one: add the imports,
+   swap `placeholder: true` for the four source fields, and set
+   width/height to the file's native size. Nothing at the call sites
+   changes.
+   ============================================================ */
 
 import clubBoxJpg from "../assets/club-box.jpg";
 import clubBox480 from "../assets/club-box-480.webp";
@@ -47,15 +53,34 @@ import loteVillaNueva480 from "../assets/lote-villa-nueva-480.webp";
 import loteVillaNueva900 from "../assets/lote-villa-nueva-900.webp";
 import loteVillaNueva1400 from "../assets/lote-villa-nueva-1400.webp";
 
+/* Caja real de los banners de 3.25:1 (Carta y Laboratorio), en px CSS a su
+   ancho máximo: la columna de la app llega a 430 y el wrapper le quita 40 de
+   padding lateral. Sirve como `width`/`height` de los slots reservados para
+   que la caja sólida ya tenga la geometría final. */
+const BANNER = { width: 390, height: 120 };
+
 export const ASSET_MANIFEST = {
+  /* Slot reservado — banner superior de Laboratorio.
+     Antes existía un `hero-dispenser.jpg` real de 1400x1011 (sigue en
+     src/assets/, sin usar): era vertical y en esta caja de 3.25:1 perdía el
+     78% de la imagen, así que se reemplaza por una foto encuadrada a medida
+     en vez de recortar aquella. */
   "hero-dispenser": {
-    jpg: heroDispenserJpg,
-    webp480: heroDispenser480,
-    webp900: heroDispenser900,
-    webp1400: heroDispenser1400,
+    placeholder: true,
     color: "#4e4c3e",
-    width: 1400,
-    height: 1011,
+    ...BANNER,
+  },
+  /* Slots reservados — banners de categoría de Carta que hasta ahora no
+     tenían imagen (ver CAT_IMG en App.jsx). */
+  "menu-espresso": {
+    placeholder: true,
+    color: "#6f4b32",
+    ...BANNER,
+  },
+  "menu-panaderia": {
+    placeholder: true,
+    color: "#b08b58",
+    ...BANNER,
   },
   "club-box": {
     jpg: clubBoxJpg,

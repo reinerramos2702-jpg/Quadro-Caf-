@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useContext, createContext } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, useContext, createContext, Suspense, lazy } from "react";
 import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
@@ -9,9 +9,17 @@ import { supabase } from "./lib/supabase";
 import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
-import heroDispenser from "./assets/hero-dispenser.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
+import violaFont from "./assets/fonts/VIOLA.otf";
+import violaAcentosFont from "./assets/fonts-derivados/VIOLA-Acentos.otf";
+import nexaBoldFont from "./assets/fonts/Nexa-Bold.otf";
+import nexaLightFont from "./assets/fonts/Nexa-Light.otf";
+
+// three.js pesa varios cientos de KB — se carga bajo demanda (chunk propio,
+// se descarga solo cuando alguien abre Inicio o Lab, no bloquea el resto).
+const EspiralTubo3D = lazy(() => import("./lib/espiral3d.jsx"));
+const EspiralHero = lazy(() => import("./lib/espiral3d.jsx").then((m) => ({ default: m.EspiralHero })));
 
 /* ============================================================
    QUADRO CAFÉ — v4 "alta gama"
@@ -28,6 +36,16 @@ const PALETAS = {
     brand: "#3b574c", onBrand: "#e9d8c6", deep: "#26382f",
     brandAlt: "#b5613c", onBrandAlt: "#f5efe6",
     purple: "#243b57", amarillo: "#c79a3b", warn: "#9c3b28",
+    // Tinte del cono 3D dondequiera que aparezca (hero y comparador de
+    // Inicio, simulador de Lab). `null` = sin tinte: el modelo conserva su
+    // propia textura, que sobre los fondos claros de este tema ya contrasta
+    // de sobra. Ver `modelo` en el tema oscuro.
+    modelo: null,
+    // Opacidad (alfa hex, mismo idioma que el resto del archivo) del velo que
+    // separa ese cono del titular. Aquí hace falta fuerte: modelo oscuro sobre
+    // fondo claro es el caso de MÁS contraste, y sin velo el cono compite con
+    // "EL SABOR / TIENE UNA".
+    veloHero: "cc",
   },
   oscuro: {
     id: "oscuro", shell: "#07100D",
@@ -36,6 +54,26 @@ const PALETAS = {
     brand: "#7FE3C0", onBrand: "#0B0F0D", deep: "#050807",
     brandAlt: "#C9873A", onBrandAlt: "#0B0F0D",
     purple: "#A47BE0", amarillo: "#E0C24B", warn: "#E08C6B",
+    // Tinte del cono 3D dondequiera que aparezca (hero y comparador de
+    // Inicio, simulador de Lab): un mismo objeto de marca no puede leerse
+    // distinto según el módulo. El modelo es negro (su baseColor promedia
+    // 31/255) y contra los fondos de este tema desaparecía.
+    //
+    // Topo medio, no crema: el valor sale de barrer seis tonos midiendo las
+    // DOS relaciones que compiten entre sí — subir el cono lo despega del
+    // fondo pero se come la espiral, que es el dato del simulador.
+    //   #CFC3AE  espiral/cono 1.09  ·  cono/fondo 10.58
+    //   #9A8E80  espiral/cono 1.98  ·  cono/fondo  5.77
+    //   #746A5F  espiral/cono 3.27  ·  cono/fondo  3.45   <- único con ambas >3
+    //   #615950  espiral/cono 4.51  ·  cono/fondo  2.48
+    modelo: "#746A5F",
+    // Velo más suave que en claro: aquí el problema es el inverso — el cono
+    // apenas se despega del fondo, así que taparlo al 80% lo borraba.
+    // Bajó de b3 a 8c al oscurecer `modelo`: el topo llega al hero ya
+    // atenuado por este velo, y con b3 la separación contra el fondo caía a
+    // 1.21:1. A 8c vuelve a 1.38:1 sin tocar el titular — su luminancia no
+    // cambia (p95 = 237 en las tres variantes medidas), solo sube la del cono.
+    veloHero: "8c",
   },
 };
 
@@ -44,26 +82,60 @@ const FINCA_TINTS = {
   oscuro: ["#5B2E8C", "#1E5C4A", "#C9873A"],
 };
 
+/* Tipografía real de marca (reemplaza las aproximaciones Fraunces/Inter
+   Tight de Google Fonts): VIOLA es el lettering real del logo quadrocafe.com
+   — se usa solo en display/headers. Nexa (Light 300 / Bold 700) es la sans
+   de marca para cuerpo y labels.
+
+   'VIOLA Acentos' es un derivado generado por scripts/generar-acentos-viola.mjs:
+   VIOLA no trae ninguna vocal acentuada ni Ñ/Ü, así que esos glifos son la
+   letra base REAL de VIOLA con el acento compuesto encima. Va justo después
+   de 'VIOLA' en el stack para que el navegador lo use solo en los codepoints
+   que faltan — ver el bloque de .disp más abajo. */
 const FONTS = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap');
+@font-face{font-family:'VIOLA';src:url(${violaFont}) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'VIOLA Acentos';src:url(${violaAcentosFont}) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Nexa';src:url(${nexaLightFont}) format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'Nexa';src:url(${nexaBoldFont}) format('opentype');font-weight:700;font-style:normal;font-display:swap}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap');
 `;
 
 function buildCss(C) {
   return `
 ${FONTS}
 *{box-sizing:border-box}
-.qc{font-family:'Inter Tight',system-ui,sans-serif;color:${C.text};background:${C.surface}}
-.disp{font-family:'Fraunces',serif;font-weight:700;letter-spacing:-.01em;font-optical-sizing:auto}
+.qc{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:300;color:${C.text};background:${C.surface}}
+/* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
+   VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
+   Á/É/Í/Ó de "TRIÁNGULO", "SIFÓN", "CAFÉ" caía a Fraunces: otra tipografía
+   dentro de la misma palabra. text-transform:uppercase arregló el caso
+   (antes caía en minúscula real) y font-size-adjust:from-font igualó el
+   tamaño, pero ninguno de los dos podía igualar lo que se nota de verdad,
+   que es el CARÁCTER del glifo — Fraunces no se parece a VIOLA.
+   Fix real: 'VIOLA Acentos', una fuente derivada donde cada glifo es la
+   letra base real de VIOLA con el acento compuesto encima (ver
+   scripts/generar-acentos-viola.mjs). Va segunda en el stack, así que
+   solo entra en los codepoints que VIOLA no cubre, con el mismo upem,
+   la misma altura de mayúscula y el mismo ancho de avance que la base:
+   la palabra se dibuja entera con la misma letra.
+   Fraunces queda de tercera, ya solo como red de seguridad.
+   Nexa (.mono/.label/.micro) sí trae los acentos completos — ahí nunca
+   hubo fallback, from-font se mantiene por los glifos sueltos que no
+   cubra (símbolos raros). */
+.disp{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto;font-size-adjust:from-font;text-transform:uppercase}
 .script{font-family:'Fraunces',serif;font-style:italic;font-weight:600}
-.mono{font-family:'Inter Tight',system-ui,sans-serif;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
-.disp-xl{font-family:'Fraunces',serif;font-weight:600;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0}
-.disp-l{font-family:'Fraunces',serif;font-weight:600;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0}
-.disp-m{font-family:'Fraunces',serif;font-weight:500;font-size:22px;line-height:28px;margin:0}
-.body-l{font-family:'Inter Tight',sans-serif;font-weight:400;font-size:17px;line-height:26px}
-.label{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
-.micro{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase}
-.quadro-frame{clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
+.mono{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
+.disp-xl{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0;font-size-adjust:from-font;text-transform:uppercase}
+.disp-l{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0;font-size-adjust:from-font;text-transform:uppercase}
+.disp-m{font-family:'VIOLA','VIOLA Acentos','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0;font-size-adjust:from-font;text-transform:uppercase}
+.body-l{font-family:'Nexa','Inter Tight',sans-serif;font-weight:300;font-size:17px;line-height:26px;font-size-adjust:from-font}
+.label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
+.micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;font-size-adjust:from-font}
 .qc-scroll::-webkit-scrollbar{width:0;height:0}
+@keyframes qc-spiral-enter{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes qc-spiral-spin{to{transform:rotate(360deg)}}
+.spiral-enter{animation:qc-spiral-enter .9s cubic-bezier(.2,.8,.2,1) both}
+.spiral-spin{transform-origin:100px 100px;animation:qc-spiral-spin 16s cubic-bezier(.45,0,.55,1) infinite}
 @keyframes qc-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes qc-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 @keyframes qc-slide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
@@ -182,7 +254,16 @@ const MENU = [
 ];
 
 const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
-const CAT_IMG = { Filtrado: "lote-bourbon", Frío: "menu-iced", Postres: "menu-postres" };
+/* Banner de cada categoría de Carta. Ahora las cinco tienen slot: `menu-espresso`
+   y `menu-panaderia` son slots reservados en el manifiesto (bloque de color
+   sólido) hasta que lleguen las fotos definitivas. */
+const CAT_IMG = {
+  Filtrado: "lote-bourbon",
+  Espresso: "menu-espresso",
+  Frío: "menu-iced",
+  Panadería: "menu-panaderia",
+  Postres: "menu-postres",
+};
 
 /* Aviso de "estamos usando el respaldo local" — nunca silencioso. En consola
    siempre (el dueño puede revisarla en prod si algo no cuadra); en pantalla
@@ -326,6 +407,23 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false }) {
   const asset = ASSET_MANIFEST[id];
   if (!asset) return null;
   const { objectFit, objectPosition, ...wrapperStyle } = style;
+
+  /* Slot reservado: el manifiesto declara la caja pero todavía no hay
+     imagen (ver el encabezado de assetManifest.js). Se pinta el bloque de
+     color con la geometría final para que el layout ya sea el definitivo;
+     cuando el asset entre, este componente vuelve solo al camino de
+     <picture> sin tocar el punto de uso. `role="presentation"` porque un
+     bloque de color no comunica nada — no debe anunciarse como imagen. */
+  if (asset.placeholder) {
+    return (
+      <div className={className} role="presentation" style={{
+        display: "block", overflow: "hidden", background: asset.color,
+        aspectRatio: `${asset.width} / ${asset.height}`,
+        ...wrapperStyle,
+      }} />
+    );
+  }
+
   return (
     <picture className={className} style={{
       display: "block", overflow: "hidden", background: asset.color,
@@ -435,26 +533,65 @@ function btnMiniStyle(C) {
 
 /* ============================ INICIO ============================ */
 
+/* Encoge el tamaño de fuente hasta que el texto quepa en UNA sola línea
+   dentro del ancho de su contenedor. Existe por el titular de Inicio:
+   "geometría." en Fraunces itálica a 44px no entra en un teléfono angosto
+   y se cortaba contra el borde derecho. Partirlo en dos líneas no es
+   opción (es la palabra que remata la frase), así que se reduce el cuerpo.
+
+   El ancho del texto es lineal respecto al font-size, así que basta con
+   medirlo una vez a `max` y escalar por la razón que falte — no hace falta
+   iterar. Se vuelve a medir cuando cambia el ancho (ResizeObserver, o sea
+   también al rotar el teléfono) y cuando terminan de cargar las webfonts,
+   porque medir con la fuente de fallback da un ancho distinto. */
+function UnaLinea({ children, max, min = 20, className, style }) {
+  const ref = useRef(null);
+  const [size, setSize] = useState(max);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const cont = el?.parentElement;
+    if (!el || !cont) return;
+
+    const medir = () => {
+      const disponible = cont.clientWidth;
+      if (!disponible) return;
+      el.style.fontSize = `${max}px`;
+      const natural = el.scrollWidth;
+      const ajustado = natural > disponible
+        ? Math.max(min, Math.floor(max * (disponible / natural)))
+        : max;
+      // Se reescribe el estilo en vez de limpiarlo: si el valor calculado
+      // no cambia, React no re-renderiza y limpiarlo dejaría el elemento
+      // sin tamaño hasta el próximo render.
+      el.style.fontSize = `${ajustado}px`;
+      setSize(ajustado);
+    };
+
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(cont);
+    document.fonts?.ready.then(medir).catch(() => {});
+    return () => ro.disconnect();
+  }, [children, max, min]);
+
+  return (
+    <span ref={ref} className={className}
+      style={{ ...style, fontSize: size, display: "inline-block", whiteSpace: "nowrap", maxWidth: "100%" }}>
+      {children}
+    </span>
+  );
+}
+
 function Inicio({ ir, lote }) {
   const { C, tema } = useTheme();
-  const [prog, setProg] = useState(0);
   const [geo, setGeo] = useState(GEOMETRIAS[0]);
-  useEffect(() => {
-    let raf, t0 = performance.now();
-    const loop = (t) => {
-      const p = ((t - t0) / 3600) % 1;
-      setProg(p);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [geo]);
 
   const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
-      <button onClick={() => ir("club")} className="press tapfx quadro-frame rise" style={{
+      <button onClick={() => ir("club")} className="press tapfx rise" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
         width: "calc(100% - 40px)", margin: "12px 20px 0", textAlign: "left", cursor: "pointer",
         border: `1px solid ${C.brandAlt}`, borderRadius: 16, padding: "13px 16px",
@@ -470,33 +607,56 @@ function Inicio({ ir, lote }) {
         <ChevronRight size={16} color={C.textMuted} />
       </button>
 
-      <div className="rise" style={{
-        position: "relative", padding: "26px 20px 8px", overflow: "hidden",
-        backgroundImage: `linear-gradient(180deg, ${C.surface}CC, ${C.surface}), url(${heroDispenser})`,
-        backgroundSize: "cover", backgroundPosition: "center",
-      }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
-          Barra abierta · 7:00 a 20:00
+      <div className="rise" style={{ position: "relative", padding: "26px 20px 8px", overflow: "hidden", minHeight: 300 }}>
+        {/* Hero 3D: mismo modelo que Lab (public/models/espiral.glb) más la
+           espiral encendida con los colores de marca, orbitando solo, sin
+           interacción, de fondo. Reemplaza el <model-viewer> de la primera
+           pasada — ese mostraba solo el modelo apagado y se perdía contra
+           el fondo en ambos temas; la espiral con brillo (igual que en Lab
+           y en el comparador de rutas de abajo, mismo componente) es lo
+           que le da presencia sin depender de afinar luces a ciegas. */}
+        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+          <Suspense fallback={null}>
+            <EspiralHero vueltas={4.2} radio={1} width={340} height={300}
+              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
+              colorModelo={C.modelo} />
+          </Suspense>
         </div>
-        <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
-          El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
-        </h1>
-        <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
-          Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
-        </p>
+        {/* Velo que separa el cono 3D del titular. Su fuerza va por tema
+           (`veloHero`): los dos temas tienen el problema opuesto — ver los
+           comentarios en PALETAS. */}
+        <div aria-hidden style={{
+          position: "absolute", inset: 0,
+          background: `linear-gradient(180deg, ${C.surface}${C.veloHero}, ${C.surface})`,
+        }} />
+        <div style={{ position: "relative" }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
+            Barra abierta · 7:00 a 20:00
+          </div>
+          {/* lineHeight .88 apretaba tanto las líneas que la itálica de
+             "geometría" (ascendentes largas) chocaba con "tiene una"; el
+             tracking negativo que hereda .disp además pegaba las letras
+             entre sí. Aquí se sueltan las dos cosas. El remate va en
+             <UnaLinea> porque a 44px se salía del ancho del teléfono. */}
+          <h1 className="disp" style={{ fontSize: 44, lineHeight: 1.02, letterSpacing: ".012em", margin: "10px 0 4px" }}>
+            El sabor<br />tiene una<br />
+            <UnaLinea className="script" max={44} min={24} style={{ color: C.brand }}>geometría.</UnaLinea>
+          </h1>
+          <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
+            Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
+          </p>
+        </div>
       </div>
 
       <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          <svg width={132} height={132} viewBox="0 0 200 200" style={{ flexShrink: 0 }}>
-            <circle cx="100" cy="100" r="92" fill="none" stroke={C.line} strokeWidth="1" />
-            <circle cx="100" cy="100" r="62" fill="none" stroke={C.line} strokeWidth="1" strokeDasharray="3 5" />
-            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
-            <path d={spiralPath(geo.vueltas, geo.pasos, geo.radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="2.6" strokeLinecap="round" />
-            <circle r="4" fill={C.brandAlt}
-              cx={100 + Math.cos(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)}
-              cy={100 + Math.sin(prog * geo.vueltas * Math.PI * 2) * (86 * geo.radio * prog)} />
-          </svg>
+          <div key={geo.id} style={{ flexShrink: 0 }} className="spiral-enter">
+            <Suspense fallback={<div style={{ width: 132, height: 132 }} />}>
+              <EspiralTubo3D vueltas={geo.vueltas} radio={geo.radio} prog={1} tam={132}
+                colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
+                colorModelo={C.modelo} />
+            </Suspense>
+          </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="mono" style={{ fontSize: 10, color: C.brandAlt, letterSpacing: ".16em", textTransform: "uppercase" }}>{geo.metodo}</div>
             <div className="disp" style={{ fontSize: 19, margin: "4px 0 10px" }}>{geo.nombre}</div>
@@ -515,7 +675,7 @@ function Inicio({ ir, lote }) {
 
       <div className="slide" style={{ margin: "16px 20px 0" }}>
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".2em", color: C.textMuted, textTransform: "uppercase", marginBottom: 8 }}>Lote en barra hoy</div>
-        <button onClick={() => ir("fincas")} className="press tapfx quadro-frame" style={{
+        <button onClick={() => ir("fincas")} className="press tapfx" style={{
           width: "100%", textAlign: "left", cursor: "pointer", border: `1px solid ${C.line}`,
           borderRadius: 18, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
         }}>
@@ -531,7 +691,7 @@ function Inicio({ ir, lote }) {
           </div>
           <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
             {lote.notas.map((n) => (
-              <span key={n} className="mono" style={{ fontSize: 10, padding: "4px 9px", borderRadius: 99, border: `1px solid ${C.line}`, color: C.text }}>{n}</span>
+              <span key={n} className="mono" style={{ fontSize: 10, padding: "4px 9px", borderRadius: 99, border: `1px solid ${C.line}`, color: C.text, display: "inline-grid", placeItems: "center" }}>{n}</span>
             ))}
           </div>
           <div className="mono" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 12, fontSize: 11, color: C.brand }}>
@@ -588,7 +748,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
           const open = abierto === m.id;
           const agotado = m.disponible === false;
           return (
-            <div key={m.id} className="rise quadro-frame" style={{
+            <div key={m.id} className="rise" style={{
               animationDelay: `${i * 45}ms`, background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
               borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
               opacity: agotado ? .55 : 1,
@@ -598,9 +758,9 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
                     {agotado ? (
-                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600 }}>Agotado hoy</span>
+                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Agotado hoy</span>
                     ) : m.tag && (
-                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>
+                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>{m.tag}</span>
                     )}
                   </div>
                   <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
@@ -672,7 +832,7 @@ function FichaLote({ lote, compact, titulo }) {
   const acidez = Math.round(lote.altura / 26);
   const cuerpo = lote.proceso.includes("Honey") ? 80 : 58;
   return (
-    <div className="quadro-frame" style={{
+    <div style={{
       flex: compact ? 1 : "initial", minWidth: 0, background: C.card, border: `1px solid ${C.line}`,
       borderRadius: compact ? 14 : 18, padding: compact ? 12 : 16,
     }}>
@@ -749,7 +909,7 @@ function Fincas({ lote, setLote, onBack }) {
       )}
 
       {!comparar && (
-        <div className="pop quadro-frame" key={lote.id} style={{
+        <div className="pop" key={lote.id} style={{
           margin: "0 20px", borderRadius: 22, overflow: "hidden",
           border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
         }}>
@@ -895,7 +1055,10 @@ function Laboratorio({ onBack }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-      <ResponsiveImg id="hero-dispenser" alt="Equipo de extracción Quadro Café" style={{
+      {/* Banner superior, con la misma geometría que los de Carta (3.25:1).
+         Aquí los 20px laterales van en el propio componente, no heredados de
+         un wrapper con padding. `eager`: es lo primero de la pantalla. */}
+      <ResponsiveImg id="hero-dispenser" alt="Equipo de extracción Quadro Café" eager style={{
         width: "calc(100% - 40px)", margin: "0 20px", height: 120, borderRadius: 14,
       }} />
       <Header sub="Geometría de extracción" titulo="Laboratorio" onBack={onBack} />
@@ -903,25 +1066,17 @@ function Laboratorio({ onBack }) {
         Mueve la ruta del agua y mira cómo se desplaza el perfil. Lo mismo que hace la máquina, en tu mano.
       </p>
 
+      {/* Un solo elemento 3D real (espiral.glb + tubo procedural que
+         responde a vueltas/radio/prog) — antes eran dos cosas separadas
+         (un <model-viewer> decorativo arriba, un SVG plano abajo con el
+         propio simulador); se fusionaron para eliminar la duplicación. */}
       <div style={{ margin: "0 20px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
-        <div style={{ display: "grid", placeItems: "center", position: "relative" }}>
-          <svg width={210} height={210} viewBox="0 0 200 200">
-            <defs>
-              <radialGradient id="lecho">
-                <stop offset="0%" stopColor={C.brandAlt} stopOpacity=".25" />
-                <stop offset="100%" stopColor={C.brandAlt} stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle cx="100" cy="100" r="92" fill="url(#lecho)" stroke={C.line} />
-            <circle cx="100" cy="100" r="60" fill="none" stroke={C.line} strokeDasharray="2 6" />
-            <circle cx="100" cy="100" r="30" fill="none" stroke={C.line} strokeDasharray="2 6" />
-            <path d={spiralPath(vueltas, 280, radio, 200, 1)} fill="none" stroke={C.line} strokeWidth="2" />
-            <path d={spiralPath(vueltas, 280, radio, 200, prog)} fill="none" stroke={C.brand} strokeWidth="3" strokeLinecap="round" />
-            <circle r="5" fill={C.brandAlt}
-              cx={100 + Math.cos(prog * vueltas * Math.PI * 2) * (86 * radio * prog)}
-              cy={100 + Math.sin(prog * vueltas * Math.PI * 2) * (86 * radio * prog)} />
-          </svg>
-          {corriendo && <span className="drip" style={{ position: "absolute", top: 6, width: 3, height: 12, borderRadius: 99, background: C.brand }} />}
+        <div style={{ display: "grid", placeItems: "center" }}>
+          <Suspense fallback={<div style={{ width: 230, height: 230 }} />}>
+            <EspiralTubo3D vueltas={vueltas} radio={radio} prog={prog} tam={230}
+              colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
+              colorModelo={C.modelo} />
+          </Suspense>
         </div>
 
         <button onClick={() => setCorriendo(true)} className="press" style={{
@@ -1183,6 +1338,7 @@ function EstudioLightbox({ medio, total, index, cerrar, mover }) {
           <span className="mono" style={{
             fontSize: 10, color: C.textMuted, letterSpacing: ".1em", background: C.card,
             border: `1px solid ${C.line}`, borderRadius: 99, padding: "5px 10px",
+            display: "inline-grid", placeItems: "center",
           }}>{index + 1} / {total}</span>
           <button onClick={cerrar} className="press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
         </div>
