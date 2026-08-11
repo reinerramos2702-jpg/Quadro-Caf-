@@ -945,11 +945,19 @@ function Fincas({ lote, setLote, onBack }) {
             </svg>
             <div style={{ position: "relative", textAlign: "center" }}>
               <div className={reproduciendo ? "pulse" : ""} style={{
-                width: 92, height: 92, borderRadius: "50%", margin: "0 auto",
+                width: 92, height: 92, borderRadius: "50%", margin: "0 auto", overflow: "hidden",
                 display: "grid", placeItems: "center", background: C.surface,
                 border: `2px solid ${reproduciendo ? C.brand : C.brandAlt}`,
               }}>
-                <span className="disp" style={{ fontSize: 34, color: reproduciendo ? C.brand : C.brandAlt }}>{lote.avatar.inicial}</span>
+                {lote.avatar.video ? (
+                  // Mismo patrón que Marca (logo circular): wrapper de tamaño fijo con
+                  // overflow:hidden + media a 100%/100% con objectFit cover — el archivo
+                  // no necesita venir pre-recortado en círculo.
+                  <video key={lote.avatar.video} src={lote.avatar.video} autoPlay loop muted playsInline
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                ) : (
+                  <span className="disp" style={{ fontSize: 34, color: reproduciendo ? C.brand : C.brandAlt }}>{lote.avatar.inicial}</span>
+                )}
               </div>
               {reproduciendo && [0, .5, 1].map((d) => (
                 <span key={d} className="steam" style={{
