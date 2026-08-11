@@ -11,7 +11,7 @@ A mobile-first web app for Quadro Café, a real coffee shop at 4ª Av. de Los Pa
 - **Vite + React 18**, plain JS (no TypeScript), inline styles (no CSS framework/Tailwind)
 - Icons: `lucide-react`
 - Single-file component pattern: the entire app lives in `src/App.jsx` (mounted by `src/main.jsx`).
-- Deploy: GitHub → Cloudflare Pages, auto-deploys on push to `claude/quadro-cafe-v2-5uq32e`
+- Deploy: GitHub → **Cloudflare Workers Builds** (not Pages — see `wrangler.toml`, which serves `./dist` as static assets with SPA fallback). Auto-deploys on push to `main`; `README.md` documents the build-time env vars. Note `VITE_*` variables must exist in Cloudflare's *build* environment, not as Worker runtime bindings.
 - `npm run dev` / `npm run build` / `npm run preview`
 
 ## Theme system

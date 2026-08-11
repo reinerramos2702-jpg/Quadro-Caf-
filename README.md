@@ -26,7 +26,7 @@ Si estas variables faltan (o Supabase no responde), la app cae de vuelta a los d
 
 ## Deploy (Cloudflare Workers)
 
-El repo se despliega vía **Workers Builds** (integración Git de Cloudflare Workers, no Cloudflare Pages clásico): cada push a `claude/quadro-cafe-v2-5uq32e` dispara un build (`npm run build`) y un deploy (`npx wrangler deploy`) automáticos, configurados por `wrangler.toml` (sirve `./dist` como sitio estático con fallback SPA).
+El repo se despliega vía **Workers Builds** (integración Git de Cloudflare Workers, no Cloudflare Pages clásico): cada push a `main` dispara un build (`npm run build`) y un deploy (`npx wrangler deploy`) automáticos, configurados por `wrangler.toml` (sirve `./dist` como sitio estático con fallback SPA).
 
 ### Configurar las variables de entorno del build
 
