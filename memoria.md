@@ -293,3 +293,42 @@ El dueño eligió la opción de tinte más apagado tras ver que el crema `#CFC3A
 **`veloHero` (oscuro) bajó de `b3` a `8c`.** El topo llega al hero de Inicio ya atenuado por el velo, así que con `b3` la separación cono-vs-fondo caía a 1,21:1. A `8c` vuelve a **1,38:1**, sin tocar el titular: su luminancia es 237,3 en todas las variantes medidas — el velo solo mueve el cono. El tema claro no se toca (`modelo: null`, `veloHero: "cc"`).
 
 Resumen del hero de Inicio: 1,02:1 sin tinte → 1,53:1 con crema → **1,38:1 con topo**. Se cede un poco ahí, que es el precio de recuperar 3:1 en el simulador, donde la espiral es información y no decoración.
+
+## Fotos reales en los seis banners de 3.25:1 (2026-08-11) — rama `fix/checklist-batch`
+
+Llegaron las seis imágenes finales del dueño, generadas a medida para la caja de 3.25:1 documentada en el reporte de medidas. Vinieron a **2260x696** (no 1170x360 como decía el mensaje — más resolución, sin problema), salvo `menu-espresso` a **2172x724 = ratio 3.00**, la única que `cover` recorta (7.7% del alto, repartido arriba y abajo; el bowl está centrado, así que no lo toca).
+
+### Mapeo, con una corrección del dueño a mitad de camino
+
+Las imágenes venían con nombres de hash, así que el destino se dedujo por contenido (se armó una hoja de contactos para verlas todas juntas). El primer mapeo puso los tubos en Filtrado y los dispensadores en Lab; el dueño corrigió que era al revés. Quedó:
+
+| asset | contenido | destino |
+|---|---|---|
+| `menu-filtrado` | dispensadores de pared | Filtrado |
+| `menu-espresso` | bowl en la tostadora | Espresso |
+| `menu-frio` | frappé | Frío |
+| `menu-panaderia` | bagel en plato | Panadería |
+| `menu-postres-v2` | caja de cookies | Postres |
+| `lab-tubos` | tubos de grano en gradilla | Laboratorio |
+
+`-v2` en postres para no pisar el render viejo `menu-postres`, que sigue en `src/assets/` por si se quiere recuperar. Los otros huérfanos (`menu-iced`, `hero-dispenser`) también quedan en disco: Vite no los mete al bundle si nadie los importa.
+
+### El overlay del logo: solo una de las seis
+
+El pedido original era ponerle overlay del logo a cinco de las seis ("todas menos Frío"). Al revisar las imágenes resultó que **cinco de seis ya traen "QUADRO CAFÉ" dibujado por el generador** — en el bowl, el plato, la caja, el vaso, y en la escena misma de los dispensadores (ahí arriba a la izquierda, exactamente donde iría el overlay: habrían quedado dos logos pisados). Se le reportó al dueño con el detalle de cada una y confirmó: overlay solo donde falta. La única sin marca alguna es `lab-tubos`, y es la única que lo lleva.
+
+Implementación: prop `logo` en `ResponsiveImg`, que envuelve el `<picture>` en un contenedor `position: relative` y superpone `<Marca size={26}>` en `position: absolute`. Tres decisiones:
+- **Se reusa `Marca`**, el componente que ya dibuja el logo en el header y la nav, en vez de duplicar el tratamiento. `logo.png` no tiene alpha (es un cuadro con esquinas crema), por eso `Marca` lo recorta en círculo — replicarlo a mano habría mostrado el cuadro.
+- **La marca va fuera del `<picture>`**, en un div hermano: `<picture>` solo admite `<source>`/`<img>`, meterle un div rompe el HTML. El wrapper toma la geometría y el `borderRadius`, y la foto los hereda.
+- `drop-shadow` suave detrás: la gradilla tiene fondo gris medio y sin sombra el logo se perdía.
+
+### Pipeline
+
+`scripts/generar-asset.mjs` se amplió: acepta PNG (las fuentes venían así) y emite el JPG de respaldo, porque un PNG fotográfico pesa varias veces el JPG equivalente y `<picture>` necesita un fallback raster. Los PNG originales no se commitean — el `.jpg` queda de master, igual que los assets previos del repo.
+
+Anchos **480/900/1170**: 1170 = 390 px CSS x DPR 3, más allá de eso ninguna pantalla usa los píxeles. Como las entradas viejas se generaron a 1400, el manifiesto ahora declara `webp: [[import, ancho], ...]` en vez de campos fijos `webp480/900/1400`, y `ResponsiveImg` arma el `srcSet` desde esa lista — así conviven ambos sin regenerar lo viejo.
+
+De paso se corrigió el `sizes`: decía `100vw` cuando la caja real es `100vw - 56` (16 de margen del body + 40 de padding del wrapper), así que el navegador pedía una variante más grande de la necesaria.
+
+### Verificación
+Panel con las seis cajas a su geometría exacta (334x120, `cover`, radius 14) para juzgar recorte y encuadre de un vistazo, más capturas del Lab real en ambos temas. Ninguna sale estirada ni mal recortada; el overlay queda alineado con el logo del header. Build en verde con `sw.js`.

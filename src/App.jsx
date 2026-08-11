@@ -254,15 +254,14 @@ const MENU = [
 ];
 
 const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
-/* Banner de cada categoría de Carta. Ahora las cinco tienen slot: `menu-espresso`
-   y `menu-panaderia` son slots reservados en el manifiesto (bloque de color
-   sólido) hasta que lleguen las fotos definitivas. */
+/* Banner de cada categoría de Carta — las cinco con foto propia, encuadrada
+   a la caja de 3.25:1 (ver assetManifest.js). */
 const CAT_IMG = {
-  Filtrado: "lote-bourbon",
+  Filtrado: "menu-filtrado",
   Espresso: "menu-espresso",
-  Frío: "menu-iced",
+  Frío: "menu-frio",
   Panadería: "menu-panaderia",
-  Postres: "menu-postres",
+  Postres: "menu-postres-v2",
 };
 
 /* Aviso de "estamos usando el respaldo local" — nunca silencioso. En consola
@@ -400,10 +399,17 @@ function ThemeToggle() {
 
 /* ============================ PIEZAS ============================ */
 
-/* <picture> con WebP responsivo (480/900/1400w) + fallback JPG, con el color
-   dominante del asset pintado en el wrapper hasta que la imagen cargue (sin
-   blur — placeholder sólido). `eager` solo para imagen above-the-fold. */
-function ResponsiveImg({ id, alt = "", style = {}, className, eager = false }) {
+/* <picture> con WebP responsivo (anchos declarados por cada asset en el
+   manifiesto) + fallback JPG, con el color dominante del asset pintado en el
+   wrapper hasta que la imagen cargue (sin blur — placeholder sólido).
+   `eager` solo para imagen above-the-fold.
+
+   `logo`: superpone la marca arriba a la izquierda como capa CSS aparte, sin
+   tocar el archivo. Solo lo usan las fotos que NO traen el logotipo ya
+   dibujado — hoy `lab-tubos`; las demás lo traen integrado en el producto
+   (el bowl, el plato, la caja, el vaso) o en la propia escena, y una segunda
+   marca encima quedaría duplicada. */
+function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, logo = false }) {
   const asset = ASSET_MANIFEST[id];
   if (!asset) return null;
   const { objectFit, objectPosition, ...wrapperStyle } = style;
@@ -424,21 +430,41 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false }) {
     );
   }
 
-  return (
-    <picture className={className} style={{
+  const foto = (
+    <picture className={logo ? undefined : className} style={{
       display: "block", overflow: "hidden", background: asset.color,
       aspectRatio: `${asset.width} / ${asset.height}`,
-      ...wrapperStyle,
+      ...(logo ? { width: "100%", height: "100%", borderRadius: "inherit" } : wrapperStyle),
     }}>
       <source type="image/webp"
-        srcSet={`${asset.webp480} 480w, ${asset.webp900} 900w, ${asset.webp1400} 1400w`}
-        sizes="(max-width: 430px) 100vw, 430px" />
+        srcSet={asset.webp.map(([src, w]) => `${src} ${w}w`).join(", ")}
+        sizes="(max-width: 430px) calc(100vw - 56px), 374px" />
       <img src={asset.jpg} alt={alt} loading={eager ? "eager" : "lazy"} style={{
         width: "100%", height: "100%", display: "block",
         objectFit: objectFit || "cover",
         ...(objectPosition ? { objectPosition } : {}),
       }} />
     </picture>
+  );
+
+  if (!logo) return foto;
+
+  /* La marca va en un contenedor propio en vez de dentro del <picture>: ese
+     elemento solo admite <source>/<img>, meterle un div rompería el HTML.
+     El wrapper toma la geometría (incluido el borderRadius) y la foto la
+     hereda, así el recorte de la esquina sigue aplicando a ambos. */
+  return (
+    <div className={className} style={{ position: "relative", overflow: "hidden", ...wrapperStyle }}>
+      {foto}
+      <span aria-hidden style={{
+        position: "absolute", top: 12, left: 12,
+        // Sombra suave detrás: la marca cae sobre foto, y sin ella se pierde
+        // en las zonas claras (la gradilla tiene fondo gris medio).
+        filter: "drop-shadow(0 1px 5px rgba(0,0,0,.45))",
+      }}>
+        <Marca size={26} />
+      </span>
+    </div>
   );
 }
 
@@ -1058,7 +1084,7 @@ function Laboratorio({ onBack }) {
       {/* Banner superior, con la misma geometría que los de Carta (3.25:1).
          Aquí los 20px laterales van en el propio componente, no heredados de
          un wrapper con padding. `eager`: es lo primero de la pantalla. */}
-      <ResponsiveImg id="hero-dispenser" alt="Equipo de extracción Quadro Café" eager style={{
+      <ResponsiveImg id="lab-tubos" alt="Tubos de grano por nivel de tueste en la barra de Quadro Café" eager logo style={{
         width: "calc(100% - 40px)", margin: "0 20px", height: 120, borderRadius: 14,
       }} />
       <Header sub="Geometría de extracción" titulo="Laboratorio" onBack={onBack} />
