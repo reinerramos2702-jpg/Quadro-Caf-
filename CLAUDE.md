@@ -73,4 +73,6 @@ Its material is genuinely dark (baseColor averages 31/255), which is why in the 
 
 ## Out of scope / not yet built
 
-React Native migration, Supabase (auth/orders/real email capture), real in-app payments, CRM export integration, Higgsfield avatar videos (would replace the text/audio induction player in Fincas). See `docs/HANDOFF.md` for the original list — still accurate.
+React Native migration, Supabase (auth/orders/real email capture), real in-app payments, CRM export integration. See `docs/HANDOFF.md` for the original list — still accurate.
+
+**Higgsfield avatar videos in Fincas — structure ready, asset still pending (2026-08-11):** the 92×92px avatar circle in `Fincas` (`App.jsx`) now renders `lote.avatar.video` (a looping, muted `<video>` with `objectFit: "cover"`, same crop pattern as `Marca`) when present, falling back to the text initial otherwise — Elio/Rosa/Mina are unaffected since they have no `video` field. No actual video file is wired in yet; once the owner delivers one, add `video: <import>` to that finca's `avatar` object. The text/audio induction player (guion + Reproducir/Transcripción) itself hasn't been touched.
