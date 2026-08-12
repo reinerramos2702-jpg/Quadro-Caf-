@@ -78,7 +78,11 @@ const PALETAS = {
 };
 
 const FINCA_TINTS = {
-  claro: ["#243b57", "#3b574c", "#b5613c"],
+  // 4º valor de claro reservado para Agua Fría (verde profundo, confirmado por
+  // el dueño 2026-08-11) — inerte hasta que esa finca entre a FINCAS (índice 3).
+  claro: ["#243b57", "#3b574c", "#b5613c", "#26382f"],
+  // Oscuro todavía sin 4º valor: el candidato #7FE3C0 (alien) fue descartado
+  // por el dueño, sin reemplazo definido aún. No agregar nada acá sin confirmar.
   oscuro: ["#5B2E8C", "#1E5C4A", "#C9873A"],
 };
 
