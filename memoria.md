@@ -339,4 +339,20 @@ Dos cambios de estructura de código, sin tocar Higgsfield ni audio todavía:
 
 - **Círculo de avatar de `Fincas` acepta video**: el wrapper de 92×92px (`borderRadius:"50%"`) ahora tiene `overflow:"hidden"` y, si `lote.avatar.video` existe, renderiza un `<video autoPlay loop muted playsInline objectFit:"cover">` en vez de la inicial de texto — mismo patrón que `Marca` (el logo circular del header): el archivo puede ser rectangular normal, el recorte a círculo lo hace el CSS, no hace falta pre-recortarlo ni con transparencia. Fallback a `lote.avatar.inicial` cuando no hay `video` — así Elio/Rosa/Mina (que no tienen ese campo) siguen igual. Falta la ruta del archivo final; cuando llegue, solo hay que agregar `video: <import>` al `avatar` de la finca correspondiente en `FINCAS`.
 
-- **Agua Fría — NO se agregó todavía a `FINCAS`, a propósito**: el dueño confirmó datos cualitativos reales (caficultor **José Tomás Carrillo Batalla**, finca con más de 100 años de trayectoria, premios en Europa a inicios del siglo XX, tercera generación, variedades **Tabi, Borbón Rosado, Geisha y Monte Claro** — Geisha como varietal insignia si hace falta uno solo), pero el schema de `FINCAS` exige `zona`, `altura` (msnm), `proceso` y `score` (SCA) porque el código hace matemática con ellos (`dulzor = score - 12`, `acidez = altura / 26`, `cuerpo` según si `proceso.includes("Honey")`, línea ~857-859 de `App.jsx`) y los renderiza en la vista Comparar. El dueño confirmó explícitamente que esos 4 campos **todavía no los tiene** — agregarlos con valores inventados rompería el runtime apenas alguien seleccione Agua Fría (`undefined.includes` explota) además de violar la política de datos reales del proyecto. Queda pendiente del Bloque 7 (fusión de roster, ver "Pendiente (v4)" arriba) hasta tener esos 4 datos; también falta un 4° color en `FINCA_TINTS` (candidatos ya definidos en la paleta y sin uso ahí: `#26382f` verde profundo en claro, `#7FE3C0` alien en oscuro) y decidir el orden en el array (se recomienda agregarla al final, no al principio, para no correr los índices de `comparados` por defecto en `Fincas`, que hoy son `FINCAS[0]`/`FINCAS[1]`).
+- **Agua Fría — NO se agregó todavía a `FINCAS`, a propósito**: el schema de `FINCAS` exige `zona`, `altura` (msnm), `proceso` y `score` (SCA) porque el código hace matemática con ellos (`dulzor = score - 12`, `acidez = altura / 26`, `cuerpo` según si `proceso.includes("Honey")`, línea ~857-859 de `App.jsx`) y los renderiza en la vista Comparar. Agregar el objeto con campos faltantes/inventados rompería el runtime apenas alguien seleccione Agua Fría (`undefined.includes` explota) además de violar la política de datos reales del proyecto. Queda pendiente del Bloque 7 (fusión de roster, ver "Pendiente (v4)" arriba) hasta tener los 3 datos que faltan (ver abajo); también hay que decidir el orden en el array (se recomienda agregarla al final, no al principio, para no correr los índices de `comparados` por defecto en `Fincas`, que hoy son `FINCAS[0]`/`FINCAS[1]`).
+
+  **Datos confirmados por el dueño (2026-08-11):**
+  - Caficultor: **José Tomás Carrillo Batalla**
+  - Historia: finca con más de 100 años de trayectoria, premios en Europa a inicios del siglo XX, tercera generación
+  - Variedades: **Tabi, Borbón Rosado, Geisha (insignia), Monte Claro**
+  - Zona: Municipio Guaicaipuro, Sector Cortada de Maturín, Estado Miranda
+  - Altura: **1200 msnm**
+
+  **Pendiente del checklist (el dueño aún no los pasó — esperar, no inventar):**
+  - Proceso de beneficio
+  - Puntaje SCA
+  - Notas de cata
+
+  **`FINCA_TINTS` (`App.jsx` línea ~80)**: el 4º valor de `claro` ya quedó fijado en `#26382f` (verde profundo, confirmado por el dueño) — es inerte hasta que Agua Fría entre al array (`FINCAS.findIndex` nunca llega al índice 3 con solo 3 fincas). El candidato de `oscuro` (`#7FE3C0` alien) fue **descartado explícitamente**; el dueño no dio reemplazo — sigue pendiente, no agregar nada ahí sin confirmar.
+
+  **Regla permanente (confirmada por el dueño 2026-08-11):** todo cambio de código o de dato debe reflejarse en los `.md` correspondientes (`memoria.md`, `CLAUDE.md`, y los que apliquen) **en el mismo paso**, no después — ver también `CLAUDE.md`.
