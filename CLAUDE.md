@@ -40,8 +40,11 @@ Typography: the real brand fonts now ship in `src/assets/fonts/` (protected fold
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
 
+**Permanent rule (confirmed by the owner 2026-08-11):** any code change or data change must be reflected in the corresponding `.md` files (`memoria.md`, `CLAUDE.md`, and whichever else applies) **in the same step**, not afterward.
+
 Current confirmed-real data inventory (as of the v3 pass):
 - Fincas/lotes (`FINCAS` in `App.jsx`): Elio (Triángulo de Mocotíes, Bailadores — Catuai, 86.5 SCA), Rosa (Santa Cruz de Mora, VCT — 83 SCA), Mina (La Mina, Colombia/1000 Cups — Yellow Bourbon honey, 87.5 SCA). Supersedes the earlier v2 roster (Agua Fría/Santa Anita/Los Naranjos/Shady Ramírez from `docs/HANDOFF.md`) — preserved there as history but no longer what's rendered in the app.
+- **Agua Fría (Bloque 7 merge, in progress, NOT yet in `FINCAS`)**: confirmed so far — caficultor José Tomás Carrillo Batalla; finca with 100+ years of trayectoria, awards in Europe in the early 20th century, third generation; varietals Tabi, Borbón Rosado, Geisha (insignia), Monte Claro; zona Municipio Guaicaipuro, Sector Cortada de Maturín, Estado Miranda; altura 1200 msnm. **Still missing** (owner hasn't passed these yet — do not invent, wait): proceso de beneficio, puntaje SCA, notas de cata. Do not add the entry to `FINCAS` until those three land — the schema does arithmetic on `score`/`altura`/`proceso` (see `Fincas`/`FichaFinca` in `App.jsx`) that breaks at runtime on `undefined`. `FINCA_TINTS`' 4th `claro` value is already locked to `#26382f`; the `oscuro` 4th value has no confirmed color yet (`#7FE3C0` was proposed and explicitly rejected). Full log in `memoria.md` under "Fincas — avatar en video (estructura) + Agua Fría pendiente".
 - Menu (`MENU`): real prices, categories (Filtrado/Espresso/Frío/Panadería/Postres), tags.
 - Equipo (`EQUIPO`): Comandante C40, AeroPress, Sifón de vacío, Copas de perfil (Pinot/Aroma/Barrel).
 - Location/contact: address, hours, Instagram — from `docs/HANDOFF.md`, rendered on Inicio.
@@ -70,4 +73,6 @@ Its material is genuinely dark (baseColor averages 31/255), which is why in the 
 
 ## Out of scope / not yet built
 
-React Native migration, Supabase (auth/orders/real email capture), real in-app payments, CRM export integration, Higgsfield avatar videos (would replace the text/audio induction player in Fincas). See `docs/HANDOFF.md` for the original list — still accurate.
+React Native migration, Supabase (auth/orders/real email capture), real in-app payments, CRM export integration. See `docs/HANDOFF.md` for the original list — still accurate.
+
+**Higgsfield avatar videos in Fincas — structure ready, asset still pending (2026-08-11):** the 92×92px avatar circle in `Fincas` (`App.jsx`) now renders `lote.avatar.video` (a looping, muted `<video>` with `objectFit: "cover"`, same crop pattern as `Marca`) when present, falling back to the text initial otherwise — Elio/Rosa/Mina are unaffected since they have no `video` field. No actual video file is wired in yet; once the owner delivers one, add `video: <import>` to that finca's `avatar` object. The text/audio induction player (guion + Reproducir/Transcripción) itself hasn't been touched.
