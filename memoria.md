@@ -356,3 +356,31 @@ Dos cambios de estructura de código, sin tocar Higgsfield ni audio todavía:
   **`FINCA_TINTS` (`App.jsx` línea ~80)**: el 4º valor de `claro` ya quedó fijado en `#26382f` (verde profundo, confirmado por el dueño) — es inerte hasta que Agua Fría entre al array (`FINCAS.findIndex` nunca llega al índice 3 con solo 3 fincas). El candidato de `oscuro` (`#7FE3C0` alien) fue **descartado explícitamente**; el dueño no dio reemplazo — sigue pendiente, no agregar nada ahí sin confirmar.
 
   **Regla permanente (confirmada por el dueño 2026-08-11):** todo cambio de código o de dato debe reflejarse en los `.md` correspondientes (`memoria.md`, `CLAUDE.md`, y los que apliquen) **en el mismo paso**, no después — ver también `CLAUDE.md`.
+
+## Limpieza de ramas: Bloque 8 (Barra) y Bloque de banners, mergeados a `main` (2026-08-16)
+
+`main` estaba varios días atrasado de dos ramas de trabajo terminado: `fix/barra-dashboard` (Bloque 8) y `fix/checklist-batch` (banners con fotos reales + estructura de avatar-video de Fincas, ver secciones de arriba). Se mergearon ambas a `main` y se pusheó a `origin/main` (`706c647` → `9eaaa39`).
+
+**`fix/checklist-batch` mergeó limpio, sin conflictos** (fast auto-merge de git).
+
+**`fix/barra-dashboard` NO se mergeó directo — se aplicó a mano.** Esa rama se creó el 4 de agosto (`d0e68a7`), antes de que aterrizara en `main` el trabajo del 10-11 de agosto: VIOLA-Acentos, compresión del `.glb` (17.8x, 6.88MB→395KB) y el hero 3D real en Three.js (`EspiralHero`/`EspiralTubo3D`, `src/lib/espiral3d.jsx`). Un `git merge` directo producía 4 archivos en conflicto (`App.jsx`, `memoria.md`, `package-lock.json`, `public/models/espiral.glb`) y, de resolverse ingenuamente, habría **regresado** las tres cosas de arriba: el `.glb` volvía a su versión sin comprimir de 7.2MB, el hero de Inicio volvía a un `<model-viewer>` estático + SVG plano en vez del Three.js real, y el fix de acentos en VIOLA se perdía (esa rama nunca tuvo `VIOLA Acentos`/`scripts/generar-acentos-viola.mjs`, que de hecho borraba). `package.json`/`assetManifest.js` también tenían ese mismo problema (borraban `three`/`gltf-transform`/`sharp`/`opentype.js` y los scripts npm; y volvían a "slots reservados" en vez de las fotos reales de banners que trajo `fix/checklist-batch`).
+
+Se extrajo a mano solo lo específico del Bloque 8 (verificado que es contenido nuevo, no stale) y se aplicó sobre el `App.jsx` actual de `main`:
+- `METODOS_PAGO` / `ENTREGA_OPCIONES` / `ESTADOS_ORDEN` (consts de datos, sección `DATOS REALES`).
+- `Carrito`: ahora pide nombre + para acá/llevar + método de pago, y llama `enviarABarra` (prop nueva) en vez de un `confirmar` que generaba un número random.
+- `Ticket`: ahora recibe la `orden` completa y escucha su estado real por Supabase Realtime (`postgres_changes` sobre `ordenes`), en vez de un temporizador simulado de 4 pasos fijos.
+- `QuadroCafe` (App): `ticket`/`setTicket` (número mock) reemplazado por `orden`/`setOrden` (fila real de Supabase); nueva función `enviarABarra` que hace el `insert` en la tabla `ordenes` y devuelve `{ok:false, error}` en vez de lanzar.
+- Bloque nuevo `BARRA (BOH)` al final de `App.jsx`: `OrdenCard`, `reproducirBeep` (beep con Web Audio, sin asset), y `export function BarraDashboard()` — dashboard standalone para tablet/PC del local, login compartido con el Panel Admin, cola de órdenes activas por Realtime con beep+destello al llegar una nueva, botón de avanzar/cancelar estado.
+- `src/main.jsx`: decide `#barra` vs la app de cliente una sola vez al montar (`BarraDashboard` en vez de `QuadroCafe`) — **sin** el `import "@google/model-viewer"` que traía esa rama, porque ya no hace falta (el hero usa Three.js).
+- `supabase/migrations/0002_ordenes.sql` (archivo nuevo, sin conflicto): tabla `ordenes` + `ordenes_contador` (numeración secuencial diaria atómica vía trigger `security definer`), RLS (lectura/inserción pública, actualización solo `authenticated`), y alta en la publicación `supabase_realtime`. **Falta correrla a mano en el SQL Editor de Supabase** — no hay CLI de Supabase en este entorno para aplicarla.
+
+Icons nuevos importados en `App.jsx` (ya estaban en `lucide-react`, solo faltaba el import): `Banknote, Smartphone, Landmark, DollarSign` (métodos de pago), `Volume2, VolumeX, Bell, XCircle, Home, Package, User` (entrega + dashboard).
+
+`npm run build` corre en verde (la app compila y bundlea sin errores) — el único fallo es el conocido problema local del apóstrofo de la carpeta rompiendo la escritura de `sw.js` por `vite-plugin-pwa`/workbox (ver `quadro-cafe-build-apostrofo.md` en memoria del agente), no algo de este cambio.
+
+**Deploy verificado en vivo tras el push**: Cloudflare Workers Builds disparó solo (commit `9eaaa39`, deploy `2026-08-16T19:32:06Z` según `wrangler deployments list`), y el bundle servido en `https://quadro-cafe.reinerramos2702.workers.dev/` ya contiene "Dashboard de barra"/"numero_orden" — confirmado con `curl` al JS de producción, no solo asumido por el trigger de push.
+
+**Pendiente real después de este merge:**
+- Correr `supabase/migrations/0002_ordenes.sql` en el proyecto de Supabase — sin eso, `/#barra` y el carrito muestran el mensaje de "Supabase no está configurado" / fallan al enviar, aunque el código ya está en producción.
+- Verificar en el dashboard de Supabase (Database → Replication) que `ordenes` quedó en la publicación `supabase_realtime` después de correr la migración (el script lo intenta solo, pero conviene confirmarlo una vez, según su propio comentario de cabecera).
+- Las ramas remotas `fix/barra-dashboard` y `fix/checklist-batch` (y sus locales) quedaron atrás de `main` — no se borraron todavía, se puede limpiar cuando se confirme que no falta nada más por rescatar de ellas.

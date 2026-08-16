@@ -71,8 +71,16 @@ Two consequences to respect:
 
 Its material is genuinely dark (baseColor averages 31/255), which is why in the dark theme the Inicio hero tints it — see `PALETAS[].modelo` / `veloHero` and `tenirModelo()`. A `material.color` alone can't lighten it: in three.js that value *multiplies* the baseColor texture, so it can only darken; the tint works by dropping `map` and letting the color apply over white. The relief is unaffected — it lives in the normal map.
 
+## Bloque 8 — Barista Dashboard (`/#barra`, merged 2026-08-16)
+
+Real orders now exist end to end: `Carrito` collects name + para acá/llevar + payment method and calls `enviarABarra` (in `QuadroCafe`), which inserts into the Supabase `ordenes` table (`supabase/migrations/0002_ordenes.sql`) instead of faking a random ticket number. `Ticket` shows the real order and listens to its `estado` via Supabase Realtime (`postgres_changes` on `ordenes`) — no more simulated 4-step timer. `src/main.jsx` renders `BarraDashboard` (a separate export from `App.jsx`, own component tree, no phone frame) instead of `QuadroCafe` when `window.location.hash === "#barra"` — it's a staff-facing queue (login shared with Panel Admin for now) with Realtime updates, a Web Audio beep + border flash on new orders, and advance/cancel per order.
+
+**Pending before this actually works in production:** `0002_ordenes.sql` still has to be run by hand in the Supabase SQL Editor (no Supabase CLI in this environment) — until then `/#barra` and checkout both show "Supabase no está configurado" even though the code is live. After running it, confirm in Database → Replication that `ordenes` landed in the `supabase_realtime` publication.
+
+This was cherry-picked by hand from a stale branch (`fix/barra-dashboard`, created 2026-08-04) rather than merged directly — that branch predated the VIOLA-Acentos/`.glb` compression/Three.js hero work below and would have regressed all three if merged as-is. See `memoria.md` § "Limpieza de ramas" (2026-08-16) for the full list of what was and wasn't ported.
+
 ## Out of scope / not yet built
 
-React Native migration, Supabase (auth/orders/real email capture), real in-app payments, CRM export integration. See `docs/HANDOFF.md` for the original list — still accurate.
+React Native migration, Supabase auth/real email capture, real in-app payments, CRM export integration. See `docs/HANDOFF.md` for the original list — mostly still accurate; orders are now real (see Bloque 8 above), the rest isn't.
 
 **Higgsfield avatar videos in Fincas — structure ready, asset still pending (2026-08-11):** the 92×92px avatar circle in `Fincas` (`App.jsx`) now renders `lote.avatar.video` (a looping, muted `<video>` with `objectFit: "cover"`, same crop pattern as `Marca`) when present, falling back to the text initial otherwise — Elio/Rosa/Mina are unaffected since they have no `video` field. No actual video file is wired in yet; once the owner delivers one, add `video: <import>` to that finca's `avatar` object. The text/audio induction player (guion + Reproducir/Transcripción) itself hasn't been touched.
