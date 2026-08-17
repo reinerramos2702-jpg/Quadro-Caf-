@@ -36,6 +36,27 @@ Typography: the real brand fonts now ship in `src/assets/fonts/` (protected fold
 
 **Marco Quadro (retired 2026-08-09)**: used to be a corner notch (`.quadro-frame` CSS class, `clip-path` cutting the bottom-right corner) applied to product/finca/lote cards, echoing the mountain-peak notch in the real logo. The owner asked to remove it everywhere — all cards now use plain, fully-rounded corners (`borderRadius` on all four corners, no `clip-path`, no `borderBottomRightRadius: 0` override). `.quadro-frame` no longer exists in the CSS; don't reintroduce it.
 
+## Motion system (Sprint "Alta Gama", Fase 2 — 2026-08-17)
+
+Design tokens for every animation added from this sprint onward, defined as CSS custom properties at the top of `buildCss()` in `App.jsx`:
+
+```
+--motion-fast   150ms   touch/micro-interaction — immediate tap feedback
+--motion-base   300ms   content transition — view/state changes
+--motion-slow   500ms   large elements — hero, featured entrances
+--ease-out      cubic-bezier(.16,1,.3,1)   entrances (something appears)
+--ease-in-out   cubic-bezier(.45,0,.15,1)  state transitions (something changes state)
+--ease-spring   cubic-bezier(.34,1.56,.64,1)  subtle overshoot, for tactile elements (buttons, chips)
+```
+
+Three new utility classes consume them: `.mo-tap` (spring press feedback, `transform:scale(.94)` on `:active`), `.mo-enter`/`.mo-hero` (reuse the pre-existing `qc-rise` keyframe — same `translateY(16px)→0` — just with the new token durations/easing instead of a loose `cubic-bezier`). **First and so far only usage**: `ThemeToggle`'s button swapped `className="press"` → `className="mo-tap"` — verified in prod DevTools as `transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)`, matches the tokens exactly.
+
+**Deliberately additive, not a migration**: every pre-existing animation class (`.rise`, `.pop`, `.slide`, `.sheet`, `.press`, `.tapfx`, `.pulse`, `.bar`, `.drip`, `.steam`, all the `qc-*` keyframes) is untouched, byte-for-byte — nothing in Fincas, Elio, or any already-animated screen changed in this phase. Later sprint phases should reach for the new tokens on *new* animation work; migrating old classes to the token system is a separate, explicit decision, not implied by this phase landing.
+
+**Framer Motion evaluated and rejected for this sprint** (owner asked for an explicit bundle-size call before approving any new animation library): `framer-motion` full import is 62KB gzip (Bundlephobia); even the reduced `LazyMotion`+`domAnimation` path, documented at ~19.6KB, was measured at ~43KB gzip in real Webpack/Rollup builds per a GitHub issue on the library's own repo (motiondivision/motion#1585) — the "small" numbers assume ideal tree-shaking that doesn't always hold. The sprint's actual needs (entrance/exit, subtle spring, crossfade, fill-on-scroll bars) are already covered by the CSS system above — `qc-bar{from{width:0}}` in particular is already the exact fill-on-scroll shape Fase 4 needs, it just needs an `IntersectionObserver` trigger. Bundle impact of the token system itself: **+1.14KB gzip** (77.39KB vs 76.25KB baseline — pure CSS/comments, no dependency added). Reconsider a real animation library only if a later phase needs shared-element/layout animations or drag, and measure the *actual* Vite/Rollup build before committing, not the library's documentation numbers.
+
+Respects `prefers-reduced-motion` for free — the existing global rule (`@media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}`) already zeroes out any `transition`/`animation` on the page, this system included, without needing to declare it again.
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
