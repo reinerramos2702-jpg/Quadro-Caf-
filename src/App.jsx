@@ -754,8 +754,28 @@ function mezclarHex(hexA, hexB, t) {
 // Nunca un hex suelto: los dos extremos salen de PALETAS (card = taza vacía,
 // brandAlt = acento cálido de marca) para que el gradiente sea correcto en
 // los dos temas sin declarar nada nuevo.
+//
+// Bug reportado (2026-08-17): Sifón (extracción 88/cuerpo 72) y AeroPress
+// Punto Central (extracción 68/cuerpo 84) se veían casi idénticos. Causa:
+// esta fórmula solo miraba `cuerpo` normalizado contra 0-100, y el `cuerpo`
+// real de las 4 rutas nunca baja de 38 ni sube de 84 — o sea usaba solo el
+// 46% central del gradiente card→brandAlt, y encima ese par puntual queda a
+// 12 puntos de distancia ahí adentro, casi imperceptible. Fix: normalizar
+// cada eje contra su rango REAL en GEOMETRIAS (estira lo poco que hay a
+// todo el gradiente disponible) y sumar `extracción` como segundo eje —
+// que es justo donde ese par sí difiere fuerte (88 vs 68). Cuerpo pesa más
+// (.6) por ser lo que más se lee como densidad visual; extracción amplifica
+// (.4). Con esto el mismo par pasa de 12 a ~24 puntos de separación.
+function normalizar(valor, min, max) {
+  if (max === min) return .5;
+  return Math.min(1, Math.max(0, (valor - min) / (max - min)));
+}
+const CUERPO_RANGO = GEOMETRIAS.reduce((r, g) => [Math.min(r[0], g.efecto.cuerpo), Math.max(r[1], g.efecto.cuerpo)], [Infinity, -Infinity]);
+const EXTRACCION_RANGO = GEOMETRIAS.reduce((r, g) => [Math.min(r[0], g.efecto.extraccion), Math.max(r[1], g.efecto.extraccion)], [Infinity, -Infinity]);
 function colorTaza(efecto, C) {
-  const t = Math.min(1, Math.max(0, efecto.cuerpo / 100));
+  const nCuerpo = normalizar(efecto.cuerpo, CUERPO_RANGO[0], CUERPO_RANGO[1]);
+  const nExtraccion = normalizar(efecto.extraccion, EXTRACCION_RANGO[0], EXTRACCION_RANGO[1]);
+  const t = nCuerpo * .6 + nExtraccion * .4;
   return mezclarHex(C.card, C.brandAlt, t);
 }
 
