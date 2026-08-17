@@ -2262,7 +2262,6 @@ export default function QuadroCafe() {
     { k: "fincas", t: "Fincas", i: Mountain },
     { k: "maquinas", t: "Lab", i: Waves },
     { k: "academia", t: "Aula", i: GraduationCap },
-    { k: "estudio", t: "Estudio", i: ImageIcon },
   ];
 
   return (
