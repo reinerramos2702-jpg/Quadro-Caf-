@@ -2203,7 +2203,6 @@ export default function QuadroCafe() {
   const [orden, setOrden] = useState(null);
   const [lote, setLote] = useState(FINCAS[0]);
   const [taza, setTaza] = useState(TAZAS[1]);
-  const [medios, setMedios] = useState(MEDIOS_INICIALES);
   const [email, setEmail] = useState(() => {
     try { return localStorage.getItem("qc-email") || ""; } catch { return ""; }
   });
