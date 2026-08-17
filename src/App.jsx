@@ -1006,7 +1006,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
         <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto" }}>
           {CATS.map((c) => (
             <div key={c} ref={(el) => { chipRefs.current[c] = el; }}>
-              <Chip active={c === cat} onClick={() => setCat(c)}>{c}</Chip>
+              <Chip active={c === cat} onClick={() => cambiarCategoria(c)}>{c}</Chip>
             </div>
           ))}
         </div>
