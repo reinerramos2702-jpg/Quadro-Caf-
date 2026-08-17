@@ -1603,7 +1603,12 @@ function Laboratorio({ onBack }) {
   const [corriendo, setCorriendo] = useState(false);
   const [prog, setProg] = useState(1);
 
-  useEffect(() => { setVueltas(geo.vueltas); setRadio(geo.radio); }, [geo]);
+  // Al cambiar de método (chip) también se corta cualquier vertido en curso
+  // y el tubo vuelve a reposo (prog=1) — mismo reset que ya hace el
+  // comparador de Inicio al tocar una ruta distinta, para que el
+  // "spiral-enter" de abajo entre limpio y no arrastre un vertido a medias
+  // del método anterior.
+  useEffect(() => { setVueltas(geo.vueltas); setRadio(geo.radio); setProg(1); setCorriendo(false); }, [geo]);
 
   useEffect(() => {
     if (!corriendo) return;
@@ -1617,6 +1622,14 @@ function Laboratorio({ onBack }) {
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [corriendo]);
+
+  // Mismo patrón que "Simular vertido" de Inicio (Fase 4): respeta
+  // prefers-reduced-motion a mano porque el trazo corre por rAF, no por una
+  // transition/animation CSS que la regla global ya cubra.
+  const simularVertido = () => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) { setProg(1); return; }
+    setCorriendo(true);
+  };
 
   const perfil = useMemo(() => {
     const extraccion = Math.round(Math.min(98, 30 + vueltas * 7 + radio * 22 + (temp - 88) * 2.2 + (30 - molienda) * .8));
