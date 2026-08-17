@@ -1342,9 +1342,14 @@ function FichaLote({ lote, compact, titulo }) {
         ))}
       </div>
       <div style={{ marginTop: compact ? 12 : 16 }}>
-        {dulzor != null && <Meter label="Dulzor" value={dulzor} tone={C.brandAlt} />}
-        <Meter label="Acidez" value={acidez} />
-        {cuerpo != null && <Meter label="Cuerpo" value={cuerpo} tone={C.purple} />}
+        {/* triggerKey={lote.id} (Fase 6): FichaLote no remonta al cambiar de
+           finca (solo la card superior de arriba lo hace, vía su propio
+           key={lote.id}), así que sin esto las barras saltaban directo al
+           valor nuevo sin volver a llenarse — mismo mecanismo `triggerKey`
+           que ya usa `Meter` desde Fase 4 (Inicio) y Fase 5 (Lab). */}
+        {dulzor != null && <Meter label="Dulzor" value={dulzor} tone={C.brandAlt} triggerKey={lote.id} />}
+        <Meter label="Acidez" value={acidez} triggerKey={lote.id} />
+        {cuerpo != null && <Meter label="Cuerpo" value={cuerpo} tone={C.purple} triggerKey={lote.id} />}
       </div>
     </div>
   );
