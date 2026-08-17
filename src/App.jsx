@@ -1824,6 +1824,19 @@ function Academia({ taza, setTaza, onBack }) {
         <div style={{ height: 5, background: C.line, borderRadius: 99, marginTop: 10, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${pct}%`, background: C.brand, borderRadius: 99, transition: "width .5s cubic-bezier(.2,.8,.2,1)" }} />
         </div>
+        {racha.dias > 0 && (
+          // Racha visual/local (ver comentario junto al estado más arriba) —
+          // solo aparece una vez que hay al menos 1 día contado, para no
+          // mostrar "0 días de racha" a alguien que recién entra.
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 12 }}>
+            <span ref={flameRef} className="mo-bounce" style={{ display: "grid", placeItems: "center", color: C.brandAlt }}>
+              <Flame size={14} fill={C.brandAlt} />
+            </span>
+            <span className="mono" style={{ fontSize: 10.5, color: C.textMuted, letterSpacing: ".06em" }}>
+              {racha.dias} {racha.dias === 1 ? "día de racha" : "días de racha"}
+            </span>
+          </div>
+        )}
       </div>
 
       {insigniaLista && (
