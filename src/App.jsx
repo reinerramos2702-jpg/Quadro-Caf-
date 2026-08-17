@@ -2869,7 +2869,7 @@ export default function QuadroCafe() {
           </div>
 
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <div key={tab} className="rise" style={{ height: "100%" }}>
+            <div key={tab} className="mo-tabswitch" style={{ height: "100%", "--tabdir": tabDir }}>
               {tab === "inicio" && <Inicio ir={setTab} lote={lote} />}
               {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} carritoBtnRef={carritoBtnRef} />}
               {tab === "fincas" && <Fincas lote={lote} setLote={setLote} onBack={irInicio} />}
