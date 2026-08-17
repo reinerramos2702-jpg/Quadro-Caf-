@@ -974,9 +974,10 @@ function Fincas({ lote, setLote, onBack }) {
   const [transcripcion, setTrans] = useState(false);
   const [comparar, setComparar] = useState(false);
   const [comparados, setComparados] = useState([FINCAS[0].id, FINCAS[1].id]);
+  const [agenteAbierto, setAgenteAbierto] = useState(false);
   const timer = useRef(null);
 
-  useEffect(() => { setLinea(0); setRepro(false); }, [lote.id]);
+  useEffect(() => { setLinea(0); setRepro(false); setAgenteAbierto(false); }, [lote.id]);
 
   useEffect(() => {
     if (!reproduciendo) { clearTimeout(timer.current); return; }
