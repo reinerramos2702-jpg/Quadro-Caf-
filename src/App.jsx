@@ -1463,6 +1463,23 @@ function Fincas({ lote, setLote, onBack }) {
   const [agenteAbierto, setAgenteAbierto] = useState(false);
   const timer = useRef(null);
 
+  // Fase 7 — skeleton breve al cambiar de finca, mismo patrón y misma razón
+  // que `cambiando`/`cambiarCategoria` de Carta (Fase 3): `cambiandoFinca`
+  // se prende en el MISMO handler que llama a `setLote`, no reactivamente
+  // en un efecto que observa `lote`, para no dejar pasar un frame con el
+  // lote nuevo ya renderizado y el skeleton todavía apagado.
+  const [cambiandoFinca, setCambiandoFinca] = useState(false);
+  const elegirFinca = (f) => {
+    if (f.id === lote.id) return;
+    setCambiandoFinca(true);
+    setLote(f);
+  };
+  useEffect(() => {
+    if (!cambiandoFinca) return;
+    const t = setTimeout(() => setCambiandoFinca(false), 260);
+    return () => clearTimeout(t);
+  }, [cambiandoFinca]);
+
   useEffect(() => { setLinea(0); setRepro(false); setAgenteAbierto(false); }, [lote.id]);
 
   useEffect(() => {
