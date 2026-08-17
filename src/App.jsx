@@ -855,7 +855,7 @@ function Inicio({ ir, lote }) {
            el fondo en ambos temas; la espiral con brillo (igual que en Lab
            y en el comparador de rutas de abajo, mismo componente) es lo
            que le da presencia sin depender de afinar luces a ciegas. */}
-        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+        <div ref={heroCapaRef} style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", willChange: "transform" }}>
           <Suspense fallback={null}>
             <EspiralHero vueltas={4.2} radio={1} width={340} height={300}
               colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
