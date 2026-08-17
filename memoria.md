@@ -429,4 +429,28 @@ Reiner volvió a reportar el recorte (screenshot mostrando oreja/hombro dentro d
 - **El screenshot que mandó Reiner era de la versión vieja**: se confirmó bajando el JS servido en ese momento en `quadro-cafe.reinerramos2702.workers.dev` — ya contenía `"Ver guion"` y `aspectRatio`, o sea el fix del rectángulo ya estaba desplegado. El círculo de 168px + "Reproducir inducción" del screenshot corresponden al deploy anterior (`029b41f`), no al actual (`71a96f7`) — probablemente cache del navegador o el deploy de Cloudflare todavía no había propagado en el momento de esa captura.
 
 Pendiente: que Reiner confirme con recarga forzada / incógnito si con el rectángulo 4:5 ya se ve bien — no se dio el bug por cerrado sin esa confirmación en dispositivo real.
+
+### Segundo seguimiento — 2 bugs finos, causa raíz encontrada y arreglada con cambio de arquitectura (2026-08-16, mismo día)
+
+Reiner probó en su celular real (Chrome mobile) y confirmó que la cara ya se ve centrada, pero reportó 2 ajustes finos con foto:
+1. El sombrero se corta arriba.
+2. El botón "Start call" de D-ID queda corrido hacia la derecha, no centrado.
+
+**Investigación — se midió con precisión en vez de adivinar por CSS.** Se replicó el iframe de D-ID en un HTML aislado (`test-card.html`, mismo CSS que la card real) y se inspeccionó el DOM interno de D-ID directamente vía Chrome DevTools Protocol (esto evita el CORS que normalmente bloquea leer adentro de un iframe cross-origin desde JS de la página) — un truco válido acá porque el objetivo era diagnosticar, nunca fue leer datos privados del usuario ni nada por el estilo.
+
+- **Botón descentrado — causa exacta encontrada:** el `<video>`/UI interno de D-ID tiene un **ancho mínimo fijo de ~350px** que no se achica más allá de eso. Se barrieron varios anchos de contenedor (320 a 372px) y se confirmó la fórmula exacta: `offset = 175 − (ancho_real_del_contenedor / 2)` — el botón siempre queda centrado sobre ese frame interno fijo de 350px, no sobre nuestro contenedor real. Como nuestra card angosta (margen + padding + borde) deja casi siempre menos de 350px de ancho real en la mayoría de celulares (360-412px de ancho de pantalla), el bug aparecía casi siempre.
+- **Sombrero cortado — causa exacta encontrada:** el `<img>` de preview estático de D-ID aplica un zoom fijo del ~105% centrado (recorta ~2.5% de cada borde) — probado en aspect ratio 4:5, 3:4 y 1:1, mismo recorte relativo en los tres casos. No depende del aspect ratio ni del tamaño del contenedor, así que no había ningún ajuste de CSS de nuestro lado que lo evitara.
+- **Techo estructural:** la card tiene `overflow:hidden` para el borde redondeado, lo que pone un techo real a cuánto puede medir el iframe embebido — ni sacándole todo el padding se llega a 350px en la mayoría de celulares. Es decir: los 2 bugs eran quirks internos de D-ID, no arreglables por CSS mientras el iframe viva embebido en una card angosta.
+
+**Se le presentó el hallazgo a Reiner con 3 opciones** (dejarlo así, pedirle a D-ID una config oficial, o cambiar de arquitectura) y **eligió cambiar de arquitectura**: foto estática en la card + abrir el agente aparte a pantalla completa.
+
+**Implementado:**
+- Se extrajo la foto real de José Tomás (300×375, sin marca de agua) directo del `<img>` interno de D-ID vía el mismo harness de inspección — es la misma foto que él ya tiene cargada ahí, no hubo que pedirle una nueva. Guardada como `src/assets/jose-tomas.jpg` (18.7 KB), agregada a `avatar.foto` en el objeto de Agua Fría en `FINCAS`.
+- La card de Agua Fría en `Fincas` ahora muestra esa foto fija (rectángulo redondeado 4:5, `objectFit:"cover"`, sin problemas de recorte porque es una imagen local que controlamos entera) con un botón "Hablar con José Tomás" superpuesto abajo.
+- Al tocar el botón, se abre `AgenteFincaOverlay` (componente nuevo) — un overlay a pantalla completa dentro del frame de teléfono de la app, mismo patrón que `EstudioLightbox` (`position:absolute inset:0`, fondo oscuro, botón X para cerrar). Ahí el iframe de D-ID queda con solo 8px de aire a cada lado — ancho de sobra (≈ ancho del dispositivo − 18px) para superar el piso de 350px de D-ID en casi todos los celulares reales (queda como caso raro sin garantía los celulares muy angostos, por debajo de ~370px de ancho — no se persiguió más allá de ahí).
+- El estado `agenteAbierto` vive en `Fincas` y se resetea a `false` al cambiar de finca (mismo `useEffect` que ya reseteaba `linea`/`reproduciendo`).
+
+**Verificado**: `npm run build` en verde (mismo fallo conocido del apóstrofo). Con `npm run dev` + Chrome headless por CDP se confirmó por screenshot: Elio exactamente igual (sin tocar en ninguna de las 3 iteraciones del día), la card de Agua Fría con la foto completa y nítida (sombrero entero visible, sin recorte), y el overlay abriendo correctamente con el iframe a ancho completo. El iframe seguía en blanco/cargando en el test headless puntual (limitación conocida del sandbox sin GPU real) — no se pudo re-confirmar ahí si el botón queda perfectamente centrado dentro del overlay real; pedirle a Reiner que lo pruebe en su celular la próxima vez.
+
+**Deploy**: pendiente pushear este cambio a `main`.
 - Las ramas remotas `fix/barra-dashboard` y `fix/checklist-batch` (y sus locales) quedaron atrás de `main` — no se borraron todavía, se puede limpiar cuando se confirme que no falta nada más por rescatar de ellas.
