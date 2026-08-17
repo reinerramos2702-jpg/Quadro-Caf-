@@ -152,6 +152,26 @@ ${FONTS}
 .mo-enter{animation:qc-rise var(--motion-base) var(--ease-out) both}
 .mo-hero{animation:qc-rise var(--motion-slow) var(--ease-out) both}
 .qc{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:300;color:${C.text};background:${C.surface}}
+/* Fase 7 (transversal, 2026-08-17) — crossfade de tema en vez de flash.
+   :where() mantiene la especificidad SOLO del selector de tipo (button/div/
+   etc, 0-0-1) — más baja que cualquier clase suelta como .press/.mo-press/
+   .mo-tap (0-1-0) — así que cualquier regla más específica de esas gana
+   siempre, sin importar el orden en el archivo, y el elemento sigue con SU
+   transition propia (feedback de tap) en vez de perderla. Los elementos que
+   no declaran su propio transition (la gran mayoría de fondos/bordes lisos:
+   cards, superficies, texto) heredan este crossfade suave "gratis". No
+   incluye box-shadow/transform a propósito — esos son gestos táctiles, no
+   parte del swap de tema. */
+:where(.qc) button,:where(.qc) div,:where(.qc) span,:where(.qc) p,:where(.qc) input{transition:background-color var(--motion-slow) var(--ease-in-out),border-color var(--motion-slow) var(--ease-in-out),color var(--motion-slow) var(--ease-in-out)}
+/* Slide direccional entre tabs del nav inferior — reemplaza el .rise vertical
+   (pensado para entradas, no para "pestañas de app nativa") por un
+   desplazamiento horizontal cuya dirección depende de si el tab nuevo queda
+   a la derecha o la izquierda del anterior (--tabdir, seteada inline por
+   QuadroCafe). Con --tabdir sin definir (ej. Club/Admin, fuera del nav
+   inferior) cae a 1 por el fallback del var(), mismo comportamiento que un
+   swap "hacia adelante". */
+@keyframes qc-tabswitch{from{opacity:0;transform:translateX(calc(14px * var(--tabdir, 1)))}to{opacity:1;transform:none}}
+.mo-tabswitch{animation:qc-tabswitch var(--motion-base) var(--ease-out) both}
 /* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
    VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
    Á/É/Í/Ó de "TRIÁNGULO", "SIFÓN", "CAFÉ" caía a Fraunces: otra tipografía
