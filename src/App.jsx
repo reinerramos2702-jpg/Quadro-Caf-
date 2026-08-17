@@ -492,7 +492,7 @@ function ThemeToggle() {
   const { tema, setTema, C } = useTheme();
   const oscuro = tema === "oscuro";
   return (
-    <button onClick={() => setTema(oscuro ? "claro" : "oscuro")} className="press" aria-label="Cambiar tema" style={{
+    <button onClick={() => setTema(oscuro ? "claro" : "oscuro")} className="mo-tap" aria-label="Cambiar tema" style={{
       display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 11,
       border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer",
     }}>
