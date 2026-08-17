@@ -555,4 +555,4 @@ Las 4 piezas respetan `prefers-reduced-motion` a mano donde hace falta (todo lo 
 
 **Nota operativa, no un bug de la app**: para levantar Chrome headless se usó `taskkill /IM chrome.exe` al terminar, que mata TODOS los procesos `chrome.exe` de la máquina, no solo la instancia headless — si Reiner tenía Chrome normal abierto durante esta sesión, esas ventanas se cerraron también. Anotado para no repetir el mismo comando la próxima vez (matar por PID específico, no por nombre de imagen).
 
-**Deploy**: pendiente pushear (7 commits de auto-save locales, `git push` queda para después de que Reiner confirme visualmente esta fase, según la regla del sprint).
+**Deploy**: pusheado a `main` — Cloudflare Workers Builds lo toma solo. Queda pendiente que Reiner confirme visualmente en producción antes de arrancar Fase 5 (Laboratorio), según la regla del sprint.
