@@ -2390,6 +2390,7 @@ export default function QuadroCafe() {
   });
   const [verCarrito, setVerCarrito] = useState(false);
   const carritoBtnRef = useRef(null); // blanco del "fly to cart" de Carta (Fase 3)
+  const badgeRef = useRetriggerAnim(carrito.length); // bounce del badge al sumar/restar (Fase 3)
   const [orden, setOrden] = useState(null);
   const [lote, setLote] = useState(FINCAS[0]);
   const [taza, setTaza] = useState(TAZAS[1]);
