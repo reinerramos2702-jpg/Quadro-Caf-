@@ -239,8 +239,9 @@ const FINCAS = [
       // ajustar por CSS desde afuera — en una card angosta (la mayoría de
       // celulares reales) eso descentraba el botón "Start call" y recortaba
       // el sombrero. Se movió a foto fija + botón que abre el agente en un
-      // overlay a pantalla completa (mismo patrón que EstudioLightbox), donde
-      // sí tiene ancho de sobra.
+      // overlay a pantalla completa (`AgenteFincaOverlay`, mismo patrón
+      // position:absolute inset:0 que usaba el módulo Estudio, eliminado
+      // 2026-08-17), donde sí tiene ancho de sobra.
       foto: joseTomas,
       // Agente conversacional real (D-ID Agents). Plan free trial: trae
       // watermark de marca hasta que se active un plan pago.
