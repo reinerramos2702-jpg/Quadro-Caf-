@@ -418,5 +418,15 @@ Se le preguntó a Reiner cómo resolverlo (afecta código compartido con Elio) y
 
 **Verificado**: `npm run build` sigue en verde (mismo fallo conocido del apóstrofo, no relacionado). Con `npm run dev` + Chrome headless por CDP se confirmó por screenshot que Elio sigue exactamente igual (círculo 92px, botón ahora dice "Ver guion") y que Agua Fría muestra el rectángulo grande sin cortes de layout, con el mismo copy corregido. El iframe D-ID seguía en blanco/cargando en el test headless (sin GPU real, SPA pesada) — no se pudo confirmar ahí si el fix del bug 1 resuelve el recorte real ni si el bug del "agent unavailable" persiste; eso requiere que Reiner lo revise en un navegador real tras el deploy.
 
-**Deploy**: pendiente pushear este cambio a `main`.
+**Deploy**: pusheado a `main`.
+
+### Seguimiento — foto de José Tomás sí está bien encuadrada, el bug 1 ya estaba resuelto (2026-08-16, mismo día)
+
+Reiner volvió a reportar el recorte (screenshot mostrando oreja/hombro dentro de un círculo, con el botón diciendo "Reproducir inducción") y sospechó que la foto fuente subida a D-ID estaba mal encuadrada. Se verificó abriendo el `agentUrl` directo en una pestaña (sin iframe, vía Chrome headless por CDP) según pidió:
+
+- **La foto/video de origen está bien encuadrada**: retrato de busto, cara centrada, sombrero, fondo natural — no hace falta resubir nada a D-ID.
+- **Medido en el shadow DOM de D-ID**: el `<video>` real mide **864×1080px, aspect ratio exacto 4:5 (0.8)** — coincide exacto con el `aspectRatio: "4/5"` que ya tenía el contenedor rectangular del fix anterior. A esa proporción exacta el video entra completo, sin recortar.
+- **El screenshot que mandó Reiner era de la versión vieja**: se confirmó bajando el JS servido en ese momento en `quadro-cafe.reinerramos2702.workers.dev` — ya contenía `"Ver guion"` y `aspectRatio`, o sea el fix del rectángulo ya estaba desplegado. El círculo de 168px + "Reproducir inducción" del screenshot corresponden al deploy anterior (`029b41f`), no al actual (`71a96f7`) — probablemente cache del navegador o el deploy de Cloudflare todavía no había propagado en el momento de esa captura.
+
+Pendiente: que Reiner confirme con recarga forzada / incógnito si con el rectángulo 4:5 ya se ve bien — no se dio el bug por cerrado sin esa confirmación en dispositivo real.
 - Las ramas remotas `fix/barra-dashboard` y `fix/checklist-batch` (y sus locales) quedaron atrás de `main` — no se borraron todavía, se puede limpiar cuando se confirme que no falta nada más por rescatar de ellas.
