@@ -1021,28 +1021,37 @@ function Fincas({ lote, setLote, onBack }) {
           border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
         }}>
           {lote.avatar.agentUrl ? (
-            // Agente conversacional real (D-ID Agents, voz + cámara). El link de
-            // "share" de D-ID es la página completa con SU PROPIO chrome (ícono de
-            // ajustes, botón de mic, banner de error) — no hay parámetro de URL
-            // documentado para un modo minimalista (investigado en docs.d-id.com;
-            // el único "embed limpio" real es otro mecanismo, un <script> con
-            // client-key generado por API, que igual conserva controles propios).
-            // Meterlo en un círculo recortaba esa UI por las esquinas. Por eso este
-            // caso usa un rectángulo redondeado grande en vez del círculo de
-            // Elio/Rosa/Mina — ese círculo de abajo queda intacto para ellos.
-            // Plan free trial de D-ID: trae watermark hasta activar un plan pago.
+            // Agente conversacional real (D-ID Agents, voz + cámara). Primer intento:
+            // el iframe de D-ID embebido directo acá adentro (círculo, después
+            // rectángulo). Se descartó tras medirlo con CDP: el widget de D-ID tiene
+            // un piso de ancho fijo de ~350px (no se achica más) y un zoom del 105%
+            // en su preview estático — ninguno de los dos se puede tocar por CSS
+            // desde afuera (contenido cross-origin). En una card angosta como esta
+            // (la mayoría de celulares reales quedan por debajo de esos 350px una
+            // vez restados margen/padding/borde), eso descentraba el botón "Start
+            // call" del widget y recortaba el sombrero — confirmado reproduciendo el
+            // iframe en un harness aparte y midiendo el DOM interno de D-ID por CDP,
+            // no es algo que dependa de la foto ni del aspect ratio del contenedor.
+            // Fix: foto fija (mismo recorte que ya tiene el agente en D-ID, sin
+            // marca de agua) acá en el card, con un botón que abre el agente en un
+            // overlay a pantalla completa (`AgenteFincaOverlay`, mismo patrón que
+            // `EstudioLightbox`) — ahí sí tiene ancho de sobra y se ve como en la
+            // página completa de D-ID (probado directo, sin iframe, se ve bien).
             <div style={{ padding: "18px 18px 4px" }}>
-              <div style={{
-                width: "100%", aspectRatio: "4 / 5", borderRadius: 20, overflow: "hidden",
-                background: C.surface, border: `2px solid ${C.brandAlt}`,
+              <button onClick={() => setAgenteAbierto(true)} className="press tapfx" style={{
+                width: "100%", aspectRatio: "4 / 5", borderRadius: 20, overflow: "hidden", position: "relative",
+                background: C.surface, border: `2px solid ${C.brandAlt}`, padding: 0, cursor: "pointer", display: "block",
               }}>
-                <iframe
-                  src={lote.avatar.agentUrl}
-                  title={`${lote.avatar.nombre} · Finca ${lote.finca}`}
-                  allow="microphone; camera"
-                  style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-                />
-              </div>
+                <img src={lote.avatar.foto} alt={`${lote.avatar.nombre}, ${lote.avatar.rol}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <span className="mono" style={{
+                  position: "absolute", left: "50%", bottom: 14, transform: "translateX(-50%)",
+                  display: "flex", alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 99,
+                  background: C.brand, color: C.onBrand, fontWeight: 600, fontSize: 12, whiteSpace: "nowrap",
+                }}>
+                  <Mic size={13} /> Hablar con {lote.avatar.nombre}
+                </span>
+              </button>
               <div style={{ textAlign: "center", margin: "12px 0 4px" }}>
                 <div className="disp" style={{ fontSize: 16 }}>{lote.avatar.nombre}</div>
                 <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{lote.avatar.rol}</div>
