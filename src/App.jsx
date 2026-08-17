@@ -2733,6 +2733,32 @@ export default function QuadroCafe() {
   });
   const [splash, setSplash] = useState(true);
 
+  // Fase 7 — transición direccional entre tabs del nav inferior: se lee
+  // `prevTabRef` (todavía el valor VIEJO en este render, recién se actualiza
+  // en el efecto de abajo después de que React confirme el render) contra
+  // `tab` (el nuevo) para saber si el tab activo se movió a la derecha o a
+  // la izquierda dentro de TABS, y con eso arma `--tabdir` (1 o -1) que
+  // consume `qc-tabswitch` (ver buildCss). Club/Admin no viven en el nav
+  // inferior — quedan fuera del orden y caen a dir=1 (mismo look que un
+  // swap "hacia adelante").
+  const ORDEN_TABS = ["inicio", "menu", "fincas", "maquinas", "academia"];
+  const prevTabRef = useRef(tab);
+  const i0 = ORDEN_TABS.indexOf(prevTabRef.current), i1 = ORDEN_TABS.indexOf(tab);
+  const tabDir = (i0 === -1 || i1 === -1 || i1 === i0) ? 1 : (i1 > i0 ? 1 : -1);
+  useEffect(() => { prevTabRef.current = tab; }, [tab]);
+
+  // Indicador único que se desliza entre íconos del nav inferior, en vez de
+  // que cada botón muestre/oculte el suyo por separado (eso no "desliza",
+  // aparece/desaparece en el lugar nuevo). Mismo patrón offsetLeft/
+  // useLayoutEffect que el underline de categorías de Carta (Fase 3).
+  const tabBtnRefs = useRef({});
+  const [navIndicador, setNavIndicador] = useState(null);
+  useLayoutEffect(() => {
+    const el = tabBtnRefs.current[tab];
+    if (!el) { setNavIndicador(null); return; }
+    setNavIndicador({ left: el.offsetLeft + el.offsetWidth / 2 - 7 });
+  }, [tab]);
+
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
   useEffect(() => { try { localStorage.setItem("qc-carrito", JSON.stringify(carrito)); } catch { /* noop */ } }, [carrito]);
   useEffect(() => { try { localStorage.setItem("qc-email", email); } catch { /* noop */ } }, [email]);
