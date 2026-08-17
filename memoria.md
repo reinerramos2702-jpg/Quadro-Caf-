@@ -555,4 +555,14 @@ Las 4 piezas respetan `prefers-reduced-motion` a mano donde hace falta (todo lo 
 
 **Nota operativa, no un bug de la app**: para levantar Chrome headless se usó `taskkill /IM chrome.exe` al terminar, que mata TODOS los procesos `chrome.exe` de la máquina, no solo la instancia headless — si Reiner tenía Chrome normal abierto durante esta sesión, esas ventanas se cerraron también. Anotado para no repetir el mismo comando la próxima vez (matar por PID específico, no por nombre de imagen).
 
-**Deploy**: pusheado a `main` — Cloudflare Workers Builds lo toma solo. Queda pendiente que Reiner confirme visualmente en producción antes de arrancar Fase 5 (Laboratorio), según la regla del sprint.
+**Deploy**: pusheado a `main` — Cloudflare Workers Builds lo toma solo.
+
+### Bugfix post-Fase 4: Sifón y AeroPress se veían casi del mismo color en la taza (2026-08-17)
+
+Reiner reportó, ya confirmando Fase 4 en producción, que la taza de color (pieza 2 arriba) mostraba a Sifón (extracción 88/cuerpo 72) y AeroPress Punto Central (extracción 68/cuerpo 84) casi idénticos.
+
+**Causa**: `colorTaza()` normalizaba `cuerpo` contra un rango fijo 0-100, pero el `cuerpo` real de las 4 rutas nunca baja de 38 ni sube de 84 — o sea usaba solo el 46% central del gradiente `card→brandAlt`, y ese par puntual queda a 12 puntos de distancia justo ahí adentro, casi imperceptible.
+
+**Fix** (`colorTaza`/`normalizar` en `App.jsx`): cada eje se normaliza contra su rango real dentro de `GEOMETRIAS` (estira lo poco que hay a todo el gradiente disponible) y se suma `extracción` como segundo eje — que es justo donde ese par sí difiere fuerte (88 vs 68). `cuerpo` pesa más (`.6`, por ser lo que más se lee como densidad visual), `extracción` amplifica (`.4`). Con esto el mismo par pasa de 12 a ~24 puntos de separación en el gradiente. Sigue sin usar ningún hex suelto — los dos extremos siguen saliendo de `PALETAS` (`C.card`/`C.brandAlt`).
+
+Commit `4b8c5cf`, pusheado a `main`. **Confirmado por Reiner.** Con esto, Fase 4 queda cerrada del todo — recién ahora arranca Fase 5 (Laboratorio), según la regla del sprint.
