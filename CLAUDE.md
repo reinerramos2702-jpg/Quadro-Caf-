@@ -94,6 +94,20 @@ Cuatro piezas en `Laboratorio` (`App.jsx`):
 
 **Verificado** con el mismo driver CDP propio (WebSocket/fetch nativos de Node 24): capturas del crossfade a mitad de animación y ya asentado, del botón "Vertiendo…" con `disabled:true` confirmado en el DOM, y de "Perfil resultante" con el goteo+taza visibles, en ambos temas. Color de la taza verificado contra el valor **objetivo** (`el.style`), no el pintado a mitad de transición: extracción 72→`rgb(150,104,48)`, extracción 98→`rgb(197,133,57)`. Cero errores de consola. `npm run build` en verde. Bundle: **79.75 KB gzip** (antes 79.55 KB con el bugfix de `colorTaza` ya aplicado → **+0.20 KB**, sin dependencias nuevas).
 
+## Motion system — Fase 6 (Fincas + Aula, 2026-08-17, retomado tras apagón)
+
+Fase reconstruida a partir del diff de 10 commits `[AUTO-SAVE]` que quedaron sin documentar por un apagón forzoso a mitad de fase (ver `memoria.md` § "Fase 6" para el detalle completo de la reconstrucción). Del mapa de la fase, dos piezas de Fincas (pulso en el avatar cuando `reproduciendo`, dots de progreso del guion) y una de Aula (barra "Tu avance" con `transition: width`) **ya existían de fases anteriores** — no eran trabajo pendiente. Lo que sí se hizo en esta fase:
+
+- **`FichaLote` re-llena sus barras al cambiar de finca**: `Meter` ahora recibe `triggerKey={lote.id}` (Dulzor/Acidez/Cuerpo) — sin esto, cambiar de finca en el modo comparar/detalle saltaba directo al valor nuevo en vez de re-animar el fill, porque `FichaLote` no remonta al cambiar de lote (solo la card de arriba lo hace).
+- **Transiciones en `Fincas`**: `.slide` al alternar entre la fila de chips normal y "Comparar"; `.rise` con stagger (`slot * 60ms`) al mostrar las 2 fichas comparadas; `AgenteFincaOverlay` pasó de `.pop` a `.sheet` (mismo keyframe `qc-sheet` que el carrito) — se lee como una hoja a pantalla completa en vez de una tarjeta apareciendo, coherente con ser un overlay full-bleed.
+- **Racha de Aula (`badges`/racha visual-local)**: `{dias, ultimaFecha}` en `localStorage` (`qc-academia-racha`) — sube 1 por día distinto con al menos una lección completada, se corta a 1 si el día anterior no tuvo actividad. Ícono `Flame` con bounce (`useRetriggerAnim(racha.dias)`), visible solo con `racha.dias > 0`. **Decisión temporal reversible**: el dueño no confirmó si debe persistir en Supabase — se implementó local-only a propósito (mismo patrón que ya usa `estado`), reemplazable por una tabla/columna sin tocar la UI si lo pide después.
+- **Checkbox de lección con micro-animación** (única pieza que realmente faltaba del mapa): `transition` de `background`/`border-color` sobre el cuadrado 22×22, tokens `--motion-fast`/`--ease-spring`; el ícono `Check` ahora lleva `className="pop"` (reusa `qc-pop`) para entrar con fade+scale en vez de aparecer de golpe al completar la lección.
+- **Acordeón del quiz de Aula**: mismo cambio de conditional-mount → `grid-template-rows: 0fr→1fr` que ya se hizo en el acordeón de Carta (Fase 3), por la misma razón (evitar el salto instantáneo de layout).
+- **`press` → `mo-press`** en los botones propios de Fincas/Academia, para tacto consistente con el resto del sprint (Elio y el resto de `.press` compartido siguen intactos).
+- **Taza SVG de Aula**: sin tocar a propósito, sigue pendiente de fotos reales del dueño.
+
+`npm run build` en verde (mismo fallo conocido del apóstrofo).
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
