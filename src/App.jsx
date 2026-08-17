@@ -417,12 +417,6 @@ const ESTADOS_ORDEN = [
   { id: "listo", label: "Listo para retirar" },
 ];
 
-const DESTINOS = ["Galería del local", "Foto de lote", "Máquina en acción", "Avatar de finca", "Menú impreso", "Paleta de color"];
-const MEDIOS_INICIALES = [
-  { id: "seed-local", nombre: "Barra — Quadro Café", url: estudioLocal, destino: "Galería del local" },
-  { id: "seed-pourover", nombre: "Filtrado en barra", url: estudioPourover, destino: "Máquina en acción" },
-];
-
 /* ============================ UTILES ============================ */
 
 const money = (n) => `$${n.toFixed(2)}`;
