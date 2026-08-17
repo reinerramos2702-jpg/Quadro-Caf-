@@ -2914,6 +2914,7 @@ export default function QuadroCafe() {
               <span className="disp" style={{ fontSize: 15 }}>Quadro Café</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <SonidoToggle />
               <ThemeToggle />
               <button ref={carritoBtnRef} onClick={() => setVerCarrito(true)} className="press" aria-label="Ver pedido" style={{
                 position: "relative", ...btnMiniStyle(C), width: 36, height: 36, borderRadius: 11,
