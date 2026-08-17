@@ -1428,7 +1428,7 @@ function Fincas({ lote, setLote, onBack }) {
             // 2026-08-17) — ahí sí tiene ancho de sobra y se ve como en la
             // página completa de D-ID (probado directo, sin iframe, se ve bien).
             <div style={{ padding: "18px 18px 4px" }}>
-              <button onClick={() => setAgenteAbierto(true)} className="press tapfx" style={{
+              <button onClick={() => setAgenteAbierto(true)} className="mo-press tapfx" style={{
                 width: "100%", aspectRatio: "4 / 5", borderRadius: 20, overflow: "hidden", position: "relative",
                 background: C.surface, border: `2px solid ${C.brandAlt}`, padding: 0, cursor: "pointer", display: "block",
               }}>
