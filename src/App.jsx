@@ -804,6 +804,33 @@ function TazaColor({ color, C, size = 30 }) {
   );
 }
 
+// Goteo del Laboratorio (Fase 5): tres gotas en bucle infinito (`.drip`,
+// definida desde antes en la hoja de estilos junto a `.steam` pero sin
+// ningún uso todavía) cayendo sobre la misma `TazaColor` de Inicio, coloreadas
+// con `colorExtraccion`. La animación corre siempre (no depende de "Simular
+// vertido" — el goteo es la lectura continua del perfil, el botón es el
+// trazo puntual del tubo 3D, son dos cosas distintas a propósito). El tono
+// sigue el mismo mecanismo de crossfade que la taza de Inicio: `transition:
+// fill` en el propio SVG, así que al arrastrar un slider el color se mueve
+// en vivo, no solo al soltar.
+function GoteoTaza({ extraccion, C }) {
+  const color = colorExtraccion(extraccion, C);
+  return (
+    <div aria-hidden="true" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+      <div style={{ position: "relative", width: 12, height: 20 }}>
+        {[0, .5, 1].map((d) => (
+          <span key={d} className="drip" style={{
+            position: "absolute", left: "50%", top: 0, width: 5, height: 5, marginLeft: -2.5,
+            borderRadius: "50%", background: color, animationDelay: `${d * .53}s`,
+            transition: "background var(--motion-base) var(--ease-in-out)",
+          }} />
+        ))}
+      </div>
+      <TazaColor color={color} C={C} size={22} />
+    </div>
+  );
+}
+
 function Inicio({ ir, lote }) {
   const { C, tema } = useTheme();
   const [geo, setGeo] = useState(GEOMETRIAS[0]);
