@@ -531,3 +531,28 @@ Reiner confirmó la Fase 2 en producción y pidió arrancar la Fase 3, y en el m
 **Verificado**: `npm run build` en verde. Bundle: **78.68 KB gzip** (antes 77.39 KB de Fase 2 → **+1.29 KB** para las 7 piezas, sin ninguna dependencia nueva). Probado con Chrome headless por CDP: flujo completo (cambiar categoría → agregar al carrito → badge → acordeón → carrito con count-up) sin errores de consola, en ambos temas. Fincas/Elio confirmados sin tocar (`.press` global intacto, solo Menu/Carrito usan la clase nueva `.mo-press`).
 
 **Deploy**: pusheado a `main` (`04708a9`, confirmado up to date con `origin/main` — esta nota se había quedado desactualizada, corregida al retomar la sesión para Fase 4).
+
+## Sprint "Alta Gama" — Fase 4: Inicio (2026-08-17, mismo día)
+
+Reiner pidió arrancar Fase 4 con 4 piezas: swap de taza por color (SVG, fotos reales después), barras de Extracción/Cuerpo/Acidez con fill-on-load, "Simular vertido" con trazo de agua en tiempo real, y parallax sutil en el hero.
+
+**Ambigüedad de alcance resuelta antes de tocar código**: "swap de taza por color" y "Simular vertido" ya existen como nombres en la app — el primero es el widget de Aula/Academia (tazas de color fijo, efecto en dulzor percibido), agendado para Fase 6 en el propio mapa del sprint; el segundo es el botón de Laboratorio, agendado para Fase 5. Se le preguntó a Reiner directamente en vez de adivinar, porque construir en el componente equivocado habría sido caro de deshacer. Confirmó: **ambos son piezas NUEVAS dentro de Inicio**, sin tocar Aula ni Laboratorio — homónimos por coincidencia temática, no el mismo widget adelantado.
+
+**Implementado, las 4 piezas** (detalle técnico en `CLAUDE.md` § Motion system — Fase 4):
+1. Barras con fill-on-load + re-fill al cambiar de ruta — resultó que el fill-on-load YA existía desde Fase 2 (`.bar`/`qc-bar`, documentado ahí mismo como "le falta el trigger"); esta fase agregó justamente ese trigger, generalizando `useRetriggerAnim` (antes hardcodeado a `.mo-bounce`) para aceptar cualquier clase, y sumando un `triggerKey` opcional a `Meter` — sin tocar los usos existentes en Fincas/Laboratorio (su `triggerKey` queda `undefined`, la dependencia del hook nunca cambia, cero comportamiento nuevo ahí).
+2. Taza SVG con color derivado de `cuerpo` (interpolado entre `C.card` y `C.brandAlt`, nunca un hex nuevo suelto — sigue la regla de `CLAUDE.md` de no hardcodear color fuera de `PALETAS`), crossfade real vía `transition: fill` de CSS (por eso el elemento vive fuera del `key={geo.id}` que remonta el tubo 3D — un nodo remontado no tiene "desde" que cruzar) y bounce reusando `useRetriggerAnim`.
+3. "Simular vertido" en Inicio reusa el mecanismo que ya tenía `EspiralTubo3D` (`prog` dibuja el tubo progresivamente) en vez de una animación CSS paralela — mismos 4200ms que el de Laboratorio, para no inventar un segundo ritmo de vertido en la misma app.
+4. Parallax del hero: `translateY` de la capa 3D a una fracción (`×.2`) del `scrollTop` real de `.qc-scroll`, con techo de 36px para que "sutil" sea literal, throttled a un frame con `rAF`. Cero librerías nuevas — coherente con la decisión de Fase 2 de no sumar Framer Motion.
+
+Las 4 piezas respetan `prefers-reduced-motion` a mano donde hace falta (todo lo que es JS/rAF, no una `transition`/`animation` CSS) — mismo patrón ya establecido en Fase 3 (`AnimatedNumber`, `volarAlCarrito`).
+
+**Verificación con evidencia real, no solo capturas.** Se armó un driver CDP propio de ~90 líneas (`WebSocket`/`fetch` nativos de Node 24, sin dependencias — no hay Playwright/Puppeteer instalado en este repo) que navega, clickea, espera y captura contra Chrome headless (`--headless=new --remote-debugging-port`). Con eso:
+- Capturas a mitad de animación (300ms después de tocar una ruta distinta) muestran las barras a medio llenar y la taza ya con el color nuevo — prueba visual de que el retrigger corre, no solo que el estado final se ve bien.
+- El "Simular vertido" se capturó a mitad de trazo (botón en estado "Vertiendo…", tubo con la espiral parcial) y al terminar.
+- El parallax se verificó **por cálculo, no a ojo**: se leyó el `transform` inline del elemento con `Runtime.evaluate` antes y después de fijar `scrollTop = 150` — dio `translateY(30px)`, exactamente `150 × .2`, confirmando la fórmula y el techo de 36px.
+- Cero errores en `Runtime.exceptionThrown` durante todo el flujo. Probado en ambos temas (el toggle de tema se clickeó por selector `aria-label`).
+- `npm run build` en verde (mismo fallo conocido del apóstrofo, no relacionado).
+
+**Nota operativa, no un bug de la app**: para levantar Chrome headless se usó `taskkill /IM chrome.exe` al terminar, que mata TODOS los procesos `chrome.exe` de la máquina, no solo la instancia headless — si Reiner tenía Chrome normal abierto durante esta sesión, esas ventanas se cerraron también. Anotado para no repetir el mismo comando la próxima vez (matar por PID específico, no por nombre de imagen).
+
+**Deploy**: pendiente pushear (7 commits de auto-save locales, `git push` queda para después de que Reiner confirme visualmente esta fase, según la regla del sprint).
