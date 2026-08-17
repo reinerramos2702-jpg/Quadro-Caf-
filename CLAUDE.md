@@ -85,6 +85,16 @@ Real orders now exist end to end: `Carrito` collects name + para acá/llevar + p
 
 This was cherry-picked by hand from a stale branch (`fix/barra-dashboard`, created 2026-08-04) rather than merged directly — that branch predated the VIOLA-Acentos/`.glb` compression/Three.js hero work below and would have regressed all three if merged as-is. See `memoria.md` § "Limpieza de ramas" (2026-08-16) for the full list of what was and wasn't ported.
 
+## Módulo Estudio — eliminado (2026-08-17)
+
+El tab "Estudio" (subida de fotos/video reales del local + asignarlas a un "destino" dentro de la app — galería, foto de lote, etc.) se sacó por completo: no tenía uso real (el dueño nunca lo usaba en producción para reemplazar assets). Nunca persistía a Supabase — era puro estado local en memoria (`useState`, con `URL.createObjectURL(file)` para el preview), así que no había datos que migrar ni tablas que borrar.
+
+Se eliminó de `App.jsx`: los componentes `Estudio`/`EstudioLightbox`, las constantes `DESTINOS`/`MEDIOS_INICIALES`, el estado `medios`/`setMedios` en `QuadroCafe`, la entrada `estudio` del array `TABS` (nav inferior), el render condicional `{tab === "estudio" && ...}`, los imports que solo usaba (`ImageIcon`, `Upload`, `Trash2`, y los dos JPG semilla), y la carpeta `src/assets/estudio/`. El nav inferior quedó en 5 pestañas: Inicio, Carta, Fincas, Lab, Aula.
+
+No confundir con **"Estudio de color"** (Aula/Academia, la lección sobre cómo el color de la taza cambia el dulzor percibido) — es una sección distinta, con nombre parecido por coincidencia, que no se tocó.
+
+`main.jsx` nunca dependía de Estudio (su único ruteo por hash/query es `#barra` para `BarraDashboard`, ver Bloque 8 arriba) — la navegación de tabs dentro de `QuadroCafe` es 100% estado de React (`tab`/`setTab`), así que sacar una pestaña no afecta el routing de las demás.
+
 ## Out of scope / not yet built
 
 React Native migration, Supabase auth/real email capture, real in-app payments, CRM export integration. See `docs/HANDOFF.md` for the original list — mostly still accurate; orders are now real (see Bloque 8 above), the rest isn't.
