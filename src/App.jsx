@@ -1125,7 +1125,8 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
               );
             })}
           </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
