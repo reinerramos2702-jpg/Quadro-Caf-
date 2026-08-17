@@ -109,6 +109,48 @@ function buildCss(C) {
   return `
 ${FONTS}
 *{box-sizing:border-box}
+/* ============================ SISTEMA DE MOTION (Sprint "Alta Gama" — Fase 2, 2026-08-17) ============================
+   Tokens de duración/easing para el resto del sprint de animaciones. Es
+   vocabulario NUEVO y aditivo — no reemplaza ni retoca ninguna animación
+   existente (.rise/.pop/.slide/.sheet/.press/.tapfx/.pulse/etc. siguen
+   exactamente igual; Fincas/Elio y todo lo ya animado no se tocó en esta
+   fase). Las fases siguientes del sprint usan estas variables en vez de
+   valores sueltos, para que toda animación nueva hable el mismo idioma.
+
+   Se evaluó sumar Framer Motion y se descartó (62KB gzip completo, ~43KB
+   real medido incluso con LazyMotion+domAnimation según un issue de su
+   propio repo — el sistema CSS que ya tenía la app cubre lo que pide el
+   sprint a costo ~0KB). Detalle completo en memoria.md.
+
+   - --motion-fast (150ms): toque/micro-interacción — feedback inmediato de un tap.
+   - --motion-base (300ms): transición de contenido — cambios de vista/estado.
+   - --motion-slow (500ms): elementos grandes — hero, entradas destacadas.
+   - --ease-out: para entradas (algo aparece/llega a la pantalla).
+   - --ease-in-out: para transiciones de estado (algo pasa de un estado a otro).
+   - --ease-spring: overshoot sutil, para elementos táctiles (botones, chips).
+   Hereda gratis el respeto a prefers-reduced-motion que ya tiene el archivo
+   más abajo (esa regla @media apaga cualquier transition/animation-duration,
+   ésta incluida, sin que haga falta declararlo dos veces). */
+:root{
+  --motion-fast:150ms;
+  --motion-base:300ms;
+  --motion-slow:500ms;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-in-out:cubic-bezier(.45,0,.15,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+/* .mo-tap: reemplazo puntual de .press pensado para elementos táctiles
+   chicos (íconos, chips) — mismo gesto de "hundirse" al tocar pero con el
+   spring sutil del sistema nuevo en vez de un ease genérico. Primer uso:
+   ThemeToggle (ver PIEZAS más abajo). El resto de los botones de la app
+   sigue usando .press sin cambios — no se migró nada más en esta fase. */
+.mo-tap{transition:transform var(--motion-fast) var(--ease-spring)}
+.mo-tap:active{transform:scale(.94)}
+/* .mo-enter/.mo-hero: reutilizan el keyframe qc-rise que ya existía (mismo
+   translateY(16px)→0, sin tocarlo) pero con duración/easing del sistema
+   nuevo en vez del cubic-bezier suelto que usa .rise. */
+.mo-enter{animation:qc-rise var(--motion-base) var(--ease-out) both}
+.mo-hero{animation:qc-rise var(--motion-slow) var(--ease-out) both}
 .qc{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:300;color:${C.text};background:${C.surface}}
 /* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
    VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
