@@ -1572,12 +1572,16 @@ function AgenteFincaOverlay({ lote, cerrar }) {
   const { C } = useTheme();
   return (
     <div onClick={cerrar} style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.92)", zIndex: 45, display: "flex", flexDirection: "column" }}>
-      <div onClick={(e) => e.stopPropagation()} className="pop" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, padding: 8 }}>
+      {/* Fase 6: .pop (fade+scale, pensado para tarjetas) → .sheet (mismo
+         keyframe qc-sheet que ya usa el carrito, translateY(100%)→0) — se
+         lee más como "se abre una hoja a pantalla completa" que como una
+         tarjeta apareciendo, coherente con lo que es: un overlay full-bleed. */}
+      <div onClick={(e) => e.stopPropagation()} className="sheet" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, padding: 8 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px 10px" }}>
           <span className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase" }}>
             {lote.avatar.nombre} · {lote.finca}
           </span>
-          <button onClick={cerrar} className="press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
+          <button onClick={cerrar} className="mo-press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
         </div>
         <div style={{ flex: 1, minHeight: 0, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
           <iframe
