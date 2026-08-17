@@ -969,15 +969,27 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   // es una transición deliberada, no una carga real que se esté fingiendo
   // — sincronizada con --motion-base para que el slide de contenido de
   // abajo entre justo cuando termina el shimmer.
-  const catAnteriorRef = useRef(cat);
+  //
+  // `cambiando` se prende en el MISMO handler de click que cambia `cat`
+  // (cambiarCategoria de abajo), no reactivamente en un efecto que observa
+  // `cat` — si se prendiera reactivamente, React ya habría re-renderizado
+  // `items` con la categoría nueva ANTES de que el efecto alcance a poner
+  // `cambiando=true`, y se alcanzaba a ver un flash del contenido real
+  // viejo/nuevo por un frame antes de que apareciera el skeleton. Al
+  // setear los dos estados juntos en el mismo evento, React los aplica en
+  // el mismo render — nunca hay un frame con `cat` nuevo y `cambiando`
+  // todavía en `false`.
   const [cambiando, setCambiando] = useState(false);
-  useEffect(() => {
-    if (catAnteriorRef.current === cat) return;
-    catAnteriorRef.current = cat;
+  const cambiarCategoria = (c) => {
+    if (c === cat) return;
     setCambiando(true);
+    setCat(c);
+  };
+  useEffect(() => {
+    if (!cambiando) return;
     const t = setTimeout(() => setCambiando(false), 260);
     return () => clearTimeout(t);
-  }, [cat]);
+  }, [cambiando]);
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
