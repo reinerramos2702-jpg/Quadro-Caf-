@@ -1389,12 +1389,17 @@ function Fincas({ lote, setLote, onBack }) {
       <Header sub="Origen" titulo="Fincas" onBack={onBack}
         right={<Chip active={comparar} onClick={() => setComparar((v) => !v)} tone={C.purple} onTone={C.surface}>Comparar</Chip>} />
 
+      {/* Fase 6: key={comparar} + .slide en los dos wrappers de abajo —
+         antes el swap entre el chip-row normal y el de "elige 2 fincas" era
+         instantáneo (un ternario plano, sin animación de entrada). No se
+         tocó ningún .press/Chip compartido, solo se envolvió el contenido
+         que ya existía. */}
       {!comparar ? (
-        <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 16px", overflowX: "auto" }}>
+        <div key="fila-normal" className="qc-scroll slide" style={{ display: "flex", gap: 7, padding: "0 20px 16px", overflowX: "auto" }}>
           {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
         </div>
       ) : (
-        <div style={{ padding: "0 20px 16px" }}>
+        <div key="fila-comparar" className="slide" style={{ padding: "0 20px 16px" }}>
           <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 8 }}>
             Elige 2 fincas para comparar
           </div>
