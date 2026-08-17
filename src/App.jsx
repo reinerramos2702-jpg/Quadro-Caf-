@@ -2491,17 +2491,17 @@ export default function QuadroCafe() {
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <ThemeToggle />
-              <button onClick={() => setVerCarrito(true)} className="press" aria-label="Ver pedido" style={{
+              <button ref={carritoBtnRef} onClick={() => setVerCarrito(true)} className="press" aria-label="Ver pedido" style={{
                 position: "relative", ...btnMiniStyle(C), width: 36, height: 36, borderRadius: 11,
                 borderColor: carrito.length ? C.brand : C.line,
               }}>
                 <ShoppingBag size={16} />
                 {carrito.length > 0 && (
-                  <span className="mono pop" style={{
+                  <span ref={badgeRef} className="mono mo-bounce" style={{
                     position: "absolute", top: -6, right: -6, minWidth: 18, height: 18, padding: "0 4px",
                     borderRadius: 99, background: C.brand, color: C.onBrand, fontSize: 10, fontWeight: 700,
                     display: "grid", placeItems: "center",
-                  }}>{carrito.length}</span>
+                  }}><AnimatedNumber value={carrito.length} /></span>
                 )}
               </button>
             </div>
@@ -2510,7 +2510,7 @@ export default function QuadroCafe() {
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
             <div key={tab} className="rise" style={{ height: "100%" }}>
               {tab === "inicio" && <Inicio ir={setTab} lote={lote} />}
-              {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} />}
+              {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} carritoBtnRef={carritoBtnRef} />}
               {tab === "fincas" && <Fincas lote={lote} setLote={setLote} onBack={irInicio} />}
               {tab === "maquinas" && <Laboratorio onBack={irInicio} />}
               {tab === "academia" && <Academia taza={taza} setTaza={setTaza} onBack={irInicio} />}
