@@ -2389,6 +2389,7 @@ export default function QuadroCafe() {
     try { return JSON.parse(localStorage.getItem("qc-carrito")) || []; } catch { return []; }
   });
   const [verCarrito, setVerCarrito] = useState(false);
+  const carritoBtnRef = useRef(null); // blanco del "fly to cart" de Carta (Fase 3)
   const [orden, setOrden] = useState(null);
   const [lote, setLote] = useState(FINCAS[0]);
   const [taza, setTaza] = useState(TAZAS[1]);
