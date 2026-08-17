@@ -1681,7 +1681,7 @@ function Club({ email, setEmail, onBack, onAdmin }) {
 
 /* ============================ ADMIN ============================ */
 
-function AdminLogin({ onLogged }) {
+function AdminLogin({ onLogged, origen = "admin" }) {
   const { C } = useTheme();
   const [modo, setModo] = useState("login"); // "login" | "recuperar" | "enviado"
   const [correo, setCorreo] = useState("");
@@ -1701,8 +1701,13 @@ function AdminLogin({ onLogged }) {
   const enviarRecuperacion = async (e) => {
     e.preventDefault();
     setError(""); setCargando(true);
+    // El enlace de recuperación de Supabase pisa el hash con su propio
+    // #access_token=...&type=recovery, así que "a dónde volver" no puede
+    // viajar en el hash (por eso "?admin=1", ya existente, usa query string).
+    // "origen" hace lo mismo para /#barra: sin esto, el dueño que pide la
+    // clave desde el Dashboard de Barra volvía siempre al Panel Admin.
     await supabase.auth.resetPasswordForEmail(correo, {
-      redirectTo: `${window.location.origin}${window.location.pathname}?admin=1`,
+      redirectTo: `${window.location.origin}${window.location.pathname}?${origen}=1`,
     });
     setCargando(false);
     setModo("enviado"); // Supabase nunca confirma si el correo existe — el mensaje es siempre el mismo.
