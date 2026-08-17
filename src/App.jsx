@@ -2,7 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, useContex
 import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
-  Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon, Settings, LogOut,
+  Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
   Banknote, Smartphone, Landmark, DollarSign,
   Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic,
 } from "lucide-react";
