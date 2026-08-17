@@ -83,6 +83,17 @@ Cuatro piezas, todas dentro de `Inicio` (`App.jsx`) — **no se tocó** el widge
 
 **Verificado**: `npm run build` en verde (mismo fallo conocido del apóstrofo, no relacionado). Con `npm run dev` + Chrome headless por CDP (driver propio vía WebSocket nativo de Node, sin dependencias — ver `memoria.md`): capturas confirmando el fill/re-fill de las 3 barras a mitad de animación, la taza cambiando de color al swap de ruta, el tubo dibujándose a mitad de "Vertiendo…", y el cálculo del parallax verificado por lectura directa del `transform` inline (`translateY(30px)` con `scrollTop=150`, exacto `150×.2`). Probado en ambos temas. Cero errores de consola.
 
+## Motion system — Fase 5 (Laboratorio, 2026-08-17)
+
+Cuatro piezas en `Laboratorio` (`App.jsx`):
+
+- **Perfil resultante en vivo**: sin código nuevo — `Slider` ya dispara `onChange` en cada tick del arrastre (no solo al soltar) y `perfil` ya es un `useMemo` sobre los 4 sliders; `Meter` ya traía `transition: width .5s` de antes de este sprint. Las tres piezas ya combinaban para dar el efecto en vivo; esta fase solo lo verificó con evidencia (lectura del DOM en 5 pasos de un arrastre).
+- **Goteo + color de extracción** (`colorExtraccion`, `GoteoTaza`, junto a `colorTaza`/`TazaColor` de Inicio): reusa `.drip` (definida junto a `.steam` desde antes de este sprint, sin ningún uso hasta ahora) para tres gotas en bucle infinito sobre la misma `TazaColor` de Inicio. A diferencia de `colorTaza` (cuerpo+extracción de las 4 rutas fijas de `GEOMETRIAS`, con el rango estrecho que forzó el bugfix de la sección anterior), acá `extraccion` es el resultado en vivo del simulador y los sliders ya la mueven por casi todo 0-100 — normalizar directo contra 0-100 alcanza, no hace falta estirar un rango angosto. Mismos extremos `C.card`/`C.brandAlt`, nunca un hex nuevo.
+- **"Simular vertido" a la par de Inicio**: le faltaban `prefers-reduced-motion` a mano (el trazo corre por `rAF`, no por transition/animation CSS) y `disabled={corriendo}`; se portaron ambos desde el botón gemelo de Inicio, más la clase `mo-press`. El mecanismo de fondo (`prog` de `EspiralTubo3D`, 0→1 en 4200ms) no cambió — nunca hubo una animación CSS paralela que sincronizar.
+- **Crossfade al cambiar de método**: el tubo 3D ahora vive en `<div key={geo.id} className="spiral-enter">`, mismo patrón que el comparador de Inicio (opacity+scale, .9s). El `useEffect` que sincroniza `vueltas`/`radio` al cambiar `geo` ahora también resetea `prog`/`corriendo`, cortando cualquier vertido a medias del método anterior para que el crossfade entre limpio.
+
+**Verificado** con el mismo driver CDP propio (WebSocket/fetch nativos de Node 24): capturas del crossfade a mitad de animación y ya asentado, del botón "Vertiendo…" con `disabled:true` confirmado en el DOM, y de "Perfil resultante" con el goteo+taza visibles, en ambos temas. Color de la taza verificado contra el valor **objetivo** (`el.style`), no el pintado a mitad de transición: extracción 72→`rgb(150,104,48)`, extracción 98→`rgb(197,133,57)`. Cero errores de consola. `npm run build` en verde. Bundle: **79.75 KB gzip** (antes 79.55 KB con el bugfix de `colorTaza` ya aplicado → **+0.20 KB**, sin dependencias nuevas).
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
