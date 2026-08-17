@@ -506,4 +506,28 @@ Reiner arrancó un sprint largo de pulido visual/interactividad (mapa completo: 
 
 **Verificado**: `npm run build` en verde (mismo fallo conocido del apóstrofo). Bundle: **77.39 KB gzip** (antes 76.25 KB → **+1.14 KB**, solo CSS/comentarios, sin dependencia nueva — dentro del presupuesto de ~50kb que puso Reiner con margen de sobra). Probado en Chrome headless por CDP en **ambos temas** (claro y oscuro, toggle real funcionando, ícono cambia Sun↔Moon) — se ven bien los dos, sin romper nada del resto de Inicio.
 
+**Deploy**: pusheado a `main`.
+
+## Sprint "Alta Gama" — Fase 3: Carta (2026-08-17)
+
+Reiner confirmó la Fase 2 en producción y pidió arrancar la Fase 3, y en el mismo mensaje adjuntó 5 fotos de tazas para el widget "La taza también sabe" de Inicio — que es trabajo de **Fase 4**, no de Fase 3, según su propio mapa del sprint. Se le preguntó cómo secuenciar y eligió terminar Fase 3 primero. Las fotos no llegaron adjuntas en el mensaje (se le avisó y quedó pendiente que las reenvíe).
+
+**Reparto**: esta fase se hizo secuencial en el hilo principal (no ameritaba paralelizar — era una sola pieza de código coherente, sin research previo que valiera la pena delegar).
+
+**Implementado, las 7 piezas pedidas** (detalle técnico completo en `CLAUDE.md` § Motion system — Fase 3):
+1. **Fly-to-cart**: un punto viaja del botón "+" tocado hasta el ícono del carrito, vía Web Animations API (no CSS `@keyframes` fijo, porque el origen cambia en cada tarjeta).
+2. **Badge del carrito con bounce + count-up**: retriggerea la animación sin remontar (para no perder el estado del conteo animado), número real cuenta en vez de saltar.
+3. **Transición de categorías con slide + underline animado**: el underline se mide contra la posición real de cada chip (no un ancho fijo), el contenido remonta como bloque atómico con `.slide`.
+4. **"Elegir finca y taza" como acordeón animado**: técnica CSS `grid-template-rows: 0fr→1fr`, sin salto de layout, sin medir con JS.
+5. **Feedback táctil (scale .96 + sombra)**: clase nueva `.mo-press`, **sin tocar** la `.press` compartida que usa Elio/Fincas/el resto de la app.
+6. **Precio con count-up**: total del carrito y subtotal por fila.
+7. **Skeleton loaders al cambiar de categoría**: shimmer de ~260ms, honesto en los comentarios de que es una transición deliberada (los datos ya están en memoria, no hay carga real).
+
+**2 bugs reales encontrados y arreglados durante la verificación** (no en el código que se planeaba pushear tal cual — se probó de verdad antes de dar la fase por cerrada):
+- **Flash de contenido antes del skeleton**: el estado `cambiando` se prendía reactivamente en un `useEffect` que observaba `cat`, así que React ya había re-renderizado los items de la categoría nueva por un frame antes de que el efecto alcanzara a mostrar el skeleton. Fix: `cambiando` se prende en el MISMO handler de click que cambia `cat` (`cambiarCategoria`), nunca reactivo — los dos estados quedan en el mismo render, nunca hay un frame intermedio.
+- **Banners de categoría duplicados en el DOM**: la versión inicial tenía el banner (`ResponsiveImg key={cat}`) y el bloque de items (`<div key={cat}>`) como dos hermanos con su propia key cada uno. Reproducido y confirmado con un **build de producción** (no era artefacto de StrictMode/dev): cambiar de categoría dejaba banners viejos pegados en el DOM en vez de reemplazarlos — después de Filtrado→Espresso→Filtrado había 3 banners apilados en vez de 1. Costó bastante diagnosticar (se probó con instrumentación de `console.log`, inspección directa del DOM vía CDP, comparación dev vs producción) antes de encontrar el fix real: un solo wrapper con una sola key envolviendo banner + contenido juntos, para que remonten como una unidad atómica. Verificado después con `document.querySelectorAll('picture').length === 1` tras la misma secuencia de clicks que antes daba 3.
+- También se corrigió un bug de redondeo en `AnimatedNumber`: sin el fix, un precio como $4.50 se redondeaba a entero durante el conteo animado y se quedaba en $5 en vez de terminar en $4.50 exacto — separado el comportamiento según si el componente recibe `format` (precios, sin redondear) o no (conteos enteros, sí redondear).
+
+**Verificado**: `npm run build` en verde. Bundle: **78.68 KB gzip** (antes 77.39 KB de Fase 2 → **+1.29 KB** para las 7 piezas, sin ninguna dependencia nueva). Probado con Chrome headless por CDP: flujo completo (cambiar categoría → agregar al carrito → badge → acordeón → carrito con count-up) sin errores de consola, en ambos temas. Fincas/Elio confirmados sin tocar (`.press` global intacto, solo Menu/Carrito usan la clase nueva `.mo-press`).
+
 **Deploy**: pendiente pushear.
