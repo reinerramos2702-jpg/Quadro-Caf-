@@ -525,9 +525,24 @@ function ThemeToggle() {
   return (
     <button onClick={() => setTema(oscuro ? "claro" : "oscuro")} className="mo-tap" aria-label="Cambiar tema" style={{
       display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 11,
-      border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer",
+      border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer", position: "relative",
     }}>
-      {oscuro ? <Sun size={16} /> : <Moon size={16} />}
+      {/* Fase 7: crossfade sol/luna en vez de swap instantáneo — antes era
+         un ternario (`{oscuro ? <Sun/> : <Moon/>}`) que desmontaba un ícono
+         y montaba el otro de golpe, sin nada que interpolar entre dos <svg>
+         distintos. Ahora los dos quedan siempre montados, superpuestos
+         (position:absolute sobre el grid del botón), y solo cambian
+         opacity/rotate/scale — eso sí es interpolable. */}
+      <Sun size={16} style={{
+        position: "absolute", opacity: oscuro ? 1 : 0,
+        transform: oscuro ? "rotate(0deg) scale(1)" : "rotate(-90deg) scale(.5)",
+        transition: "opacity var(--motion-base) var(--ease-in-out), transform var(--motion-base) var(--ease-spring)",
+      }} />
+      <Moon size={16} style={{
+        position: "absolute", opacity: oscuro ? 0 : 1,
+        transform: oscuro ? "rotate(90deg) scale(.5)" : "rotate(0deg) scale(1)",
+        transition: "opacity var(--motion-base) var(--ease-in-out), transform var(--motion-base) var(--ease-spring)",
+      }} />
     </button>
   );
 }
