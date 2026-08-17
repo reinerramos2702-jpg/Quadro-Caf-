@@ -600,16 +600,26 @@ function Chip({ children, active, onClick, tone, onTone }) {
   );
 }
 
-function Meter({ label, value, tone, delay = 0 }) {
+// `.bar`/`qc-bar` (Fase 2) ya hacía fill-on-load: `@keyframes qc-bar{from{width:0}}`
+// deja que el navegador construya el "to" implícito desde el width inline,
+// así que la barra siempre nace en 0 y crece al valor real. Lo que le
+// faltaba (documentado en memoria.md, Fase 2) era el trigger para
+// re-dispararlo cuando el VALOR cambia sin que el elemento se desmonte —
+// por ejemplo, al tocar una ruta distinta en el comparador de Inicio.
+// `triggerKey` es opcional: sin él, `useRetriggerAnim(undefined, ...)` nunca
+// re-dispara (su dependencia nunca cambia), o sea el resto de los usos de
+// `Meter` (Fincas, Laboratorio) queda exactamente igual que antes.
+function Meter({ label, value, tone, delay = 0, triggerKey }) {
   const { C } = useTheme();
   const t = tone || C.brand;
+  const fillRef = useRetriggerAnim(triggerKey, "bar");
   return (
     <div style={{ marginBottom: 10 }}>
       <div className="mono" style={{ display: "flex", justifyContent: "space-between", fontSize: 10, letterSpacing: ".1em", color: C.textMuted, marginBottom: 5, textTransform: "uppercase" }}>
         <span>{label}</span><span style={{ color: t }}>{value}</span>
       </div>
       <div style={{ height: 4, background: C.line, borderRadius: 99, overflow: "hidden" }}>
-        <div className="bar" style={{ height: "100%", width: `${value}%`, background: t, borderRadius: 99, animationDelay: `${delay}ms`, transition: "width .5s cubic-bezier(.2,.8,.2,1)" }} />
+        <div ref={fillRef} className="bar" style={{ height: "100%", width: `${value}%`, background: t, borderRadius: 99, animationDelay: `${delay}ms`, transition: "width .5s cubic-bezier(.2,.8,.2,1)" }} />
       </div>
     </div>
   );
