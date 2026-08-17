@@ -108,6 +108,19 @@ Fase reconstruida a partir del diff de 10 commits `[AUTO-SAVE]` que quedaron sin
 
 `npm run build` en verde (mismo fallo conocido del apóstrofo).
 
+## Motion system — Fase 7: transversal/pulido (2026-08-17, sprint "Alta Gama" cerrado)
+
+Alcance confirmado por el dueño, 4 ítems, sin nada implícito más allá de eso:
+
+- **Transición entre tabs del nav inferior tipo app nativa**: el contenido de cada tab pasó de `.rise` a `.mo-tabswitch`/`qc-tabswitch` — desplazamiento horizontal cuya dirección (`--tabdir`, ±1) depende de si el tab nuevo queda a la derecha o izquierda del anterior dentro de `ORDEN_TABS`. El indicador del nav inferior pasó de un `<span>` de 2px por botón (aparece/desaparece suelto) a **un único indicador absoluto que desliza** entre posiciones, mismo patrón `offsetLeft`/`useLayoutEffect` que el underline de categorías de Carta (Fase 3), midiendo cada botón vía refs.
+- **Crossfade de tema claro/oscuro**: regla CSS global `:where(.qc) button,div,span,p,input{transition:background-color,border-color,color ...}` — `:where()` a propósito para especificidad baja (0-0-1), así nunca le gana a `.press`/`.mo-press`/`.mo-tap` (0-1-0) y el feedback táctil de tap queda intacto; da crossfade "gratis" a cualquier fondo/borde/texto liso sin transition propia. `ThemeToggle` pasó de un ternario `{oscuro ? <Sun/> : <Moon/>}` (swap instantáneo entre dos SVG distintos, nada que interpolar) a los dos íconos siempre montados y superpuestos, animando solo `opacity`/`rotate`/`scale`.
+- **Sonido sutil, opt-in**: `SonidoToggle` nuevo en el header, lee/escribe `localStorage["qc-sonido"]` ("1"/"0"), **apagado por defecto — nunca suena sin que el usuario lo prenda a mano**. `sonar(freq,dur,vol)` crea un único `AudioContext` compartido recién al primer toque real (los navegadores bloquean crearlo sin gesto del usuario), dos osciladores cortos vía Web Audio (0KB de bundle, sin archivos de audio), todo en try/catch silencioso — si Web Audio no está disponible, queda mudo, nunca rompe el tap. Un solo listener delegado (`manejarTapSonido`, `onClick` del `.qc` raíz) en vez de un handler por botón: cualquier tap en `.press`/`.mo-press`/`.mo-tap` suena el tono genérico, salvo `data-sonido="carrito"` (el "+" de agregar en Carta) que usa un tono distinto.
+- **Skeletons consistentes**: Carta ya tenía `.mo-skeleton` desde Fase 3. Nuevo acá: Fincas (`cambiandoFinca`, mismo patrón "prender en el mismo handler que cambia el estado, no reactivo" ya usado en Carta, para no dejar pasar un frame con contenido real antes del skeleton) y los `Suspense fallback` del tubo 3D lazy en Inicio/Laboratorio (antes un `<div>` vacío, ahora `.mo-skeleton` con la forma real — ahí sí es carga real del chunk de three.js).
+
+**Contexto de recuperación**: esta fase se reconstruyó en una sesión nueva después de que la máquina se colgara a mitad de trabajo (segunda vez en el sprint) — `git status` estaba limpio, 16 commits `[AUTO-SAVE]` completos y sin documentar por delante de `origin/main`, nada corrupto ni a medio commitear. Ver `memoria.md` § "Fase 7" para el detalle completo de la reconstrucción y la verificación (build verde, cero errores de consola, sesión CDP corta y cerrada explícitamente al terminar).
+
+**Con esto el sprint "Alta Gama" (Fases 2–7) queda completo.**
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
