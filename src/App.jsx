@@ -768,16 +768,22 @@ function Inicio({ ir, lote }) {
               <div className="disp" style={{ fontSize: 20 }}>{lote.finca}</div>
               <div className="mono" style={{ fontSize: 11, color: C.textMuted, marginTop: 3 }}>{lote.zona} · {lote.altura} msnm</div>
             </div>
-            <div style={{ textAlign: "right" }}>
-              <div className="disp" style={{ fontSize: 24, color: C.brand }}>{lote.score}</div>
-              <div className="mono" style={{ fontSize: 9, color: C.textMuted, letterSpacing: ".1em" }}>SCA</div>
+            {lote.score != null && (
+              <div style={{ textAlign: "right" }}>
+                <div className="disp" style={{ fontSize: 24, color: C.brand }}>{lote.score}</div>
+                <div className="mono" style={{ fontSize: 9, color: C.textMuted, letterSpacing: ".1em" }}>SCA</div>
+              </div>
+            )}
+          </div>
+          {/* Agua Fría todavía no tiene notas de cata confirmadas — no se
+             inventan, este bloque simplemente no aparece hasta que existan. */}
+          {lote.notas && lote.notas.length > 0 && (
+            <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
+              {lote.notas.map((n) => (
+                <span key={n} className="mono" style={{ fontSize: 10, padding: "4px 9px", borderRadius: 99, border: `1px solid ${C.line}`, color: C.text, display: "inline-grid", placeItems: "center" }}>{n}</span>
+              ))}
             </div>
-          </div>
-          <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
-            {lote.notas.map((n) => (
-              <span key={n} className="mono" style={{ fontSize: 10, padding: "4px 9px", borderRadius: 99, border: `1px solid ${C.line}`, color: C.text, display: "inline-grid", placeItems: "center" }}>{n}</span>
-            ))}
-          </div>
+          )}
           <div className="mono" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 12, fontSize: 11, color: C.brand }}>
             Escuchar la inducción de la finca <ChevronRight size={13} />
           </div>
