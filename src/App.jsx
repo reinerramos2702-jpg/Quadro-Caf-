@@ -235,7 +235,7 @@ const FINCAS = [
       // que son un guion de texto simulado, este iframe es un agente vivo con voz.
       // Plan free trial de D-ID: el iframe trae watermark de marca hasta que se
       // active un plan pago (pendiente de decisión de Reiner).
-      agentUrl: "https://studio.d-id.com/agents/share?id=v2_agt_UyhXfVTo&key=Y2tfRWlCRVjE3RlFlSThtSWc1dngw",
+      agentUrl: "https://studio.d-id.com/agents/share?id=v2_agt_UyhXfVTo&key=Y2tfRWlCRVlEcTE3RlFlSThtSWc1dngw",
     },
     guion: [
       "Bienvenido a Agua Fría. Soy José Tomás Carrillo Batalla, y esto es un café de familia.",
