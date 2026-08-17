@@ -1086,7 +1086,11 @@ function Fincas({ lote, setLote, onBack }) {
               <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="press"
                 style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 15px", borderRadius: 99, border: "none", background: C.brand, color: C.onBrand, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
                 {reproduciendo ? <Pause size={14} /> : <Play size={14} />}
-                {reproduciendo ? "Pausar" : linea === 0 ? "Reproducir inducción" : "Continuar"}
+                {/* Nunca hubo audio real acá — es un guion en texto que avanza solo.
+                   El copy decía "Reproducir"/"Pausar" como si fuera un audio real;
+                   se corrigió a "Ver guion" para no prometer algo que no pasa (ver
+                   memoria.md/CLAUDE.md — pendiente real: videos Higgsfield o TTS). */}
+                {reproduciendo ? "Pausar" : linea === 0 ? "Ver guion" : "Continuar"}
               </button>
               <button onClick={() => setTrans(!transcripcion)} className="press mono" style={{
                 fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", background: "none",
