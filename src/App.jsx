@@ -949,6 +949,31 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   const items = carta.filter((m) => m.cat === cat);
   const imgCategoria = CAT_IMG[cat];
 
+  // Underline animado que se desliza al chip de categoría activo — se mide
+  // la posición real del chip tocado (offsetLeft/offsetWidth, en vez de
+  // asumir un ancho fijo) porque cada nombre de categoría mide distinto.
+  const chipRefs = useRef({});
+  const [indicador, setIndicador] = useState(null);
+  useLayoutEffect(() => {
+    const el = chipRefs.current[cat];
+    if (el) setIndicador({ left: el.offsetLeft, width: el.offsetWidth });
+  }, [cat]);
+
+  // Skeleton breve al cambiar de categoría. useCarta() ya tiene todo en
+  // memoria (no hay fetch por categoría, es un filtro local), así que esto
+  // es una transición deliberada, no una carga real que se esté fingiendo
+  // — sincronizada con --motion-base para que el slide de contenido de
+  // abajo entre justo cuando termina el shimmer.
+  const catAnteriorRef = useRef(cat);
+  const [cambiando, setCambiando] = useState(false);
+  useEffect(() => {
+    if (catAnteriorRef.current === cat) return;
+    catAnteriorRef.current = cat;
+    setCambiando(true);
+    const t = setTimeout(() => setCambiando(false), 260);
+    return () => clearTimeout(t);
+  }, [cat]);
+
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
       <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} />
@@ -960,8 +985,21 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
           ⚠ Modo dev: mostrando MENU local — Supabase no respondió. Revisa la consola.
         </div>
       )}
-      <div className="qc-scroll" style={{ display: "flex", gap: 7, padding: "0 20px 14px", overflowX: "auto" }}>
-        {CATS.map((c) => <Chip key={c} active={c === cat} onClick={() => setCat(c)}>{c}</Chip>)}
+      <div style={{ position: "relative", padding: "0 20px 14px" }}>
+        <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto" }}>
+          {CATS.map((c) => (
+            <div key={c} ref={(el) => { chipRefs.current[c] = el; }}>
+              <Chip active={c === cat} onClick={() => setCat(c)}>{c}</Chip>
+            </div>
+          ))}
+        </div>
+        {indicador && (
+          <span style={{
+            position: "absolute", bottom: 8, left: indicador.left, width: indicador.width,
+            height: 2, borderRadius: 99, background: C.brand, pointerEvents: "none",
+            transition: "left var(--motion-base) var(--ease-in-out), width var(--motion-base) var(--ease-in-out)",
+          }} />
+        )}
       </div>
 
       <div style={{ padding: "0 20px" }}>
@@ -970,82 +1008,97 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
             width: "100%", height: 120, borderRadius: 14, marginBottom: 12,
           }} />
         )}
-        {items.map((m, i) => {
-          const n = carrito.filter((x) => x.id === m.id).length;
-          const open = abierto === m.id;
-          const agotado = m.disponible === false;
-          return (
-            <div key={m.id} className="rise" style={{
-              animationDelay: `${i * 45}ms`, background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
-              borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
-              opacity: agotado ? .55 : 1,
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
+        {cambiando ? (
+          [0, 1, 2].map((i) => (
+            <div key={i} className="mo-skeleton" style={{ height: 92, borderRadius: 16, marginBottom: 10 }} />
+          ))
+        ) : (
+          <div key={cat} className="slide">
+            {items.map((m) => {
+              const n = carrito.filter((x) => x.id === m.id).length;
+              const open = abierto === m.id;
+              const agotado = m.disponible === false;
+              return (
+                <div key={m.id} style={{
+                  background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
+                  borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
+                  opacity: agotado ? .55 : 1,
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                        <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
+                        {agotado ? (
+                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Agotado hoy</span>
+                        ) : m.tag && (
+                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>{m.tag}</span>
+                        )}
+                      </div>
+                      <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
+                    {agotado ? <span /> : m.finca ? (
+                      <button onClick={() => setAbierto(open ? null : m.id)} className="mo-press mono" style={{
+                        fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: C.brand,
+                        background: "none", border: "none", cursor: "pointer", padding: 0,
+                      }}>
+                        {open ? "Ocultar opciones" : "Elegir finca y taza"}
+                      </button>
+                    ) : <span />}
                     {agotado ? (
-                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Agotado hoy</span>
-                    ) : m.tag && (
-                      <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>{m.tag}</span>
+                      <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Vuelve mañana</span>
+                    ) : (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        {n > 0 && (
+                          <>
+                            <button onClick={() => quitar(m.id)} className="mo-press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={14} /></button>
+                            <span className="mono" style={{ width: 16, textAlign: "center", fontSize: 13 }}><AnimatedNumber value={n} /></span>
+                          </>
+                        )}
+                        <button
+                          onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
+                          className="mo-press" aria-label={`Agregar ${m.nombre}`}
+                          style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                          <Plus size={14} />
+                        </button>
+                      </div>
                     )}
                   </div>
-                  <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</div>
-                </div>
-              </div>
 
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-                {agotado ? <span /> : m.finca ? (
-                  <button onClick={() => setAbierto(open ? null : m.id)} className="press mono" style={{
-                    fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: C.brand,
-                    background: "none", border: "none", cursor: "pointer", padding: 0,
-                  }}>
-                    {open ? "Ocultar opciones" : "Elegir finca y taza"}
-                  </button>
-                ) : <span />}
-                {agotado ? (
-                  <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Vuelve mañana</span>
-                ) : (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {n > 0 && (
-                      <>
-                        <button onClick={() => quitar(m.id)} className="press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={14} /></button>
-                        <span className="mono" style={{ width: 16, textAlign: "center", fontSize: 13 }}>{n}</span>
-                      </>
-                    )}
-                    <button onClick={() => add(m)} className="press" aria-label={`Agregar ${m.nombre}`} style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
-                      <Plus size={14} />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {open && !agotado && (
-                <div className="pop" style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
-                  <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 8 }}>Finca</div>
-                  <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
-                    {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
-                  </div>
-                  <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", margin: "14px 0 8px" }}>Taza</div>
-                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                    {TAZAS.map((t) => (
-                      <button key={t.id} onClick={() => setTaza(t)} className="press" aria-label={`Taza ${t.nombre}`} style={{
-                        width: 30, height: 30, borderRadius: 8, background: t.hex, cursor: "pointer",
-                        border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
-                      }} />
-                    ))}
-                  </div>
-                  <p style={{ fontSize: 12, color: C.textMuted, marginTop: 10, lineHeight: 1.45 }}>
-                    <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
-                  </p>
+                  {!agotado && m.finca && (
+                    <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows var(--motion-base) var(--ease-in-out)" }} aria-hidden={!open}>
+                      <div style={{ overflow: "hidden" }}>
+                        <div style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
+                          <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 8 }}>Finca</div>
+                          <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
+                            {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+                          </div>
+                          <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", margin: "14px 0 8px" }}>Taza</div>
+                          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                            {TAZAS.map((t) => (
+                              <button key={t.id} onClick={() => setTaza(t)} className="mo-press" aria-label={`Taza ${t.nombre}`} style={{
+                                width: 30, height: 30, borderRadius: 8, background: t.hex, cursor: "pointer",
+                                border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
+                              }} />
+                            ))}
+                          </div>
+                          <p style={{ fontSize: 12, color: C.textMuted, marginTop: 10, lineHeight: 1.45 }}>
+                            <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
