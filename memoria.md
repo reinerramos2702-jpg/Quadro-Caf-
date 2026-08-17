@@ -488,6 +488,6 @@ Reiner decidió sacar el tab "Estudio" — subida de fotos/video del local + asi
 
 Nav inferior quedó en 5 pestañas: Inicio, Carta, Fincas, Lab, Aula.
 
-**Verificación** (delegada a un subagente en paralelo, ver flujo de trabajo del sprint más abajo): build limpio, grep sin referencias huérfanas, y las 5 pestañas restantes probadas una por una en Chrome headless por CDP — Agua Fría/D-ID en Fincas confirmado intacto.
+**Verificación**: se delegó un primer intento a un subagente en paralelo (mientras el hilo principal investigaba Framer Motion para la Fase 2), pero su reporte final salió inservible — devolvió un eco confuso de un mensaje de estado en vez de hallazgos reales, así que no se confió en él. La verificación real la hizo el hilo principal directamente después: `npm run build` en verde (mismo fallo conocido del apóstrofo, no relacionado), `grep` en `App.jsx` sin ninguna referencia huérfana a `Estudio`/`DESTINOS`/`MEDIOS_INICIALES`/`medios`/`ImageIcon`/`Upload`/`Trash2` (solo quedan los 3 comentarios históricos correctos y el "Estudio de color" de Aula, que no es este módulo), y con `npm run dev` + Chrome headless por CDP se confirmó por screenshot: el nav real devuelve exactamente `["Inicio","Carta","Fincas","Lab","Aula"]`, cero errores de consola, Lab/Aula/Fincas (Elio, default) cargan y se ven perfectos.
 
-**Deploy**: [completar tras confirmar el subagente / antes de pushear].
+**Deploy**: pusheado a `main`.
