@@ -859,9 +859,89 @@ function Inicio({ ir, lote }) {
   );
 }
 
+/* ============================ MOTION — PIEZAS COMPARTIDAS (Fase 3) ============================ */
+
+// Retriggerea una animación CSS por clase cada vez que `dep` cambia, sin
+// desmontar el elemento (así un hijo con estado propio — como
+// AnimatedNumber de abajo — no pierde ese estado). No anima en el montaje
+// inicial (ya sea que el elemento nazca invisible o que el propio montaje
+// dispare su animación de "aparecer" — este hook es para lo que pasa
+// DESPUÉS de eso). El truco es el clásico: sacar la clase, forzar reflow
+// leyendo `offsetWidth`, y volver a ponerla — así el navegador la trata
+// como una animación nueva en vez de ignorar el reinicio.
+function useRetriggerAnim(dep) {
+  const ref = useRef(null);
+  const primero = useRef(true);
+  useEffect(() => {
+    if (primero.current) { primero.current = false; return; }
+    const el = ref.current;
+    if (!el) return;
+    el.classList.remove("mo-bounce");
+    void el.offsetWidth;
+    el.classList.add("mo-bounce");
+  }, [dep]);
+  return ref;
+}
+
+// Número que cuenta hacia su valor nuevo en vez de saltar de golpe —
+// usado en el badge del carrito y en los precios que cambian por selección.
+// Respeta prefers-reduced-motion a mano (acá no alcanza con la regla CSS
+// global, porque el conteo lo mueve JS/rAF, no una `transition`/`animation`).
+function AnimatedNumber({ value, format }) {
+  const [display, setDisplay] = useState(value);
+  const prevRef = useRef(value);
+  const rafRef = useRef(null);
+  useEffect(() => {
+    const desde = prevRef.current;
+    const hasta = value;
+    if (desde === hasta) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(hasta);
+      prevRef.current = hasta;
+      return;
+    }
+    const inicio = performance.now();
+    const dur = 300; // --motion-base
+    cancelAnimationFrame(rafRef.current);
+    const paso = (t) => {
+      const p = Math.min(1, (t - inicio) / dur);
+      const suavizado = 1 - Math.pow(1 - p, 3); // aproxima --ease-out
+      setDisplay(Math.round(desde + (hasta - desde) * suavizado));
+      if (p < 1) rafRef.current = requestAnimationFrame(paso);
+      else prevRef.current = hasta;
+    };
+    rafRef.current = requestAnimationFrame(paso);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [value]);
+  return format ? format(display) : display;
+}
+
+// "Fly to cart": un puntito que viaja desde el botón "+" tocado hasta el
+// ícono del carrito en el header, vía Web Animations API — no puede ser un
+// @keyframes fijo en CSS porque el origen cambia con cada tarjeta de
+// producto (posiciones distintas en cada tap). Se crea y se destruye solo;
+// no toca el DOM de React, así que no puede desincronizar el estado.
+function volarAlCarrito(desdeEl, haciaEl, color) {
+  if (!desdeEl || !haciaEl) return;
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+  const from = desdeEl.getBoundingClientRect();
+  const to = haciaEl.getBoundingClientRect();
+  const dot = document.createElement("div");
+  dot.style.cssText = `position:fixed;left:${from.left + from.width / 2 - 6}px;top:${from.top + from.height / 2 - 6}px;width:12px;height:12px;border-radius:50%;background:${color};z-index:999;pointer-events:none;`;
+  document.body.appendChild(dot);
+  const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+  const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+  const anim = dot.animate([
+    { transform: "translate(0,0) scale(1)", opacity: 1 },
+    { transform: `translate(${dx * .5}px, ${dy * .7}px) scale(.8)`, opacity: 1, offset: .6 },
+    { transform: `translate(${dx}px, ${dy}px) scale(.25)`, opacity: 0 },
+  ], { duration: 550, easing: "cubic-bezier(.34,1.56,.64,1)" });
+  anim.onfinish = () => dot.remove();
+}
+
 /* ============================ MENÚ ============================ */
 
-function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
+function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carritoBtnRef }) {
   const { C } = useTheme();
   const [cat, setCat] = useState("Filtrado");
   const [abierto, setAbierto] = useState(null);
