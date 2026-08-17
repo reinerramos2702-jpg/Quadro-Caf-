@@ -452,5 +452,17 @@ Reiner probó en su celular real (Chrome mobile) y confirmó que la cara ya se v
 
 **Verificado**: `npm run build` en verde (mismo fallo conocido del apóstrofo). Con `npm run dev` + Chrome headless por CDP se confirmó por screenshot: Elio exactamente igual (sin tocar en ninguna de las 3 iteraciones del día), la card de Agua Fría con la foto completa y nítida (sombrero entero visible, sin recorte), y el overlay abriendo correctamente con el iframe a ancho completo. El iframe seguía en blanco/cargando en el test headless puntual (limitación conocida del sandbox sin GPU real) — no se pudo re-confirmar ahí si el botón queda perfectamente centrado dentro del overlay real; pedirle a Reiner que lo pruebe en su celular la próxima vez.
 
+**Deploy**: pusheado a `main`.
+
+### Foto de José Tomás reemplazada por una de mayor resolución (2026-08-16, mismo día)
+
+Reiner mandó la foto de referencia real de José Tomás en alta resolución. Comparación:
+- **Vieja** (`jose-tomas.jpg` original): 300×375px, 18.7 KB — era el thumbnail de preview que D-ID renderiza puertas adentro, extraído de ahí por necesidad (no había una fuente mejor a mano en ese momento).
+- **Nueva** (la que mandó Reiner): 1122×1402px, 1.9 MB PNG — casi 14× más píxeles, foto de referencia real.
+
+Se re-codificó con `sharp` (ya es dependencia del proyecto, la usa `scripts/generar-asset.mjs`) a JPEG calidad 85 + mozjpeg → **1122×1402, 110 KB** — mismo 4:5 exacto que ya tenía, así que no hizo falta tocar el `aspectRatio` del contenedor en `Fincas`. Reemplazó a `src/assets/jose-tomas.jpg` sin cambios de código, solo el archivo.
+
+**Verificado**: `npm run build` en verde (mismo fallo conocido del apóstrofo, no relacionado).
+
 **Deploy**: pendiente pushear este cambio a `main`.
 - Las ramas remotas `fix/barra-dashboard` y `fix/checklist-batch` (y sus locales) quedaron atrás de `main` — no se borraron todavía, se puede limpiar cuando se confirme que no falta nada más por rescatar de ellas.
