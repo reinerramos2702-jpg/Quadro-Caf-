@@ -1690,7 +1690,10 @@ function Laboratorio({ onBack }) {
       </div>
 
       <div style={{ margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 12 }}>Perfil resultante</div>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase" }}>Perfil resultante</div>
+          <GoteoTaza extraccion={perfil.extraccion} C={C} />
+        </div>
         <Meter label="Extracción" value={perfil.extraccion} />
         <Meter label="Cuerpo" value={perfil.cuerpo} tone={C.brandAlt} />
         <Meter label="Acidez" value={perfil.acidez} tone={C.purple} />
