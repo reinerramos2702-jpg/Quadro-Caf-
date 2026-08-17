@@ -205,6 +205,17 @@ ${FONTS}
 .steam{animation:qc-steam 2.6s ease-out infinite}
 .pulse{animation:qc-pulse 2.4s ease-in-out infinite}
 .bar{animation:qc-bar .8s cubic-bezier(.2,.8,.2,1) both}
+/* Fase 3 (Carta, 2026-08-17) — piezas nuevas del sistema de motion. Igual
+   que en Fase 2: aditivo, nada de lo de arriba se tocó. .mo-press es un
+   .press "con sombra" para los botones propios de Carta (cantidad, agregar,
+   "elegir finca y taza") — el .press global (usado por Fincas/Elio y el
+   resto de la app) sigue exactamente igual, no se migró nada más. */
+@keyframes qc-badge-bounce{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes qc-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.mo-press{transition:transform var(--motion-fast) var(--ease-spring), box-shadow var(--motion-fast) var(--ease-out)}
+.mo-press:active{transform:scale(.96);box-shadow:0 3px 12px rgba(0,0,0,.22)}
+.mo-bounce{animation:qc-badge-bounce var(--motion-base) var(--ease-spring)}
+.mo-skeleton{background:linear-gradient(90deg, ${C.line} 25%, ${C.surface} 50%, ${C.line} 75%);background-size:200% 100%;animation:qc-shimmer 1.1s ease-in-out infinite}
 :focus-visible{outline:2px solid ${C.brand};outline-offset:2px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
 `;
