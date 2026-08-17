@@ -1529,16 +1529,21 @@ function Fincas({ lote, setLote, onBack }) {
       )}
 
       {!comparar ? (
-        <div style={{ margin: "16px 20px 0" }}>
+        <div key="ficha-normal" className="slide" style={{ margin: "16px 20px 0" }}>
           <FichaLote lote={lote} />
         </div>
       ) : (
-        <div style={{ display: "flex", gap: 10, margin: "16px 20px 0", alignItems: "stretch" }}>
+        <div key="ficha-comparar" style={{ display: "flex", gap: 10, margin: "16px 20px 0", alignItems: "stretch" }}>
           {[0, 1].map((slot) => {
             const id = comparados[slot];
             const f = id && FINCAS.find((x) => x.id === id);
             return f ? (
-              <FichaLote key={id} lote={f} compact titulo={f.finca} />
+              // .rise con stagger (slot 0/1) — mismo patrón ya usado en Equipo
+              // de Laboratorio y ACADEMIA, para que las dos fichas entren una
+              // detrás de otra en vez de las dos a la vez.
+              <div key={id} className="rise" style={{ animationDelay: `${slot * 60}ms`, flex: 1, minWidth: 0, display: "flex" }}>
+                <FichaLote lote={f} compact titulo={f.finca} />
+              </div>
             ) : (
               <div key={`vacio-${slot}`} style={{
                 flex: 1, minWidth: 0, border: `1px dashed ${C.line}`, borderRadius: 14,
