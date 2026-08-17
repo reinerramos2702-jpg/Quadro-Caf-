@@ -2324,7 +2324,6 @@ export default function QuadroCafe() {
               {tab === "fincas" && <Fincas lote={lote} setLote={setLote} onBack={irInicio} />}
               {tab === "maquinas" && <Laboratorio onBack={irInicio} />}
               {tab === "academia" && <Academia taza={taza} setTaza={setTaza} onBack={irInicio} />}
-              {tab === "estudio" && <Estudio medios={medios} setMedios={setMedios} onBack={irInicio} />}
               {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} onAdmin={() => setTab("admin")} />}
               {tab === "admin" && <Admin onBack={irInicio} />}
             </div>
