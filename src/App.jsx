@@ -890,22 +890,39 @@ function Inicio({ ir, lote }) {
 
       <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          <div key={geo.id} style={{ flexShrink: 0 }} className="spiral-enter">
-            <Suspense fallback={<div style={{ width: 132, height: 132 }} />}>
-              <EspiralTubo3D vueltas={geo.vueltas} radio={geo.radio} prog={1} tam={132}
-                colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
-                colorModelo={C.modelo} />
-            </Suspense>
+          {/* La taza vive FUERA del div con key={geo.id}: ese remonta a
+             propósito (retrigger del spiral-enter del tubo), pero un
+             remount no tiene "desde" que animar — el crossfade de color de
+             la taza necesita el mismo nodo vivo entre renders. */}
+          <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
+            <div key={geo.id} className="spiral-enter">
+              <Suspense fallback={<div style={{ width: 132, height: 132 }} />}>
+                <EspiralTubo3D vueltas={geo.vueltas} radio={geo.radio} prog={prog} tam={132}
+                  colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
+                  colorModelo={C.modelo} />
+              </Suspense>
+            </div>
+            <div ref={tazaRef} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+              <TazaColor color={colorTaza(geo.efecto, C)} C={C} size={26} />
+              <span className="mono" style={{ fontSize: 8, color: C.textMuted, letterSpacing: ".06em" }}>Color en taza</span>
+            </div>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="mono" style={{ fontSize: 10, color: C.brandAlt, letterSpacing: ".16em", textTransform: "uppercase" }}>{geo.metodo}</div>
             <div className="disp" style={{ fontSize: 19, margin: "4px 0 10px" }}>{geo.nombre}</div>
-            <Meter label="Extracción" value={geo.efecto.extraccion} />
-            <Meter label="Cuerpo" value={geo.efecto.cuerpo} tone={C.brandAlt} />
-            <Meter label="Acidez" value={geo.efecto.acidez} tone={C.purple} />
+            <Meter label="Extracción" value={geo.efecto.extraccion} triggerKey={geo.id} delay={0} />
+            <Meter label="Cuerpo" value={geo.efecto.cuerpo} tone={C.brandAlt} triggerKey={geo.id} delay={90} />
+            <Meter label="Acidez" value={geo.efecto.acidez} tone={C.purple} triggerKey={geo.id} delay={180} />
           </div>
         </div>
         <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.5, margin: "12px 0 12px" }}>{geo.lectura}</p>
+        <button onClick={simularVertido} disabled={corriendo} className="mo-press" style={{
+          width: "100%", marginBottom: 14, padding: "11px", borderRadius: 12, border: `1px solid ${C.brand}`,
+          background: corriendo ? C.brand : "transparent", color: corriendo ? C.onBrand : C.brand,
+          cursor: corriendo ? "default" : "pointer", fontWeight: 600, fontSize: 12.5,
+        }}>
+          {corriendo ? "Vertiendo…" : "Simular vertido"}
+        </button>
         <div style={{ display: "flex", gap: 7, overflowX: "auto" }} className="qc-scroll">
           {GEOMETRIAS.map((g) => (
             <Chip key={g.id} active={g.id === geo.id} onClick={() => setGeo(g)}>{g.nombre}</Chip>
