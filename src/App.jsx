@@ -4,7 +4,7 @@ import {
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon, Settings, LogOut,
   Banknote, Smartphone, Landmark, DollarSign,
-  Volume2, VolumeX, Bell, XCircle, Home, Package, User,
+  Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
@@ -13,6 +13,7 @@ import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
+import joseTomas from "./assets/jose-tomas.jpg";
 import violaFont from "./assets/fonts/VIOLA.otf";
 import violaAcentosFont from "./assets/fonts-derivados/VIOLA-Acentos.otf";
 import nexaBoldFont from "./assets/fonts/Nexa-Bold.otf";
