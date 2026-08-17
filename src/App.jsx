@@ -1020,6 +1020,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
       </div>
 
       <div style={{ padding: "0 20px" }}>
+        {console.log("DEBUGTEMP render imgCategoria", cat, imgCategoria)}
         {imgCategoria && (
           <ResponsiveImg key={cat} id={imgCategoria} alt={cat} className="rise" style={{
             width: "100%", height: 120, borderRadius: 14, marginBottom: 12,
