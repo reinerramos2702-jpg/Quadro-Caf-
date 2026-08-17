@@ -785,7 +785,7 @@ function Inicio({ ir, lote }) {
             </div>
           )}
           <div className="mono" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 12, fontSize: 11, color: C.brand }}>
-            Escuchar la inducción de la finca <ChevronRight size={13} />
+            Ver el guion de la finca <ChevronRight size={13} />
           </div>
         </button>
       </div>
