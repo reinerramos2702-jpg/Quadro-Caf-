@@ -869,17 +869,17 @@ function Inicio({ ir, lote }) {
 // DESPUÉS de eso). El truco es el clásico: sacar la clase, forzar reflow
 // leyendo `offsetWidth`, y volver a ponerla — así el navegador la trata
 // como una animación nueva en vez de ignorar el reinicio.
-function useRetriggerAnim(dep) {
+function useRetriggerAnim(dep, className = "mo-bounce") {
   const ref = useRef(null);
   const primero = useRef(true);
   useEffect(() => {
     if (primero.current) { primero.current = false; return; }
     const el = ref.current;
     if (!el) return;
-    el.classList.remove("mo-bounce");
+    el.classList.remove(className);
     void el.offsetWidth;
-    el.classList.add("mo-bounce");
-  }, [dep]);
+    el.classList.add(className);
+  }, [dep, className]);
   return ref;
 }
 
