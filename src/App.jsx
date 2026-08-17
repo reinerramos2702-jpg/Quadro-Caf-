@@ -774,11 +774,63 @@ function TazaColor({ color, C, size = 30 }) {
 function Inicio({ ir, lote }) {
   const { C, tema } = useTheme();
   const [geo, setGeo] = useState(GEOMETRIAS[0]);
+  // "Simular vertido" (nuevo en Inicio, no toca el botón homónimo de
+  // Laboratorio): reusa el mismo mecanismo que ya tenía EspiralTubo3D — su
+  // prop `prog` dibuja el tubo progresivamente — así el trazo de agua en
+  // tiempo real es el componente real, no una animación CSS aparte que
+  // pudiera desincronizarse de la ruta 3D. prog=1 es el reposo (trazo
+  // completo, como estaba antes de esta fase); tocar el botón lo corre de
+  // 0 a 1 en un rAF, igual que Laboratorio (misma duración, 4200ms, para no
+  // inventar un segundo ritmo de "vertido" en la misma app).
+  const [prog, setProg] = useState(1);
+  const [corriendo, setCorriendo] = useState(false);
+  useEffect(() => { setProg(1); setCorriendo(false); }, [geo]);
+  useEffect(() => {
+    if (!corriendo) return;
+    let raf, t0 = performance.now();
+    const dur = 4200;
+    const loop = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      setProg(p);
+      if (p < 1) raf = requestAnimationFrame(loop); else setCorriendo(false);
+    };
+    setProg(0);
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [corriendo]);
+  const simularVertido = () => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) { setProg(1); return; }
+    setCorriendo(true);
+  };
+  // Taza por color: elemento estable (no remonta con `key={geo.id}` como el
+  // tubo 3D) para que la transición CSS de `fill` pueda cruzar de un color
+  // al otro de verdad — un remount no tiene "desde" que animar. El bounce
+  // sí necesita el mismo truco de siempre (useRetriggerAnim), y por eso
+  // también necesita un elemento que sobreviva entre renders.
+  const tazaRef = useRetriggerAnim(geo.id);
+
+  // Parallax sutil del hero: la capa 3D se mueve una fracción del scroll de
+  // la pantalla (con techo, para que "sutil" sea literal), el titular no se
+  // toca — throttled a un frame con rAF, y respeta prefers-reduced-motion a
+  // mano porque mover un transform por scroll no es una transition/animation
+  // CSS que la regla global ya cubra.
+  const heroCapaRef = useRef(null);
+  const parallaxRaf = useRef(null);
+  useEffect(() => () => cancelAnimationFrame(parallaxRaf.current), []);
+  const onScrollParallax = (e) => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    if (parallaxRaf.current) return;
+    const top = e.currentTarget.scrollTop;
+    parallaxRaf.current = requestAnimationFrame(() => {
+      parallaxRaf.current = null;
+      if (heroCapaRef.current) heroCapaRef.current.style.transform = `translateY(${Math.min(36, top * .2)}px)`;
+    });
+  };
 
   const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
 
   return (
-    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
+    <div className="qc-scroll" onScroll={onScrollParallax} style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
       <button onClick={() => ir("club")} className="press tapfx rise" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
         width: "calc(100% - 40px)", margin: "12px 20px 0", textAlign: "left", cursor: "pointer",
