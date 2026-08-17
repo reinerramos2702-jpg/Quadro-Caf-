@@ -547,6 +547,32 @@ function ThemeToggle() {
   );
 }
 
+// Fase 7 — toggle de sonido, opt-in y apagado por defecto (ver `sonar` más
+// abajo): solo lee/escribe `localStorage["qc-sonido"]`, la fuente de verdad
+// real que consulta el delegado `manejarTapSonido` en cada tap; este estado
+// local es nomás para repintar el ícono.
+function SonidoToggle() {
+  const { C } = useTheme();
+  const [on, setOn] = useState(() => {
+    try { return localStorage.getItem("qc-sonido") === "1"; } catch { return false; }
+  });
+  const alternar = () => {
+    setOn((v) => {
+      const next = !v;
+      try { localStorage.setItem("qc-sonido", next ? "1" : "0"); } catch { /* noop */ }
+      return next;
+    });
+  };
+  return (
+    <button onClick={alternar} className="mo-tap" aria-label={on ? "Silenciar sonidos" : "Activar sonidos"} aria-pressed={on} style={{
+      display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 11,
+      border: `1px solid ${C.line}`, background: "transparent", color: on ? C.brand : C.text, cursor: "pointer",
+    }}>
+      {on ? <Volume2 size={16} /> : <VolumeX size={16} />}
+    </button>
+  );
+}
+
 /* ============================ PIEZAS ============================ */
 
 /* <picture> con WebP responsivo (anchos declarados por cada asset en el
