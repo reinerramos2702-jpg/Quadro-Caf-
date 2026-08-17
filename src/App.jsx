@@ -1155,6 +1155,43 @@ function volarAlCarrito(desdeEl, haciaEl, color) {
   anim.onfinish = () => dot.remove();
 }
 
+// Sonido sutil opt-in (Fase 7) — toque de botón / agregar al carrito.
+// Apagado por defecto: `localStorage["qc-sonido"]` solo vale "1" si el
+// usuario lo prendió a mano desde `SonidoToggle` en el header — nunca suena
+// sin ese gesto explícito. Un solo `AudioContext` compartido y creado recién
+// al primer toque real (los navegadores bloquean `AudioContext` sin gesto
+// del usuario, así que crearlo antes no serviría de nada); dos osciladores
+// cortos en vez de archivos de audio, así que esto pesa 0KB de bundle. Todo
+// dentro de un try/catch — si Web Audio no está disponible o el navegador
+// lo bloquea, esto queda en silencio, nunca rompe el tap real.
+let sonidoCtx = null;
+function sonar(freq, dur, vol) {
+  try {
+    if (localStorage.getItem("qc-sonido") !== "1") return;
+    if (!sonidoCtx) sonidoCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (sonidoCtx.state === "suspended") sonidoCtx.resume();
+    const osc = sonidoCtx.createOscillator(), gain = sonidoCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, sonidoCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, sonidoCtx.currentTime + dur);
+    osc.connect(gain).connect(sonidoCtx.destination);
+    osc.start();
+    osc.stop(sonidoCtx.currentTime + dur);
+  } catch { /* Web Audio no disponible/bloqueado — silencioso a propósito */ }
+}
+const sonarTap = () => sonar(680, .045, .045);
+const sonarCarrito = () => sonar(880, .09, .06);
+// Delegado en un único listener (en vez de uno por botón) sobre el `.qc`
+// raíz: cualquier tap dentro de `.press`/`.mo-press`/`.mo-tap` suena el tono
+// genérico, salvo que el propio botón marque `data-sonido="carrito"` (el
+// "+"/agregar de Carta), que usa el tono distinto de `sonarCarrito`.
+function manejarTapSonido(e) {
+  const el = e.target.closest(".press, .mo-press, .mo-tap");
+  if (!el) return;
+  if (el.dataset.sonido === "carrito") sonarCarrito(); else sonarTap();
+}
+
 /* ============================ MENÚ ============================ */
 
 function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carritoBtnRef }) {
