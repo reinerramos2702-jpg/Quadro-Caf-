@@ -2630,6 +2630,18 @@ export function BarraDashboard() {
     );
   } else if (sesion === undefined) {
     contenido = <div style={{ minHeight: "100vh" }} />;
+  } else if (sesion && recuperando) {
+    contenido = (
+      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
+        <div style={{ width: "100%", maxWidth: 380 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 10 }}>
+            <Marca size={34} />
+            <span className="disp" style={{ fontSize: 22 }}>Dashboard de barra</span>
+          </div>
+          <AdminNuevaClave onListo={() => setRecuperando(false)} />
+        </div>
+      </div>
+    );
   } else if (!sesion) {
     contenido = (
       <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
@@ -2638,7 +2650,7 @@ export function BarraDashboard() {
             <Marca size={34} />
             <span className="disp" style={{ fontSize: 22 }}>Dashboard de barra</span>
           </div>
-          <AdminLogin onLogged={() => {}} />
+          <AdminLogin onLogged={() => {}} origen="barra" />
         </div>
       </div>
     );
