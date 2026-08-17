@@ -1028,8 +1028,9 @@ function Fincas({ lote, setLote, onBack }) {
             // no es algo que dependa de la foto ni del aspect ratio del contenedor.
             // Fix: foto fija (mismo recorte que ya tiene el agente en D-ID, sin
             // marca de agua) acá en el card, con un botón que abre el agente en un
-            // overlay a pantalla completa (`AgenteFincaOverlay`, mismo patrón que
-            // `EstudioLightbox`) — ahí sí tiene ancho de sobra y se ve como en la
+            // overlay a pantalla completa (`AgenteFincaOverlay`, mismo patrón
+            // position:absolute inset:0 que usaba el módulo Estudio, eliminado
+            // 2026-08-17) — ahí sí tiene ancho de sobra y se ve como en la
             // página completa de D-ID (probado directo, sin iframe, se ve bien).
             <div style={{ padding: "18px 18px 4px" }}>
               <button onClick={() => setAgenteAbierto(true)} className="press tapfx" style={{
