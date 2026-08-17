@@ -1155,6 +1155,39 @@ function Fincas({ lote, setLote, onBack }) {
           })}
         </div>
       )}
+
+      {agenteAbierto && lote.avatar.agentUrl && (
+        <AgenteFincaOverlay lote={lote} cerrar={() => setAgenteAbierto(false)} />
+      )}
+    </div>
+  );
+}
+
+// Overlay a pantalla completa para el agente D-ID (mismo patrón que
+// `EstudioLightbox`: position:absolute inset:0 sobre el frame de la app).
+// El iframe queda con ancho de sobra (solo 8px de aire a cada lado) para no
+// pisar el piso de ~350px del widget de D-ID — ver el comentario largo en
+// `Fincas` sobre por qué ya no vive embebido dentro de la card angosta.
+function AgenteFincaOverlay({ lote, cerrar }) {
+  const { C } = useTheme();
+  return (
+    <div onClick={cerrar} style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.92)", zIndex: 45, display: "flex", flexDirection: "column" }}>
+      <div onClick={(e) => e.stopPropagation()} className="pop" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, padding: 8 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px 10px" }}>
+          <span className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase" }}>
+            {lote.avatar.nombre} · {lote.finca}
+          </span>
+          <button onClick={cerrar} className="press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
+        </div>
+        <div style={{ flex: 1, minHeight: 0, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
+          <iframe
+            src={lote.avatar.agentUrl}
+            title={`${lote.avatar.nombre} · Finca ${lote.finca}`}
+            allow="microphone; camera"
+            style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
