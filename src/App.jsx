@@ -1157,8 +1157,9 @@ function Fincas({ lote, setLote, onBack }) {
   );
 }
 
-// Overlay a pantalla completa para el agente D-ID (mismo patrón que
-// `EstudioLightbox`: position:absolute inset:0 sobre el frame de la app).
+// Overlay a pantalla completa para el agente D-ID (mismo patrón
+// position:absolute inset:0 que usaba el módulo Estudio, eliminado
+// 2026-08-17 — sobre el frame de la app).
 // El iframe queda con ancho de sobra (solo 8px de aire a cada lado) para no
 // pisar el piso de ~350px del widget de D-ID — ver el comentario largo en
 // `Fincas` sobre por qué ya no vive embebido dentro de la card angosta.
