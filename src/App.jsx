@@ -2202,7 +2202,7 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
                   {f.finca && <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 3 }}>{lote.finca} · taza {taza.nombre.toLowerCase()}</div>}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <span className="mono" style={{ fontSize: 13 }}>{money(f.precio * f.n)}</span>
+                  <span className="mono" style={{ fontSize: 13 }}><AnimatedNumber value={f.precio * f.n} format={money} /></span>
                   <button onClick={() => quitar(f.id)} className="press" aria-label="Quitar" style={btnMiniStyle(C)}><Minus size={13} /></button>
                 </div>
               </div>
