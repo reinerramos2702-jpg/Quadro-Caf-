@@ -1017,7 +1017,11 @@ function Inicio({ ir, lote }) {
              la taza necesita el mismo nodo vivo entre renders. */}
           <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
             <div key={geo.id} className="spiral-enter">
-              <Suspense fallback={<div style={{ width: 132, height: 132 }} />}>
+              {/* Fase 7: fallback con shimmer (`.mo-skeleton`, mismo patrón
+                 que Carta/Fincas) en vez de un div en blanco — acá SÍ es
+                 carga real (el chunk de three.js/espiral3d.jsx se pide con
+                 lazy()), no una transición fingida como en esos otros casos. */}
+              <Suspense fallback={<div className="mo-skeleton" style={{ width: 132, height: 132, borderRadius: "50%" }} />}>
                 <EspiralTubo3D vueltas={geo.vueltas} radio={geo.radio} prog={prog} tam={132}
                   colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
                   colorModelo={C.modelo} />
