@@ -2881,23 +2881,37 @@ export default function QuadroCafe() {
           </div>
 
           <div style={{
-            flexShrink: 0, display: "flex", justifyContent: "space-around",
+            position: "relative", flexShrink: 0, display: "flex", justifyContent: "space-around",
             borderTop: `1px solid ${C.line}`, background: C.card, padding: "9px 4px 12px",
           }}>
             {TABS.map((x) => {
               const Icono = x.i, on = tab === x.k;
               return (
-                <button key={x.k} onClick={() => setTab(x.k)} className="press" style={{
+                <button key={x.k} ref={(el) => { tabBtnRefs.current[x.k] = el; }} onClick={() => setTab(x.k)} className="press" style={{
                   background: "none", border: "none", cursor: "pointer", padding: "5px 8px",
                   display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
                   color: on ? C.brand : C.textMuted, transition: "color .2s",
                 }}>
                   <Icono size={19} />
                   <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase" }}>{x.t}</span>
-                  <span style={{ width: on ? 14 : 0, height: 2, borderRadius: 99, background: C.brand, transition: "width .25s" }} />
+                  {/* Espaciador: el indicador real ahora es el único <span>
+                     absoluto de abajo (desliza entre tabs en vez de aparecer/
+                     desaparecer suelto en cada botón); este se queda solo
+                     para reservar la misma altura de 2px + gap que tenía. */}
+                  <span style={{ width: 14, height: 2, opacity: 0 }} />
                 </button>
               );
             })}
+            {/* Fase 7: indicador único deslizante — mismo patrón offsetLeft
+               + useLayoutEffect que el underline de categorías de Carta
+               (Fase 3), acá midiendo botones de tab en vez de chips. */}
+            {navIndicador && (
+              <span style={{
+                position: "absolute", bottom: 10, left: navIndicador.left, width: 14, height: 2, borderRadius: 99,
+                background: C.brand, pointerEvents: "none",
+                transition: "left var(--motion-base) var(--ease-in-out)",
+              }} />
+            )}
           </div>
 
           {verCarrito && (
