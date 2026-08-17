@@ -1511,7 +1511,7 @@ function Fincas({ lote, setLote, onBack }) {
          que ya existía. */}
       {!comparar ? (
         <div key="fila-normal" className="qc-scroll slide" style={{ display: "flex", gap: 7, padding: "0 20px 16px", overflowX: "auto" }}>
-          {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+          {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => elegirFinca(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
         </div>
       ) : (
         <div key="fila-comparar" className="slide" style={{ padding: "0 20px 16px" }}>
