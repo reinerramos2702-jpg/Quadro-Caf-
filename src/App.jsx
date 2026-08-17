@@ -219,6 +219,32 @@ const FINCAS = [
       "Filtrado. Si lo pasas por espresso, pierdes la parte floral.",
     ],
   },
+  {
+    id: "aguafria",
+    finca: "Agua Fría",
+    zona: "Cortada de Maturín, Municipio Guaicaipuro, Miranda",
+    altura: 1200, varietal: "Tabi, Borbón Rosado, Geisha (insignia), Monte Claro",
+    // proceso / score / notas: el dueño (José Tomás Carrillo Batalla) todavía no
+    // los confirma — NO inventar cifras. FichaLote y el card "Lote en barra hoy"
+    // en Inicio ya ocultan esos campos cuando faltan; agregarlos acá en cuanto
+    // lleguen confirmados (ver CLAUDE.md § Real-data policy).
+    avatar: {
+      nombre: "José Tomás", rol: "Caficultor · 3ra generación",
+      inicial: "J",
+      // Avatar conversacional real (D-ID Agents) — a diferencia de Elio/Rosa/Mina,
+      // que son un guion de texto simulado, este iframe es un agente vivo con voz.
+      // Plan free trial de D-ID: el iframe trae watermark de marca hasta que se
+      // active un plan pago (pendiente de decisión de Reiner).
+      agentUrl: "https://studio.d-id.com/agents/share?id=v2_agt_UyhXfVTo&key=Y2tfRWlCRVjE3RlFlSThtSWc1dngw",
+    },
+    guion: [
+      "Bienvenido a Agua Fría. Soy José Tomás Carrillo Batalla, y esto es un café de familia.",
+      "Estamos en el Sector Cortada de Maturín, Municipio Guaicaipuro, Estado Miranda, a 1.200 metros de altura.",
+      "Esta finca lleva más de 100 años de trayectoria, con premios en Europa desde inicios del siglo XX. Soy la tercera generación.",
+      "Sembramos Tabi, Borbón Rosado, Monte Claro, y nuestra variedad insignia: Geisha.",
+      "Arriba puedes hablar conmigo en vivo — soy un avatar conversacional, no una grabación.",
+    ],
+  },
 ];
 
 const GEOMETRIAS = [
