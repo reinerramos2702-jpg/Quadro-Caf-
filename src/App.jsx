@@ -1507,7 +1507,23 @@ function Fincas({ lote, setLote, onBack }) {
         </div>
       )}
 
-      {!comparar && (
+      {!comparar && (cambiandoFinca ? (
+        // Fase 7: mismo patrón de skeleton "deliberado" que Carta (Fase 3) —
+        // FINCAS también vive entero en memoria (sin fetch por finca), así
+        // que esto es una transición a propósito, no una carga real fingida.
+        // Cubre el mismo alto aproximado que la card real de abajo, para que
+        // no salte el layout al resolver.
+        <div style={{ margin: "0 20px" }}>
+          <div className="mo-skeleton" style={{ height: 216, borderRadius: "22px 22px 0 0" }} />
+          <div style={{
+            background: C.surface, padding: "14px 16px", minHeight: 86,
+            borderRadius: "0 0 22px 22px", border: `1px solid ${C.line}`, borderTop: "none",
+          }}>
+            <div className="mo-skeleton" style={{ height: 14, borderRadius: 7, width: "85%" }} />
+            <div className="mo-skeleton" style={{ height: 14, borderRadius: 7, width: "60%", marginTop: 8 }} />
+          </div>
+        </div>
+      ) : (
         <div className="pop" key={lote.id} style={{
           margin: "0 20px", borderRadius: 22, overflow: "hidden",
           border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
