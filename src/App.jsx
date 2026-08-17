@@ -1009,49 +1009,66 @@ function Fincas({ lote, setLote, onBack }) {
           margin: "0 20px", borderRadius: 22, overflow: "hidden",
           border: `1px solid ${C.line}`, background: `linear-gradient(165deg, ${tint}55, ${C.card} 55%)`,
         }}>
-          <div style={{ position: "relative", height: lote.avatar.agentUrl ? 260 : 216, display: "grid", placeItems: "center" }}>
-            <svg viewBox="0 0 320 160" style={{ position: "absolute", bottom: 0, width: "100%", opacity: .35 }}>
-              <path d="M0 160 L60 78 L104 122 L156 44 L212 118 L262 70 L320 160 Z" fill={C.surface} />
-            </svg>
-            <div style={{ position: "relative", textAlign: "center" }}>
-              <div className={reproduciendo ? "pulse" : ""} style={{
-                // Círculo del avatar conversacional (D-ID Agents) más grande que el de
-                // Elio/Rosa/Mina — el dueño pidió explícitamente que se vea más la
-                // persona. Mismo patrón de tamaño fijo + overflow:hidden que abajo.
-                width: lote.avatar.agentUrl ? 168 : 92, height: lote.avatar.agentUrl ? 168 : 92,
-                borderRadius: "50%", margin: "0 auto", overflow: "hidden",
-                display: "grid", placeItems: "center", background: C.surface,
-                border: `2px solid ${reproduciendo ? C.brand : C.brandAlt}`,
+          {lote.avatar.agentUrl ? (
+            // Agente conversacional real (D-ID Agents, voz + cámara). El link de
+            // "share" de D-ID es la página completa con SU PROPIO chrome (ícono de
+            // ajustes, botón de mic, banner de error) — no hay parámetro de URL
+            // documentado para un modo minimalista (investigado en docs.d-id.com;
+            // el único "embed limpio" real es otro mecanismo, un <script> con
+            // client-key generado por API, que igual conserva controles propios).
+            // Meterlo en un círculo recortaba esa UI por las esquinas. Por eso este
+            // caso usa un rectángulo redondeado grande en vez del círculo de
+            // Elio/Rosa/Mina — ese círculo de abajo queda intacto para ellos.
+            // Plan free trial de D-ID: trae watermark hasta activar un plan pago.
+            <div style={{ padding: "18px 18px 4px" }}>
+              <div style={{
+                width: "100%", aspectRatio: "4 / 5", borderRadius: 20, overflow: "hidden",
+                background: C.surface, border: `2px solid ${C.brandAlt}`,
               }}>
-                {lote.avatar.agentUrl ? (
-                  // Agente conversacional real (voz + cámara), plan free trial de D-ID:
-                  // el iframe trae su watermark hasta que se active un plan pago.
-                  <iframe
-                    src={lote.avatar.agentUrl}
-                    title={`${lote.avatar.nombre} · Finca ${lote.finca}`}
-                    allow="microphone; camera"
-                    style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-                  />
-                ) : lote.avatar.video ? (
-                  // Mismo patrón que Marca (logo circular): wrapper de tamaño fijo con
-                  // overflow:hidden + media a 100%/100% con objectFit cover — el archivo
-                  // no necesita venir pre-recortado en círculo.
-                  <video key={lote.avatar.video} src={lote.avatar.video} autoPlay loop muted playsInline
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                ) : (
-                  <span className="disp" style={{ fontSize: 34, color: reproduciendo ? C.brand : C.brandAlt }}>{lote.avatar.inicial}</span>
-                )}
+                <iframe
+                  src={lote.avatar.agentUrl}
+                  title={`${lote.avatar.nombre} · Finca ${lote.finca}`}
+                  allow="microphone; camera"
+                  style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+                />
               </div>
-              {reproduciendo && [0, .5, 1].map((d) => (
-                <span key={d} className="steam" style={{
-                  position: "absolute", left: `${42 + d * 8}%`, top: -6, width: 3, height: 16,
-                  borderRadius: 99, background: C.brand, animationDelay: `${d}s`,
-                }} />
-              ))}
-              <div className="disp" style={{ fontSize: 16, marginTop: 12 }}>{lote.avatar.nombre}</div>
-              <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{lote.avatar.rol}</div>
+              <div style={{ textAlign: "center", margin: "12px 0 4px" }}>
+                <div className="disp" style={{ fontSize: 16 }}>{lote.avatar.nombre}</div>
+                <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{lote.avatar.rol}</div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div style={{ position: "relative", height: 216, display: "grid", placeItems: "center" }}>
+              <svg viewBox="0 0 320 160" style={{ position: "absolute", bottom: 0, width: "100%", opacity: .35 }}>
+                <path d="M0 160 L60 78 L104 122 L156 44 L212 118 L262 70 L320 160 Z" fill={C.surface} />
+              </svg>
+              <div style={{ position: "relative", textAlign: "center" }}>
+                <div className={reproduciendo ? "pulse" : ""} style={{
+                  width: 92, height: 92, borderRadius: "50%", margin: "0 auto", overflow: "hidden",
+                  display: "grid", placeItems: "center", background: C.surface,
+                  border: `2px solid ${reproduciendo ? C.brand : C.brandAlt}`,
+                }}>
+                  {lote.avatar.video ? (
+                    // Mismo patrón que Marca (logo circular): wrapper de tamaño fijo con
+                    // overflow:hidden + media a 100%/100% con objectFit cover — el archivo
+                    // no necesita venir pre-recortado en círculo.
+                    <video key={lote.avatar.video} src={lote.avatar.video} autoPlay loop muted playsInline
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  ) : (
+                    <span className="disp" style={{ fontSize: 34, color: reproduciendo ? C.brand : C.brandAlt }}>{lote.avatar.inicial}</span>
+                  )}
+                </div>
+                {reproduciendo && [0, .5, 1].map((d) => (
+                  <span key={d} className="steam" style={{
+                    position: "absolute", left: `${42 + d * 8}%`, top: -6, width: 3, height: 16,
+                    borderRadius: 99, background: C.brand, animationDelay: `${d}s`,
+                  }} />
+                ))}
+                <div className="disp" style={{ fontSize: 16, marginTop: 12 }}>{lote.avatar.nombre}</div>
+                <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{lote.avatar.rol}</div>
+              </div>
+            </div>
+          )}
 
           <div style={{ background: C.surface, padding: "14px 16px", minHeight: 86 }}>
             <p key={linea} className="slide" style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5 }}>
