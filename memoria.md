@@ -464,5 +464,30 @@ Se re-codificó con `sharp` (ya es dependencia del proyecto, la usa `scripts/gen
 
 **Verificado**: `npm run build` en verde (mismo fallo conocido del apóstrofo, no relacionado).
 
-**Deploy**: pendiente pushear este cambio a `main`.
+**Deploy**: pusheado a `main` (commit `5508d4e`).
 - Las ramas remotas `fix/barra-dashboard` y `fix/checklist-batch` (y sus locales) quedaron atrás de `main` — no se borraron todavía, se puede limpiar cuando se confirme que no falta nada más por rescatar de ellas.
+
+## Módulo Estudio eliminado (2026-08-17)
+
+Reiner decidió sacar el tab "Estudio" — subida de fotos/video del local + asignación a un "destino" en la app — porque nunca lo terminó usando en producción.
+
+**Investigación antes de borrar (pedida explícitamente):**
+- **Datos en Supabase**: ninguno. `Estudio` nunca tocaba Supabase — era puro estado local (`useState(MEDIOS_INICIALES)` en `QuadroCafe`) con `URL.createObjectURL(file)` para previsualizar lo subido; se perdía al recargar la página. No había tabla que migrar ni borrar.
+- **Referencias cruzadas**: ninguna real. `DESTINOS`/`medios`/`setMedios`/`EstudioLightbox` solo se usaban dentro del propio módulo. Ojo con el falso amigo: existe una sección **"Estudio de color"** dentro de Aula/Academia (la lección de cómo el color de la taza cambia el dulzor percibido) — nombre parecido, cero relación, no se tocó.
+- **`main.jsx`**: no maneja Estudio para nada. Su único ruteo por hash/query es `#barra`/`?barra=1` para decidir `BarraDashboard` vs `QuadroCafe` — la navegación entre tabs (Inicio/Carta/Fincas/Lab/Aula/Estudio) es 100% estado de React dentro de `QuadroCafe` (`tab`/`setTab`), sin tocar la URL salvo el manejo de back-button. Sacar una pestaña de ese estado no afecta el routing de las demás.
+
+**Eliminado de `src/App.jsx`:**
+- Componentes `Estudio` y `EstudioLightbox` completos (bloque bajo el comentario `/* ESTUDIO MULTIMEDIA */`).
+- Constantes `DESTINOS` y `MEDIOS_INICIALES`.
+- Estado `const [medios, setMedios] = useState(MEDIOS_INICIALES)` en `QuadroCafe`.
+- Entrada `{ k: "estudio", t: "Estudio", i: ImageIcon }` del array `TABS` (nav inferior).
+- Render condicional `{tab === "estudio" && <Estudio .../>}`.
+- Imports que solo usaba ese módulo: iconos `ImageIcon`, `Upload`, `Trash2` (lucide-react); `estudioLocal`/`estudioPourover` (los dos JPG semilla).
+- Carpeta `src/assets/estudio/` completa (`local-barra.jpg`, `pourover-barra.jpg`).
+- Los 3 comentarios en el código de `Fincas`/`AgenteFincaOverlay` que mencionaban "mismo patrón que `EstudioLightbox`" (referencia de diseño, del trabajo de Agua Fría de ayer) se reescribieron para no señalar a un componente que ya no existe — ahora dicen "mismo patrón position:absolute inset:0 que usaba el módulo Estudio, eliminado 2026-08-17".
+
+Nav inferior quedó en 5 pestañas: Inicio, Carta, Fincas, Lab, Aula.
+
+**Verificación** (delegada a un subagente en paralelo, ver flujo de trabajo del sprint más abajo): build limpio, grep sin referencias huérfanas, y las 5 pestañas restantes probadas una por una en Chrome headless por CDP — Agua Fría/D-ID en Fincas confirmado intacto.
+
+**Deploy**: [completar tras confirmar el subagente / antes de pushear].
