@@ -2556,6 +2556,7 @@ export function BarraDashboard() {
   // dueño), este es el punto donde filtrar por user.app_metadata.rol antes
   // de dar acceso al dashboard.
   const [sesion, setSesion] = useState(undefined);
+  const [recuperando, setRecuperando] = useState(false);
   const [ordenes, setOrdenes] = useState([]);
   const [silenciado, setSilenciado] = useState(() => {
     try { return localStorage.getItem("qc-barra-silenciado") === "1"; } catch { return false; }
@@ -2571,7 +2572,10 @@ export function BarraDashboard() {
   useEffect(() => {
     if (!supabase) { setSesion(null); return; }
     supabase.auth.getSession().then(({ data }) => setSesion(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_evento, s) => setSesion(s));
+    const { data: sub } = supabase.auth.onAuthStateChange((evento, s) => {
+      setSesion(s);
+      if (evento === "PASSWORD_RECOVERY") setRecuperando(true);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
