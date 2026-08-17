@@ -1493,7 +1493,7 @@ function Fincas({ lote, setLote, onBack }) {
               ))}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
-              <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="press"
+              <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="mo-press"
                 style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 15px", borderRadius: 99, border: "none", background: C.brand, color: C.onBrand, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
                 {reproduciendo ? <Pause size={14} /> : <Play size={14} />}
                 {/* Nunca hubo audio real acá — es un guion en texto que avanza solo.
@@ -1502,7 +1502,7 @@ function Fincas({ lote, setLote, onBack }) {
                    memoria.md/CLAUDE.md — pendiente real: videos Higgsfield o TTS). */}
                 {reproduciendo ? "Pausar" : linea === 0 ? "Ver guion" : "Continuar"}
               </button>
-              <button onClick={() => setTrans(!transcripcion)} className="press mono" style={{
+              <button onClick={() => setTrans(!transcripcion)} className="mo-press mono" style={{
                 fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", background: "none",
                 border: `1px solid ${C.line}`, color: C.textMuted, padding: "8px 12px", borderRadius: 99, cursor: "pointer",
               }}>
