@@ -1766,6 +1766,40 @@ function Academia({ taza, setTaza, onBack }) {
   const pct = Math.round((hechos.length / ACADEMIA.length) * 100);
   const insigniaLista = hechos.length === ACADEMIA.length;
 
+  // Racha (Fase 6) — DECISIÓN TEMPORAL REVERSIBLE: el dueño todavía no
+  // confirmó si la racha/badges de Aula debe ser solo visual o persistir en
+  // Supabase (decisión propia pendiente, ver memoria.md). Sin esa respuesta,
+  // se implementa la versión más simple y reversible: local-only en
+  // localStorage, mismo patrón que ya usa `estado` un poco más arriba. Si el
+  // dueño pide Supabase después, esto se reemplaza por una tabla/columna sin
+  // tocar la UI (misma forma { dias, ultimaFecha }).
+  // Cuenta "días distintos con al menos una lección completada", no visitas:
+  // sube 1 cuando `hechos.length` crece en un día distinto al de la última
+  // vez que subió; si el día anterior no tuvo actividad, la racha se corta a 1
+  // en vez de seguir sumando.
+  const [racha, setRacha] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("qc-academia-racha"));
+      return saved && typeof saved === "object" && typeof saved.dias === "number" ? saved : { dias: 0, ultimaFecha: null };
+    } catch { return { dias: 0, ultimaFecha: null }; }
+  });
+  const hechosPrevRef = useRef(hechos.length);
+  useEffect(() => {
+    if (hechos.length > hechosPrevRef.current) {
+      const hoy = new Date().toISOString().slice(0, 10);
+      setRacha((r) => {
+        if (r.ultimaFecha === hoy) return r; // ya se contó una lección hoy
+        const ayer = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        const dias = r.ultimaFecha === ayer ? r.dias + 1 : 1;
+        const next = { dias, ultimaFecha: hoy };
+        try { localStorage.setItem("qc-academia-racha", JSON.stringify(next)); } catch { /* noop */ }
+        return next;
+      });
+    }
+    hechosPrevRef.current = hechos.length;
+  }, [hechos.length]);
+  const flameRef = useRetriggerAnim(racha.dias);
+
   const responder = (leccionId, qIdx, opIdx) => {
     setEstado((prev) => {
       const leccion = ACADEMIA.find((a) => a.id === leccionId);
