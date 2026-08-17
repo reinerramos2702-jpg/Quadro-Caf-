@@ -2257,7 +2257,7 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", margin: "18px 0 16px" }}>
               <span className="mono" style={{ fontSize: 11, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase" }}>Total</span>
-              <span className="disp" style={{ fontSize: 30 }}>{money(total)}</span>
+              <span className="disp" style={{ fontSize: 30 }}><AnimatedNumber value={total} format={money} /></span>
             </div>
 
             {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 14, marginBottom: -6 }}>{error}</p>}
