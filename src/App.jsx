@@ -906,9 +906,14 @@ function AnimatedNumber({ value, format }) {
     const paso = (t) => {
       const p = Math.min(1, (t - inicio) / dur);
       const suavizado = 1 - Math.pow(1 - p, 3); // aproxima --ease-out
-      setDisplay(Math.round(desde + (hasta - desde) * suavizado));
+      const actual = desde + (hasta - desde) * suavizado;
+      // Sin `format` (conteos enteros, ej. el badge del carrito) redondeamos
+      // en cada frame. Con `format` (precios) NO redondeamos acá — money()
+      // ya formatea a 2 decimales, y redondear a entero de paso perdería
+      // los centavos ($4.50 quedaría en $5 y ahí se quedaría).
+      setDisplay(format ? actual : Math.round(actual));
       if (p < 1) rafRef.current = requestAnimationFrame(paso);
-      else prevRef.current = hasta;
+      else { setDisplay(hasta); prevRef.current = hasta; }
     };
     rafRef.current = requestAnimationFrame(paso);
     return () => cancelAnimationFrame(rafRef.current);
