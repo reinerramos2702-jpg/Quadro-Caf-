@@ -912,9 +912,18 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack }) {
 
 function FichaLote({ lote, compact, titulo }) {
   const { C } = useTheme();
-  const dulzor = Math.round(lote.score - 12);
+  // Agua Fría todavía no tiene proceso de beneficio / puntaje SCA / notas de
+  // cata confirmados por el dueño (ver CLAUDE.md § Real-data policy) — nunca
+  // inventar esas cifras. Cada campo derivado se oculta si su dato base falta,
+  // en vez de reventar con `undefined.includes` o mostrar un "NaN".
+  const dulzor = lote.score != null ? Math.round(lote.score - 12) : null;
   const acidez = Math.round(lote.altura / 26);
-  const cuerpo = lote.proceso.includes("Honey") ? 80 : 58;
+  const cuerpo = lote.proceso ? (lote.proceso.includes("Honey") ? 80 : 58) : null;
+  const campos = [
+    ["Altura", `${lote.altura} msnm`], ["Varietal", lote.varietal],
+  ];
+  if (lote.proceso) campos.push(["Proceso", lote.proceso]);
+  if (lote.score != null) campos.push(["Puntaje", `${lote.score} SCA`]);
   return (
     <div style={{
       flex: compact ? 1 : "initial", minWidth: 0, background: C.card, border: `1px solid ${C.line}`,
@@ -925,10 +934,7 @@ function FichaLote({ lote, compact, titulo }) {
       )}
       <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: compact ? 8 : 12 }}>Ficha del lote</div>
       <div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "1fr 1fr", gap: compact ? 8 : 14 }}>
-        {[
-          ["Altura", `${lote.altura} msnm`], ["Varietal", lote.varietal],
-          ["Proceso", lote.proceso], ["Puntaje", `${lote.score} SCA`],
-        ].map(([k, v]) => (
+        {campos.map(([k, v]) => (
           <div key={k}>
             <div className="mono" style={{ fontSize: 9.5, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{k}</div>
             <div className="disp" style={{ fontSize: compact ? 13 : 16, lineHeight: 1.15, marginTop: 3 }}>{v}</div>
@@ -936,9 +942,9 @@ function FichaLote({ lote, compact, titulo }) {
         ))}
       </div>
       <div style={{ marginTop: compact ? 12 : 16 }}>
-        <Meter label="Dulzor" value={dulzor} tone={C.brandAlt} />
+        {dulzor != null && <Meter label="Dulzor" value={dulzor} tone={C.brandAlt} />}
         <Meter label="Acidez" value={acidez} />
-        <Meter label="Cuerpo" value={cuerpo} tone={C.purple} />
+        {cuerpo != null && <Meter label="Cuerpo" value={cuerpo} tone={C.purple} />}
       </div>
     </div>
   );
