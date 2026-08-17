@@ -734,6 +734,43 @@ function UnaLinea({ children, max, min = 20, className, style }) {
   );
 }
 
+/* ============================ TAZA POR COLOR (Fase 4, Inicio) ============================
+   Indicador nuevo en el comparador de rutas de Inicio: qué color de taza
+   deja cada geometría. No es el widget "La taza también sabe" de Aula (ese
+   compara tazas de color fijo y su efecto en el dulzor percibido, dato
+   confirmado); esto es al revés — el color nace del propio `efecto.cuerpo`
+   que ya calcula GEOMETRIAS, mismo espíritu que la fórmula del simulador
+   (un modelo razonable, no medido en laboratorio — ver CLAUDE.md). SVG por
+   ahora: cuando el dueño pase fotos reales de taza, esto es lo que se
+   reemplaza, sin tocar el resto del widget. */
+function mezclarHex(hexA, hexB, t) {
+  const a = parseInt(hexA.slice(1), 16), b = parseInt(hexB.slice(1), 16);
+  const ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255;
+  const br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255;
+  const mezcla = (x, y) => Math.round(x + (y - x) * t).toString(16).padStart(2, "0");
+  return `#${mezcla(ar, br)}${mezcla(ag, bg)}${mezcla(ab, bb)}`;
+}
+
+// Nunca un hex suelto: los dos extremos salen de PALETAS (card = taza vacía,
+// brandAlt = acento cálido de marca) para que el gradiente sea correcto en
+// los dos temas sin declarar nada nuevo.
+function colorTaza(efecto, C) {
+  const t = Math.min(1, Math.max(0, efecto.cuerpo / 100));
+  return mezclarHex(C.card, C.brandAlt, t);
+}
+
+function TazaColor({ color, C, size = 30 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M8 16h26" stroke={C.line} strokeWidth="2" strokeLinecap="round" />
+      <path d="M32 20h3a5 5 0 0 1 0 10h-3" stroke={C.line} strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M10 16h22v14a11 11 0 0 1-11 11 11 11 0 0 1-11-11V16Z"
+        stroke={C.line} strokeWidth="2"
+        style={{ fill: color, transition: "fill var(--motion-base) var(--ease-in-out)" }} />
+    </svg>
+  );
+}
+
 function Inicio({ ir, lote }) {
   const { C, tema } = useTheme();
   const [geo, setGeo] = useState(GEOMETRIAS[0]);
