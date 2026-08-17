@@ -1640,7 +1640,7 @@ function Fincas({ lote, setLote, onBack }) {
             )}
           </div>
         </div>
-      )}
+      ))}
 
       {!comparar ? (
         <div key="ficha-normal" className="slide" style={{ margin: "16px 20px 0" }}>
