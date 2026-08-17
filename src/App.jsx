@@ -1820,7 +1820,7 @@ function Academia({ taza, setTaza, onBack }) {
           const aciertos = info.respuestas.filter((r, qi) => r === a.quiz[qi]?.correcta).length;
           return (
             <div key={a.id} className="rise" style={{ animationDelay: `${i * 55}ms`, marginBottom: 10 }}>
-              <button onClick={() => setAbierta(abierto ? null : a.id)} className="press tapfx" style={{
+              <button onClick={() => setAbierta(abierto ? null : a.id)} className="mo-press tapfx" style={{
                 width: "100%", textAlign: "left", cursor: "pointer",
                 background: C.card, border: `1px solid ${done ? C.brand : C.line}`,
                 borderRadius: abierto ? "16px 16px 0 0" : 16, padding: 15, color: C.text,
@@ -1840,53 +1840,61 @@ function Academia({ taza, setTaza, onBack }) {
                 </ul>
               </button>
 
-              {abierto && (
-                <div className="slide" style={{
-                  background: C.card, border: `1px solid ${done ? C.brand : C.line}`, borderTop: "none",
-                  borderRadius: "0 0 16px 16px", padding: 15,
-                }}>
-                  <div className="mono" style={{ fontSize: 10, letterSpacing: ".14em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 12 }}>
-                    Comprueba lo que leíste
-                  </div>
-                  {a.quiz.map((qz, qi) => {
-                    const resp = info.respuestas[qi];
-                    const respondido = resp !== undefined && resp !== null;
-                    return (
-                      <div key={qi} style={{ marginBottom: qi === a.quiz.length - 1 ? 0 : 16 }}>
-                        <div style={{ fontSize: 13, color: C.text, marginBottom: 8, lineHeight: 1.4 }}>{qz.q}</div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                          {qz.opciones.map((op, oi) => {
-                            const elegido = resp === oi;
-                            const esCorrecta = oi === qz.correcta;
-                            let borde = C.line, color2 = C.textMuted;
-                            if (respondido && (elegido || esCorrecta)) {
-                              const tono = esCorrecta ? C.brand : C.warn;
-                              borde = tono; color2 = tono;
-                            }
-                            return (
-                              <button key={oi} onClick={() => responder(a.id, qi, oi)} disabled={respondido}
-                                className={respondido ? "" : "press"} style={{
-                                  textAlign: "left", padding: "9px 11px", borderRadius: 10, fontSize: 12.5,
-                                  border: `1px solid ${borde}`, background: "transparent", color: color2,
-                                  cursor: respondido ? "default" : "pointer",
-                                  display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8,
-                                }}>
-                                <span>{op}</span>
-                                {respondido && elegido && (esCorrecta ? <Check size={13} /> : <X size={13} />)}
-                              </button>
-                            );
-                          })}
-                        </div>
-                        {respondido && (
-                          <div className="mono" style={{ fontSize: 10.5, marginTop: 6, color: resp === qz.correcta ? C.brand : C.warn }}>
-                            {resp === qz.correcta ? "Correcto." : `Incorrecto — la respuesta era: ${qz.opciones[qz.correcta]}`}
+              {/* Fase 6: técnica grid-template-rows 0fr→1fr, portada tal cual
+                 del acordeón "Elegir finca y taza" de Carta (Fase 3) — antes
+                 era un conditional-mount (`{abierto && <div className="slide">}`)
+                 que producía el mismo salto instantáneo de layout que ese otro
+                 acordeón tenía antes de arreglarse. Siempre montado, oculto por
+                 altura 0 + aria-hidden, sin medir nada por JS. */}
+              <div style={{ display: "grid", gridTemplateRows: abierto ? "1fr" : "0fr", transition: "grid-template-rows var(--motion-base) var(--ease-in-out)" }} aria-hidden={!abierto}>
+                <div style={{ overflow: "hidden" }}>
+                  <div style={{
+                    background: C.card, border: `1px solid ${done ? C.brand : C.line}`, borderTop: "none",
+                    borderRadius: "0 0 16px 16px", padding: 15,
+                  }}>
+                    <div className="mono" style={{ fontSize: 10, letterSpacing: ".14em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 12 }}>
+                      Comprueba lo que leíste
+                    </div>
+                    {a.quiz.map((qz, qi) => {
+                      const resp = info.respuestas[qi];
+                      const respondido = resp !== undefined && resp !== null;
+                      return (
+                        <div key={qi} style={{ marginBottom: qi === a.quiz.length - 1 ? 0 : 16 }}>
+                          <div style={{ fontSize: 13, color: C.text, marginBottom: 8, lineHeight: 1.4 }}>{qz.q}</div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            {qz.opciones.map((op, oi) => {
+                              const elegido = resp === oi;
+                              const esCorrecta = oi === qz.correcta;
+                              let borde = C.line, color2 = C.textMuted;
+                              if (respondido && (elegido || esCorrecta)) {
+                                const tono = esCorrecta ? C.brand : C.warn;
+                                borde = tono; color2 = tono;
+                              }
+                              return (
+                                <button key={oi} onClick={() => responder(a.id, qi, oi)} disabled={respondido}
+                                  className={respondido ? "" : "mo-press"} style={{
+                                    textAlign: "left", padding: "9px 11px", borderRadius: 10, fontSize: 12.5,
+                                    border: `1px solid ${borde}`, background: "transparent", color: color2,
+                                    cursor: respondido ? "default" : "pointer",
+                                    display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8,
+                                  }}>
+                                  <span>{op}</span>
+                                  {respondido && elegido && (esCorrecta ? <Check size={13} /> : <X size={13} />)}
+                                </button>
+                              );
+                            })}
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                          {respondido && (
+                            <div className="mono slide" style={{ fontSize: 10.5, marginTop: 6, color: resp === qz.correcta ? C.brand : C.warn }}>
+                              {resp === qz.correcta ? "Correcto." : `Incorrecto — la respuesta era: ${qz.opciones[qz.correcta]}`}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           );
         })}
