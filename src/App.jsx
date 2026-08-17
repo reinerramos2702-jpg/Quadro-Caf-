@@ -232,10 +232,20 @@ const FINCAS = [
     avatar: {
       nombre: "José Tomás", rol: "Caficultor · 3ra generación",
       inicial: "J",
-      // Avatar conversacional real (D-ID Agents) — a diferencia de Elio/Rosa/Mina,
-      // que son un guion de texto simulado, este iframe es un agente vivo con voz.
-      // Plan free trial de D-ID: el iframe trae watermark de marca hasta que se
-      // active un plan pago (pendiente de decisión de Reiner).
+      // Foto real (recorte 300×375 = 4:5, la misma que José Tomás ya tiene
+      // cargada en D-ID — extraída de ahí, sin marca de agua) — se muestra
+      // estática en el card en vez del iframe embebido directo. Se probó
+      // embeber el iframe de D-ID inline primero (ver historial en
+      // memoria.md), pero el widget de D-ID tiene un piso de ancho fijo de
+      // ~350px y un zoom interno del 105% en su preview que no se pueden
+      // ajustar por CSS desde afuera — en una card angosta (la mayoría de
+      // celulares reales) eso descentraba el botón "Start call" y recortaba
+      // el sombrero. Se movió a foto fija + botón que abre el agente en un
+      // overlay a pantalla completa (mismo patrón que EstudioLightbox), donde
+      // sí tiene ancho de sobra.
+      foto: joseTomas,
+      // Agente conversacional real (D-ID Agents). Plan free trial: trae
+      // watermark de marca hasta que se active un plan pago.
       agentUrl: "https://studio.d-id.com/agents/share?id=v2_agt_UyhXfVTo&key=Y2tfRWlCRVlEcTE3RlFlSThtSWc1dngw",
     },
     guion: [
