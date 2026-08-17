@@ -1511,9 +1511,12 @@ function Academia({ taza, setTaza, onBack }) {
   );
 }
 
-/* ============================ ESTUDIO MULTIMEDIA ============================ */
-
-function EstudioLightbox({ medio, total, index, cerrar, mover }) {
+/* ============================ QUADRO CLUB ============================ */
+/* (el módulo Estudio Multimedia que vivía acá se eliminó 2026-08-17 — el
+   dueño decidió sacarlo, no tenía uso real; nunca persistía a Supabase,
+   era puro estado local con URL.createObjectURL. Ver memoria.md/CLAUDE.md
+   para el detalle completo de la eliminación.) */
+function _EstudioLightbox_ELIMINAR({ medio, total, index, cerrar, mover }) {
   const { C } = useTheme();
   return (
     <div onClick={cerrar} style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.92)", zIndex: 45, display: "flex", flexDirection: "column" }}>
