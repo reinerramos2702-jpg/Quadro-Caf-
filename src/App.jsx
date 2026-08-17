@@ -779,6 +779,19 @@ function colorTaza(efecto, C) {
   return mezclarHex(C.card, C.brandAlt, t);
 }
 
+// Variante de `colorTaza` para Laboratorio (Fase 5): ahí `extracción` ya es
+// el resultado en vivo del simulador (perfil.extraccion), no un dato fijo
+// de GEOMETRIAS, y los sliders la mueven por casi todo 0-100 con solo mover
+// un extremo (radio a tope o molienda a tope ya la acercan a 0/98) — a
+// diferencia del `cuerpo` de las 4 rutas fijas, no hace falta estirar un
+// rango angosto: normalizar directo contra 0-100 (una extracción "es" un
+// porcentaje) ya usa el gradiente completo. Mismos extremos de `colorTaza`
+// (`C.card`/`C.brandAlt`), nunca un hex nuevo.
+function colorExtraccion(extraccion, C) {
+  const t = Math.min(1, Math.max(0, extraccion / 100));
+  return mezclarHex(C.card, C.brandAlt, t);
+}
+
 function TazaColor({ color, C, size = 30 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
