@@ -1877,7 +1877,8 @@ function Academia({ taza, setTaza, onBack }) {
                   <span style={{
                     width: 22, height: 22, borderRadius: 7, display: "grid", placeItems: "center",
                     border: `1px solid ${done ? C.brand : C.line}`, background: done ? C.brand : "transparent", color: C.onBrand,
-                  }}>{done && <Check size={13} />}</span>
+                    transition: "background var(--motion-fast) var(--ease-spring), border-color var(--motion-fast) var(--ease-spring)",
+                  }}>{done && <Check size={13} className="pop" />}</span>
                 </div>
                 <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 5 }}>
                   {a.min} min de lectura{done ? ` · ${aciertos}/${a.quiz.length} correctas` : ""}
