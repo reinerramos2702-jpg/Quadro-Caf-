@@ -1337,7 +1337,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
                         )}
                         <button
                           onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
-                          className="mo-press" aria-label={`Agregar ${m.nombre}`}
+                          className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
                           style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
                           <Plus size={14} />
                         </button>
