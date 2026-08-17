@@ -1820,7 +1820,9 @@ function Laboratorio({ onBack }) {
            .9s) — remonta a propósito para que el cambio de método se sienta
            como una entrada nueva, no un salto instantáneo de geometría. */}
         <div key={geo.id} className="spiral-enter" style={{ display: "grid", placeItems: "center" }}>
-          <Suspense fallback={<div style={{ width: 230, height: 230 }} />}>
+          {/* Fase 7: mismo fallback con shimmer que el comparador de Inicio
+             — acá también es carga real del chunk lazy de three.js. */}
+          <Suspense fallback={<div className="mo-skeleton" style={{ width: 230, height: 230, borderRadius: "50%" }} />}>
             <EspiralTubo3D vueltas={vueltas} radio={radio} prog={prog} tam={230}
               colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
               colorModelo={C.modelo} />
