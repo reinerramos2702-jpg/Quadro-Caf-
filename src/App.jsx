@@ -1020,19 +1020,28 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
       </div>
 
       <div style={{ padding: "0 20px" }}>
-        {console.log("DEBUGTEMP render imgCategoria", cat, imgCategoria)}
-        {imgCategoria && (
-          <ResponsiveImg key={cat} id={imgCategoria} alt={cat} className="rise" style={{
-            width: "100%", height: 120, borderRadius: 14, marginBottom: 12,
-          }} />
-        )}
-        {cambiando ? (
-          [0, 1, 2].map((i) => (
-            <div key={i} className="mo-skeleton" style={{ height: 92, borderRadius: 16, marginBottom: 10 }} />
-          ))
-        ) : (
-          <div key={cat} className="slide">
-            {items.map((m) => {
+        {/* Un solo wrapper con key={cat} en vez de dos hermanos con su
+           propia key cada uno (el banner por un lado, el slide de items
+           por el otro) — con dos keys independientes en el mismo nivel,
+           en este entorno quedaban imágenes de categorías previas sin
+           limpiar en el DOM al cambiar rápido de categoría (reproducido
+           y confirmado con build de producción, no era un artefacto de
+           StrictMode). Con un único wrapper, todo el bloque de la
+           categoría remonta como una unidad atómica — no hay forma de que
+           el banner y el contenido queden desincronizados entre sí. */}
+        <div key={cat}>
+          {imgCategoria && (
+            <ResponsiveImg id={imgCategoria} alt={cat} className="rise" style={{
+              width: "100%", height: 120, borderRadius: 14, marginBottom: 12,
+            }} />
+          )}
+          {cambiando ? (
+            [0, 1, 2].map((i) => (
+              <div key={i} className="mo-skeleton" style={{ height: 92, borderRadius: 16, marginBottom: 10 }} />
+            ))
+          ) : (
+            <div className="slide">
+              {items.map((m) => {
               const n = carrito.filter((x) => x.id === m.id).length;
               const open = abierto === m.id;
               const agotado = m.disponible === false;
