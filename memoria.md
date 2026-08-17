@@ -530,4 +530,4 @@ Reiner confirmó la Fase 2 en producción y pidió arrancar la Fase 3, y en el m
 
 **Verificado**: `npm run build` en verde. Bundle: **78.68 KB gzip** (antes 77.39 KB de Fase 2 → **+1.29 KB** para las 7 piezas, sin ninguna dependencia nueva). Probado con Chrome headless por CDP: flujo completo (cambiar categoría → agregar al carrito → badge → acordeón → carrito con count-up) sin errores de consola, en ambos temas. Fincas/Elio confirmados sin tocar (`.press` global intacto, solo Menu/Carrito usan la clase nueva `.mo-press`).
 
-**Deploy**: pendiente pushear.
+**Deploy**: pusheado a `main` (`04708a9`, confirmado up to date con `origin/main` — esta nota se había quedado desactualizada, corregida al retomar la sesión para Fase 4).
