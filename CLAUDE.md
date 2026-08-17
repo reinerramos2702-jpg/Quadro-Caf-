@@ -60,7 +60,6 @@ Current confirmed-real data inventory (as of the v3 pass):
 
 `src/assets/` holds two kinds of real assets — no stock photos, no unlabeled AI images:
 - Professional Blender renders the owner commissioned (`hero-dispenser.jpg`, `club-box.jpg`, `menu-postres.jpg`, `menu-iced.jpg`, `lote-bourbon.jpg`) — used as ambient/equipment/category imagery, not as literal "ficha del lote" evidence (printed label text can lag behind current data — see `memoria.md`).
-- Real camera photos (`assets/estudio/`) pre-seeding the Estudio tab's media library.
 - `logo.png` is the one non-render real asset — the official brand mark, used in `Marca`.
 - `jose-tomas.jpg` (added 2026-08-16, replaced same day with a higher-res version the owner sent directly): José Tomás Carrillo Batalla's real photo. First version (300×375, 18.7 KB) was extracted from his D-ID Agents share page — the same photo he already had uploaded there, just low-res since that's the size D-ID renders its preview thumbnail at. Reiner then sent the actual reference photo (1122×1402, 1.9 MB PNG); re-encoded with `sharp` (already a project dependency, used by `scripts/generar-asset.mjs`) to JPEG quality 85 + mozjpeg → **110 KB**, same 1122×1402 (still exactly 4:5, matches the card's `aspectRatio`, no CSS changes needed). Used as the static avatar photo in the Agua Fría card in `Fincas`. See the D-ID section above for why it's a static photo instead of the iframe being embedded directly.
 
