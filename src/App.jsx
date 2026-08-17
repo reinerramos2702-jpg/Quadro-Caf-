@@ -4,7 +4,7 @@ import {
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
   Banknote, Smartphone, Landmark, DollarSign,
-  Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic,
+  Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
