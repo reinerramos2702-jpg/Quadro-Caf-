@@ -1661,7 +1661,11 @@ function Laboratorio({ onBack }) {
          (un <model-viewer> decorativo arriba, un SVG plano abajo con el
          propio simulador); se fusionaron para eliminar la duplicación. */}
       <div style={{ margin: "0 20px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
-        <div style={{ display: "grid", placeItems: "center" }}>
+        {/* `key={geo.id}` + `spiral-enter`: mismo micro-crossfade que ya usa
+           el tubo del comparador de Inicio al cambiar de ruta (opacity+scale,
+           .9s) — remonta a propósito para que el cambio de método se sienta
+           como una entrada nueva, no un salto instantáneo de geometría. */}
+        <div key={geo.id} className="spiral-enter" style={{ display: "grid", placeItems: "center" }}>
           <Suspense fallback={<div style={{ width: 230, height: 230 }} />}>
             <EspiralTubo3D vueltas={vueltas} radio={radio} prog={prog} tam={230}
               colorLinea={C.line} colorBrand={C.brand} colorAcento={C.brandAlt}
@@ -1669,10 +1673,10 @@ function Laboratorio({ onBack }) {
           </Suspense>
         </div>
 
-        <button onClick={() => setCorriendo(true)} className="press" style={{
+        <button onClick={simularVertido} disabled={corriendo} className="mo-press" style={{
           width: "100%", marginTop: 12, padding: "12px", borderRadius: 12, border: `1px solid ${C.brand}`,
           background: corriendo ? C.brand : "transparent", color: corriendo ? C.onBrand : C.brand,
-          cursor: "pointer", fontWeight: 600, fontSize: 13,
+          cursor: corriendo ? "default" : "pointer", fontWeight: 600, fontSize: 13,
         }}>
           {corriendo ? "Vertiendo…" : "Simular vertido"}
         </button>
