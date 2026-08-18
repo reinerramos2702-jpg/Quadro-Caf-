@@ -2108,15 +2108,32 @@ function Academia({ taza, setTaza, onBack }) {
 
         <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 18 }}>
           <div style={{ display: "grid", placeItems: "center", marginBottom: 16 }}>
+            {/* Foto real del producto (2026-08-17) reemplaza la taza dibujada
+               con divs (cuerpo de color plano + franja oscura simulando el
+               café) para las 5 que ya tienen foto — `.pop` sigue haciendo el
+               crossfade al cambiar de taza, igual que antes. `foto` es
+               opcional a propósito: si algún día se agrega una taza sin foto
+               todavía (ej. la 6ta, "Marrón caramelo", pendiente de Reiner),
+               cae de vuelta al dibujo CSS en vez de romper o mostrar un
+               `<img>` vacío. */}
             <div key={taza.id} className="pop" style={{ position: "relative" }}>
-              <div style={{
-                width: 94, height: 78, borderRadius: "10px 10px 40px 40px",
-                background: taza.hex, border: `2px solid ${C.line}`,
-              }} />
-              <div style={{
-                position: "absolute", top: 8, left: 10, right: 10, height: 16,
-                borderRadius: 99, background: "#2B1A10",
-              }} />
+              {taza.foto ? (
+                <img src={taza.foto} alt={`Taza ${taza.nombre}`} style={{
+                  width: 120, height: 120, objectFit: "cover", borderRadius: 18,
+                  border: `2px solid ${C.line}`, display: "block",
+                }} />
+              ) : (
+                <>
+                  <div style={{
+                    width: 94, height: 78, borderRadius: "10px 10px 40px 40px",
+                    background: taza.hex, border: `2px solid ${C.line}`,
+                  }} />
+                  <div style={{
+                    position: "absolute", top: 8, left: 10, right: 10, height: 16,
+                    borderRadius: 99, background: "#2B1A10",
+                  }} />
+                </>
+              )}
               {[0, .6, 1.2].map((d) => (
                 <span key={d} className="steam" style={{
                   position: "absolute", left: `${34 + d * 14}%`, top: -14, width: 3, height: 16,
