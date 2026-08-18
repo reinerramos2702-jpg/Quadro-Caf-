@@ -1,6 +1,6 @@
 import sharp from "sharp";
 
-const dir = String.raw`C:\Users\RAI Agency\OneDrive\Documentos\RAI Agency\App's\Quadro Cafe\_incoming\`;
+const dir = String.raw`C:\Users\RAI Agency\OneDrive\Documentos\RAI Agency\App's\Quadro Cafe\_incoming` + "\\";
 const files = [
   "file_00000000341481f59002032dfee9559f.png",
   "file_0000000079e8820c88ca84da6815cee8.png",
