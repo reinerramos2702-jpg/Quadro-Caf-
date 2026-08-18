@@ -31,6 +31,7 @@ for (const { src, out } of mapa) {
   const [r, g, b] = data;
   const hex = "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("").toUpperCase();
 
-  const stat = await sharp(outPath).metadata();
-  console.log(out, "->", hex, `(${stat.width}x${stat.height}, ${(stat.size / 1024).toFixed(1)}KB)`);
+  const meta = await sharp(outPath).metadata();
+  const size = statSync(outPath).size;
+  console.log(out, "->", hex, `(${meta.width}x${meta.height}, ${(size / 1024).toFixed(1)}KB)`);
 }
