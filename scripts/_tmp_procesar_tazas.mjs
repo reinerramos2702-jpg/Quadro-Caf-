@@ -23,7 +23,7 @@ for (const { src, out } of mapa) {
   // blanco, no el brillo del asa): un cuadrado de 30x30px centrado un poco
   // a la izquierda y abajo del centro, zona de cerámica lisa en las 5 fotos.
   const { data, info } = await sharp(input)
-    .extract({ left: 480, top: 760, width: 40, height: 40 })
+    .extract({ left: 250, top: 830, width: 60, height: 60 })
     .resize(1, 1)
     .raw()
     .toBuffer({ resolveWithObject: true });
