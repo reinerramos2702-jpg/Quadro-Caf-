@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { statSync } from "fs";
 
 const incoming = String.raw`C:\Users\RAI Agency\OneDrive\Documentos\RAI Agency\App's\Quadro Cafe\_incoming` + "\\";
 const outDir = "src/assets/";
