@@ -626,4 +626,28 @@ Reiner pidió el mismo nivel de detalle de la doc de Fase 7 pero para 4/5/6, pun
   - **Verificado en código antes de documentar nada como "cerrado"**: la integración de fotos para este widget **no existe en el repo todavía** — `TAZAS` (`App.jsx` ~L348-354) sigue siendo 5 entradas CSS-only (`blanca #F2EDE3`, `azul #5E93A8`, `roja #B2483A`, `verde #1E5C4A`, `barro #8C6242` — nombres/hex distintos a los que describe el roadmap de Reiner), dibujadas como `div`s de color plano, sin ningún `<img>`. Se buscó en `src/assets/`, en `_incoming/` (carpeta OneDrive donde suelen aterrizar assets sin integrar) y en todo `git log --all -i --grep=taza` — cero rastro de las 5 fotos ya generadas. Se le señaló la discrepancia a Reiner en vez de asumir que el trabajo de integración ya estaba hecho y solo faltaba el asset — confirmó que **todavía no las mandó**, van a llegar en un paso siguiente. **Nada de este widget se tocó todavía**: sigue con los 5 swatches CSS originales tal cual estaban, esperando las fotos.
 - **Track D "Alta Gama" — confirmado cerrado por Reiner** (Fases 2 a 7, todo lo demás), salvo este ítem aparte de fotos de tazas que **no bloquea el cierre** (es un asset externo pendiente de Reiner, no trabajo de código pendiente) y que se retoma cuando envíe las 5 fotos + eventualmente la 6ª.
 
+### Las 5 fotos de tazas llegaron y se integraron en la misma sesión (2026-08-17)
+
+Reiner las pegó directo en el chat (imagen inline) primero — sin archivo accesible en disco desde acá, se le explicó y pidió que las pusiera en `_incoming/` (la carpeta OneDrive sin `.git` que ya se usa para assets sin integrar, ver nota histórica arriba). Aparecieron ahí como 5 PNG de 1254×1254 con nombre genérico (`file_0000...png`), identificadas una por una abriéndolas:
+
+| Archivo | Color |
+|---|---|
+| `...341481f5...` | Blanca |
+| `...79e8820c...` | Azul marino |
+| `...ccd081f5...` | Verde bosque |
+| `...d1ec822f...` | Terracota (logo verde) |
+| `...dfd081f5...` | Roja |
+
+**Antes de tocar `TAZAS` se detectó una discrepancia real** entre los 5 nombres del roadmap de Reiner (Terracota/Verde bosque/Blanca/Azul marino/Roja) y los 5 que ya vivían en el código con su propio `pct`/`efecto` de dulzor aprobado (Blanca/Azul Alpine/Roja Sunset/Verde Mocotíes/Barro Barrel) — nombres y hasta colores distintos en el caso de "Barro Barrel" vs "Terracota". Se le preguntó a Reiner en vez de asumir un mapeo o inventar `pct`/`efecto` nuevos (regla de "no inventar datos" del proyecto). **Confirmó**: es el mismo set de siempre, swap 1:1 de foto+nombre, `pct`/`efecto` **sin tocar**: Blanca→Blanca, Azul Alpine→Azul Marino, Roja Sunset→Roja, Verde Mocotíes→Verde Bosque, Barro Barrel→Terracota. La 6ª (Marrón caramelo) queda **explícitamente afuera** del set de producción por ahora — sin foto real ni `pct`/`efecto` confirmado, no se inventa, se suma en un paso aparte cuando Reiner la tenga.
+
+**Implementado**:
+- Las 5 PNG se procesaron con el mismo pipeline que `jose-tomas.jpg` (`sharp`, sin CLI dedicado — script de un solo uso, no quedó en `scripts/`): resize a 480×480 `cover`, JPEG calidad 85 + mozjpeg → 9–13 KB cada una (`src/assets/taza-blanca.jpg`, `taza-azul-marino.jpg`, `taza-verde-bosque.jpg`, `taza-terracota.jpg`, `taza-roja.jpg`).
+- `TAZAS` (`App.jsx`) ganó un campo `foto` por entrada y `nombre`/`hex` actualizados al mapeo confirmado — `pct`/`efecto` **byte-idénticos** a como estaban. `hex` se re-muestreó del cuerpo real de cada foto (una zona de cerámica lisa, verificada visualmente para no caer en el logo/fondo/brillo) en vez de mantener el hex de diseño anterior, para que el swatch chico siga matcheando la foto real; esto es un dato leído de las fotos reales, no inventado.
+- El "hero" (la taza grande arriba del selector) pasó de dibujarse con `div`s (cuerpo de color plano + franja oscura simulando el café) a la foto real (`<img>`, 120×120, `objectFit: cover`, mismo borde `C.line` que tenía el dibujo). El humo (`.steam`) se mantuvo intacto encima. **Fallback defensivo a propósito**: si `taza.foto` no existe (ej. el día que se sume Marrón caramelo sin foto todavía), cae de vuelta al dibujo CSS original en vez de romper — no hace falta tocar este código cuando llegue la 6ª, si se agrega sin `foto` sigue funcionando igual que ahora.
+- Los 5 swatches selectores (34×34, abajo del hero) se dejaron como estaban — chips de color plano con `t.hex`, no fotos en miniatura (a esa escala una foto se vería peor que un color sólido, y ya cumplen su función de selector).
+
+**Verificado**: `npm run build` en verde (mismo fallo conocido del apóstrofo). `npm run dev` + una sesión CDP corta (cerrada explícitamente al terminar): cero errores de consola, captura confirmando el widget con la foto de Azul Marino, nombre actualizado, `+18% dulzor percibido` intacto, y los 5 swatches con los colores nuevos.
+
+**Con esto, "La taza también sabe" queda al día salvo la 6ª taza (Marrón caramelo `#A87456`), que sigue 100% del lado de Reiner: falta que genere la foto y confirme su `pct`/`efecto` real.
+
 **Próximo**: arrancar Track A (Lighthouse) — sin tocar Elio, según regla fija del proyecto.
