@@ -350,12 +350,21 @@ const GEOMETRIAS = [
     lectura: "Temperatura sostenida y agitación total. Extrae más, perdona menos." },
 ];
 
+// Fotos reales (2026-08-17): swap 1:1 de las 5 tazas de siempre por fotos de
+// producto reales, confirmado por Reiner — mismo `pct`/`efecto` (el dato de
+// "dulzor percibido" ya aprobado, sin tocar), solo cambia `nombre`/`hex`
+// (`hex` re-muestreado del cuerpo real de cada foto, ver `foto`) y se agrega
+// `foto`. `id` se deja igual a propósito (no hay nada persistido que dependa
+// de él, pero tampoco hace falta tocarlo). Queda afuera a propósito una 6ta
+// taza "Marrón caramelo" (#A87456) — Reiner todavía no generó esa foto ni
+// pasó su pct/efecto real; no se inventa acá, se suma en un paso aparte
+// cuando la tenga.
 const TAZAS = [
-  { id: "blanca", nombre: "Blanca", hex: "#F2EDE3", pct: 0, efecto: "Referencia. Percepción neutra de dulzor y amargor." },
-  { id: "azul", nombre: "Azul Alpine", hex: "#5E93A8", pct: 18, efecto: "Se percibe más dulce. Baja la lectura de amargor." },
-  { id: "roja", nombre: "Roja Sunset", hex: "#B2483A", pct: -12, efecto: "Realza cuerpo e intensidad. Sube el amargor percibido." },
-  { id: "verde", nombre: "Verde Mocotíes", hex: "#1E5C4A", pct: 8, efecto: "Acentúa las notas vegetales y de té verde." },
-  { id: "barro", nombre: "Barro Barrel", hex: "#8C6242", pct: 4, efecto: "Suaviza la acidez. Alarga el retrogusto." },
+  { id: "blanca", nombre: "Blanca", hex: "#F2EDE3", foto: tazaBlanca, pct: 0, efecto: "Referencia. Percepción neutra de dulzor y amargor." },
+  { id: "azul", nombre: "Azul Marino", hex: "#415065", foto: tazaAzulMarino, pct: 18, efecto: "Se percibe más dulce. Baja la lectura de amargor." },
+  { id: "roja", nombre: "Roja", hex: "#BA5340", foto: tazaRoja, pct: -12, efecto: "Realza cuerpo e intensidad. Sube el amargor percibido." },
+  { id: "verde", nombre: "Verde Bosque", hex: "#535C4C", foto: tazaVerdeBosque, pct: 8, efecto: "Acentúa las notas vegetales y de té verde." },
+  { id: "barro", nombre: "Terracota", hex: "#BA7554", foto: tazaTerracota, pct: 4, efecto: "Suaviza la acidez. Alarga el retrogusto." },
 ];
 
 const MENU = [
