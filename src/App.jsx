@@ -3002,7 +3002,7 @@ export default function QuadroCafe() {
             </div>
           </div>
 
-          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+          <main style={{ flex: 1, overflow: "hidden", position: "relative" }}>
             <div key={tab} className="mo-tabswitch" style={{ height: "100%", "--tabdir": tabDir }}>
               {tab === "inicio" && <Inicio ir={setTab} lote={lote} />}
               {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} carritoBtnRef={carritoBtnRef} />}
@@ -3012,7 +3012,7 @@ export default function QuadroCafe() {
               {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} onAdmin={() => setTab("admin")} />}
               {tab === "admin" && <Admin onBack={irInicio} />}
             </div>
-          </div>
+          </main>
 
           <div style={{
             position: "relative", flexShrink: 0, display: "flex", justifyContent: "space-around",
