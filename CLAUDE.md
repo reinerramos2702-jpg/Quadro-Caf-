@@ -182,6 +182,10 @@ No confundir con **"Estudio de color"** (Aula/Academia, la lección sobre cómo 
 
 `main.jsx` nunca dependía de Estudio (su único ruteo por hash/query es `#barra` para `BarraDashboard`, ver Bloque 8 arriba) — la navegación de tabs dentro de `QuadroCafe` es 100% estado de React (`tab`/`setTab`), así que sacar una pestaña no afecta el routing de las demás.
 
+## Roadmap "Publicación app stores" — Track A: Lighthouse (2026-08-17)
+
+Primera sesión de un checklist de 16 para publicar en app stores. Auditoría Lighthouse corrida contra producción (mobile + desktop): **Performance 61/68, Accessibility 98/98, Best Practices 100/100, SEO 83/83** (Lighthouse 13 ya no tiene categoría PWA en el core — no hay score de eso). Detalle completo de issues y plan de fixes priorizado en `memoria.md` § "Track A — Auditoría Lighthouse". Nada se tocó en código todavía; próxima sesión arranca por los quick wins ahí listados (robots.txt, meta description, landmark `<main>`, recompresión del logo) antes de entrar al fix más grande (code-splitting del bundle principal / diferir el chunk de three.js).
+
 ## Out of scope / not yet built
 
 React Native migration, Supabase auth/real email capture, real in-app payments, CRM export integration. See `docs/HANDOFF.md` for the original list — mostly still accurate; orders are now real (see Bloque 8 above), the rest isn't.
