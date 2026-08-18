@@ -650,4 +650,45 @@ Reiner las pegó directo en el chat (imagen inline) primero — sin archivo acce
 
 **Con esto, "La taza también sabe" queda al día salvo la 6ª taza (Marrón caramelo `#A87456`), que sigue 100% del lado de Reiner: falta que genere la foto y confirme su `pct`/`efecto` real.
 
-**Próximo**: arrancar Track A (Lighthouse) — sin tocar Elio, según regla fija del proyecto.
+## Track A — Auditoría Lighthouse (2026-08-17)
+
+Roadmap "Publicación app stores", sesión 1/16. Auditoría corrida con `npx lighthouse` (v13.4.1) contra producción (`https://quadro-cafe.reinerramos2702.workers.dev/`), mobile (preset por defecto, throttling simulado) y desktop (`--preset=desktop`) por separado. Reportes completos en `lighthouse/{mobile,desktop}.report.{html,json}` (no versionados — son output local, ver `.gitignore`; si hace falta reproducir, el comando exacto quedó documentado abajo).
+
+**Nota de alcance**: Lighthouse 13 eliminó la categoría PWA del core (reemplazada por "Agentic Browsing", que no es lo mismo) — no hay score de PWA de este audit. Chequeo manual en su lugar: el build (`dist/`) ya trae `manifest.webmanifest` y `registerSW.js` (vía `vite-plugin-pwa`, confirmado por archivo), o sea la base de instalabilidad está — no se verificó a fondo (offline, ícono maskable, etc.) porque quedó fuera de esta pasada.
+
+**Scores**
+
+| Categoría | Mobile | Desktop |
+|---|---|---|
+| Performance | 61 | 68 |
+| Accessibility | 98 | 98 |
+| Best Practices | 100 | 100 |
+| SEO | 83 | 83 |
+
+**Issues concretos**
+
+- **Performance — Total Blocking Time altísimo (mobile 6.640ms, score 0; desktop 1.490ms, score 1)**: el bundle principal (`assets/index-*.js`, 145KB, **60% sin usar** según `unused-javascript`) ejecuta ~5.2s de scripting en mobile. El chunk de three.js (`espiral3d-*.js`, 172KB, 33% sin usar) suma otros ~3.3s — se carga en cadena inmediatamente detrás del bundle principal porque `Inicio` (primer tab) lo importa vía `React.lazy` apenas monta, así que "lazy" no lo saca del camino crítico de la primera pantalla. `network-dependency-tree-insight` muestra la cadena real: `index.js → espiral3d.js → espiral.glb` (405KB), 2.87s solo esa cadena.
+- **Performance — Cumulative Layout Shift 0.102 (mobile, score 89)**: `layout-shifts` reporta 3 shifts; no se identificó el elemento exacto en esta pasada (`cls-culprits-insight` no devolvió detalle en este run).
+- **Performance — imagen de logo pesada**: `src/assets/logo.png` (usado en `Marca`) pesa 52KB pero se muestra a 62×62px con un archivo de 256×256 — 48KB desperdiciados por tamaño + 41KB más si se convirtiera a WebP/AVIF.
+- **Accessibility (98) — falta landmark `<main>`**: el árbol raíz de `App.jsx` usa `<div className="qc">` (líneas ~2953 y ~3319) sin ningún `<main>` alrededor del contenido de cada tab.
+- **SEO (83) — sin meta description**: `index.html` no tiene `<meta name="description">`.
+- **SEO (83) — robots.txt inválido (18 errores)**: no existe `public/robots.txt`, así que la ruta cae al fallback SPA de `wrangler.toml` (`not_found_handling = "single-page-application"`) y sirve el `index.html` completo como si fuera el robots.txt — Lighthouse lo parsea como HTML y falla.
+- **Best Practices (100 igual, pero con warning)**: `valid-source-maps` — el JS de producción no tiene source maps (no baja el score en este run, pero conviene si se va a debuggear producción).
+
+**Priorización de fixes**
+
+Quick wins (bajo esfuerzo, alto impacto — para próxima sesión):
+1. Agregar `public/robots.txt` real (`User-agent: *\nAllow: /`) — arregla el error de 18 fallos en SEO en un archivo.
+2. Agregar `<meta name="description" content="...">` a `index.html` — sube SEO.
+3. Envolver el contenido de cada tab en `<main>` dentro de `App.jsx` — sube Accessibility a ~100.
+4. Recomprimir `logo.png` a su tamaño real de render (62×62 @2x ≈ 124×124) y/o convertir a WebP — ahorra ~48-90KB en la carga inicial.
+
+Requieren más trabajo (arquitectura/decisión del dueño):
+5. **TBT/mainthread**: el bundle principal con 60% de código sin usar en la carga inicial es el problema de fondo — candidato a code-splitting más agresivo (separar por tab/ruta, no solo el chunk de three.js) o diferir el chunk de three.js hasta que el usuario realmente interactúe con el comparador/Laboratorio en vez de cargarlo apenas monta `Inicio`. Impacto grande en el score pero toca la arquitectura de carga de `App.jsx`, no es un cambio de una línea.
+6. CLS (0.102, mobile): necesita otra pasada con `cls-culprits-insight` con más detalle (o inspección visual en Chrome DevTools) para identificar el elemento exacto antes de tocar código.
+
+No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, según el pedido (Track A = auditoría). Próxima sesión: decidir con el dueño si arrancamos por los quick wins (#1-4) o si el code-splitting (#5) entra en este mismo track dado que es el que más pesa en el score.
+
+**Comando para reproducir**: `npx lighthouse "https://quadro-cafe.reinerramos2702.workers.dev/" --output=html,json --output-path=./lighthouse/mobile --chrome-flags="--headless=new --no-sandbox"` (agregar `--preset=desktop` para el modo desktop). Nota: en este entorno Windows, Lighthouse tira un `EPERM` al final al intentar borrar su carpeta temp (`chrome-launcher` cleanup) — es cosmético, el reporte ya se generó antes de ese error; no hace falta reintentar.
+
+**Próximo**: ejecutar los quick wins de Track A (#1-4) — sin tocar Elio, según regla fija del proyecto.
