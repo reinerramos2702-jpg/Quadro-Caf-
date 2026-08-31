@@ -3044,9 +3044,16 @@ export default function QuadroCafe() {
             {/* Pill líquida detrás del ícono activo — ver comentario junto a
                @keyframes qc-navpill-squish en buildCss. Se dibuja ANTES que
                los botones (mismo orden de DOM) para quedar detrás del ícono,
-               pero asoma por encima del borde del nav con `top` negativo. */}
+               pero asoma por encima del borde del nav con `top` negativo.
+               top:-10 (bajado de -18 el 2026-08-31, hallazgo de verificación
+               visual): con -18 la pill se montaba sobre el chip "Espiral
+               continua"/"Punto central" de Inicio cuando el contenido llega
+               justo hasta el borde del nav sin scroll — -10 sigue leyéndose
+               como una burbuja que flota sobre el nav (vs. el underline de
+               2px que reemplaza) pero sin invadir contenido real de las
+               pantallas más ajustadas. */}
             {navIndicador && (
-              <span className="mo-navpill" style={{ top: -18, transform: `translateX(${navIndicador.x}px)` }}>
+              <span className="mo-navpill" style={{ top: -10, transform: `translateX(${navIndicador.x}px)` }}>
                 <span ref={navPillSquishRef} style={{
                   display: "block", width: "100%", height: "100%", borderRadius: 999, background: C.brand,
                 }} />
