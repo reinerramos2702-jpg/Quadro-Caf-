@@ -3055,24 +3055,37 @@ export default function QuadroCafe() {
           </main>
 
           <div style={{
-            position: "relative", flexShrink: 0, display: "flex", justifyContent: "space-around",
+            position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 10,
+            display: "flex", justifyContent: "space-around",
             borderTop: `1px solid ${C.line}`, background: C.card, padding: "9px 4px 12px",
           }}>
-            {/* Pill líquida detrás del ícono activo — ver comentario junto a
+            {/* Nav fijo (2026-08-31): pasó de flex-item (flexShrink:0, dentro
+               del flujo de la columna junto a `main`) a position:"absolute"
+               anclado al frame del teléfono (que ya es position:"relative" y
+               no scrollea) — así queda SIEMPRE visible sin depender de que
+               `main`/sus `.qc-scroll` internos midan bien su alto, inmune al
+               bug clásico de mobile donde un contenedor a 100vh empuja el
+               último elemento fuera de la pantalla visible cuando la barra
+               de direcciones del navegador se expande/contrae. `main` ya no
+               resta su alto en el flex (flex:1 ahora ocupa todo el espacio
+               que antes cedía al nav), pero el padding-bottom de ~100-120px
+               que cada `.qc-scroll` de la app ya reservaba de antes (para no
+               terminar el contenido pegado al borde) alcanza de sobra como
+               zona segura para que el nav overlay no tape contenido real. */}
+            {/* Pill líquida detrás del ítem activo — ver comentario junto a
                @keyframes qc-navpill-squish en buildCss. Se dibuja ANTES que
-               los botones (mismo orden de DOM) para quedar detrás del ícono,
-               pero asoma por encima del borde del nav con `top` negativo.
-               top:-10 (bajado de -18 el 2026-08-31, hallazgo de verificación
-               visual): con -18 la pill se montaba sobre el chip "Espiral
-               continua"/"Punto central" de Inicio cuando el contenido llega
-               justo hasta el borde del nav sin scroll — -10 sigue leyéndose
-               como una burbuja que flota sobre el nav (vs. el underline de
-               2px que reemplaza) pero sin invadir contenido real de las
-               pantallas más ajustadas. */}
+               los botones (mismo orden de DOM) para quedar detrás. Ahora
+               envuelve ícono+label juntos (2026-08-31, antes sólo el ícono):
+               ancho/alto/top vienen de `navIndicador`, calculados sobre el
+               botón más ancho de los 5 para que el desplazamiento entre tabs
+               sea un translateX puro sin animar width/left. */}
             {navIndicador && (
-              <span className="mo-navpill" style={{ top: -10, transform: `translateX(${navIndicador.x}px)` }}>
+              <span className="mo-navpill" style={{
+                top: navIndicador.top, width: navIndicador.width, height: navIndicador.height,
+                borderRadius: navIndicador.height, transform: `translateX(${navIndicador.x}px)`,
+              }}>
                 <span ref={navPillSquishRef} style={{
-                  display: "block", width: "100%", height: "100%", borderRadius: 999, background: C.brand,
+                  display: "block", width: "100%", height: "100%", borderRadius: navIndicador.height, background: C.brand,
                 }} />
               </span>
             )}
@@ -3085,7 +3098,7 @@ export default function QuadroCafe() {
                   color: on ? C.onBrand : C.textMuted, transition: "color .2s",
                 }}>
                   <Icono size={19} />
-                  <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase", color: on ? C.brand : C.textMuted }}>{x.t}</span>
+                  <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase", color: on ? C.onBrand : C.textMuted }}>{x.t}</span>
                 </button>
               );
             })}
