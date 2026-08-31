@@ -177,6 +177,26 @@ ${FONTS}
    swap "hacia adelante". */
 @keyframes qc-tabswitch{from{opacity:0;transform:translateX(calc(14px * var(--tabdir, 1)))}to{opacity:1;transform:none}}
 .mo-tabswitch{animation:qc-tabswitch var(--motion-base) var(--ease-out) both}
+/* Pill "líquida" del nav inferior (evolución del underline de 14x2 de Fase 7,
+   ver PIEZAS/QuadroCafe) — burbuja detrás del ícono activo que se desplaza y
+   asoma por encima del borde del nav, al estilo del selector de tabs de apps
+   nativas. Nada de filtro SVG gooey (feGaussianBlur+feColorMatrix): es caro
+   en Android gama media y este componente está siempre visible en pantalla.
+   El look "líquido" se falsea con dos animaciones separadas sobre dos nodos
+   distintos, a propósito, para no pisar transform con transition+animation
+   a la vez en el mismo elemento:
+   - el wrapper (.mo-navpill) sólo hace transition:transform con
+     --ease-spring — el propio overshoot del spring en el eje de traslado ya
+     lee como líquido, sin animar nada más ahí.
+   - el nodo interno (.mo-navpill-squish) es el que retriggerea el keyframe
+     de "squish" (estira/achata) cada vez que cambia el tab activo, vía
+     useRetriggerAnim(tab, "mo-navpill-squish") — mismo hook que ya usa el
+     bounce del badge del carrito y la racha de Aula, sin tocarlo.
+   border-radius fijo en px (no %) para que la forma no se deforme al
+   escalar en X/Y durante el squish. */
+@keyframes qc-navpill-squish{0%{transform:scaleX(1) scaleY(1)}35%{transform:scaleX(1.32) scaleY(.8)}100%{transform:scaleX(1) scaleY(1)}}
+.mo-navpill{position:absolute;left:0;width:40px;height:40px;border-radius:999px;pointer-events:none;transition:transform var(--motion-base) var(--ease-spring)}
+.mo-navpill-squish{animation:qc-navpill-squish var(--motion-base) var(--ease-spring)}
 /* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
    VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
    Á/É/Í/Ó de "TRIÁNGULO", "SIFÓN", "CAFÉ" caía a Fraunces: otra tipografía
@@ -2889,8 +2909,11 @@ export default function QuadroCafe() {
   useLayoutEffect(() => {
     const el = tabBtnRefs.current[tab];
     if (!el) { setNavIndicador(null); return; }
-    setNavIndicador({ left: el.offsetLeft + el.offsetWidth / 2 - 7 });
+    setNavIndicador({ x: el.offsetLeft + el.offsetWidth / 2 - 20 });
   }, [tab]);
+  // Squish de la pill del nav, retriggereado en cada cambio de tab — mismo
+  // hook que ya usa el bounce del badge del carrito, sin tocarlo.
+  const navPillSquishRef = useRetriggerAnim(tab, "mo-navpill-squish");
 
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
   useEffect(() => { try { localStorage.setItem("qc-carrito", JSON.stringify(carrito)); } catch { /* noop */ } }, [carrito]);
@@ -3018,34 +3041,37 @@ export default function QuadroCafe() {
             position: "relative", flexShrink: 0, display: "flex", justifyContent: "space-around",
             borderTop: `1px solid ${C.line}`, background: C.card, padding: "9px 4px 12px",
           }}>
+            {/* Pill líquida detrás del ícono activo — ver comentario junto a
+               @keyframes qc-navpill-squish en buildCss. Se dibuja ANTES que
+               los botones (mismo orden de DOM) para quedar detrás del ícono,
+               pero asoma por encima del borde del nav con `top` negativo.
+               top:-10 (bajado de -18 el 2026-08-31, hallazgo de verificación
+               visual): con -18 la pill se montaba sobre el chip "Espiral
+               continua"/"Punto central" de Inicio cuando el contenido llega
+               justo hasta el borde del nav sin scroll — -10 sigue leyéndose
+               como una burbuja que flota sobre el nav (vs. el underline de
+               2px que reemplaza) pero sin invadir contenido real de las
+               pantallas más ajustadas. */}
+            {navIndicador && (
+              <span className="mo-navpill" style={{ top: -10, transform: `translateX(${navIndicador.x}px)` }}>
+                <span ref={navPillSquishRef} style={{
+                  display: "block", width: "100%", height: "100%", borderRadius: 999, background: C.brand,
+                }} />
+              </span>
+            )}
             {TABS.map((x) => {
               const Icono = x.i, on = tab === x.k;
               return (
                 <button key={x.k} ref={(el) => { tabBtnRefs.current[x.k] = el; }} onClick={() => setTab(x.k)} className="press" style={{
-                  background: "none", border: "none", cursor: "pointer", padding: "5px 8px",
+                  position: "relative", background: "none", border: "none", cursor: "pointer", padding: "5px 8px",
                   display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                  color: on ? C.brand : C.textMuted, transition: "color .2s",
+                  color: on ? C.onBrand : C.textMuted, transition: "color .2s",
                 }}>
                   <Icono size={19} />
-                  <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase" }}>{x.t}</span>
-                  {/* Espaciador: el indicador real ahora es el único <span>
-                     absoluto de abajo (desliza entre tabs en vez de aparecer/
-                     desaparecer suelto en cada botón); este se queda solo
-                     para reservar la misma altura de 2px + gap que tenía. */}
-                  <span style={{ width: 14, height: 2, opacity: 0 }} />
+                  <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase", color: on ? C.brand : C.textMuted }}>{x.t}</span>
                 </button>
               );
             })}
-            {/* Fase 7: indicador único deslizante — mismo patrón offsetLeft
-               + useLayoutEffect que el underline de categorías de Carta
-               (Fase 3), acá midiendo botones de tab en vez de chips. */}
-            {navIndicador && (
-              <span style={{
-                position: "absolute", bottom: 10, left: navIndicador.left, width: 14, height: 2, borderRadius: 99,
-                background: C.brand, pointerEvents: "none",
-                transition: "left var(--motion-base) var(--ease-in-out)",
-              }} />
-            )}
           </div>
 
           {verCarrito && (
