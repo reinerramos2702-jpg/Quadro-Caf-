@@ -183,9 +183,9 @@ ${FONTS}
    nativas. Nada de filtro SVG gooey (feGaussianBlur+feColorMatrix): es caro
    en Android gama media y este componente está siempre visible en pantalla.
    El look "líquido" se falsea con dos animaciones separadas sobre dos nodos
-   distintos, a propósito, para no pisar `transform` con transition+animation
+   distintos, a propósito, para no pisar transform con transition+animation
    a la vez en el mismo elemento:
-   - el wrapper (.mo-navpill) sólo hace `transition:transform` con
+   - el wrapper (.mo-navpill) sólo hace transition:transform con
      --ease-spring — el propio overshoot del spring en el eje de traslado ya
      lee como líquido, sin animar nada más ahí.
    - el nodo interno (.mo-navpill-squish) es el que retriggerea el keyframe
