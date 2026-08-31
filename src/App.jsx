@@ -196,8 +196,7 @@ ${FONTS}
    escalar en X/Y durante el squish. */
 @keyframes qc-navpill-squish{0%{transform:scaleX(1) scaleY(1)}35%{transform:scaleX(1.32) scaleY(.8)}100%{transform:scaleX(1) scaleY(1)}}
 .mo-navpill{position:absolute;width:40px;height:40px;border-radius:999px;pointer-events:none;transition:transform var(--motion-base) var(--ease-spring)}
-.mo-navpill-squish{width:100%;height:100%;border-radius:999px;background:var(--navpill-bg)}
-.mo-navpill-squish.mo-navpill-squish-run{animation:qc-navpill-squish var(--motion-base) var(--ease-spring)}
+.mo-navpill-squish{animation:qc-navpill-squish var(--motion-base) var(--ease-spring)}
 /* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
    VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
    Á/É/Í/Ó de "TRIÁNGULO", "SIFÓN", "CAFÉ" caía a Fraunces: otra tipografía
