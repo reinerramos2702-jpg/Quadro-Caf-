@@ -195,7 +195,7 @@ ${FONTS}
    border-radius fijo en px (no %) para que la forma no se deforme al
    escalar en X/Y durante el squish. */
 @keyframes qc-navpill-squish{0%{transform:scaleX(1) scaleY(1)}35%{transform:scaleX(1.32) scaleY(.8)}100%{transform:scaleX(1) scaleY(1)}}
-.mo-navpill{position:absolute;width:40px;height:40px;border-radius:999px;pointer-events:none;transition:transform var(--motion-base) var(--ease-spring)}
+.mo-navpill{position:absolute;left:0;width:40px;height:40px;border-radius:999px;pointer-events:none;transition:transform var(--motion-base) var(--ease-spring)}
 .mo-navpill-squish{animation:qc-navpill-squish var(--motion-base) var(--ease-spring)}
 /* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
    VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
