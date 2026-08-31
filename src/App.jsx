@@ -2909,7 +2909,20 @@ export default function QuadroCafe() {
   useLayoutEffect(() => {
     const el = tabBtnRefs.current[tab];
     if (!el) { setNavIndicador(null); return; }
-    setNavIndicador({ x: el.offsetLeft + el.offsetWidth / 2 - 20 });
+    // La pill envuelve ícono+label juntos (cambio 2026-08-31) — se
+    // dimensiona en base al botón más ancho de los 5 (ORDEN_TABS), no al
+    // botón activo puntual, para que el ancho quede fijo entre tabs y el
+    // desplazamiento sea un translateX puro (sin animar width/left, que
+    // dispararía layout en cada cambio de tab).
+    const anchos = ORDEN_TABS.map((k) => tabBtnRefs.current[k]?.offsetWidth || 0);
+    const ancho = Math.max(...anchos, el.offsetWidth) + 14;
+    const alto = el.offsetHeight + 8;
+    setNavIndicador({
+      x: el.offsetLeft + el.offsetWidth / 2 - ancho / 2,
+      top: el.offsetTop - 4,
+      width: ancho,
+      height: alto,
+    });
   }, [tab]);
   // Squish de la pill del nav, retriggereado en cada cambio de tab — mismo
   // hook que ya usa el bounce del badge del carrito, sin tocarlo.
