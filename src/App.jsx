@@ -2909,8 +2909,11 @@ export default function QuadroCafe() {
   useLayoutEffect(() => {
     const el = tabBtnRefs.current[tab];
     if (!el) { setNavIndicador(null); return; }
-    setNavIndicador({ left: el.offsetLeft + el.offsetWidth / 2 - 7 });
+    setNavIndicador({ x: el.offsetLeft + el.offsetWidth / 2 - 20 });
   }, [tab]);
+  // Squish de la pill del nav, retriggereado en cada cambio de tab — mismo
+  // hook que ya usa el bounce del badge del carrito, sin tocarlo.
+  const navPillSquishRef = useRetriggerAnim(tab, "mo-navpill-squish");
 
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
   useEffect(() => { try { localStorage.setItem("qc-carrito", JSON.stringify(carrito)); } catch { /* noop */ } }, [carrito]);
