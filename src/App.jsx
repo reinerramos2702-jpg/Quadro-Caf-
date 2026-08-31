@@ -177,6 +177,27 @@ ${FONTS}
    swap "hacia adelante". */
 @keyframes qc-tabswitch{from{opacity:0;transform:translateX(calc(14px * var(--tabdir, 1)))}to{opacity:1;transform:none}}
 .mo-tabswitch{animation:qc-tabswitch var(--motion-base) var(--ease-out) both}
+/* Pill "líquida" del nav inferior (evolución del underline de 14x2 de Fase 7,
+   ver PIEZAS/QuadroCafe) — burbuja detrás del ícono activo que se desplaza y
+   asoma por encima del borde del nav, al estilo del selector de tabs de apps
+   nativas. Nada de filtro SVG gooey (feGaussianBlur+feColorMatrix): es caro
+   en Android gama media y este componente está siempre visible en pantalla.
+   El look "líquido" se falsea con dos animaciones separadas sobre dos nodos
+   distintos, a propósito, para no pisar `transform` con transition+animation
+   a la vez en el mismo elemento:
+   - el wrapper (.mo-navpill) sólo hace `transition:transform` con
+     --ease-spring — el propio overshoot del spring en el eje de traslado ya
+     lee como líquido, sin animar nada más ahí.
+   - el nodo interno (.mo-navpill-squish) es el que retriggerea el keyframe
+     de "squish" (estira/achata) cada vez que cambia el tab activo, vía
+     useRetriggerAnim(tab, "mo-navpill-squish") — mismo hook que ya usa el
+     bounce del badge del carrito y la racha de Aula, sin tocarlo.
+   border-radius fijo en px (no %) para que la forma no se deforme al
+   escalar en X/Y durante el squish. */
+@keyframes qc-navpill-squish{0%{transform:scaleX(1) scaleY(1)}35%{transform:scaleX(1.32) scaleY(.8)}100%{transform:scaleX(1) scaleY(1)}}
+.mo-navpill{position:absolute;width:40px;height:40px;border-radius:999px;pointer-events:none;transition:transform var(--motion-base) var(--ease-spring)}
+.mo-navpill-squish{width:100%;height:100%;border-radius:999px;background:var(--navpill-bg)}
+.mo-navpill-squish.mo-navpill-squish-run{animation:qc-navpill-squish var(--motion-base) var(--ease-spring)}
 /* Acentos en VIOLA — por qué el fix anterior no alcanzaba:
    VIOLA trae 76 glifos y CERO vocales acentuadas (ni Ñ ni Ü), así que la
    Á/É/Í/Ó de "TRIÁNGULO", "SIFÓN", "CAFÉ" caía a Fraunces: otra tipografía
