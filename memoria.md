@@ -692,3 +692,61 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 **Comando para reproducir**: `npx lighthouse "https://quadro-cafe.reinerramos2702.workers.dev/" --output=html,json --output-path=./lighthouse/mobile --chrome-flags="--headless=new --no-sandbox"` (agregar `--preset=desktop` para el modo desktop). Nota: en este entorno Windows, Lighthouse tira un `EPERM` al final al intentar borrar su carpeta temp (`chrome-launcher` cleanup) — es cosmético, el reporte ya se generó antes de ese error; no hace falta reintentar.
 
 **Próximo**: ejecutar los quick wins de Track A (#1-4) — sin tocar Elio, según regla fija del proyecto.
+
+---
+
+## Fix — nav inferior "se movía" al scrollear (2026-09-01)
+
+El dueño reportó que el nav inferior (Inicio/Carta/Fincas/Lab/Aula) seguía
+ocultándose/moviéndose al scrollear hacia arriba, no solo hacia abajo, y
+pidió confirmar primero si el fix anterior (el que puso el nav en
+`position:absolute`, 2026-08-31) ya contemplaba esto.
+
+**Confirmado que no lo contemplaba.** Ese fix resolvía un bug distinto:
+contenido empujando el nav fuera de pantalla por mal cálculo de alto en un
+layout flex. Pero tanto `.qc` (línea ~3011) como el frame del teléfono
+(línea ~3013) seguían midiéndose con `100vh` puro — y no existe ningún
+listener de scroll que oculte/muestre el nav (se buscó `scrollY`,
+`onScroll`, `translateY` condicional: no hay nada de eso en el archivo). No
+existe tampoco un "Bloque UI-1" documentado en este repo — se buscó en
+`memoria.md`/`docs/HANDOFF.md` y ese nombre no aparece; lo más cercano es
+el comentario inline junto al nav.
+
+**Mecanismo real**: en mobile, `100vh` es el alto de *layout* viewport, que
+no se re-mide cuando la barra de direcciones del navegador se
+expande/contrae al scrollear — el alto *visible* cambia sin que el layout
+reaccione, así que el frame (anclado a ese vh fijo) queda desfasado del
+área visible, y el nav (que cuelga de `bottom:0` de ese frame) se percibe
+como si se moviera.
+
+**Fix aplicado**: dos clases CSS nuevas en `buildCss()` (`src/App.jsx`,
+junto a los tokens `:root` del sistema de motion):
+
+```css
+.qc-vh{min-height:100vh;min-height:100dvh}
+.qc-frame-vh{height:100vh;height:100dvh}
+```
+
+Declarado dos veces a propósito (fallback sin `@supports`: un navegador sin
+soporte de `dvh` ignora esa línea y se queda con el `vh` de arriba). No se
+podía hacer en el `style={{...}}` inline porque un objeto JS no admite la
+misma propiedad dos veces — por eso viven como clases, aplicadas a `.qc`
+(antes `minHeight:"100vh"` inline) y al frame del teléfono (antes
+`height:"100vh"` inline). El nav en sí no se tocó — sigue
+`position:"absolute", bottom:0`, correcto.
+
+**Verificación — con una limitación real que hay que decir explícita,
+no dar el bug por cerrado sin más**: `npm run build` en verde (el único
+fallo es el conocido de `vite-plugin-pwa` al generar el service worker por
+el apóstrofo en la ruta del repo — `App's`/Quadro Cafe —, no relacionado,
+documentado en fases anteriores). Se verificó por CDP (Chrome headless,
+driver propio vía WebSocket) que las clases `.qc-vh`/`.qc-frame-vh` aplican
+y que `min-height`/`height` computados coinciden con `window.innerHeight`
+(805px en la corrida), y que el nav queda anclado al borde inferior del
+frame sin overlap ni salto. **Pero esto no reproduce el bug real**: un
+Chrome headless no tiene barra de direcciones que expandir/contraer, así
+que no hay forma de simular por CDP el cambio real de alto de viewport que
+dispara el bug en un móvil real. La prueba de que el fix efectivamente lo
+resuelve queda pendiente de confirmación del dueño en un navegador móvil
+real (o al menos el device toolbar de Chrome DevTools, que tampoco es
+100% fiel a la barra de direcciones real).
