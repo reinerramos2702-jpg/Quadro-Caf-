@@ -121,6 +121,29 @@ Alcance confirmado por el dueño, 4 ítems, sin nada implícito más allá de es
 
 **Con esto el sprint "Alta Gama" (Fases 2–7) queda completo.**
 
+## Fix — nav inferior y `100vh`/`100dvh` (2026-09-01)
+
+El nav inferior (`.qc` y el frame del teléfono en `App.jsx`, ~línea 3011)
+usaban `100vh` puro para su alto. En mobile, `100vh` es el alto de *layout*
+viewport y no se re-mide cuando la barra de direcciones del navegador se
+expande/contrae al scrollear, así que el frame (anclado a ese vh fijo)
+podía quedar desfasado del área visible real — y como el nav cuelga de
+`bottom:0` de ese frame (fix de 2026-08-31, que resolvía un bug de layout
+flex distinto y no cubría este caso), se percibía como si el nav se
+moviera al scrollear. Fix: dos clases nuevas en `buildCss()`,
+`.qc-vh{min-height:100vh;min-height:100dvh}` y
+`.qc-frame-vh{height:100vh;height:100dvh}` — declaradas dos veces a
+propósito como fallback (un navegador sin soporte de `dvh` ignora esa
+línea y se queda con el `vh` anterior), reemplazando los `minHeight`/
+`height` que antes vivían en los `style={{...}}` inline (un objeto JS no
+admite la misma propiedad dos veces). El nav en sí no cambió. **Verificado
+por build + CDP que las clases aplican correctamente, pero no hay forma de
+simular por Chrome headless el cambio real de alto de viewport que
+dispara el bug (no tiene barra de direcciones que expandir/contraer)** —
+la confirmación real de que el fix resuelve el bug queda pendiente de
+prueba del dueño en un móvil real. Detalle completo en `memoria.md` §
+"Fix — nav inferior 'se movía' al scrollear".
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
