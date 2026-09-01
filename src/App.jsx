@@ -187,7 +187,20 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:non
    window.visualViewport ("resize", ver el useEffect en QuadroCafe) con
    el alto real en px, en sincronía con la animación de la barra (para eso
    existe esa API). Si --vvh todavía no está seteada (SSR, o el navegador
-   no soporta visualViewport) cae al fallback 100dvh sin romper nada. */
+   no soporta visualViewport) cae al fallback 100dvh sin romper nada.
+
+   Iteración 3 (2026-09-01, mismo día, probado de nuevo en el cel real):
+   la iteración 2 solo le dio --vvh a .qc-frame-vh, no a .qc-vh — y .qc es
+   el contenedor grid/place-items:center que CENTRA al frame. Con el
+   navegador real, en el instante en que la barra de direcciones termina
+   de expandirse, .qc (todavía en 100dvh puro, sin el valor fresco) se
+   quedaba un momento más alto que el frame (ya corregido a --vvh) — el
+   grid centraba ese frame ahora más chico DENTRO de una caja .qc más
+   alta, empujando el frame entero (nav incluido) fuera del área
+   realmente visible. Aplicar el mismo --vvh a .qc-vh hace que ambas
+   cajas se actualicen desde la MISMA escritura de la custom property, en
+   el mismo recálculo de estilos — no puede quedar una adelantada a la
+   otra. */
 .qc-vh{min-height:100vh;min-height:100dvh;min-height:var(--vvh, 100dvh)}
 .qc-frame-vh{height:100vh;height:100dvh;height:var(--vvh, 100dvh)}
 /* .mo-tap: reemplazo puntual de .press pensado para elementos táctiles
