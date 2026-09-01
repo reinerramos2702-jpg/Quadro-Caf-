@@ -750,3 +750,52 @@ dispara el bug en un móvil real. La prueba de que el fix efectivamente lo
 resuelve queda pendiente de confirmación del dueño en un navegador móvil
 real (o al menos el device toolbar de Chrome DevTools, que tampoco es
 100% fiel a la barra de direcciones real).
+
+### Iteración 2 (2026-09-01, mismo día) — probado en Chrome Android real
+
+El dueño probó en un teléfono real: el nav queda fijo mientras se
+scrollea (el fix de arriba funciona para eso), **pero** al llegar arriba
+del todo — el instante exacto en que la barra de direcciones de Chrome
+termina de expandirse — el nav "bajaba" de nuevo un momento. Pidió
+investigar si convenía escuchar `window.visualViewport` directamente en
+vez de depender solo de la unidad CSS `dvh`.
+
+**Investigación**: `dvh` sigue siendo válido y necesario, pero su
+recálculo interno del navegador le llega con un frame (o más) de retraso
+respecto a la animación real de la propia barra — es un timing gap del
+motor, no un error de la unidad. Además se encontró una causa raíz
+adicional y más probable para el "por qué justo arriba del todo": el
+`<body>` no tenía ningún reset (`margin`/`padding` por default del
+navegador, sin `overflow` declarado), así que el documento real
+(`html`/`body`) terminaba ~16px más alto que el viewport por el margin de
+8px arriba+abajo — es decir, la página raíz SÍ podía scrollear un poco,
+aunque la intención de la app siempre fue que solo scrolleen los
+`.qc-scroll` internos de cada tab. Sumado a que ningún `.qc-scroll` tenía
+`overscroll-behavior` declarado, un swipe que llegaba al límite de un
+`.qc-scroll` (típicamente arriba del todo) podía seguir de largo
+("scroll chaining") y mover el documento real por detrás — eso es lo que
+más probablemente dispara el show/hide de la barra de direcciones,
+incluso sin que se vea nada scrolleando fuera del frame del teléfono.
+
+**Fix, tres capas (todas en `src/App.jsx`, `buildCss()` + `QuadroCafe`)**:
+1. `html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none}` — elimina el margin de 8px que hacía scrolleable al documento real, y bloquea que scrollee aunque algo se lo empuje.
+2. `.qc-scroll{overscroll-behavior-y:contain}` — cada contenedor de scroll interno frena el gesto en su propio límite en vez de dejarlo pasar al documento.
+3. `.qc-frame-vh{height:100vh;height:100dvh;height:var(--vvh, 100dvh)}` — tercera capa que gana en la cascada cuando `--vvh` existe. Un nuevo `useEffect` en `QuadroCafe` escucha `window.visualViewport`'s evento `"resize"` (rAF-throttled) y escribe el alto real en px a esa custom property, en sincronía con la animación real de la barra (para eso existe esa API — más rápida que esperar el recálculo interno de `dvh`). Si `--vvh` no está seteada (SSR, o sin soporte de `visualViewport`) cae al fallback `100dvh` sin romper nada.
+
+**Verificado por CDP** (Chrome headless, mismo driver propio): `--vvh` se
+escribe correctamente (805px, igual a `window.innerHeight`/
+`visualViewport.height` en la corrida), `.qc-frame-vh` computa ese mismo
+alto, `html`/`body` quedan con `overflow:hidden`/`margin:0` y
+`document.documentElement.scrollHeight` ahora es exactamente igual a
+`window.innerHeight` (antes tenía ~16px de sobra por el margin default —
+confirma que se cerró esa causa raíz), y `.qc-scroll` computa
+`overscroll-behavior-y:contain`. `npm run build` en verde (mismo fallo
+conocido del apóstrofo, no relacionado).
+
+**Misma limitación que la iteración 1, sigue sin poder probarse del
+todo por automatización**: CDP headless no tiene barra de direcciones
+real que expandir/contraer, así que no puede reproducir el momento exacto
+que el dueño reportó — sólo confirma que el mecanismo (variable CSS,
+listener, reset de scroll) está correctamente cableado. La confirmación
+final de que ya no "baja" en ese instante puntual sigue pendiente de
+prueba en el teléfono real del dueño.
