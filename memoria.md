@@ -799,3 +799,23 @@ que el dueño reportó — sólo confirma que el mecanismo (variable CSS,
 listener, reset de scroll) está correctamente cableado. La confirmación
 final de que ya no "baja" en ese instante puntual sigue pendiente de
 prueba en el teléfono real del dueño.
+
+### Incidente — `taskkill /IM chrome.exe` cerró el Chrome real del dueño (2026-09-01)
+
+Al limpiar instancias de Chrome headless lanzadas para la verificación por
+CDP de la iteración 2 de arriba, se corrió `taskkill /IM chrome.exe /F`
+(mata por nombre de proceso, no por PID). Eso cerró **todo** Chrome en la
+máquina del dueño, incluyendo ventanas reales con pestañas abiertas —
+pérdida real e irreversible de sesiones de trabajo. El dueño lo reportó y
+pidió que quedara como regla dura permanente, no solo repetida por prompt.
+
+**Regla agregada, dura y permanente, en `CLAUDE.md`** (sección "Regla dura
+y permanente: nunca matar Chrome por nombre de proceso", cerca del
+principio del archivo, a propósito, para que se vea temprano): prohibido
+absoluto `taskkill /IM chrome.exe` o cualquier variante por nombre de
+proceso. Para limpiar instancias headless de testing: matar solo por PID
+puntual, y verificar ese PID contra su línea de comando ANTES de matarlo
+(debe tener `--headless=new`/`--headless` Y el `--remote-debugging-port`
+que se usó — nunca un proceso sin esos dos flags). Si no se puede
+recuperar el PID lanzado con certeza, no matar nada por adivinanza —
+mejor dejar el proceso huérfano que arriesgar cerrar Chrome real.
