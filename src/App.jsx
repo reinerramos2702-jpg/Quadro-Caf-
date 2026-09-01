@@ -114,6 +114,21 @@ function buildCss(C) {
   return `
 ${FONTS}
 *{box-sizing:border-box}
+/* html,body (2026-09-01, junto con .qc-vh/.qc-frame-vh más abajo): sin
+   este reset, el margin de 8px que el navegador pone en <body> por
+   default sumaba a la altura de .qc (min-height:100dvh) y hacía que el
+   documento entero terminara ~16px más alto que el viewport — es decir,
+   la página raíz SÍ podía scrollear un poquito, aunque la intención de la
+   app es que solo scrolleen los .qc-scroll internos de cada tab. Ese
+   scroll residual del documento (más el "scroll chaining" por defecto:
+   cuando un .qc-scroll interno llega a su límite arriba/abajo, el gesto
+   sigue empujando al documento si nada lo frena) es lo que probablemente
+   dispara el show/hide de la barra de direcciones del navegador, incluso
+   cuando visualmente "no se ve" nada scrolleando fuera del frame del
+   teléfono. overflow:hidden en html,body bloquea que el documento mismo
+   scrollee; overscroll-behavior:none es el respaldo para navegadores que
+   igual dejan pasar el gesto. */
+html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none}
 /* ============================ SISTEMA DE MOTION (Sprint "Alta Gama" — Fase 2, 2026-08-17) ============================
    Tokens de duración/easing para el resto del sprint de animaciones. Es
    vocabulario NUEVO y aditivo — no reemplaza ni retoca ninguna animación
