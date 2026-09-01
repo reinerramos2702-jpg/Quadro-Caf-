@@ -184,6 +184,20 @@ probarse el instante puntual por automatización** (headless no tiene
 barra de direcciones real) — confirmación final pendiente del dueño.
 Detalle completo en `memoria.md` § "Iteración 2".
 
+**Iteración 3 (mismo día, probado de nuevo en el cel real — bug real
+encontrado)**: la iteración 2 solo le dio `--vvh` a `.qc-frame-vh`, no a
+`.qc-vh` (el contenedor exterior `grid;place-items:center` que centra ese
+frame). Al terminar de expandirse la barra, `.qc` (todavía en `100dvh`
+puro) quedaba un momento más alto que el frame ya corregido — el grid
+centraba el frame más chico dentro de esa caja stale, empujándolo (nav
+incluido) fuera del área visible. Fix: el mismo `--vvh` en `.qc-vh`
+también, así ambas cajas leen la misma custom property en el mismo
+recálculo — no pueden desincronizarse. Verificado por CDP forzando
+`--vvh` a un valor arbitrario y confirmando que ambas cajas cambian juntas
+al mismo número. Misma limitación de siempre: no se puede reproducir el
+timing real de la barra por CDP headless — confirmación final pendiente
+de nueva prueba del dueño. Detalle en `memoria.md` § "Iteración 3".
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
