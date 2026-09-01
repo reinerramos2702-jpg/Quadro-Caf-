@@ -857,3 +857,63 @@ sin poder reproducirse por CDP headless el timing real de la barra de
 direcciones expandiéndose en un dispositivo real — la confirmación final
 de que ya no se esconde queda pendiente de una nueva prueba del dueño en
 su celular.
+
+### Iteración 4 (2026-09-01, mismo día) — fix definitivo: `position:"fixed"`, no más perseguir el alto del viewport
+
+El dueño probó la iteración 3 en su celular y el nav TODAVÍA se escondía
+al llegar arriba del todo (screenshot real adjunto, mostrando la barra de
+navegación del sistema tapando el nav). Pidió explícitamente: "esta es la
+barra que no puede esconderse nunca, debe siempre estar a la vista
+estática. Hazlo."
+
+**Diagnóstico de fondo**: las tres iteraciones anteriores compartían el
+mismo defecto de raíz — el nav (`bottom:0`) siempre dependió del ALTO DEL
+FRAME (`.qc-frame-vh`), y ese alto siempre dependió de algún cálculo (CSS
+`vh`→`dvh`→`--vvh` vía JS). No importa cuánto se afine ese cálculo, sigue
+siendo perseguir un objetivo en movimiento: mientras el nav dependa de que
+ALGO calcule bien el alto del viewport en el momento exacto correcto, va
+a poder desincronizarse.
+
+**Fix real**: sacar al nav de esa cadena de dependencia por completo. Pasó
+de `position:"absolute"` (relativo al frame, position:"relative") a
+`position:"fixed"` (relativo al viewport visual real del navegador — el
+frame no tiene ningún `transform`/`filter`/`perspective` que le robe ese
+containing block, confirmado por grep en todo el archivo). Un elemento
+`position:fixed` con `bottom:0` es una garantía NATIVA del navegador: el
+motor lo pinta pegado al borde inferior del viewport visual en cada frame
+de la animación de la barra de direcciones, sin ningún cálculo de altura
+de por medio — no hay `vh`/`dvh`/`--vvh` que perseguir, no hay layout que
+recalcular, es el mecanismo para el que `position:fixed` fue diseñado.
+`left:"50%"` + `transform:"translateX(-50%)"` + `maxWidth:430` (en vez de
+`left:0;right:0`) reproducen el mismo centrado horizontal que ya tenía el
+frame, para que en desktop (frame angosto centrado en una ventana ancha)
+el nav no se estire a todo el ancho de la pantalla real.
+
+**Por qué las iteraciones 1-3 no eran "trabajo perdido"**: `html,body`
+reset + `overscroll-behavior:contain` en `.qc-scroll` siguen siendo
+correctos y se quedan (evitan que el documento real scrollee y que un
+swipe encadene ese scroll al documento, causa más probable de que la
+barra del navegador se dispare a expandirse en primer lugar). `--vvh`/
+`.qc-vh`/`.qc-frame-vh` también se quedan tal cual — siguen siendo
+correctos para el FRAME en sí (su tamaño visual, contenido, fondo), solo
+que el nav ya no depende de ellos.
+
+**Verificado por CDP** (PID verificado contra su línea de comando antes
+de matarlo, según la regla nueva): confirmado `position:fixed` con
+`getComputedStyle`, y la prueba definitiva — se forzó `--vvh` a `500px`
+manualmente (simulando que el frame se encoge, como pasaría con cualquier
+glitch futuro de altura de viewport) y se confirmó que el FRAME sí bajó
+su borde inferior a 500px, pero el NAV se quedó exactamente en 749px
+(el borde real de `window.innerHeight`) — cero movimiento, totalmente
+desacoplado del alto del frame. `npm run build` en verde (mismo fallo
+conocido del apóstrofo).
+
+**Limitación honesta, la misma de siempre**: sigue sin poder reproducirse
+por CDP headless la animación real de la barra de direcciones en un
+dispositivo real. Pero a diferencia de las iteraciones 1-3 (que dependían
+de que un cálculo de altura llegara a tiempo), esta vez la prueba
+estructural es más fuerte: `position:fixed` + `bottom:0` sin ningún
+ancestro que robe el containing block es un comportamiento garantizado
+por la especificación CSS, no una carrera contra el timing de un evento.
+Aun así, la confirmación en el celular real del dueño sigue siendo el
+paso final antes de mergear.
