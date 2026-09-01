@@ -2951,6 +2951,38 @@ export default function QuadroCafe() {
   const navPillSquishRef = useRetriggerAnim(tab, "mo-navpill-squish");
 
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
+
+  // Fix nav inferior (2026-09-01, iteración 2): `.qc-frame-vh`/`.qc-vh`
+  // (buildCss) ya usan 100dvh en vez de 100vh, pero probado en un Chrome
+  // Android real el nav todavía "bajaba" un instante justo cuando la barra
+  // de direcciones terminaba de expandirse del todo al llegar arriba de un
+  // scroll — la recalculación interna de `dvh` del navegador le llega con
+  // un frame (o más) de retraso respecto a su propia animación de barra.
+  // `window.visualViewport` sí dispara su evento "resize" en sincronía con
+  // esa animación (para eso existe la API — teclado virtual y barras de
+  // navegador), así que se usa para escribir el alto real en px a una
+  // custom property (`--vvh`) que gana en la cascada de `.qc-frame-vh`
+  // (`height:100vh; height:100dvh; height:var(--vvh, 100dvh)`), sin
+  // reemplazar el fallback dvh — sólo lo corrige en el instante en que hay
+  // datos más frescos. rAF-throttled para no forzar layout en cada evento
+  // (pueden llegar varios por frame durante la animación de la barra).
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) return;
+    const vv = window.visualViewport;
+    let raf = null;
+    const aplicar = () => {
+      raf = null;
+      document.documentElement.style.setProperty("--vvh", `${vv.height}px`);
+    };
+    const onResize = () => { if (raf === null) raf = requestAnimationFrame(aplicar); };
+    onResize();
+    vv.addEventListener("resize", onResize);
+    return () => {
+      vv.removeEventListener("resize", onResize);
+      if (raf !== null) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   useEffect(() => { try { localStorage.setItem("qc-carrito", JSON.stringify(carrito)); } catch { /* noop */ } }, [carrito]);
   useEffect(() => { try { localStorage.setItem("qc-email", email); } catch { /* noop */ } }, [email]);
 
