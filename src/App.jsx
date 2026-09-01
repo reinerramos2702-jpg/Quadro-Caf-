@@ -182,12 +182,12 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:non
    termina de expandirse — el nav "baja" de nuevo un momento. dvh solo no
    alcanza ahí: el recálculo interno del navegador para esa unidad le
    llega con retraso respecto a la animación real de su propia barra.
-   `height:var(--vvh, 100dvh)` agrega una tercera capa que gana en la
-   cascada cuando existe: `--vvh` la escribe en tiempo real un listener de
-   `window.visualViewport` ("resize", ver el useEffect en QuadroCafe) con
+   height:var(--vvh, 100dvh) agrega una tercera capa que gana en la
+   cascada cuando existe: --vvh la escribe en tiempo real un listener de
+   window.visualViewport ("resize", ver el useEffect en QuadroCafe) con
    el alto real en px, en sincronía con la animación de la barra (para eso
-   existe esa API). Si `--vvh` todavía no está seteada (SSR, o el navegador
-   no soporta visualViewport) cae al fallback `100dvh` sin romper nada. */
+   existe esa API). Si --vvh todavía no está seteada (SSR, o el navegador
+   no soporta visualViewport) cae al fallback 100dvh sin romper nada. */
 .qc-vh{min-height:100vh;min-height:100dvh}
 .qc-frame-vh{height:100vh;height:100dvh;height:var(--vvh, 100dvh)}
 /* .mo-tap: reemplazo puntual de .press pensado para elementos táctiles
