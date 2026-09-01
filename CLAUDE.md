@@ -198,6 +198,30 @@ al mismo número. Misma limitación de siempre: no se puede reproducir el
 timing real de la barra por CDP headless — confirmación final pendiente
 de nueva prueba del dueño. Detalle en `memoria.md` § "Iteración 3".
 
+**Iteración 4 (mismo día — fix definitivo, el dueño pidió explícitamente
+"nunca debe esconderse, estática")**: las tres iteraciones anteriores
+compartían el mismo defecto de raíz — el nav dependía del alto del frame,
+y ese alto siempre dependía de ALGÚN cálculo (vh→dvh→`--vvh` vía JS), así
+que siempre podía desincronizarse por timing. Fix real: sacar al nav de
+esa cadena. Pasó de `position:"absolute"` (relativo al frame) a
+`position:"fixed"` (relativo al viewport visual real del navegador — el
+frame no tiene ningún `transform`/`filter`/`perspective` que le robe ese
+containing block). `position:fixed` + `bottom:0` es una garantía nativa
+del navegador — se pinta pegado al viewport visual en cada frame de la
+animación de la barra, sin ningún cálculo de altura de por medio. `left:
+"50%"` + `transform:"translateX(-50%)"` + `maxWidth:430` reemplazan
+`left:0;right:0` para mantener el mismo centrado horizontal en desktop.
+Los fixes de las iteraciones 1-3 (`html,body` reset, `overscroll-behavior`
+en `.qc-scroll`, `--vvh`/`.qc-vh`/`.qc-frame-vh`) se quedan tal cual —
+siguen siendo correctos para el frame en sí, solo que el nav ya no
+depende de ellos. Verificado por CDP forzando `--vvh` a 500px (frame se
+encoge a 500px) y confirmando que el nav se queda exactamente en el borde
+real del viewport (749px), sin moverse un píxel. Misma limitación de
+siempre — CDP headless no reproduce la animación real de la barra —, pero
+esta vez la garantía es de especificación CSS, no una carrera de timing.
+Confirmación final pendiente del dueño en su celular. Detalle en
+`memoria.md` § "Iteración 4".
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
