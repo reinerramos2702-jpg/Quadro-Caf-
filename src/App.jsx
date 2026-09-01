@@ -3089,7 +3089,11 @@ export default function QuadroCafe() {
                que antes cedía al nav), pero el padding-bottom de ~100-120px
                que cada `.qc-scroll` de la app ya reservaba de antes (para no
                terminar el contenido pegado al borde) alcanza de sobra como
-               zona segura para que el nav overlay no tape contenido real. */}
+               zona segura para que el nav overlay no tape contenido real.
+               Nota (2026-09-01): este fix resolvía el push-out por flex,
+               pero no el desfase de alto por `100vh` vs. la barra de
+               direcciones del navegador — ver `.qc-vh`/`.qc-frame-vh` en
+               buildCss() para ese bug distinto, reportado después. */}
             {/* Pill líquida detrás del ítem activo — ver comentario junto a
                @keyframes qc-navpill-squish en buildCss. Se dibuja ANTES que
                los botones (mismo orden de DOM) para quedar detrás. Ahora
