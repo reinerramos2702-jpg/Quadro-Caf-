@@ -3169,8 +3169,10 @@ export default function QuadroCafe() {
                de direcciones del navegador se expande/contrae. Ayudó, pero
                seguía siendo perseguir un objetivo en movimiento: mientras el
                frame (y por lo tanto el nav, anclado a su `bottom:0`) dependa
-               de CUALQUIER cálculo de altura — CSS o JS — announcing va a
-               poder quedar un frame atrás de la animación real de la barra.
+               de CUALQUIER cálculo de altura — CSS o JS — siempre puede
+               quedar un frame de animación atrás de la barra real (como pasó
+               en la iteración 2: el nav dependía del alto del frame, y el
+               frame dependía de un valor que llegaba con retraso).
                2026-09-01, iteración 4 (fix definitivo): el nav dejó de
                depender del alto del frame por completo. Pasó de
                `position:"absolute"` (relativo al frame) a `position:"fixed"`
