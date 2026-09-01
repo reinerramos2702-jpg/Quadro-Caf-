@@ -819,3 +819,41 @@ puntual, y verificar ese PID contra su línea de comando ANTES de matarlo
 que se usó — nunca un proceso sin esos dos flags). Si no se puede
 recuperar el PID lanzado con certeza, no matar nada por adivinanza —
 mejor dejar el proceso huérfano que arriesgar cerrar Chrome real.
+
+### Iteración 3 (2026-09-01, mismo día) — probado de nuevo en el cel real, bug real encontrado en la iteración 2
+
+El dueño probó la iteración 2 en su celular: el nav seguía escondiéndose
+al llegar arriba del todo del scroll (screenshot real adjunto). La
+iteración 2 tenía un gap real: `height:var(--vvh, 100dvh)` solo se agregó
+a `.qc-frame-vh` (el frame del teléfono), **no** a `.qc-vh` (el contenedor
+exterior `display:grid;place-items:center` que centra ese frame). En el
+instante en que la barra de direcciones del navegador termina de
+expandirse, `.qc` — todavía en `100dvh` puro, sin el valor fresco de
+`--vvh` — se quedaba un momento más alto que el frame (que sí ya se había
+corregido a `--vvh`). El grid centraba ese frame ahora más chico DENTRO
+de una caja `.qc` más alta (stale), empujando el frame entero —nav
+incluido— fuera del área realmente visible. Justo el "se esconde al subir
+del todo" que reportó el dueño.
+
+**Fix**: aplicar el mismo `--vvh` a `.qc-vh`:
+`min-height:100vh;min-height:100dvh;min-height:var(--vvh, 100dvh)`. Ahora
+ambas cajas (`.qc` y el frame) leen la MISMA custom property en el mismo
+recálculo de estilos — no puede quedar una adelantada a la otra nunca
+más, porque comparten la fuente de verdad en vez de que una dependa del
+`dvh` nativo (con su lag) y la otra del valor JS fresco.
+
+**Verificado por CDP** (mismo driver, PID de Chrome verificado contra su
+línea de comando — `--headless=new` + `--remote-debugging-port` presentes
+— antes de matarlo, según la regla nueva de arriba): se forzó
+`--vvh:600px` manualmente vía `Runtime.evaluate` y se confirmó que
+`.qc`.minHeight y `.qc-frame-vh`.height cambian juntos al mismo valor
+(749px→600px→749px al sacar la propiedad) — la garantía estructural de
+que ya no pueden desincronizarse. `npm run build` en verde (mismo fallo
+conocido del apóstrofo).
+
+**Misma limitación que las iteraciones anteriores**: esto prueba que el
+mecanismo está bien cableado (ambas cajas comparten fuente), pero sigue
+sin poder reproducirse por CDP headless el timing real de la barra de
+direcciones expandiéndose en un dispositivo real — la confirmación final
+de que ya no se esconde queda pendiente de una nueva prueba del dueño en
+su celular.
