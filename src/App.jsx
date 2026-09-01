@@ -147,19 +147,19 @@ ${FONTS}
 /* .qc-vh / .qc-frame-vh (2026-09-01): el nav inferior es position:absolute
    anclado al frame del teléfono (ver comentario junto al nav más abajo en
    el archivo), y ese fix de 2026-08-31 asumía que el problema era solo de
-   layout flex — pero tanto `.qc` como el frame seguían midiéndose con
-   `100vh` puro. En mobile, `100vh` es el alto de layout viewport, que NO
-   se re-mide cuando la barra de direcciones del navegador se
-   expande/contrae al scrollear — el alto *visible* real cambia sin que el
-   layout reaccione, así que el frame (anclado a ese vh fijo) queda
-   desfasado del área visible y el nav que cuelga de su `bottom:0` parece
-   moverse. `100dvh` (dynamic viewport height) sí se re-mide con cada
-   cambio de chrome del navegador. Declarado dos veces a propósito — un
-   navegador sin soporte de `dvh` simplemente ignora esa línea y se queda
-   con el `vh` de arriba, así que sirve de fallback sin necesidad de
-   @supports. No se puede hacer esto en un style inline (no admite la
-   misma propiedad dos veces en un objeto JS), por eso vive acá como clase
-   en vez de en el `style={{...}}` de `.qc`/el frame. */
+   layout flex — pero tanto .qc como el frame seguían midiéndose con 100vh
+   puro. En mobile, 100vh es el alto de layout viewport, que NO se re-mide
+   cuando la barra de direcciones del navegador se expande/contrae al
+   scrollear — el alto visible real cambia sin que el layout reaccione, así
+   que el frame (anclado a ese vh fijo) queda desfasado del área visible y
+   el nav que cuelga de su bottom:0 parece moverse. 100dvh (dynamic
+   viewport height) sí se re-mide con cada cambio de chrome del navegador.
+   Declarado dos veces a propósito — un navegador sin soporte de dvh
+   simplemente ignora esa línea y se queda con el vh de arriba, así que
+   sirve de fallback sin necesidad de @supports. No se puede hacer esto en
+   un style inline (no admite la misma propiedad dos veces en un objeto
+   JS), por eso vive acá como clase en vez de en el style={{...}} de
+   .qc/el frame. */
 .qc-vh{min-height:100vh;min-height:100dvh}
 .qc-frame-vh{height:100vh;height:100dvh}
 /* .mo-tap: reemplazo puntual de .press pensado para elementos táctiles
