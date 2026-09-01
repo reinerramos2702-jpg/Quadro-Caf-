@@ -144,6 +144,23 @@ la confirmación real de que el fix resuelve el bug queda pendiente de
 prueba del dueño en un móvil real. Detalle completo en `memoria.md` §
 "Fix — nav inferior 'se movía' al scrollear".
 
+**Iteración 2 (mismo día, probado en Chrome Android real)**: `dvh` solo no
+alcanzaba — su recálculo interno le llega con retraso respecto a la
+animación real de la barra, y además `<body>` no tenía reset (`margin`
+default de 8px hacía que el documento real fuera scrolleable ~16px, y sin
+`overscroll-behavior` un swipe en el límite de un `.qc-scroll` podía
+"encadenar" ese scroll al documento). Tres capas agregadas: reset
+`html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none}`,
+`.qc-scroll{overscroll-behavior-y:contain}`, y una tercera capa en la
+cascada de `.qc-frame-vh` — `height:var(--vvh, 100dvh)` — donde `--vvh` la
+escribe en tiempo real un nuevo `useEffect` en `QuadroCafe` que escucha
+`window.visualViewport`'s `"resize"` (rAF-throttled), en sincronía con la
+animación real de la barra. Verificado por CDP que todo el mecanismo está
+cableado correctamente (variable, listener, resets); **sigue sin poder
+probarse el instante puntual por automatización** (headless no tiene
+barra de direcciones real) — confirmación final pendiente del dueño.
+Detalle completo en `memoria.md` § "Iteración 2".
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
