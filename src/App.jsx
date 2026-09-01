@@ -188,7 +188,7 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:non
    el alto real en px, en sincronía con la animación de la barra (para eso
    existe esa API). Si --vvh todavía no está seteada (SSR, o el navegador
    no soporta visualViewport) cae al fallback 100dvh sin romper nada. */
-.qc-vh{min-height:100vh;min-height:100dvh}
+.qc-vh{min-height:100vh;min-height:100dvh;min-height:var(--vvh, 100dvh)}
 .qc-frame-vh{height:100vh;height:100dvh;height:var(--vvh, 100dvh)}
 /* .mo-tap: reemplazo puntual de .press pensado para elementos táctiles
    chicos (íconos, chips) — mismo gesto de "hundirse" al tocar pero con el
