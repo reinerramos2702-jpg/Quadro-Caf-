@@ -2,6 +2,29 @@
 
 Guidance for Claude Code sessions working in this repo. Read `docs/HANDOFF.md` and `docs/rai-template-escalable.md` for full historical context, and `memoria.md` for the running project log.
 
+## Regla dura y permanente: nunca matar Chrome por nombre de proceso
+
+**PROHIBIDO ABSOLUTO: `taskkill /IM chrome.exe` (o cualquier variante que
+cierre Chrome por nombre de proceso, en vez de por PID puntual).** Pasó de
+verdad (2026-09-01): al limpiar instancias de Chrome headless lanzadas
+para verificar por CDP, se corrió `taskkill /IM chrome.exe /F` y cerró
+TODO Chrome del dueño en la máquina, incluyendo ventanas reales con
+pestañas abiertas — pérdida real, irreversible, de sesiones de trabajo del
+dueño. No puede volver a pasar.
+
+**Para limpiar instancias headless de testing**: matar SOLO por PID
+específico, y verificar ese PID contra la línea de comando del proceso
+ANTES de matarlo — confirmar que es el headless que la sesión lanzó (debe
+tener el flag `--headless=new` o `--headless` Y el flag
+`--remote-debugging-port=<el puerto que se usó>` en su línea de comando),
+nunca un proceso de Chrome sin esos dos flags. En Windows, esto se checkea
+con `wmic process where processid=<PID> get commandline` o
+`Get-CimInstance Win32_Process -Filter "ProcessId=<PID>" | Select
+CommandLine` antes de cualquier `taskkill /PID <PID> /F`. Si el PID lanzado
+por el propio script/spawn no se puede recuperar con certeza, no matar
+nada por adivinanza — dejar el proceso huérfano es preferible a arriesgar
+cerrar Chrome real del dueño.
+
 ## What this is
 
 A mobile-first web app for Quadro Café, a real coffee shop at 4ª Av. de Los Palos Grandes, Edif. Los Eucaliptos, Caracas. Built under RAI Agency, intended as the flagship case study for a replicable "finca interactiva" template (see `docs/rai-template-escalable.md`).
