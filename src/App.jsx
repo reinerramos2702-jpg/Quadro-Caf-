@@ -274,6 +274,13 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:non
 .label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
 .micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;font-size-adjust:from-font}
 .qc-scroll::-webkit-scrollbar{width:0;height:0}
+/* overscroll-behavior-y:contain (2026-09-01, junto con el reset de
+   html,body de arriba): sin esto, cuando un .qc-scroll llega a su límite
+   (típicamente arriba del todo) el gesto de swipe puede seguir de largo
+   ("scroll chaining") y mover el documento real por detrás, que es lo que
+   dispara el show/hide de la barra de direcciones del navegador. contain
+   detiene el scroll ahí mismo en vez de dejarlo pasar. */
+.qc-scroll{overscroll-behavior-y:contain}
 @keyframes qc-spiral-enter{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 @keyframes qc-spiral-spin{to{transform:rotate(360deg)}}
 .spiral-enter{animation:qc-spiral-enter .9s cubic-bezier(.2,.8,.2,1) both}
