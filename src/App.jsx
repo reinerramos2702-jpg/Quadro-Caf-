@@ -159,9 +159,22 @@ ${FONTS}
    sirve de fallback sin necesidad de @supports. No se puede hacer esto en
    un style inline (no admite la misma propiedad dos veces en un objeto
    JS), por eso vive acá como clase en vez de en el style={{...}} de
-   .qc/el frame. */
+   .qc/el frame.
+
+   Iteración 2 (2026-09-01, probado en Chrome Android real): el dueño
+   confirmó que el nav queda fijo mientras se scrollea, PERO al llegar
+   arriba del todo — el instante exacto en que la barra de direcciones
+   termina de expandirse — el nav "baja" de nuevo un momento. dvh solo no
+   alcanza ahí: el recálculo interno del navegador para esa unidad le
+   llega con retraso respecto a la animación real de su propia barra.
+   `height:var(--vvh, 100dvh)` agrega una tercera capa que gana en la
+   cascada cuando existe: `--vvh` la escribe en tiempo real un listener de
+   `window.visualViewport` ("resize", ver el useEffect en QuadroCafe) con
+   el alto real en px, en sincronía con la animación de la barra (para eso
+   existe esa API). Si `--vvh` todavía no está seteada (SSR, o el navegador
+   no soporta visualViewport) cae al fallback `100dvh` sin romper nada. */
 .qc-vh{min-height:100vh;min-height:100dvh}
-.qc-frame-vh{height:100vh;height:100dvh}
+.qc-frame-vh{height:100vh;height:100dvh;height:var(--vvh, 100dvh)}
 /* .mo-tap: reemplazo puntual de .press pensado para elementos táctiles
    chicos (íconos, chips) — mismo gesto de "hundirse" al tocar pero con el
    spring sutil del sistema nuevo en vez de un ease genérico. Primer uso:
