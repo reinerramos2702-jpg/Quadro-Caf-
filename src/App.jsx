@@ -3153,27 +3153,43 @@ export default function QuadroCafe() {
           </main>
 
           <div style={{
-            position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 10,
+            position: "fixed", left: "50%", transform: "translateX(-50%)",
+            width: "100%", maxWidth: 430, bottom: 0, zIndex: 10,
             display: "flex", justifyContent: "space-around",
             borderTop: `1px solid ${C.line}`, background: C.card, padding: "9px 4px 12px",
           }}>
-            {/* Nav fijo (2026-08-31): pasó de flex-item (flexShrink:0, dentro
-               del flujo de la columna junto a `main`) a position:"absolute"
-               anclado al frame del teléfono (que ya es position:"relative" y
-               no scrollea) — así queda SIEMPRE visible sin depender de que
-               `main`/sus `.qc-scroll` internos midan bien su alto, inmune al
-               bug clásico de mobile donde un contenedor a 100vh empuja el
-               último elemento fuera de la pantalla visible cuando la barra
-               de direcciones del navegador se expande/contrae. `main` ya no
-               resta su alto en el flex (flex:1 ahora ocupa todo el espacio
-               que antes cedía al nav), pero el padding-bottom de ~100-120px
-               que cada `.qc-scroll` de la app ya reservaba de antes (para no
-               terminar el contenido pegado al borde) alcanza de sobra como
-               zona segura para que el nav overlay no tape contenido real.
-               Nota (2026-09-01): este fix resolvía el push-out por flex,
-               pero no el desfase de alto por `100vh` vs. la barra de
-               direcciones del navegador — ver `.qc-vh`/`.qc-frame-vh` en
-               buildCss() para ese bug distinto, reportado después. */}
+            {/* Nav fijo — historial:
+               2026-08-31: pasó de flex-item a position:"absolute" anclado al
+               frame del teléfono, para no depender de que `main` midiera bien
+               su alto (bug de layout flex, resuelto).
+               2026-09-01, iteraciones 1-3: `.qc-frame-vh`/`.qc-vh` migraron de
+               100vh a 100dvh y después a un `--vvh` escrito en tiempo real vía
+               `window.visualViewport` (ver useEffect en QuadroCafe), para que
+               el FRAME persiguiera el alto real del viewport cuando la barra
+               de direcciones del navegador se expande/contrae. Ayudó, pero
+               seguía siendo perseguir un objetivo en movimiento: mientras el
+               frame (y por lo tanto el nav, anclado a su `bottom:0`) dependa
+               de CUALQUIER cálculo de altura — CSS o JS — announcing va a
+               poder quedar un frame atrás de la animación real de la barra.
+               2026-09-01, iteración 4 (fix definitivo): el nav dejó de
+               depender del alto del frame por completo. Pasó de
+               `position:"absolute"` (relativo al frame) a `position:"fixed"`
+               (relativo al viewport visual real del navegador) — el frame no
+               tiene ningún `transform`/`filter`/`perspective` que le robe ese
+               containing block, así que el fixed apunta directo al viewport
+               del navegador. Un elemento `position:fixed` con `bottom:0` es
+               una garantía nativa del navegador: se pinta pegado al borde
+               inferior del viewport VISUAL en cada frame de la animación de
+               la barra, sin ningún cálculo de altura de por medio — no hay
+               vh/dvh/vvh que perseguir, no hay layout que recalcular. `left:
+               "50%"` + `transform:"translateX(-50%)"` + `maxWidth:430`
+               reproducen el mismo centrado horizontal que ya tenía el frame
+               (`.qc-frame-vh`), para que en desktop (frame angosto centrado
+               en una ventana grande) el nav siga alineado con el frame en vez
+               de estirarse a lo ancho de toda la pantalla. `main`/sus
+               `.qc-scroll` internos ya reservaban ~100-120px de
+               padding-bottom de antes — alcanza de sobra como zona segura
+               para que el nav overlay no tape contenido real. */}
             {/* Pill líquida detrás del ítem activo — ver comentario junto a
                @keyframes qc-navpill-squish en buildCss. Se dibuja ANTES que
                los botones (mismo orden de DOM) para quedar detrás. Ahora
