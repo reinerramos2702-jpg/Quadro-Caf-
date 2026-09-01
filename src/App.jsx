@@ -3008,10 +3008,10 @@ export default function QuadroCafe() {
 
   return (
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
-      <div className="qc" onClick={manejarTapSonido} style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
+      <div className="qc qc-vh" onClick={manejarTapSonido} style={{ display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
         <style>{css}</style>
-        <div style={{
-          position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940,
+        <div className="qc-frame-vh" style={{
+          position: "relative", width: "100%", maxWidth: 430, maxHeight: 940,
           background: C.surface, overflow: "hidden", display: "flex", flexDirection: "column",
         }}>
           {splash ? (
