@@ -3,13 +3,14 @@ import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Image as ImageIcon, Upload, Trash2, Sun, Moon, Settings, LogOut,
+  Banknote, Smartphone, Landmark, DollarSign,
+  Volume2, VolumeX, Bell, XCircle, Home, Package, User,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
 import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
-import heroDispenser from "./assets/hero-dispenser.jpg";
 import estudioLocal from "./assets/estudio/local-barra.jpg";
 import estudioPourover from "./assets/estudio/pourover-barra.jpg";
 import violaFont from "./assets/fonts/VIOLA.otf";
@@ -64,15 +65,29 @@ function buildCss(C) {
 ${FONTS}
 *{box-sizing:border-box}
 .qc{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:300;color:${C.text};background:${C.surface}}
-.disp{font-family:'VIOLA','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto}
+/* font-size-adjust:from-font en todas las clases con fallback (VIOLA→Fraunces,
+   Nexa→Inter Tight/system-ui): VIOLA y Nexa no traen tildes/ñ (ver comentario
+   arriba de @font-face), así que esos glifos puntuales caen al siguiente
+   font-family del stack. Sin esto, el navegador dibuja el glifo de fallback
+   a su propio x-height/cap-height — que no coincide con el de VIOLA/Nexa —
+   así que dentro de un texto en mayúscula (.mono/.label/.micro, o cualquier
+   .disp* forzado a uppercase) una tilde o ñ se ve chica y como fuera de
+   registro, casi como si no hubiera heredado el uppercase/tamaño del resto
+   (sí los hereda — text-transform y font-size son propiedades del elemento,
+   no de la fuente — es la métrica del glifo de reemplazo la que no calza).
+   from-font le pide al navegador reescalar el fallback para igualar el
+   tamaño percibido de la fuente principal. Soporte: Chromium/Firefox
+   recientes; en motores sin soporte no rompe nada, sigue el comportamiento
+   previo. */
+.disp{font-family:'VIOLA','Fraunces',serif;font-weight:400;letter-spacing:-.01em;font-optical-sizing:auto;font-size-adjust:from-font}
 .script{font-family:'Fraunces',serif;font-style:italic;font-weight:600}
-.mono{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.disp-xl{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0}
-.disp-l{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0}
-.disp-m{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0}
-.body-l{font-family:'Nexa','Inter Tight',sans-serif;font-weight:300;font-size:17px;line-height:26px}
-.label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
-.micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase}
+.mono{font-family:'Nexa','Inter Tight',system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
+.disp-xl{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:40px;line-height:44px;letter-spacing:-.02em;margin:0;font-size-adjust:from-font}
+.disp-l{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:30px;line-height:34px;letter-spacing:-.015em;margin:0;font-size-adjust:from-font}
+.disp-m{font-family:'VIOLA','Fraunces',serif;font-weight:400;font-size:22px;line-height:28px;margin:0;font-size-adjust:from-font}
+.body-l{font-family:'Nexa','Inter Tight',sans-serif;font-weight:300;font-size:17px;line-height:26px;font-size-adjust:from-font}
+.label{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;font-size-adjust:from-font}
+.micro{font-family:'Nexa','Inter Tight',sans-serif;font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;font-size-adjust:from-font}
 .quadro-frame{clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
 .qc-scroll::-webkit-scrollbar{width:0;height:0}
 @keyframes qc-spiral-enter{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
@@ -285,6 +300,32 @@ const CLUB_NIVELES = [
   { nombre: "Q Circle", desde: 600, beneficio: "Cata privada trimestral con el equipo Quadro" },
 ];
 
+// Selección de método al confirmar el pedido — no cobra nada dentro de la
+// app, solo le avisa a la barra cómo va a pagar el cliente. Sin datos de
+// cuenta/banco: esos se confirman en caja, no se inventan aquí.
+const METODOS_PAGO = [
+  { id: "efectivo", nombre: "Efectivo", nota: "Paga en caja al retirar", icono: Banknote },
+  { id: "movil", nombre: "Pago móvil", nota: "Datos en caja al confirmar", icono: Smartphone },
+  { id: "zelle", nombre: "Zelle", nota: "Datos en caja al confirmar", icono: DollarSign },
+  { id: "transferencia", nombre: "Transferencia", nota: "Datos en caja al confirmar", icono: Landmark },
+];
+
+// Para acá / para llevar — el cliente elige antes de enviar a barra, viaja con la orden.
+const ENTREGA_OPCIONES = [
+  { id: "aca", nombre: "Para acá", icono: Home },
+  { id: "llevar", nombre: "Para llevar", icono: Package },
+];
+
+// Pasos reales de preparación — comparten forma entre el ticket del cliente
+// (Realtime, Bloque 8) y el dashboard de barra. "completada" no tiene paso
+// visible: es el estado que saca la orden de la cola activa tras entregarla.
+const ESTADOS_ORDEN = [
+  { id: "recibido", label: "Recibido en barra" },
+  { id: "moliendo", label: "Moliendo" },
+  { id: "extrayendo", label: "Extrayendo" },
+  { id: "listo", label: "Listo para retirar" },
+];
+
 const DESTINOS = ["Galería del local", "Foto de lote", "Máquina en acción", "Avatar de finca", "Menú impreso", "Paleta de color"];
 const MEDIOS_INICIALES = [
   { id: "seed-local", nombre: "Barra — Quadro Café", url: estudioLocal, destino: "Galería del local" },
@@ -474,20 +515,48 @@ function Inicio({ ir, lote }) {
         <ChevronRight size={16} color={C.textMuted} />
       </button>
 
-      <div className="rise" style={{
-        position: "relative", padding: "26px 20px 8px", overflow: "hidden",
-        backgroundImage: `linear-gradient(180deg, ${C.surface}CC, ${C.surface}), url(${heroDispenser})`,
-        backgroundSize: "cover", backgroundPosition: "center",
-      }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
-          Barra abierta · 7:00 a 20:00
+      <div className="rise" style={{ position: "relative", padding: "26px 20px 8px", overflow: "hidden", minHeight: 300 }}>
+        {/* Hero 3D: mismo modelo que Lab (public/models/espiral.glb — el .glb
+           reenviado por el dueño resultó ser idéntico byte a byte al que ya
+           estaba en el repo, así que se reusa en vez de duplicar 7MB),
+           orbitando solo como fondo decorativo. Sin camera-controls a
+           propósito — "sin interacción" — reemplaza el JPG estático
+           hero-dispenser.jpg que había antes. No se tocó escala/posición
+           del modelo (nada que ajustar: model-viewer autoencuadra por
+           bounding sphere), solo se alejó un poco la cámara del encuadre
+           automático (mismo criterio que el fix de Lab) para no recortar
+           bordes mientras gira. */}
+        {/* eslint-disable-next-line react/no-unknown-property */}
+        <model-viewer
+          src="/models/espiral.glb"
+          alt=""
+          aria-hidden="true"
+          auto-rotate
+          rotation-per-second="9deg"
+          interaction-prompt="none"
+          camera-orbit="0deg 75deg 115%"
+          shadow-intensity="0.9"
+          exposure="1.1"
+          style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none",
+            "--poster-color": "transparent", backgroundColor: "transparent",
+          }}
+        />
+        <div aria-hidden style={{
+          position: "absolute", inset: 0,
+          background: `linear-gradient(180deg, ${C.surface}CC, ${C.surface})`,
+        }} />
+        <div style={{ position: "relative" }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".24em", color: C.brandAlt, textTransform: "uppercase" }}>
+            Barra abierta · 7:00 a 20:00
+          </div>
+          <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
+            El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
+          </h1>
+          <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
+            Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
+          </p>
         </div>
-        <h1 className="disp" style={{ fontSize: 44, lineHeight: .88, margin: "10px 0 4px" }}>
-          El sabor<br />tiene una<br /><span className="script" style={{ color: C.brand }}>geometría.</span>
-        </h1>
-        <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
-          Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
-        </p>
       </div>
 
       <div className="pop" style={{ position: "relative", margin: "14px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: 16 }}>
@@ -907,11 +976,12 @@ function Laboratorio({ onBack }) {
           auto-rotate
           rotation-per-second="16deg"
           interaction-prompt="none"
+          camera-orbit="0deg 75deg 115%"
           shadow-intensity="1"
           shadow-softness=".8"
           exposure="1.15"
           style={{
-            width: "100%", height: "100%", padding: 22,
+            width: "100%", height: "100%", padding: 8,
             "--poster-color": "transparent", backgroundColor: "transparent",
           }}
         />
@@ -1842,7 +1912,7 @@ function Admin({ onBack }) {
 
 /* ============================ CARRITO ============================ */
 
-function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
+function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
   const { C } = useTheme();
   const total = carrito.reduce((s, i) => s + i.precio, 0);
   const agrupado = carrito.reduce((acc, i) => {
@@ -1850,6 +1920,24 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
     return acc;
   }, {});
   const filas = Object.values(agrupado);
+  const [metodo, setMetodo] = useState(METODOS_PAGO[0].id);
+  const [entrega, setEntrega] = useState(ENTREGA_OPCIONES[0].id);
+  const [nombre, setNombre] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState("");
+  const elegido = METODOS_PAGO.find((m) => m.id === metodo);
+
+  const onEnviar = async () => {
+    if (!nombre.trim()) { setError("Escribe tu nombre para la orden."); return; }
+    setError(""); setEnviando(true);
+    const items = filas.map((f) => ({
+      id: f.id, nombre: f.nombre, precio: f.precio, cantidad: f.n,
+      ...(f.finca ? { finca: lote.finca, taza: taza.nombre } : {}),
+    }));
+    const res = await enviarABarra({ metodo, nombre: nombre.trim(), destino: entrega, items, total });
+    setEnviando(false);
+    if (!res.ok) setError(res.error);
+  };
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.72)", zIndex: 40, display: "flex", alignItems: "flex-end" }} onClick={cerrar}>
@@ -1881,19 +1969,68 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
               </div>
             ))}
 
+            <div className="mono" style={{ fontSize: 10, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase", margin: "18px 0 8px" }}>
+              Tu nombre
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
+              <User size={15} color={C.textMuted} />
+              <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="¿Cómo te llamamos en barra?"
+                style={{ border: "none", outline: "none", fontSize: 13.5, flex: 1, background: "transparent", color: C.text }} />
+            </div>
+
+            <div className="mono" style={{ fontSize: 10, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase", margin: "18px 0 8px" }}>
+              Para acá o para llevar
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {ENTREGA_OPCIONES.map((op) => {
+                const Icono = op.icono, on = op.id === entrega;
+                return (
+                  <button key={op.id} onClick={() => setEntrega(op.id)} className="press" style={{
+                    display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: 12,
+                    border: `1px solid ${on ? C.brand : C.line}`, background: on ? `${C.brand}14` : "transparent",
+                    color: on ? C.brand : C.text, cursor: "pointer", textAlign: "left",
+                  }}>
+                    <Icono size={16} />
+                    <span style={{ fontSize: 12.5, fontWeight: 600 }}>{op.nombre}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mono" style={{ fontSize: 10, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase", margin: "18px 0 8px" }}>
+              Cómo vas a pagar
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {METODOS_PAGO.map((m) => {
+                const Icono = m.icono, on = m.id === metodo;
+                return (
+                  <button key={m.id} onClick={() => setMetodo(m.id)} className="press" style={{
+                    display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: 12,
+                    border: `1px solid ${on ? C.brand : C.line}`, background: on ? `${C.brand}14` : "transparent",
+                    color: on ? C.brand : C.text, cursor: "pointer", textAlign: "left",
+                  }}>
+                    <Icono size={16} />
+                    <span style={{ fontSize: 12.5, fontWeight: 600 }}>{m.nombre}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", margin: "18px 0 16px" }}>
               <span className="mono" style={{ fontSize: 11, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase" }}>Total</span>
               <span className="disp" style={{ fontSize: 30 }}>{money(total)}</span>
             </div>
 
-            <button onClick={confirmar} className="press" style={{
-              width: "100%", padding: 15, borderRadius: 14, border: "none",
+            {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 14, marginBottom: -6 }}>{error}</p>}
+            <button onClick={onEnviar} disabled={enviando} className="press" style={{
+              marginTop: 18, width: "100%", padding: 15, borderRadius: 14, border: "none",
               background: C.brand, color: C.onBrand, fontWeight: 700, fontSize: 15, cursor: "pointer",
+              opacity: enviando ? .65 : 1,
             }}>
-              Enviar a barra
+              {enviando ? "Enviando…" : "Enviar a barra"}
             </button>
             <p className="mono" style={{ fontSize: 10, color: C.textMuted, textAlign: "center", marginTop: 10 }}>
-              Pago en caja o transferencia al retirar
+              {elegido.nota}
             </p>
           </>
         )}
@@ -1902,38 +2039,80 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, confirmar }) {
   );
 }
 
-function Ticket({ n, cerrar }) {
+function Ticket({ orden, cerrar }) {
   const { C } = useTheme();
-  const [paso, setPaso] = useState(0);
-  const pasos = ["Recibido en barra", "Moliendo", "Extrayendo", "Listo para retirar"];
+  const [estado, setEstado] = useState(orden.estado);
+  const elegido = METODOS_PAGO.find((m) => m.id === orden.metodo_pago);
+
+  // Escucha el estado real de la orden por Supabase Realtime — nada de
+  // temporizador simulado, la barra es quien mueve esto.
   useEffect(() => {
-    if (paso >= pasos.length - 1) return;
-    const t = setTimeout(() => setPaso((p) => p + 1), 2200);
-    return () => clearTimeout(t);
-  }, [paso]);
+    if (!supabase) return;
+    const canal = supabase
+      .channel(`orden-${orden.id}`)
+      .on("postgres_changes", {
+        event: "UPDATE", schema: "public", table: "ordenes", filter: `id=eq.${orden.id}`,
+      }, (payload) => setEstado(payload.new.estado))
+      .subscribe();
+    return () => supabase.removeChannel(canal);
+  }, [orden.id]);
+
+  if (estado === "cancelada") {
+    return (
+      <div style={{ position: "absolute", inset: 0, background: C.surface, zIndex: 50, padding: 24, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div className="pop" style={{ textAlign: "center" }}>
+          <div style={{ display: "grid", placeItems: "center", marginBottom: 20 }}>
+            <div style={{ width: 76, height: 76, borderRadius: "50%", display: "grid", placeItems: "center", border: `2px solid ${C.warn}` }}>
+              <XCircle size={30} color={C.warn} />
+            </div>
+          </div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.warn, textTransform: "uppercase" }}>Orden</div>
+          <div className="disp" style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 12px" }}>#{String(orden.numero_orden).padStart(3, "0")}</div>
+          <p style={{ fontSize: 14, color: C.textMuted, maxWidth: 260, margin: "0 auto" }}>
+            La barra canceló esta orden. Si no lo esperabas, pregunta en caja.
+          </p>
+          <button onClick={cerrar} className="press" style={{
+            marginTop: 22, padding: "13px 26px", borderRadius: 99, cursor: "pointer",
+            border: `1px solid ${C.line}`, background: "transparent", color: C.text, fontSize: 14,
+          }}>
+            Volver a la carta
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const lista = ESTADOS_ORDEN.length - 1;
+  const idx = ESTADOS_ORDEN.findIndex((e) => e.id === estado);
+  const paso = estado === "completada" ? lista : Math.max(0, idx);
 
   return (
     <div style={{ position: "absolute", inset: 0, background: C.surface, zIndex: 50, padding: 24, display: "flex", flexDirection: "column", justifyContent: "center" }}>
       <div className="pop" style={{ textAlign: "center" }}>
         <div style={{ display: "grid", placeItems: "center", marginBottom: 20 }}>
-          <div className={paso < 3 ? "pulse" : ""} style={{
+          <div className={paso < lista ? "pulse" : ""} style={{
             width: 76, height: 76, borderRadius: "50%", display: "grid", placeItems: "center",
-            border: `2px solid ${paso === 3 ? C.brand : C.brandAlt}`,
+            border: `2px solid ${paso === lista ? C.brand : C.brandAlt}`,
           }}>
-            {paso === 3 ? <Check size={30} color={C.brand} /> : <Coffee size={28} color={C.brandAlt} />}
+            {paso === lista ? <Check size={30} color={C.brand} /> : <Coffee size={28} color={C.brandAlt} />}
           </div>
         </div>
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase" }}>Orden</div>
-        <div className="disp" style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px" }}>#{n}</div>
+        <div className="disp" style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px" }}>#{String(orden.numero_orden).padStart(3, "0")}</div>
+        {elegido && (
+          <div className="mono" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 11, color: C.textMuted, marginTop: -12, marginBottom: 20 }}>
+            <elegido.icono size={13} /> {elegido.nombre}
+          </div>
+        )}
 
         <div style={{ textAlign: "left", maxWidth: 260, margin: "0 auto" }}>
-          {pasos.map((p, i) => (
-            <div key={p} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, opacity: i <= paso ? 1 : .35, transition: "opacity .4s" }}>
+          {ESTADOS_ORDEN.map((p, i) => (
+            <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, opacity: i <= paso ? 1 : .35, transition: "opacity .4s" }}>
               <span style={{
                 width: 20, height: 20, borderRadius: 6, display: "grid", placeItems: "center",
                 background: i <= paso ? C.brand : "transparent", border: `1px solid ${i <= paso ? C.brand : C.line}`, color: C.onBrand,
               }}>{i <= paso && <Check size={12} />}</span>
-              <span style={{ fontSize: 14, fontWeight: i === paso ? 700 : 400 }}>{p}</span>
+              <span style={{ fontSize: 14, fontWeight: i === paso ? 700 : 400 }}>{p.label}</span>
             </div>
           ))}
         </div>
@@ -1976,7 +2155,7 @@ export default function QuadroCafe() {
     try { return JSON.parse(localStorage.getItem("qc-carrito")) || []; } catch { return []; }
   });
   const [verCarrito, setVerCarrito] = useState(false);
-  const [ticket, setTicket] = useState(null);
+  const [orden, setOrden] = useState(null);
   const [lote, setLote] = useState(FINCAS[0]);
   const [taza, setTaza] = useState(TAZAS[1]);
   const [medios, setMedios] = useState(MEDIOS_INICIALES);
@@ -1994,23 +2173,44 @@ export default function QuadroCafe() {
   useEffect(() => {
     window.history.replaceState({ tab: "inicio" }, "");
     const onPop = (e) => {
-      if (ticket) { setTicket(null); return; }
+      if (orden) { setOrden(null); return; }
       if (verCarrito) { setVerCarrito(false); return; }
       setTab(e.state?.tab || "inicio");
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, [ticket, verCarrito]);
+  }, [orden, verCarrito]);
 
   useEffect(() => {
     if (window.history.state?.tab !== tab) window.history.pushState({ tab }, "");
   }, [tab]);
   useEffect(() => { if (verCarrito) window.history.pushState({ tab, modal: "carrito" }, ""); }, [verCarrito]);
-  useEffect(() => { if (ticket) window.history.pushState({ tab, modal: "ticket" }, ""); }, [ticket]);
+  useEffect(() => { if (orden) window.history.pushState({ tab, modal: "ticket" }, ""); }, [orden]);
 
   const irInicio = () => setTab("inicio");
   const add = (m) => setCarrito((c) => [...c, m]);
   const quitar = (id) => setCarrito((c) => { const i = c.findIndex((x) => x.id === id); if (i < 0) return c; const n = [...c]; n.splice(i, 1); return n; });
+
+  // Inserta la orden real en Supabase — número secuencial y estado los pone
+  // el trigger/la barra, no el cliente. Devuelve {ok:false, error} en vez de
+  // lanzar, para que el carrito pueda mostrar el problema sin romperse.
+  const enviarABarra = async ({ metodo, nombre, destino, items, total }) => {
+    if (!supabase) {
+      console.warn("No se pudo enviar la orden: Supabase no está configurado.");
+      return { ok: false, error: "No se pudo conectar con la barra. Intenta de nuevo en un momento." };
+    }
+    const { data, error: err } = await supabase.from("ordenes").insert({
+      nombre_cliente: nombre, destino, items, total, metodo_pago: metodo,
+    }).select().single();
+    if (err) {
+      console.warn("No se pudo crear la orden:", err.message);
+      return { ok: false, error: "No se pudo enviar el pedido. Intenta de nuevo." };
+    }
+    setOrden(data);
+    setVerCarrito(false);
+    setCarrito([]);
+    return { ok: true };
+  };
 
   const TABS = [
     { k: "inicio", t: "Inicio", i: Coffee },
@@ -2110,10 +2310,258 @@ export default function QuadroCafe() {
           {verCarrito && (
             <Carrito carrito={carrito} lote={lote} taza={taza}
               cerrar={() => setVerCarrito(false)} quitar={quitar}
-              confirmar={() => { setTicket(Math.floor(100 + Math.random() * 800)); setVerCarrito(false); setCarrito([]); }} />
+              enviarABarra={enviarABarra} />
           )}
-          {ticket && <Ticket n={ticket} cerrar={() => setTicket(null)} />}
+          {orden && <Ticket orden={orden} cerrar={() => setOrden(null)} />}
         </div>
+      </div>
+    </ThemeCtx.Provider>
+  );
+}
+
+/* ============================ BARRA (BOH) ============================ */
+/* Dashboard separado del Panel Admin: tablet/computadora del local, de pie,
+   sin frame de teléfono, tipografía y botones grandes, cero menús anidados.
+   Ruta propia (#barra), montada directo desde main.jsx — no comparte árbol
+   de componentes con QuadroCafe. */
+
+const DOS_HORAS_MS = 2 * 60 * 60 * 1000;
+
+// Beep corto generado con Web Audio — sin asset de sonido que mantener.
+function reproducirBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+    osc.onended = () => ctx.close();
+  } catch { /* autoplay bloqueado u otro navegador sin Web Audio — no es crítico */ }
+}
+
+function OrdenCard({ orden, onAvanzar, onCancelar }) {
+  const { C } = useTheme();
+  const metodo = METODOS_PAGO.find((m) => m.id === orden.metodo_pago);
+  const entrega = ENTREGA_OPCIONES.find((e) => e.id === orden.destino);
+  const paso = Math.max(0, ESTADOS_ORDEN.findIndex((e) => e.id === orden.estado));
+  const esUltimo = paso === ESTADOS_ORDEN.length - 1;
+
+  return (
+    <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <div className="disp" style={{ fontSize: 34, lineHeight: 1 }}>#{String(orden.numero_orden).padStart(3, "0")}</div>
+          <div style={{ fontSize: 17, fontWeight: 700, marginTop: 6 }}>{orden.nombre_cliente}</div>
+        </div>
+        <button onClick={onCancelar} className="press" aria-label="Cancelar orden" style={{
+          display: "grid", placeItems: "center", width: 44, height: 44, borderRadius: 12,
+          border: `1px solid ${C.line}`, background: "transparent", color: C.warn, cursor: "pointer", flexShrink: 0,
+        }}>
+          <XCircle size={20} />
+        </button>
+      </div>
+
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {entrega && (
+          <span className="mono" style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.textMuted, border: `1px solid ${C.line}`, borderRadius: 999, padding: "5px 10px" }}>
+            <entrega.icono size={12} /> {entrega.nombre}
+          </span>
+        )}
+        {metodo && (
+          <span className="mono" style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.textMuted, border: `1px solid ${C.line}`, borderRadius: 999, padding: "5px 10px" }}>
+            <metodo.icono size={12} /> {metodo.nombre}
+          </span>
+        )}
+      </div>
+
+      <div style={{ borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, padding: "12px 0", display: "flex", flexDirection: "column", gap: 6 }}>
+        {orden.items.map((it, i) => (
+          <div key={i} style={{ fontSize: 15.5 }}>
+            {it.cantidad}× {it.nombre}{it.finca ? ` · ${it.finca} (${it.taza})` : ""}
+          </div>
+        ))}
+      </div>
+
+      <div className="mono" style={{ fontSize: 12.5, color: C.brandAlt, letterSpacing: ".08em" }}>
+        {ESTADOS_ORDEN[paso]?.label || orden.estado}
+      </div>
+
+      <button onClick={onAvanzar} className="press" style={{
+        width: "100%", padding: "17px", borderRadius: 14, border: "none", cursor: "pointer",
+        background: C.brand, color: C.onBrand, fontWeight: 700, fontSize: 17,
+      }}>
+        {esUltimo ? "Entregar" : `Avanzar a ${ESTADOS_ORDEN[paso + 1].label}`}
+      </button>
+    </div>
+  );
+}
+
+export function BarraDashboard() {
+  const [tema, setTema] = useState(() => {
+    try {
+      const saved = localStorage.getItem("qc-tema");
+      if (saved === "claro" || saved === "oscuro") return saved;
+    } catch { /* localStorage no disponible */ }
+    return typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "oscuro" : "claro";
+  });
+  useEffect(() => { try { localStorage.setItem("qc-tema", tema); } catch { /* noop */ } }, [tema]);
+  const C = PALETAS[tema];
+  const css = useMemo(() => buildCss(C), [C]);
+
+  // undefined = verificando sesión, null = sin sesión. Login compartido con
+  // el Panel Admin por ahora — cuando existan roles separados (staff vs
+  // dueño), este es el punto donde filtrar por user.app_metadata.rol antes
+  // de dar acceso al dashboard.
+  const [sesion, setSesion] = useState(undefined);
+  const [ordenes, setOrdenes] = useState([]);
+  const [silenciado, setSilenciado] = useState(() => {
+    try { return localStorage.getItem("qc-barra-silenciado") === "1"; } catch { return false; }
+  });
+  const [destello, setDestello] = useState(false);
+  const [ahora, setAhora] = useState(() => Date.now());
+  const silenciadoRef = useRef(silenciado);
+
+  useEffect(() => { silenciadoRef.current = silenciado; }, [silenciado]);
+  useEffect(() => { try { localStorage.setItem("qc-barra-silenciado", silenciado ? "1" : "0"); } catch { /* noop */ } }, [silenciado]);
+  useEffect(() => { const t = setInterval(() => setAhora(Date.now()), 60000); return () => clearInterval(t); }, []);
+
+  useEffect(() => {
+    if (!supabase) { setSesion(null); return; }
+    supabase.auth.getSession().then(({ data }) => setSesion(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_evento, s) => setSesion(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const cargar = async () => {
+    const { data, error: err } = await supabase.from("ordenes").select("*")
+      .in("estado", ["recibido", "moliendo", "extrayendo", "listo"])
+      .order("creado_en");
+    if (!err && data) setOrdenes(data);
+  };
+
+  useEffect(() => {
+    if (!sesion || !supabase) return;
+    cargar();
+    const canal = supabase.channel("barra-ordenes")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "ordenes" }, (payload) => {
+        setOrdenes((os) => (os.some((o) => o.id === payload.new.id) ? os : [...os, payload.new]));
+        if (!silenciadoRef.current) reproducirBeep();
+        setDestello(true);
+        setTimeout(() => setDestello(false), 1200);
+      })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "ordenes" }, (payload) => {
+        setOrdenes((os) => os.map((o) => (o.id === payload.new.id ? payload.new : o)));
+      })
+      .subscribe();
+    return () => supabase.removeChannel(canal);
+  }, [sesion]);
+
+  const avanzar = async (o) => {
+    const idx = ESTADOS_ORDEN.findIndex((e) => e.id === o.estado);
+    const siguiente = idx < ESTADOS_ORDEN.length - 1 ? ESTADOS_ORDEN[idx + 1].id : "completada";
+    setOrdenes((os) => os.map((x) => (x.id === o.id ? { ...x, estado: siguiente } : x)));
+    const { error: err } = await supabase.from("ordenes").update({ estado: siguiente }).eq("id", o.id);
+    if (err) cargar();
+  };
+
+  const cancelar = async (o) => {
+    if (!window.confirm(`¿Cancelar la orden #${String(o.numero_orden).padStart(3, "0")} de ${o.nombre_cliente}?`)) return;
+    setOrdenes((os) => os.map((x) => (x.id === o.id ? { ...x, estado: "cancelada" } : x)));
+    const { error: err } = await supabase.from("ordenes").update({ estado: "cancelada" }).eq("id", o.id);
+    if (err) cargar();
+  };
+
+  let contenido;
+
+  if (!supabase) {
+    contenido = (
+      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
+        <p style={{ fontSize: 16, maxWidth: 420, textAlign: "center", color: C.textMuted }}>
+          Supabase no está configurado en este entorno (faltan las variables VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY).
+        </p>
+      </div>
+    );
+  } else if (sesion === undefined) {
+    contenido = <div style={{ minHeight: "100vh" }} />;
+  } else if (!sesion) {
+    contenido = (
+      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
+        <div style={{ width: "100%", maxWidth: 380 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 10 }}>
+            <Marca size={34} />
+            <span className="disp" style={{ fontSize: 22 }}>Dashboard de barra</span>
+          </div>
+          <AdminLogin onLogged={() => {}} />
+        </div>
+      </div>
+    );
+  } else {
+    const activas = ordenes
+      .filter((o) => o.estado !== "completada" && o.estado !== "cancelada")
+      .filter((o) => ahora - new Date(o.creado_en).getTime() <= DOS_HORAS_MS)
+      .sort((a, b) => new Date(a.creado_en) - new Date(b.creado_en));
+
+    contenido = (
+      <div style={{ minHeight: "100vh", paddingBottom: 40 }}>
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
+          padding: "20px 28px", borderBottom: `1px solid ${C.line}`, background: C.card,
+          position: "sticky", top: 0, zIndex: 5,
+          boxShadow: destello ? `0 0 0 3px ${C.brand} inset` : "none", transition: "box-shadow .3s",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <Marca size={38} />
+            <div>
+              <div className="disp" style={{ fontSize: 24 }}>Dashboard de barra</div>
+              <div className="mono" style={{ fontSize: 11, color: C.textMuted }}>
+                {activas.length} orden{activas.length === 1 ? "" : "es"} activa{activas.length === 1 ? "" : "s"}
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <ThemeToggle />
+            <button onClick={() => setSilenciado((s) => !s)} className="press" aria-label={silenciado ? "Activar sonido" : "Silenciar avisos"} style={{
+              display: "grid", placeItems: "center", width: 48, height: 48, borderRadius: 14,
+              border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer",
+            }}>
+              {silenciado ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
+            <button onClick={() => supabase.auth.signOut()} className="press" aria-label="Salir" style={{
+              display: "grid", placeItems: "center", width: 48, height: 48, borderRadius: 14,
+              border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer",
+            }}>
+              <LogOut size={20} />
+            </button>
+          </div>
+        </div>
+
+        <div style={{ padding: 28, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
+          {activas.length === 0 ? (
+            <p className="disp" style={{ fontSize: 20, color: C.textMuted, gridColumn: "1 / -1", textAlign: "center", padding: "60px 0" }}>
+              <Bell size={22} style={{ verticalAlign: "-4px", marginRight: 10 }} />
+              Sin órdenes activas. Cuando llegue un pedido, aparece aquí.
+            </p>
+          ) : activas.map((o) => (
+            <OrdenCard key={o.id} orden={o} onAvanzar={() => avanzar(o)} onCancelar={() => cancelar(o)} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <ThemeCtx.Provider value={{ tema, setTema, C }}>
+      <div className="qc" style={{ minHeight: "100vh", background: C.surface, color: C.text }}>
+        <style>{css}</style>
+        {contenido}
       </div>
     </ThemeCtx.Provider>
   );
