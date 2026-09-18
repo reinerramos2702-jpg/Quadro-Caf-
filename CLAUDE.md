@@ -135,6 +135,8 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Punto 7, comparar**: sin código; se queda en `FichaLote`.
 - **Punto 10, Tienda**: tab nuevo después de Fincas (`Tienda`, `TIENDA_PROXIMAMENTE`). El nav inferior tiene ahora **6** pestañas. Solo tarjetas "Próximamente" por tipo (Café en grano, Accesorios) hasta que haya catálogo real.
 - **Punto 4, Club**: la tarjeta de captura de correo muestra el texto exacto "Suscríbete a la Newsletter para recibir premios o descuentos especiales." No parafrasear.
+- **Punto 1, pulido**: pasada acotada. Un guion de una sola línea (las fincas en preparación) ya no muestra dots, "Ver guion" ni transcripción. La pill del nav se acota al ancho del nav (con 6 pestañas se salía 4px).
+- **Punto 15, "É" de "Quadro Café"**: **no reproducible** en Chrome ni en WebKit (métricas de `VIOLA`/`VIOLA Acentos` idénticas, captura ×4 correcta). No tocar la tipografía sin una captura del dispositivo afectado. Sospecha: iOS Safari + `font-size-adjust` + la falta del glifo "x" en `VIOLA Acentos`.
 - **Pendiente de Reiner en Supabase**: correr 0004 y 0005, desplegar la edge function y cargar el secret. 0003 va al hacer el merge.
 - **Decisiones para los puntos que faltan**: el punto 3 saca a Elio, Rosa y Mina de `FINCAS` (reemplaza la vieja regla de "no tocar Elio"); los puntos 2 y 11 quedan solo con estructura, sin inventar fotos ni productos; el punto 10 (Tienda) lleva tarjetas "Próximamente" sin nombre ni precio inventados.
 

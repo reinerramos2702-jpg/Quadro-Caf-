@@ -1687,6 +1687,10 @@ function Fincas({ lote, setLote, onBack }) {
             <p key={linea} className="slide" style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5 }}>
               {lote.guion[linea]}
             </p>
+            {/* Pulido (reunión 05/sept, punto 1): con un guion de una sola línea
+               (las fincas en preparación) no hay nada que avanzar — sin dots,
+               "Ver guion" ni transcripción, solo el texto. */}
+            {lote.guion.length > 1 && <>
             <div style={{ display: "flex", gap: 4, marginTop: 12 }}>
               {lote.guion.map((_, i) => (
                 <span key={i} style={{
@@ -1722,6 +1726,7 @@ function Fincas({ lote, setLote, onBack }) {
                 ))}
               </div>
             )}
+            </>}
           </div>
         </div>
       ))}
