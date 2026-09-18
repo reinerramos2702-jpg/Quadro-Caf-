@@ -4,7 +4,7 @@ import {
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
   Banknote, Smartphone, Landmark, DollarSign, Coins, ImagePlus, Receipt, Clock,
-  Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame,
+  Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame, Store,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
@@ -198,7 +198,7 @@ ${FONTS}
    escalar en X/Y durante el squish. */
 @keyframes qc-navpill-squish{0%{transform:scaleX(1) scaleY(1)}35%{transform:scaleX(1.32) scaleY(.8)}100%{transform:scaleX(1) scaleY(1)}}
 /* width/height/top/border-radius vienen por instancia (inline, calculados en
-   QuadroCafe a partir del botón más ancho de los 5) desde que la pill pasó a
+   QuadroCafe a partir del botón más ancho de los 6) desde que la pill pasó a
    envolver ícono+label juntos (2026-08-31) — antes eran fijos acá (40x40)
    cuando la pill sólo cubría el ícono. */
 .mo-navpill{position:absolute;left:0;pointer-events:none;transition:transform var(--motion-base) var(--ease-spring)}
@@ -2218,6 +2218,56 @@ function Academia({ taza, setTaza, onBack }) {
 
 /* ============================ QUADRO CLUB ============================ */
 
+/* ============================ TIENDA ============================ */
+
+/* Módulo nuevo de merchandising (reunión 05/sept, punto 10). Todavía no hay
+   catálogo real: por decisión de Reiner (2026-09-18) se muestran solo los
+   dos tipos de producto que se nombraron en la reunión, como "Próximamente",
+   sin nombres, fotos ni precios inventados. Cuando llegue el catálogo, cada
+   tarjeta se vuelve un producto real (mismo patrón que MENU/useCarta). */
+const TIENDA_PROXIMAMENTE = [
+  { id: "grano", tipo: "Café en grano", detalle: "Bolsas para preparar en casa.", icono: Coffee },
+  { id: "accesorios", tipo: "Accesorios", detalle: "Para preparar café como en la barra.", icono: Package },
+];
+
+function Tienda({ onBack }) {
+  const { C } = useTheme();
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
+      <Header sub="Merchandising" titulo="Tienda" onBack={onBack} />
+      <p style={{ margin: "0 20px 16px", fontSize: 13, color: C.textMuted, lineHeight: 1.5 }}>
+        Estamos armando el catálogo de Quadro Café para llevar a casa.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, margin: "0 20px" }}>
+        {TIENDA_PROXIMAMENTE.map((p, i) => {
+          const Icono = p.icono;
+          return (
+            <div key={p.id} className="rise" style={{
+              animationDelay: `${i * 60}ms`, display: "flex", alignItems: "center", gap: 14,
+              background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
+            }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: 14, flexShrink: 0, display: "grid", placeItems: "center",
+                background: `${C.brand}14`, color: C.brand,
+              }}>
+                <Icono size={22} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="disp" style={{ fontSize: 15 }}>{p.tipo}</div>
+                <div style={{ fontSize: 12, color: C.textMuted, marginTop: 3, lineHeight: 1.4 }}>{p.detalle}</div>
+              </div>
+              <span className="mono" style={{
+                fontSize: 9, padding: "3px 8px", borderRadius: 99, border: `1px solid ${C.brandAlt}`, color: C.brandAlt,
+                fontWeight: 600, display: "inline-grid", placeItems: "center", flexShrink: 0,
+              }}>Próximamente</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function Club({ email, setEmail, onBack, onAdmin }) {
   const { C } = useTheme();
   const [enviado, setEnviado] = useState(!!email);
@@ -3047,7 +3097,7 @@ export default function QuadroCafe() {
   // consume `qc-tabswitch` (ver buildCss). Club/Admin no viven en el nav
   // inferior — quedan fuera del orden y caen a dir=1 (mismo look que un
   // swap "hacia adelante").
-  const ORDEN_TABS = ["inicio", "menu", "fincas", "maquinas", "academia"];
+  const ORDEN_TABS = ["inicio", "menu", "fincas", "tienda", "maquinas", "academia"];
   const prevTabRef = useRef(tab);
   const i0 = ORDEN_TABS.indexOf(prevTabRef.current), i1 = ORDEN_TABS.indexOf(tab);
   const tabDir = (i0 === -1 || i1 === -1 || i1 === i0) ? 1 : (i1 > i0 ? 1 : -1);
@@ -3063,7 +3113,7 @@ export default function QuadroCafe() {
     const el = tabBtnRefs.current[tab];
     if (!el) { setNavIndicador(null); return; }
     // La pill envuelve ícono+label juntos (cambio 2026-08-31) — se
-    // dimensiona en base al botón más ancho de los 5 (ORDEN_TABS), no al
+    // dimensiona en base al botón más ancho de los 6 (ORDEN_TABS), no al
     // botón activo puntual, para que el ancho quede fijo entre tabs y el
     // desplazamiento sea un translateX puro (sin animar width/left, que
     // dispararía layout en cada cambio de tab).
@@ -3141,6 +3191,7 @@ export default function QuadroCafe() {
     { k: "inicio", t: "Inicio", i: Coffee },
     { k: "menu", t: "Carta", i: ShoppingBag },
     { k: "fincas", t: "Fincas", i: Mountain },
+    { k: "tienda", t: "Tienda", i: Store }, // punto 10, reunión 05/sept
     { k: "maquinas", t: "Lab", i: Waves },
     { k: "academia", t: "Aula", i: GraduationCap },
   ];
@@ -3204,6 +3255,7 @@ export default function QuadroCafe() {
               {tab === "inicio" && <Inicio ir={setTab} lote={loteBarra} />}
               {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={loteBarra} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} carritoBtnRef={carritoBtnRef} />}
               {tab === "fincas" && <Fincas lote={lote} setLote={setLote} onBack={irInicio} />}
+              {tab === "tienda" && <Tienda onBack={irInicio} />}
               {tab === "maquinas" && <Laboratorio onBack={irInicio} />}
               {tab === "academia" && <Academia taza={taza} setTaza={setTaza} onBack={irInicio} />}
               {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} onAdmin={() => setTab("admin")} />}
@@ -3234,7 +3286,7 @@ export default function QuadroCafe() {
                los botones (mismo orden de DOM) para quedar detrás. Ahora
                envuelve ícono+label juntos (2026-08-31, antes sólo el ícono):
                ancho/alto/top vienen de `navIndicador`, calculados sobre el
-               botón más ancho de los 5 para que el desplazamiento entre tabs
+               botón más ancho de los 6 para que el desplazamiento entre tabs
                sea un translateX puro sin animar width/left. */}
             {navIndicador && (
               <span className="mo-navpill" style={{

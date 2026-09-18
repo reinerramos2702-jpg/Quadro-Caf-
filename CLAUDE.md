@@ -132,6 +132,8 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Punto 11, productos nuevos**: el punto de entrada es "Agregar producto" del Panel Admin (`AdminNuevoProducto`), que ahora también acepta una etiqueta opcional (`tag`). No se cargó contenido: la lista real está pendiente de Reiner.
 - **Punto 3, roster de Fincas**: ver "Roster actual" en Real-data policy más abajo.
 - **Punto 8, ficha técnica**: `FichaLote` ("Ficha técnica") muestra siempre Altura/Varietal/Proceso/Puntaje con "Por confirmar" para lo que falte, más Extensión (`hectareas`) si existe. Nunca se rellena con cifras inventadas.
+- **Punto 7, comparar**: sin código; se queda en `FichaLote`.
+- **Punto 10, Tienda**: tab nuevo después de Fincas (`Tienda`, `TIENDA_PROXIMAMENTE`). El nav inferior tiene ahora **6** pestañas. Solo tarjetas "Próximamente" por tipo (Café en grano, Accesorios) hasta que haya catálogo real.
 - **Pendiente de Reiner en Supabase**: correr 0004 y 0005, desplegar la edge function y cargar el secret. 0003 va al hacer el merge.
 - **Decisiones para los puntos que faltan**: el punto 3 saca a Elio, Rosa y Mina de `FINCAS` (reemplaza la vieja regla de "no tocar Elio"); los puntos 2 y 11 quedan solo con estructura, sin inventar fotos ni productos; el punto 10 (Tienda) lleva tarjetas "Próximamente" sin nombre ni precio inventados.
 
@@ -193,7 +195,7 @@ This was cherry-picked by hand from a stale branch (`fix/barra-dashboard`, creat
 
 El tab "Estudio" (subida de fotos/video reales del local + asignarlas a un "destino" dentro de la app — galería, foto de lote, etc.) se sacó por completo: no tenía uso real (el dueño nunca lo usaba en producción para reemplazar assets). Nunca persistía a Supabase — era puro estado local en memoria (`useState`, con `URL.createObjectURL(file)` para el preview), así que no había datos que migrar ni tablas que borrar.
 
-Se eliminó de `App.jsx`: los componentes `Estudio`/`EstudioLightbox`, las constantes `DESTINOS`/`MEDIOS_INICIALES`, el estado `medios`/`setMedios` en `QuadroCafe`, la entrada `estudio` del array `TABS` (nav inferior), el render condicional `{tab === "estudio" && ...}`, los imports que solo usaba (`ImageIcon`, `Upload`, `Trash2`, y los dos JPG semilla), y la carpeta `src/assets/estudio/`. El nav inferior quedó en 5 pestañas: Inicio, Carta, Fincas, Lab, Aula.
+Se eliminó de `App.jsx`: los componentes `Estudio`/`EstudioLightbox`, las constantes `DESTINOS`/`MEDIOS_INICIALES`, el estado `medios`/`setMedios` en `QuadroCafe`, la entrada `estudio` del array `TABS` (nav inferior), el render condicional `{tab === "estudio" && ...}`, los imports que solo usaba (`ImageIcon`, `Upload`, `Trash2`, y los dos JPG semilla), y la carpeta `src/assets/estudio/`. El nav inferior quedó en 5 pestañas: Inicio, Carta, Fincas, Lab, Aula (desde la reunión 05/sept son 6: se sumó Tienda después de Fincas).
 
 No confundir con **"Estudio de color"** (Aula/Academia, la lección sobre cómo el color de la taza cambia el dulzor percibido) — es una sección distinta, con nombre parecido por coincidencia, que no se tocó.
 
