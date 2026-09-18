@@ -3121,8 +3121,12 @@ export default function QuadroCafe() {
     const anchos = ORDEN_TABS.map((k) => tabBtnRefs.current[k]?.offsetWidth || 0);
     const ancho = Math.max(...anchos, el.offsetWidth) + 14;
     const alto = el.offsetHeight + 8;
+    // Con 6 pestañas (Tienda, reunión 05/sept) el primer y el último botón
+    // quedan tan cerca del borde que la pill centrada se salía del nav y el
+    // frame la recortaba (medido: 4px a 360px de ancho). Se acota al nav.
+    const anchoNav = el.parentElement?.clientWidth || Infinity;
     setNavIndicador({
-      x: el.offsetLeft + el.offsetWidth / 2 - ancho / 2,
+      x: Math.min(Math.max(0, el.offsetLeft + el.offsetWidth / 2 - ancho / 2), anchoNav - ancho),
       top: el.offsetTop - 4,
       width: ancho,
       height: alto,
