@@ -19,7 +19,7 @@ Foto del estado para retomar en una sesión nueva. Se actualiza al cerrar cada p
 | 13 | Comprobante + OCR | ✅ Commiteado (`b57b2b2` a `80b76ad`, 5 commits) |
 | 2 | Foto por producto (estructura) | ✅ Estructura lista, sin fotos todavía |
 | 11 | Productos nuevos (punto de entrada) | ✅ Admin listo (+ etiqueta), sin contenido todavía |
-| 3 | Roster de Fincas (Agua Fría + Los Naranjos + 2 placeholder) | ⏳ Pendiente |
+| 3 | Roster de Fincas (Agua Fría + Los Naranjos + 2 placeholder) | ✅ Commiteado |
 | 8 | Ficha técnica por finca | ⏳ Pendiente |
 | 7 | Comparar (se queda en FichaLote) | ⏳ Pendiente |
 | 10 | Módulo Tienda ("Próximamente") | ⏳ Pendiente |

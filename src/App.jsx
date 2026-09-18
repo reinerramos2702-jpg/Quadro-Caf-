@@ -83,13 +83,15 @@ const PALETAS = {
   },
 };
 
+/* Tinte por finca, por id (antes era por índice de FINCAS, y el roster nuevo
+   de la reunión 05/sept lo habría corrido). Solo están los colores que el
+   dueño confirmó para una finca que sigue en el roster: Agua Fría en claro
+   (verde profundo, 2026-08-11). El resto cae a C.brand hasta que elija. En
+   oscuro no hay ninguno: #7FE3C0 (alien) fue descartado para Agua Fría, no
+   reintroducirlo. Los tintes de Elio/Rosa/Mina se fueron con ellos. */
 const FINCA_TINTS = {
-  // 4º valor de claro reservado para Agua Fría (verde profundo, confirmado por
-  // el dueño 2026-08-11) — inerte hasta que esa finca entre a FINCAS (índice 3).
-  claro: ["#243b57", "#3b574c", "#b5613c", "#26382f"],
-  // Oscuro todavía sin 4º valor: el candidato #7FE3C0 (alien) fue descartado
-  // por el dueño, sin reemplazo definido aún. No agregar nada acá sin confirmar.
-  oscuro: ["#5B2E8C", "#1E5C4A", "#C9873A"],
+  claro: { aguafria: "#26382f" },
+  oscuro: {},
 };
 
 /* Tipografía real de marca (reemplaza las aproximaciones Fraunces/Inter
@@ -272,54 +274,16 @@ ${FONTS}
 
 /* ============================ DATOS REALES ============================ */
 
+/* Roster curado en la reunión del 05/sept (punto 3, decidido por Reiner el
+   2026-09-18): salen Elio (Triángulo de Mocotíes), Rosa (Santa Cruz de Mora)
+   y Mina (La Mina) — su historial queda en git y en memoria.md. Queda Agua
+   Fría (avatar D-ID intacto), entra Los Naranjos con los datos que pasó el
+   dueño, y Santa Rosa / Buenos Aires quedan con la estructura lista y
+   `placeholder: true` hasta que lleguen sus datos reales.
+   Una finca placeholder se puede ver en el tab Fincas, pero nunca se ofrece
+   en barra (ver FINCAS_EN_BARRA). Ningún campo es obligatorio salvo id,
+   finca, avatar y guion: todo lo demás se oculta si falta, sin inventar. */
 const FINCAS = [
-  {
-    id: "mocoties",
-    finca: "Triángulo de Mocotíes",
-    zona: "Bailadores, Mérida",
-    altura: 2200, varietal: "Catuai", proceso: "Lavado", score: 86.5,
-    notas: ["Caramelo", "Floral", "Té verde"],
-    avatar: { nombre: "Elio", rol: "Tostador de altura", inicial: "E" },
-    guion: [
-      "Bienvenido. Soy Elio, del Triángulo de Mocotíes, en Bailadores.",
-      "Sembramos a 2.200 metros. El frío alarga la maduración del fruto y concentra el azúcar.",
-      "Este lote es Catuai lavado: despulpado el mismo día, fermentado 18 horas, secado en marquesina.",
-      "En taza vas a encontrar caramelo primero, luego floral, y un cierre a té verde.",
-      "Puntaje SCA: 86,5. Fue el grano del Campeonato AeroPress Venezuela 2023.",
-      "Si lo preparas en AeroPress, invertido y 2 minutos. No lo ahogues en agua caliente.",
-    ],
-  },
-  {
-    id: "vct",
-    finca: "Santa Cruz de Mora",
-    zona: "Mérida · VCT",
-    altura: 1400, varietal: "Arábica", proceso: "Lavado", score: 83.0,
-    notas: ["Panela", "Nuez", "Cítrico suave"],
-    avatar: { nombre: "Rosa", rol: "Beneficiadora", inicial: "R" },
-    guion: [
-      "Soy Rosa. Trabajo el beneficio húmedo en Santa Cruz de Mora.",
-      "Café verde lavado, humedad entre 11 y 12 por ciento, empacado en GrainPro.",
-      "Screen 16/18 en el 95 por ciento del lote. Menos de 20 defectos por muestra de 300 gramos.",
-      "Es un café de cuerpo medio, dulce a panela. Aguanta leche sin desaparecer.",
-      "Puntaje 83. Es nuestro café de todos los días, el que sostiene la barra.",
-    ],
-  },
-  {
-    id: "lamina",
-    finca: "La Mina",
-    zona: "Colombia · 1000 Cups",
-    altura: 1800, varietal: "Yellow Bourbon", proceso: "Honey · fermentación",
-    score: 87.5,
-    notas: ["Choco dulce", "Fruto amarillo", "Floral"],
-    avatar: { nombre: "Mina", rol: "Curadora de lote", inicial: "M" },
-    guion: [
-      "La Mina. Yellow Bourbon a 1.800 metros, fermentación honey controlada.",
-      "El mucílago se queda en el grano durante el secado. Por eso el dulzor es tan espeso.",
-      "Chocolate dulce al frente, fruta amarilla en el medio, floral al enfriarse.",
-      "Puntaje 87,5. Es el lote más caro de la barra y el que más se defiende solo.",
-      "Filtrado. Si lo pasas por espresso, pierdes la parte floral.",
-    ],
-  },
   {
     id: "aguafria",
     finca: "Agua Fría",
@@ -357,7 +321,40 @@ const FINCAS = [
       "Arriba puedes hablar conmigo en vivo — soy un avatar conversacional, no una grabación.",
     ],
   },
+  {
+    id: "losnaranjos",
+    finca: "Los Naranjos",
+    zona: "Mérida",
+    varietal: "Castilla, Caturra, Villa Nueva",
+    hectareas: 99,
+    // altura / proceso / score / notas: todavía sin confirmar por el dueño —
+    // NO inventar. Se agregan acá apenas lleguen, sin tocar nada más.
+    avatar: { nombre: "Falsir Durán", rol: "Caficultor", inicial: "F" },
+    guion: [
+      "Bienvenido a Los Naranjos, en Mérida. Soy Falsir Durán.",
+      "Es una finca de 99 hectáreas.",
+      "Cultivamos Castilla, Caturra y Villa Nueva.",
+    ],
+  },
+  {
+    id: "santarosa",
+    finca: "Santa Rosa",
+    placeholder: true,
+    avatar: { nombre: "Santa Rosa", rol: "Ficha en preparación", inicial: "S" },
+    guion: ["La ficha de Santa Rosa está en preparación. Pronto vas a conocer su origen, su gente y su café."],
+  },
+  {
+    id: "buenosaires",
+    finca: "Buenos Aires",
+    placeholder: true,
+    avatar: { nombre: "Buenos Aires", rol: "Ficha en preparación", inicial: "B" },
+    guion: ["La ficha de Buenos Aires está en preparación. Pronto vas a conocer su origen, su gente y su café."],
+  },
 ];
+
+/* Las fincas que se pueden pedir en barra (Carta, carrito, "Lote en barra
+   hoy" de Inicio): todas menos las placeholder. */
+const FINCAS_EN_BARRA = FINCAS.filter((f) => !f.placeholder);
 
 const GEOMETRIAS = [
   { id: "espiral", nombre: "Espiral continua", vueltas: 4.2, pasos: 260, radio: 1, metodo: "V60 · vertido continuo",
@@ -997,7 +994,7 @@ function Inicio({ ir, lote }) {
     });
   };
 
-  const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
+  const tint = FINCA_TINTS[tema][lote.id] || C.brand;
 
   return (
     <div className="qc-scroll" onScroll={onScrollParallax} style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
@@ -1113,7 +1110,9 @@ function Inicio({ ir, lote }) {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
               <div className="disp" style={{ fontSize: 20 }}>{lote.finca}</div>
-              <div className="mono" style={{ fontSize: 11, color: C.textMuted, marginTop: 3 }}>{lote.zona} · {lote.altura} msnm</div>
+              <div className="mono" style={{ fontSize: 11, color: C.textMuted, marginTop: 3 }}>
+                {[lote.zona, lote.altura != null && `${lote.altura} msnm`].filter(Boolean).join(" · ")}
+              </div>
             </div>
             {lote.score != null && (
               <div style={{ textAlign: "right" }}>
@@ -1435,7 +1434,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
                         <div style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
                           <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 8 }}>Finca</div>
                           <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
-                            {FINCAS.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+                            {FINCAS_EN_BARRA.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
                           </div>
                           <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", margin: "14px 0 8px" }}>Taza</div>
                           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -1473,11 +1472,11 @@ function FichaLote({ lote, compact, titulo }) {
   // inventar esas cifras. Cada campo derivado se oculta si su dato base falta,
   // en vez de reventar con `undefined.includes` o mostrar un "NaN".
   const dulzor = lote.score != null ? Math.round(lote.score - 12) : null;
-  const acidez = Math.round(lote.altura / 26);
+  const acidez = lote.altura != null ? Math.round(lote.altura / 26) : null;
   const cuerpo = lote.proceso ? (lote.proceso.includes("Honey") ? 80 : 58) : null;
-  const campos = [
-    ["Altura", `${lote.altura} msnm`], ["Varietal", lote.varietal],
-  ];
+  const campos = [];
+  if (lote.altura != null) campos.push(["Altura", `${lote.altura} msnm`]);
+  if (lote.varietal) campos.push(["Varietal", lote.varietal]);
   if (lote.proceso) campos.push(["Proceso", lote.proceso]);
   if (lote.score != null) campos.push(["Puntaje", `${lote.score} SCA`]);
   return (
@@ -1504,7 +1503,7 @@ function FichaLote({ lote, compact, titulo }) {
            valor nuevo sin volver a llenarse — mismo mecanismo `triggerKey`
            que ya usa `Meter` desde Fase 4 (Inicio) y Fase 5 (Lab). */}
         {dulzor != null && <Meter label="Dulzor" value={dulzor} tone={C.brandAlt} triggerKey={lote.id} />}
-        <Meter label="Acidez" value={acidez} triggerKey={lote.id} />
+        {acidez != null && <Meter label="Acidez" value={acidez} triggerKey={lote.id} />}
         {cuerpo != null && <Meter label="Cuerpo" value={cuerpo} tone={C.purple} triggerKey={lote.id} />}
       </div>
     </div>
@@ -1547,7 +1546,7 @@ function Fincas({ lote, setLote, onBack }) {
     return () => clearTimeout(timer.current);
   }, [reproduciendo, linea, lote]);
 
-  const tint = FINCA_TINTS[tema][FINCAS.findIndex((f) => f.id === lote.id)] || C.brand;
+  const tint = FINCA_TINTS[tema][lote.id] || C.brand;
 
   const toggleComparado = (id) => {
     setComparados((sel) => {
@@ -3021,6 +3020,9 @@ export default function QuadroCafe() {
   const [orden, setOrden] = useState(null);
   const [envioComprobante, setEnvioComprobante] = useState(null); // null | subiendo | subido | error
   const [lote, setLote] = useState(FINCAS[0]);
+  // El tab Fincas puede estar mirando una finca placeholder (punto 3): barra,
+  // Carta y carrito siempre usan una finca real.
+  const loteBarra = lote.placeholder ? FINCAS_EN_BARRA[0] : lote;
   const [taza, setTaza] = useState(TAZAS[1]);
   const [email, setEmail] = useState(() => {
     try { return localStorage.getItem("qc-email") || ""; } catch { return ""; }
@@ -3189,8 +3191,8 @@ export default function QuadroCafe() {
 
           <main style={{ flex: 1, overflow: "hidden", position: "relative" }}>
             <div key={tab} className="mo-tabswitch" style={{ height: "100%", "--tabdir": tabDir }}>
-              {tab === "inicio" && <Inicio ir={setTab} lote={lote} />}
-              {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={lote} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} carritoBtnRef={carritoBtnRef} />}
+              {tab === "inicio" && <Inicio ir={setTab} lote={loteBarra} />}
+              {tab === "menu" && <Menu carrito={carrito} add={add} quitar={quitar} lote={loteBarra} setLote={setLote} taza={taza} setTaza={setTaza} onBack={irInicio} carritoBtnRef={carritoBtnRef} />}
               {tab === "fincas" && <Fincas lote={lote} setLote={setLote} onBack={irInicio} />}
               {tab === "maquinas" && <Laboratorio onBack={irInicio} />}
               {tab === "academia" && <Academia taza={taza} setTaza={setTaza} onBack={irInicio} />}
@@ -3250,7 +3252,7 @@ export default function QuadroCafe() {
           </div>
 
           {verCarrito && (
-            <Carrito carrito={carrito} lote={lote} taza={taza}
+            <Carrito carrito={carrito} lote={loteBarra} taza={taza}
               cerrar={() => setVerCarrito(false)} quitar={quitar}
               enviarABarra={enviarABarra} />
           )}
