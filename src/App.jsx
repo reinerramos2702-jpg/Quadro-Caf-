@@ -3,7 +3,7 @@ import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
-  Banknote, Smartphone, Landmark, DollarSign, Coins,
+  Banknote, Smartphone, Landmark, DollarSign, Coins, ImagePlus, Receipt, Clock,
   Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame,
 } from "lucide-react";
 
@@ -2640,6 +2640,34 @@ function Admin({ onBack }) {
 
 /* ============================ CARRITO ============================ */
 
+/* Comprobante de pago (punto 13, reunión 05/sept). Se comprime en el propio
+   teléfono con canvas (sin librería) antes de subirlo: una captura de un
+   iPhone pesa 2-4 MB y el bucket admite 5 MB; a 1600px de lado y JPEG 0.8 queda
+   en ~150-400 KB, sobra para que el OCR lea montos y referencias. */
+async function comprimirComprobante(file, max = 1600, calidad = 0.8) {
+  const bmp = await createImageBitmap(file);
+  const escala = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const lienzo = document.createElement("canvas");
+  lienzo.width = Math.round(bmp.width * escala);
+  lienzo.height = Math.round(bmp.height * escala);
+  lienzo.getContext("2d").drawImage(bmp, 0, 0, lienzo.width, lienzo.height);
+  bmp.close?.();
+  return new Promise((ok, falla) => lienzo.toBlob((b) => (b ? ok(b) : falla(new Error("toBlob"))), "image/jpeg", calidad));
+}
+
+/* Sube el comprobante de una orden ya creada y dispara el OCR sin esperarlo:
+   el resultado llega al Ticket y a la barra por Realtime (el trigger de 0005
+   marca la orden 'pendiente' al subir; la edge function deja el estado final).
+   Si algo de esto falla, el pedido ya está en barra igual. */
+async function subirComprobante(ordenId, blob) {
+  const { error } = await supabase.storage.from("comprobantes")
+    .upload(`${ordenId}.jpg`, blob, { contentType: "image/jpeg", upsert: false });
+  if (error) throw error;
+  supabase.functions.invoke("verificar-comprobante", { body: { orden_id: ordenId } })
+    .then(({ error: e }) => { if (e) console.warn("[Comprobante] OCR no disponible:", e.message); })
+    .catch((e) => console.warn("[Comprobante] OCR no disponible:", e?.message || e));
+}
+
 function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
   const { C } = useTheme();
   const total = carrito.reduce((s, i) => s + i.precio, 0);
@@ -2655,6 +2683,27 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
   const [error, setError] = useState("");
   const elegido = METODOS_PAGO.find((m) => m.id === metodo);
 
+  // Comprobante opcional — solo tiene sentido para pagos que dejan captura
+  // (todo menos efectivo). Nunca es obligatorio para enviar el pedido.
+  const pideComprobante = metodo !== "efectivo";
+  const [comprobante, setComprobante] = useState(null); // { blob, url }
+  const [procesandoImg, setProcesandoImg] = useState(false);
+  const [errorImg, setErrorImg] = useState("");
+  useEffect(() => () => { if (comprobante) URL.revokeObjectURL(comprobante.url); }, [comprobante]);
+  const elegirComprobante = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setErrorImg(""); setProcesandoImg(true);
+    try {
+      const blob = await comprimirComprobante(file);
+      setComprobante({ blob, url: URL.createObjectURL(blob) });
+    } catch {
+      setErrorImg("No pudimos abrir esa imagen. Prueba con una captura de pantalla.");
+    }
+    setProcesandoImg(false);
+  };
+
   const onEnviar = async () => {
     if (!nombre.trim()) { setError("Escribe tu nombre para la orden."); return; }
     setError(""); setEnviando(true);
@@ -2662,7 +2711,10 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
       id: f.id, nombre: f.nombre, precio: f.precio, cantidad: f.n,
       ...(f.finca ? { finca: lote.finca, taza: taza.nombre } : {}),
     }));
-    const res = await enviarABarra({ metodo, nombre: nombre.trim(), destino: entrega, items, total });
+    const res = await enviarABarra({
+      metodo, nombre: nombre.trim(), destino: entrega, items, total,
+      comprobante: pideComprobante ? comprobante?.blob || null : null,
+    });
     setEnviando(false);
     if (!res.ok) setError(res.error);
   };
@@ -2748,6 +2800,39 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
               })}
             </div>
 
+            {pideComprobante && (
+              <div key="comprobante" className="slide">
+                <div className="mono" style={{ fontSize: 10, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase", margin: "18px 0 8px" }}>
+                  Comprobante <span style={{ letterSpacing: ".06em", opacity: .75 }}>· opcional</span>
+                </div>
+                {procesandoImg ? (
+                  <div className="mo-skeleton" style={{ height: 64, borderRadius: 12 }} />
+                ) : comprobante ? (
+                  <div className="pop" style={{
+                    display: "flex", alignItems: "center", gap: 12, padding: 8, borderRadius: 12,
+                    border: `1px solid ${C.brand}`, background: `${C.brand}14`,
+                  }}>
+                    <img src={comprobante.url} alt="Comprobante adjunto" style={{ width: 48, height: 48, borderRadius: 8, objectFit: "cover", display: "block" }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12.5, fontWeight: 600, color: C.brand }}>Comprobante listo</div>
+                      <div style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>Lo verificamos al enviar el pedido</div>
+                    </div>
+                    <button onClick={() => setComprobante(null)} className="mo-press" aria-label="Quitar comprobante" style={btnMiniStyle(C)}><X size={14} /></button>
+                  </div>
+                ) : (
+                  <label className="mo-press" style={{
+                    display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, cursor: "pointer",
+                    border: `1px dashed ${C.line}`, color: C.text,
+                  }}>
+                    <ImagePlus size={17} color={C.brand} />
+                    <span style={{ fontSize: 12.5, fontWeight: 600 }}>Adjuntar captura del pago</span>
+                    <input type="file" accept="image/*" onChange={elegirComprobante} style={{ display: "none" }} />
+                  </label>
+                )}
+                {errorImg && <p style={{ fontSize: 11.5, color: C.warn, margin: "6px 0 0" }}>{errorImg}</p>}
+              </div>
+            )}
+
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", margin: "18px 0 16px" }}>
               <span className="mono" style={{ fontSize: 11, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase" }}>Total</span>
               <span className="disp" style={{ fontSize: 30 }}><AnimatedNumber value={total} format={money} /></span>
@@ -2762,7 +2847,7 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
               {enviando ? "Enviando…" : "Enviar a barra"}
             </button>
             <p className="mono" style={{ fontSize: 10, color: C.textMuted, textAlign: "center", marginTop: 10 }}>
-              {elegido.nota}
+              {pideComprobante && comprobante ? "Se revisa automáticamente · la barra confirma" : elegido.nota}
             </p>
           </>
         )}
@@ -2890,6 +2975,7 @@ export default function QuadroCafe() {
   const carritoBtnRef = useRef(null); // blanco del "fly to cart" de Carta (Fase 3)
   const badgeRef = useRetriggerAnim(carrito.length); // bounce del badge al sumar/restar (Fase 3)
   const [orden, setOrden] = useState(null);
+  const [envioComprobante, setEnvioComprobante] = useState(null); // null | subiendo | subido | error
   const [lote, setLote] = useState(FINCAS[0]);
   const [taza, setTaza] = useState(TAZAS[1]);
   const [email, setEmail] = useState(() => {
@@ -2969,7 +3055,7 @@ export default function QuadroCafe() {
   // Inserta la orden real en Supabase — número secuencial y estado los pone
   // el trigger/la barra, no el cliente. Devuelve {ok:false, error} en vez de
   // lanzar, para que el carrito pueda mostrar el problema sin romperse.
-  const enviarABarra = async ({ metodo, nombre, destino, items, total }) => {
+  const enviarABarra = async ({ metodo, nombre, destino, items, total, comprobante }) => {
     if (!supabase) {
       console.warn("No se pudo enviar la orden: Supabase no está configurado.");
       return { ok: false, error: "No se pudo conectar con la barra. Intenta de nuevo en un momento." };
@@ -2984,6 +3070,14 @@ export default function QuadroCafe() {
     setOrden(data);
     setVerCarrito(false);
     setCarrito([]);
+    // Comprobante (punto 13): recién ahora, con la orden ya en barra, y sin
+    // esperarlo — el pedido nunca depende de que la subida o el OCR salgan bien.
+    setEnvioComprobante(comprobante ? "subiendo" : null);
+    if (comprobante) {
+      subirComprobante(data.id, comprobante)
+        .then(() => setEnvioComprobante("subido"))
+        .catch((e) => { console.warn("[Comprobante] No se pudo subir:", e?.message || e); setEnvioComprobante("error"); });
+    }
     return { ok: true };
   };
 
@@ -3116,7 +3210,7 @@ export default function QuadroCafe() {
               cerrar={() => setVerCarrito(false)} quitar={quitar}
               enviarABarra={enviarABarra} />
           )}
-          {orden && <Ticket orden={orden} cerrar={() => setOrden(null)} />}
+          {orden && <Ticket orden={orden} envioComprobante={envioComprobante} cerrar={() => setOrden(null)} />}
         </div>
       </div>
     </ThemeCtx.Provider>
