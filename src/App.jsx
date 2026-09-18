@@ -3,7 +3,7 @@ import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
-  Banknote, Smartphone, Landmark, DollarSign,
+  Banknote, Smartphone, Landmark, DollarSign, Coins,
   Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame,
 } from "lucide-react";
 
@@ -511,6 +511,9 @@ const METODOS_PAGO = [
   { id: "movil", nombre: "Pago móvil", nota: "Datos en caja al confirmar", icono: Smartphone },
   { id: "zelle", nombre: "Zelle", nota: "Datos en caja al confirmar", icono: DollarSign },
   { id: "transferencia", nombre: "Transferencia", nota: "Datos en caja al confirmar", icono: Landmark },
+  // Punto 12 (reunión 05/sept). lucide no trae el logo de Binance: Coins es
+  // el ícono genérico de cripto más cercano, sin usar marca de terceros.
+  { id: "binance", nombre: "Binance Pay", nota: "Datos en caja al confirmar", icono: Coins },
 ];
 
 // Para acá / para llevar — el cliente elige antes de enviar a barra, viaja con la orden.
@@ -2726,10 +2729,14 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
               Cómo vas a pagar
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-              {METODOS_PAGO.map((m) => {
+              {METODOS_PAGO.map((m, i) => {
                 const Icono = m.icono, on = m.id === metodo;
+                // Con un número impar de métodos (5 desde Binance), el último
+                // ocupa las dos columnas en vez de quedar huérfano a la izquierda.
+                const ultimoSolo = i === METODOS_PAGO.length - 1 && METODOS_PAGO.length % 2 === 1;
                 return (
                   <button key={m.id} onClick={() => setMetodo(m.id)} className="press" style={{
+                    gridColumn: ultimoSolo ? "1 / -1" : undefined,
                     display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: 12,
                     border: `1px solid ${on ? C.brand : C.line}`, background: on ? `${C.brand}14` : "transparent",
                     color: on ? C.brand : C.text, cursor: "pointer", textAlign: "left",
