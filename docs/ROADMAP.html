@@ -1,0 +1,713 @@
+<title>Quadro Café Roadmap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg:#f6efe4;
+    --surface:#ffffff;
+    --surface-2:#efe4d3;
+    --border:#ddccb2;
+    --text:#231d15;
+    --text-dim:#6b6053;
+    --accent:#3b574c;
+    --accent-ink:#ffffff;
+    --crema:#e9d8c6;
+    --done:#3f7d52;
+    --done-bg:#e3f0e6;
+    --progress:#a8752b;
+    --progress-bg:#f6e8d1;
+    --pending:#6b6053;
+    --pending-bg:#eee6d8;
+    --deferred:#a4553c;
+    --deferred-bg:#f3e1da;
+    --shadow: 0 1px 2px rgba(35,29,21,.06), 0 8px 24px rgba(35,29,21,.06);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#131c18;
+      --surface:#1b2622;
+      --surface-2:#22302a;
+      --border:#354942;
+      --text:#f1ece1;
+      --text-dim:#a8b3ab;
+      --accent:#7fac93;
+      --accent-ink:#0f1714;
+      --crema:#e9d8c6;
+      --done:#7fce9a;
+      --done-bg:#1e332a;
+      --progress:#e3b768;
+      --progress-bg:#3a2f1c;
+      --pending:#9aa79f;
+      --pending-bg:#233029;
+      --deferred:#e39178;
+      --deferred-bg:#3a241d;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#131c18;
+    --surface:#1b2622;
+    --surface-2:#22302a;
+    --border:#354942;
+    --text:#f1ece1;
+    --text-dim:#a8b3ab;
+    --accent:#7fac93;
+    --accent-ink:#0f1714;
+    --crema:#e9d8c6;
+    --done:#7fce9a;
+    --done-bg:#1e332a;
+    --progress:#e3b768;
+    --progress-bg:#3a2f1c;
+    --pending:#9aa79f;
+    --pending-bg:#233029;
+    --deferred:#e39178;
+    --deferred-bg:#3a241d;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter Tight',system-ui,sans-serif;
+    padding-inline:20px;
+    padding-block:28px 80px;
+  }
+  .wrap{max-width:1180px;margin-inline:auto;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;text-wrap:balance;margin:0;}
+  a{color:var(--accent);}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    margin-bottom:28px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .mark{
+    width:46px;height:46px;background:var(--accent);
+    clip-path:polygon(0 0,100% 0,100% 100%,58% 100%,58% 62%,0 62%);
+    flex:none;
+  }
+  .brand-text .eyebrow{
+    font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);font-weight:600;
+  }
+  .brand-text h1{font-size:1.55rem;font-weight:600;line-height:1.1;}
+  .topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .btn{
+    font-family:inherit;font-size:.85rem;font-weight:600;
+    border:1px solid var(--border);background:var(--surface);color:var(--text);
+    padding:9px 14px;border-radius:999px;cursor:pointer;text-decoration:none;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+  .btn:hover{filter:brightness(1.05);}
+
+  /* ---------- Stat row ---------- */
+  .stats{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;margin-bottom:28px;
+  }
+  .stat{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px 18px;box-shadow:var(--shadow);
+  }
+  .stat .num{font-family:'Fraunces',serif;font-size:2rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;}
+  .stat .label{font-size:.78rem;color:var(--text-dim);margin-top:6px;}
+
+  /* ---------- Progress ---------- */
+  .progress-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:28px;box-shadow:var(--shadow);
+  }
+  .progress-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:10px;flex-wrap:wrap;}
+  .progress-head h3{font-size:1.05rem;font-weight:600;}
+  .progress-track{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .4s ease;width:0%;}
+  .progress-note{font-size:.78rem;color:var(--text-dim);margin-top:8px;}
+
+  /* ---------- Palette ---------- */
+  .palette-section{margin-bottom:32px;}
+  .palette-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+  .swatch{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);}
+  .swatch .fill{height:64px;}
+  .swatch .info{padding:9px 11px;background:var(--surface);}
+  .swatch .name{font-size:.8rem;font-weight:600;}
+  .swatch .hex{font-size:.72rem;color:var(--text-dim);}
+
+  /* ---------- Layout grid ---------- */
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;}
+  @media (max-width:860px){.grid{grid-template-columns:1fr;}}
+
+  section.card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:20px 22px;margin-bottom:24px;box-shadow:var(--shadow);
+  }
+  section.card > h2{font-size:1.25rem;font-weight:600;margin-bottom:4px;}
+  .card-sub{font-size:.85rem;color:var(--text-dim);margin-bottom:16px;}
+
+  /* ---------- Checklist items ---------- */
+  .item{
+    display:flex;gap:12px;padding:14px 0;border-top:1px solid var(--border);
+  }
+  .item:first-of-type{border-top:none;}
+  .item.done .item-title{text-decoration:line-through;color:var(--text-dim);}
+  .chk{
+    appearance:none;width:22px;height:22px;border-radius:6px;border:2px solid var(--border);
+    flex:none;margin-top:2px;cursor:pointer;position:relative;background:var(--surface-2);
+  }
+  .chk:checked{background:var(--done);border-color:var(--done);}
+  .chk:checked::after{
+    content:"";position:absolute;left:6px;top:2px;width:6px;height:11px;
+    border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:rotate(40deg);
+  }
+  .item-body{flex:1;min-width:0;}
+  .item-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;}
+  .item-title{font-weight:600;font-size:.98rem;}
+  .item-num{font-family:'JetBrains Mono',monospace;color:var(--text-dim);font-size:.78rem;margin-right:6px;}
+  .item-desc{font-size:.87rem;color:var(--text-dim);margin-top:4px;line-height:1.5;}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;}
+  .tag{
+    font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:3px 8px;border-radius:999px;white-space:nowrap;
+  }
+  .tag.pending{background:var(--pending-bg);color:var(--pending);}
+  .tag.progress{background:var(--progress-bg);color:var(--progress);}
+  .tag.done{background:var(--done-bg);color:var(--done);}
+  .tag.stable{background:var(--deferred-bg);color:var(--deferred);}
+
+  .diff-note{
+    margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--surface-2);
+    font-size:.82rem;color:var(--text-dim);border:1px dashed var(--border);
+  }
+
+  /* ---------- module pills (sidebar) ---------- */
+  .pill-list{display:flex;flex-direction:column;gap:8px;}
+  .pill{
+    display:flex;justify-content:space-between;gap:8px;align-items:center;
+    padding:9px 12px;border-radius:10px;background:var(--surface-2);font-size:.85rem;
+  }
+  .pill .dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .pill-left{display:flex;align-items:center;gap:8px;min-width:0;}
+  .pill-left span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+  /* ---------- timeline ---------- */
+  .timeline{display:flex;flex-direction:column;}
+  .tl-item{display:flex;gap:14px;padding:12px 0;border-top:1px solid var(--border);}
+  .tl-item:first-of-type{border-top:none;}
+  .tl-dot{width:12px;height:12px;border-radius:50%;background:var(--done);flex:none;margin-top:5px;}
+  .tl-item.warn .tl-dot{background:var(--progress);}
+  .tl-item.open .tl-dot{background:var(--pending);}
+  .tl-body{flex:1;}
+  .tl-title{font-weight:600;font-size:.92rem;}
+  .tl-desc{font-size:.83rem;color:var(--text-dim);margin-top:2px;line-height:1.5;}
+  .tl-date{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-dim);}
+
+  /* ---------- next steps ---------- */
+  .steps{counter-reset:step;display:flex;flex-direction:column;gap:0;}
+  .step{
+    display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--border);
+  }
+  .step:first-of-type{border-top:none;}
+  .step-num{
+    counter-increment:step;font-family:'Fraunces',serif;font-weight:600;font-size:1.1rem;
+    color:var(--accent);flex:none;width:28px;
+  }
+  .step-num::before{content:counter(step);}
+  .step-title{font-weight:600;font-size:.92rem;}
+  .step-desc{font-size:.83rem;color:var(--text-dim);margin-top:2px;line-height:1.5;}
+
+  /* ---------- notes ---------- */
+  textarea{
+    width:100%;min-height:130px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface-2);color:var(--text);font-family:'Inter Tight',sans-serif;
+    font-size:.88rem;padding:12px;resize:vertical;line-height:1.5;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .save-state{font-size:.72rem;color:var(--text-dim);margin-top:6px;height:14px;}
+  .idea-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .idea-tag{
+    font-size:.78rem;padding:6px 10px;border-radius:8px;background:var(--surface-2);
+    border:1px solid var(--border);color:var(--text-dim);
+  }
+
+  .footer{
+    margin-top:36px;text-align:center;font-size:.78rem;color:var(--text-dim);
+  }
+  .footer .btn{margin-top:10px;}
+
+  ::selection{background:var(--accent);color:var(--accent-ink);}
+
+  @media (prefers-reduced-motion: reduce){
+    .progress-fill{transition:none;}
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div class="brand-text">
+        <div class="eyebrow">Roadmap interno · RAI Agency</div>
+        <h1>Quadro Café — Estado del Proyecto</h1>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a class="btn" href="https://quadro-cafe.reinerramos2702.workers.dev/" target="_blank" rel="noopener">App en vivo ↗</a>
+      <a class="btn" href="https://github.com/reinerramos2702-jpg/Quadro-Caf-" target="_blank" rel="noopener">Repo ↗</a>
+      <button class="btn primary" id="reset-btn" type="button">Reiniciar checklist</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num">8</div><div class="label">Bloques trabajados (1–8)</div></div>
+    <div class="stat"><div class="num">6</div><div class="label">Bloques desplegados en producción</div></div>
+    <div class="stat"><div class="num">12</div><div class="label">Puntos reunión 05/sept en alcance</div></div>
+    <div class="stat"><div class="num">1</div><div class="label">Rama pendiente de merge (nav-dvh-viewport)</div></div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-head">
+      <h3>Checklist reunión con el dueño (05/sept) — para la presentación de mañana</h3>
+      <span class="mono" id="progress-count" style="font-size:.85rem;color:var(--text-dim);">0 / 12</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-note">Marca cada punto al terminarlo — el estado se guarda en este navegador. Los 3 puntos diferidos (5, 6, 9) no cuentan aquí: van aparte, presupuesto futuro.</div>
+  </div>
+
+  <div class="palette-section">
+    <h2 style="font-size:1.15rem;margin-bottom:4px;">Paleta de marca — Quadro Café</h2>
+    <div class="card-sub">Colores oficiales confirmados + referencia visual de las 5 tazas (codifican categoría de menú).</div>
+    <div class="palette-grid">
+      <div class="swatch"><div class="fill" style="background:#3b574c;"></div><div class="info"><div class="name">Verde primario</div><div class="hex">#3B574C — oficial</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#e9d8c6;"></div><div class="info"><div class="name">Crema secundario</div><div class="hex">#E9D8C6 — oficial</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#c56b42;"></div><div class="info"><div class="name">Taza terracota</div><div class="hex">referencia visual</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#2f4a3a;"></div><div class="info"><div class="name">Taza verde bosque</div><div class="hex">referencia visual</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#f2ece1;border-bottom:1px solid var(--border);"></div><div class="info"><div class="name">Taza blanco</div><div class="hex">referencia visual</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#7a2f28;"></div><div class="info"><div class="name">Taza roja / terracota oscuro</div><div class="hex">referencia visual</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#1c2b40;"></div><div class="info"><div class="name">Taza azul marino</div><div class="hex">referencia visual</div></div></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- MAIN COLUMN -->
+    <div>
+
+      <section class="card">
+        <h2>Los 12 puntos en alcance (reunión 05/sept)</h2>
+        <div class="card-sub">Prompt completo para Claude Code ya escrito (<span class="mono">PROMPT_REUNION_05SEPT_12PUNTOS.md</span>). Regla de git: rama nueva <span class="mono">quadro-feature-reunion-05sept</span> desde <span class="mono">main</span>, modo plan primero, nunca merge sin tu aprobación explícita.</div>
+
+        <div id="checklist">
+          <div class="item" data-id="p1">
+            <input type="checkbox" class="chk" id="chk-p1">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">01</span><label class="item-title" for="chk-p1">UI/UX Premium general</label></div>
+                <div class="tags"><span class="tag pending">Dirección general</span></div>
+              </div>
+              <div class="item-desc">Reforzar el look premium ya establecido (sistema de animaciones <span class="mono">qc-*</span>, dark UI) en los módulos que sí están en este batch — sin librerías nuevas, sin tocar módulos fuera de alcance.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p2">
+            <input type="checkbox" class="chk" id="chk-p2">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">02</span><label class="item-title" for="chk-p2">Más imágenes en Carta</label></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag progress">En curso</span></div>
+              </div>
+              <div class="item-desc">1 foto real por producto, junto al título/descripción (no en el banner). Fotoproducto de Bollería vía DALL-E ya en marcha con los 9 prompts entregados — se van integrando por producto.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p3">
+            <input type="checkbox" class="chk" id="chk-p3">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">03</span><label class="item-title" for="chk-p3">Curar roster de Fincas</label></div>
+                <div class="tags"><span class="tag pending">Pendiente</span></div>
+              </div>
+              <div class="item-desc">Dejar solo "Agua Fría" (avatar D-ID intacto). Integrar "Los Naranjos" (Falsir Dúran, Mérida, 99ha, Castilla/Caturra/Villa Nueva). "Santa Rosa" y "Buenos Aires" con estructura lista + placeholder — faltan datos reales. <strong>Decidido 18/sept: se saca a Elio/Rosa/Mina</strong>, reemplaza la regla vieja "no tocar Elio".</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p4">
+            <input type="checkbox" class="chk" id="chk-p4">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">04</span><label class="item-title" for="chk-p4">Renombrar copy Quadro Club</label></div>
+                <div class="tags"><span class="tag pending">Quick win</span></div>
+              </div>
+              <div class="item-desc">Texto exacto: "Suscríbete a la Newsletter para recibir premios o descuentos especiales."</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p7">
+            <input type="checkbox" class="chk" id="chk-p7">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">07</span><label class="item-title" for="chk-p7">Ubicación de "comparar"</label></div>
+                <div class="tags"><span class="tag done">Ya decidido</span></div>
+              </div>
+              <div class="item-desc">Se queda en Fincas, dentro de <span class="mono">FichaLote</span> — sin módulo nuevo. Solo pulir UI (punto 1) si hay margen.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p8">
+            <input type="checkbox" class="chk" id="chk-p8">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">08</span><label class="item-title" for="chk-p8">Ficha técnica por finca</label></div>
+                <div class="tags"><span class="tag pending">Pendiente</span></div>
+              </div>
+              <div class="item-desc">Altura, variedad, proceso, puntaje SCA por finca. Santa Rosa / Buenos Aires: estructura con placeholder.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p10">
+            <input type="checkbox" class="chk" id="chk-p10">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">10</span><label class="item-title" for="chk-p10">Nuevo módulo "Tienda"</label></div>
+                <div class="tags"><span class="tag pending">Módulo nuevo</span></div>
+              </div>
+              <div class="item-desc">Merchandising (bolsas de grano, accesorios). Nav: justo después de "Fincas". Sin catálogo real aún → <strong>decidido 18/sept: tarjetas "Próximamente"</strong> (tipo genérico, sin nombre ni precio inventado — coherente con la política anti-invención del proyecto).</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p11">
+            <input type="checkbox" class="chk" id="chk-p11">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">11</span><label class="item-title" for="chk-p11">Nuevos productos en Carta</label></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag pending">Bloqueado</span></div>
+              </div>
+              <div class="item-desc">Falta que pases la lista completa — solo se deja el punto de entrada listo, no se inventa contenido. <strong>Confirmado 18/sept:</strong> sin fotos ni lista en repo ni <span class="mono">_incoming/</span> todavía, se sigue con solo estructura.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p12">
+            <input type="checkbox" class="chk" id="chk-p12">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">12</span><label class="item-title" for="chk-p12">Método de pago Binance</label></div>
+                <div class="tags"><span class="tag stable">Cart/Checkout — autorizado</span><span class="tag pending">Quick win</span></div>
+              </div>
+              <div class="item-desc">Sumar junto a Efectivo / Pago móvil / Zelle / Transferencia — mismo patrón de UI, extender el componente existente.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p13">
+            <input type="checkbox" class="chk" id="chk-p13">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">13</span><label class="item-title" for="chk-p13">OCR de comprobante de pago</label></div>
+                <div class="tags"><span class="tag stable">Cart/Checkout — autorizado</span><span class="tag progress">Mayor esfuerzo</span></div>
+              </div>
+              <div class="item-desc">Subir captura del comprobante y verificarla vía OCR. Definir si va client-side o edge function (cuidado con peso del bundle) + fallback manual si el OCR falla.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p14">
+            <input type="checkbox" class="chk" id="chk-p14">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">14</span><label class="item-title" for="chk-p14">Renombrar "Panadería" → "Bollería"</label></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag pending">Quick win</span></div>
+              </div>
+              <div class="item-desc">Solo cambio de copy/label — no reestructurar la categoría.</div>
+            </div>
+          </div>
+
+          <div class="item" data-id="p15">
+            <input type="checkbox" class="chk" id="chk-p15">
+            <div class="item-body">
+              <div class="item-top">
+                <div><span class="item-num">15</span><label class="item-title" for="chk-p15">Fix visual: "E" de "Quadro Café"</label></div>
+                <div class="tags"><span class="tag pending">Quick win</span></div>
+              </div>
+              <div class="item-desc">La "E" del banner se ve más chica que el resto — corregir tamaño/alineación en la tipografía del header. Confirmar con captura antes/después.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diff-note">
+          <strong>Diferido (presupuesto aparte, no tocar ahora):</strong> punto 5 — sistema de puntos de fidelidad (1pt/$1, canje en tienda) · punto 6 — quiz de trivia en Academia · punto 9 — minijuego estilo Pokémon en Carta.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Pendientes técnicos previos a esta reunión</h2>
+        <div class="card-sub">No forman parte del batch 05/sept, pero afectan lo que se muestra mañana.</div>
+        <div class="timeline">
+          <div class="tl-item warn">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Fase 1/6 "Alta Gama" — fotos de tazas, reabierta</div>
+              <div class="tl-desc">Se dio por cerrada pero producción seguía mostrando el SVG viejo. Falta confirmar con evidencia (commit en <span class="mono">origin/main</span>, deploy actual, o descartar caché de PWA) antes de mostrarla como resuelta.</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Rama <span class="mono">fix/nav-dvh-viewport</span> sin mergear</div>
+              <div class="tl-desc">26 commits, fix real de viewport dvh en mobile. Única rama realmente pendiente de tu revisión/decisión.</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Sonido real en botón "+" de Carta</div>
+              <div class="tl-desc">Esperando que subas el video a <span class="mono">_incoming/</span> para extraer el audio. Incluye migrar el toggle de sonido de <span class="mono">localStorage</span> a algo que no persista el mute entre cierres (ON por defecto cada sesión nueva).</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Avatar / mascota de marca</div>
+              <div class="tl-desc">Sin decidir entre "Cafetito" (grano antropomorfo) y "Cosechero" (niño cafetalero) — confirmar qué se habló en la reunión.</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque UI-4 (cards/carrusel en Fincas)</div>
+              <div class="tl-desc">Siguiente en la cola de animaciones, sin empezar. UI-2, UI-3 (Carta) y UI-6 (login) en pausa — tocan módulos production-stable.</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">CLS 0.102 mobile sin resolver</div>
+              <div class="tl-desc">3 layout shifts sin identificar el elemento exacto — resolver antes de sumar más bloques de animación.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Bloques completados — historial</h2>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 1 — Design tokens, tipografía, splash</div>
+              <div class="tl-desc">Marco Quadro, splash animado. En producción.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 2 — Pipeline de assets</div>
+              <div class="tl-desc">18 WebP responsivos en 3 tamaños, color dominante como placeholder (sin blur). En producción.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 3 — Carta conectada a Supabase</div>
+              <div class="tl-desc">Tabla <span class="mono">productos</span> real, badge "Agotado hoy" cuando se apaga disponibilidad desde Admin. Confirmado en producción.</div>
+            </div>
+          </div>
+          <div class="tl-item warn">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 4 — Carrito y pago (parcial)</div>
+              <div class="tl-desc">Picker de método de pago (Efectivo/Pago móvil/Zelle/Transferencia) verificado. Faltan los puntos 12 (Binance) y 13 (OCR) de esta reunión.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 5 — Panel Admin</div>
+              <div class="tl-desc">Login Supabase, edición de precio/disponibilidad en línea, "Agregar producto", recuperación de clave. En producción.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 6 — Lab 3D</div>
+              <div class="tl-desc">Espiral del simulador migrada a TubeGeometry Three.js real, aislada en lazy-load. En producción.</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 7 — Fincas + fusión de roster</div>
+              <div class="tl-desc">Es exactamente el punto 3 de esta reunión — pendiente.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Bloque 8 — Dashboard de Barra (/#barra)</div>
+              <div class="tl-desc">Recibe y gestiona órdenes desde la computadora del local. Confirmado funcionando en producción, sin pendientes.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+      <section class="card">
+        <h2 style="font-size:1.05rem;">Stack &amp; repo</h2>
+        <div class="pill-list">
+          <div class="pill"><div class="pill-left"><span>Frontend</span></div><span class="mono">React + Tailwind</span></div>
+          <div class="pill"><div class="pill-left"><span>Backend</span></div><span class="mono">Supabase</span></div>
+          <div class="pill"><div class="pill-left"><span>Hosting</span></div><span class="mono">Cloudflare Workers</span></div>
+          <div class="pill"><div class="pill-left"><span>Deploy</span></div><span class="mono">auto desde main</span></div>
+          <div class="pill"><div class="pill-left"><span>Repo</span></div><span class="mono">Quadro-Caf-</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:1.05rem;">Módulos production-stable</h2>
+        <div class="card-sub">No tocar sin razón — excepción puntual autorizada 05/sept en Carta y Cart/Checkout.</div>
+        <div class="pill-list">
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Carta</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Cart / Checkout</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Panel Admin</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Dashboard Barista (/#barra)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Nav líquido (Bloque UI-1 v2)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--progress);"></span><span>Fincas — avatar Elio (bug aspect ratio)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Fincas — avatar Agua Fría (José Tomás)</span></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:1.05rem;">Próximos pasos priorizados</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num"></div>
+            <div><div class="step-title">Cerrar los 12 puntos de la reunión</div><div class="step-desc">Enviar el prompt a Claude Code en plan mode, rama <span class="mono">quadro-feature-reunion-05sept</span>.</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num"></div>
+            <div><div class="step-title">Confirmar Fase 1/6 (fotos de tazas)</div><div class="step-desc">Evidencia de commit + deploy antes de darla por cerrada.</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num"></div>
+            <div><div class="step-title">Resolver <span class="mono">fix/nav-dvh-viewport</span></div><div class="step-desc">Revisar los 26 commits y decidir merge a main.</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num"></div>
+            <div><div class="step-title">Sonido real botón "+"</div><div class="step-desc">Subir el video a <span class="mono">_incoming/</span> cuando esté listo.</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num"></div>
+            <div><div class="step-title">Decidir mascota de marca</div><div class="step-desc">Cafetito vs Cosechero vs otra dirección.</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num"></div>
+            <div><div class="step-title">Instalar skill git-buenas-practicas</div><div class="step-desc">No está en tu máquina — escribir reglas de git explícitas en cada prompt mientras tanto.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:1.05rem;">Tus notas / ideas</h2>
+        <div class="card-sub">Se guarda solo en este navegador — anota lo que salga en la presentación de mañana.</div>
+        <textarea id="notes" placeholder="Ej: el dueño pidió mover Tienda antes de Fincas, revisar precio Binance, feedback de la reunión..."></textarea>
+        <div class="save-state" id="save-state"></div>
+        <div class="idea-tags">
+          <span class="idea-tag">💡 idea suelta</span>
+          <span class="idea-tag">❓ pregunta al dueño</span>
+          <span class="idea-tag">⚠️ riesgo</span>
+          <span class="idea-tag">💵 presupuesto aparte</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="footer">
+    Última actualización de este roadmap: <span id="last-updated" class="mono"></span> — actualízalo cada vez que cierres un bloque.
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var CHK_KEY = 'qc-roadmap-checklist-v1';
+  var NOTES_KEY = 'qc-roadmap-notes-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.chk'));
+  var fill = document.getElementById('progress-fill');
+  var count = document.getElementById('progress-count');
+  var notes = document.getElementById('notes');
+  var saveState = document.getElementById('save-state');
+  var resetBtn = document.getElementById('reset-btn');
+  var lastUpdated = document.getElementById('last-updated');
+
+  function safeGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function safeSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+  function updateProgress(){
+    var done = boxes.filter(function(b){ return b.checked; }).length;
+    var pct = boxes.length ? Math.round((done/boxes.length)*100) : 0;
+    fill.style.width = pct + '%';
+    count.textContent = done + ' / ' + boxes.length;
+  }
+
+  function loadState(){
+    var raw = safeGet(CHK_KEY);
+    var state = {};
+    if(raw){ try{ state = JSON.parse(raw); }catch(e){ state = {}; } }
+    boxes.forEach(function(b){
+      var item = b.closest('.item');
+      var id = item ? item.getAttribute('data-id') : b.id;
+      if(state[id]){ b.checked = true; item.classList.add('done'); }
+    });
+    updateProgress();
+  }
+
+  function saveChecklist(){
+    var state = {};
+    boxes.forEach(function(b){
+      var item = b.closest('.item');
+      var id = item ? item.getAttribute('data-id') : b.id;
+      state[id] = b.checked;
+      if(item){ item.classList.toggle('done', b.checked); }
+    });
+    safeSet(CHK_KEY, JSON.stringify(state));
+    updateProgress();
+  }
+
+  boxes.forEach(function(b){ b.addEventListener('change', saveChecklist); });
+
+  if(resetBtn){
+    resetBtn.addEventListener('click', function(){
+      boxes.forEach(function(b){
+        b.checked = false;
+        var item = b.closest('.item');
+        if(item){ item.classList.remove('done'); }
+      });
+      safeSet(CHK_KEY, JSON.stringify({}));
+      updateProgress();
+    });
+  }
+
+  var notesTimer;
+  var savedNotes = safeGet(NOTES_KEY);
+  if(notes && savedNotes){ notes.value = savedNotes; }
+  if(notes){
+    notes.addEventListener('input', function(){
+      clearTimeout(notesTimer);
+      if(saveState){ saveState.textContent = 'Guardando…'; }
+      notesTimer = setTimeout(function(){
+        safeSet(NOTES_KEY, notes.value);
+        if(saveState){ saveState.textContent = 'Guardado en este navegador ✓'; }
+      }, 400);
+    });
+  }
+
+  if(lastUpdated){
+    lastUpdated.textContent = new Date().toLocaleDateString('es-VE', { year:'numeric', month:'long', day:'numeric' });
+  }
+
+  loadState();
+})();
+</script>
