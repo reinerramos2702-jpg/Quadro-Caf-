@@ -3279,6 +3279,23 @@ function OrdenCard({ orden, onAvanzar, onCancelar }) {
   const paso = Math.max(0, ESTADOS_ORDEN.findIndex((e) => e.id === orden.estado));
   const esUltimo = paso === ESTADOS_ORDEN.length - 1;
 
+  // Comprobante (punto 13, excepción autorizada en Barra: solo esta pastilla).
+  // La imagen vive en un bucket privado: se abre con una signed URL de 5 min,
+  // que solo puede pedir el staff autenticado. El OCR es una ayuda — la
+  // confirmación del pago la sigue haciendo el barista mirando la imagen.
+  const COMPROBANTE_UI = {
+    pendiente: { texto: "Comprobante · verificando", color: C.textMuted },
+    verificado: { texto: `Comprobante ✓ ${orden.comprobante_monto != null ? money(Number(orden.comprobante_monto)) : ""}`.trim(), color: C.brand },
+    revisar: { texto: "Comprobante · revisar", color: C.brandAlt },
+    sin_lectura: { texto: "Comprobante · sin lectura", color: C.warn },
+  };
+  const comp = COMPROBANTE_UI[orden.comprobante_estado];
+  const verComprobante = async () => {
+    const { data, error } = await supabase.storage.from("comprobantes").createSignedUrl(`${orden.id}.jpg`, 300);
+    if (error || !data?.signedUrl) { console.warn("[Barra] No se pudo abrir el comprobante:", error?.message); return; }
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
+
   return (
     <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -3304,6 +3321,14 @@ function OrdenCard({ orden, onAvanzar, onCancelar }) {
           <span className="mono" style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.textMuted, border: `1px solid ${C.line}`, borderRadius: 999, padding: "5px 10px" }}>
             <metodo.icono size={12} /> {metodo.nombre}
           </span>
+        )}
+        {comp && (
+          <button onClick={verComprobante} className="mono press" aria-label="Ver comprobante de pago" style={{
+            display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: comp.color, background: "transparent",
+            border: `1px solid ${comp.color}`, borderRadius: 999, padding: "5px 10px", cursor: "pointer",
+          }}>
+            <Receipt size={12} /> {comp.texto}{orden.comprobante_ref ? ` · …${orden.comprobante_ref}` : ""}
+          </button>
         )}
       </div>
 
