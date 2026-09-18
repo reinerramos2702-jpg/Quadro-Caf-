@@ -33,6 +33,29 @@ comment on column ordenes.comprobante_estado is
   'null = sin comprobante. pendiente = subido, OCR en curso o caído. verificado = monto leído coincide con el total. revisar = no coincide / otra moneda / dudoso. sin_lectura = no se pudo leer.';
 comment on column ordenes.comprobante_ref is 'Solo los últimos 4 caracteres de la referencia leída (la tabla ordenes es de lectura pública).';
 
+-- ── Blindaje: el cliente no puede traer un comprobante "ya verificado" ──────
+-- `ordenes` admite INSERT público con `with check (true)` (0002), así que sin
+-- esto cualquiera con la publishable key podía crear una orden con
+-- comprobante_estado='verificado' + un monto, y la barra mostraba
+-- "Comprobante ✓" sin imagen ni OCR. Ningún INSERT legítimo trae estas
+-- columnas: las escriben solo el trigger de Storage de abajo y la edge
+-- function, siempre por UPDATE (que en 0002 es solo para authenticated).
+create or replace function limpiar_comprobante_en_insert()
+returns trigger as $$
+begin
+  new.comprobante_estado := null;
+  new.comprobante_monto := null;
+  new.comprobante_ref := null;
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists ordenes_limpiar_comprobante on ordenes;
+create trigger ordenes_limpiar_comprobante
+  before insert on ordenes
+  for each row
+  execute function limpiar_comprobante_en_insert();
+
 -- ── Detalle completo del OCR (solo staff) ───────────────────────────────────
 create table if not exists comprobantes (
   orden_id uuid primary key references ordenes (id) on delete cascade,

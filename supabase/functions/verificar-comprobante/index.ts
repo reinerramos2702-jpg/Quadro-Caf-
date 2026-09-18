@@ -107,7 +107,14 @@ Deno.serve(async (req) => {
     });
     if (!r.ok) return cerrar("sin_lectura", { motivo: `Gemini respondió ${r.status}`, modelo });
     const cuerpo = await r.json();
-    lectura = JSON.parse(cuerpo?.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}");
+    const parseado = JSON.parse(cuerpo?.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}");
+    // Gemini puede devolver JSON válido que no es un objeto ("null", un
+    // array…). Sin esto, `...lectura` más abajo reventaba fuera del try y la
+    // orden quedaba en 'pendiente' para siempre.
+    if (!parseado || typeof parseado !== "object" || Array.isArray(parseado)) {
+      return cerrar("sin_lectura", { motivo: "respuesta del OCR sin forma de objeto", modelo });
+    }
+    lectura = parseado;
   } catch (e) {
     return cerrar("sin_lectura", { motivo: ctrl.signal.aborted ? "timeout" : `error OCR: ${e}`, modelo });
   } finally {

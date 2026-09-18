@@ -16,7 +16,7 @@ Foto del estado para retomar en una sesión nueva. Se actualiza al cerrar cada p
 |---|---|---|
 | 14 | Panadería → Bollería | ✅ Commiteado (`e78a0d9`) |
 | 12 | Binance Pay | ✅ Commiteado (`39435dd`) |
-| 13 | Comprobante + OCR | ✅ Commiteado (`b57b2b2` a `80b76ad`, 5 commits) |
+| 13 | Comprobante + OCR | ✅ Commiteado (5 commits + fixes del code review) |
 | 2 | Foto por producto (estructura) | ✅ Estructura lista, sin fotos todavía |
 | 11 | Productos nuevos (punto de entrada) | ✅ Admin listo (+ etiqueta), sin contenido todavía |
 | 3 | Roster de Fincas (Agua Fría + Los Naranjos + 2 placeholder) | ✅ Commiteado |
@@ -27,11 +27,28 @@ Foto del estado para retomar en una sesión nueva. Se actualiza al cerrar cada p
 | 15 | "E" de "Quadro Café" en el header | ⚠️ No reproducible: falta captura del dispositivo |
 | 1 | Pulido premium general | ✅ Pasada acotada commiteada |
 
-## Pendientes fuera del código (Reiner, en Supabase)
+## Pendientes fuera del código (Reiner, a mano)
 
-- Correr `0004_metodo_binance.sql` y `0005_comprobantes.sql` en el SQL Editor (son aditivas).
-- Correr `0003_categoria_bolleria.sql` **recién al hacer el merge a `main`**.
-- `supabase functions deploy verificar-comprobante --no-verify-jwt` y cargar el secret `GEMINI_API_KEY`.
+Verificado por lectura en Supabase el 2026-09-18:
+1. Correr `0004_metodo_binance.sql` y `0005_comprobantes.sql` en el SQL Editor (**no están aplicadas**; son aditivas).
+2. Redesplegar la edge function: `supabase functions deploy verificar-comprobante --no-verify-jwt` (la desplegada es anterior al fix del code review).
+3. Confirmar o cargar el secret `GEMINI_API_KEY` (no se verificó).
+4. Revisar la rama y hacer el merge a `main` (solo Reiner).
+5. Correr `0003_categoria_bolleria.sql` **justo después** del deploy del merge.
+
+## Preguntas abiertas para Reiner
+
+- **Punto 15**: la "É" no se reproduce en Chrome ni en WebKit. Hace falta una captura del dispositivo donde se ve (modelo + iOS/navegador).
+- **Punto 4**: el título "Desbloquea tu ficha de cata", el botón "Quiero mi guía" y el subtítulo sobre puntos del Club siguen como estaban. ¿Se ajustan?
+- **Punto 3**: ¿"Falsir Durán" (el ROADMAP decía "Dúran") y el rol "Caficultor" están bien? ¿Tintes de color para Los Naranjos y un 4.º oscuro?
+- **Carta en producción**: hay un producto "Reiner" ($800, Filtrado, disponible), aparentemente de prueba, y el postre `m11` todavía menciona "lote Santa Cruz de Mora" (finca que salió del roster).
+
+## Verificación
+
+- Build de Vite en verde (el SW de workbox falla por el apóstrofo de la ruta, preexistente).
+- Bundle: 145.54 KB gzip (`main`) → 147.99 KB (rama).
+- Headless por CDP: cero errores de consola en 6 pestañas, 2 temas, 390/360px y `/#barra` (login).
+- Code review medium: 4 hallazgos, todos corregidos.
 
 ## Incidentes
 

@@ -2942,10 +2942,14 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
    base por Realtime (`estado`: pendiente/verificado/revisar/sin_lectura).
    El copy nunca dice "pago confirmado": el OCR solo compara el monto leído,
    la confirmación del pago sigue siendo de la barra. */
-function EstadoComprobante({ estado, envio, C }) {
+function EstadoComprobante({ estado, envio, demorado, C }) {
   if (!envio && !estado) return null;
   let icono = Clock, texto = "Verificando tu comprobante…", color = C.textMuted;
-  if (envio === "subiendo" && !estado) texto = "Subiendo tu comprobante…";
+  // Si el OCR nunca responde (la edge function cayó o la llamada se perdió
+  // en la red), la orden queda en 'pendiente' — no dejar al cliente mirando
+  // "Verificando…" para siempre: pasado OCR_ESPERA_MS se dice la verdad.
+  if (demorado && estado !== "verificado" && estado !== "revisar") { icono = Receipt; texto = "La barra verificará tu pago a mano"; }
+  else if (envio === "subiendo" && !estado) texto = "Subiendo tu comprobante…";
   else if (estado === "verificado") { icono = Check; texto = "El monto del comprobante coincide"; color = C.brand; }
   else if (estado === "revisar") { icono = Receipt; texto = "Comprobante recibido · la barra lo revisa"; color = C.brandAlt; }
   else if (estado === "sin_lectura" || (envio === "error" && !estado)) { icono = Receipt; texto = "La barra verificará tu pago a mano"; }
@@ -2960,10 +2964,20 @@ function EstadoComprobante({ estado, envio, C }) {
   );
 }
 
+// Cuánto se espera al OCR antes de darlo por perdido (Ticket y Barra).
+const OCR_ESPERA_MS = 90_000;
+
 function Ticket({ orden, envioComprobante, cerrar }) {
   const { C } = useTheme();
   const [estado, setEstado] = useState(orden.estado);
   const [comprobante, setComprobante] = useState(orden.comprobante_estado || null);
+  const [demorado, setDemorado] = useState(false);
+  const esperandoOcr = !!envioComprobante && envioComprobante !== "error" && (!comprobante || comprobante === "pendiente");
+  useEffect(() => {
+    if (!esperandoOcr) return;
+    const t = setTimeout(() => setDemorado(true), OCR_ESPERA_MS);
+    return () => clearTimeout(t);
+  }, [esperandoOcr]);
   const elegido = METODOS_PAGO.find((m) => m.id === orden.metodo_pago);
 
   // Escucha el estado real de la orden por Supabase Realtime — nada de
@@ -3029,7 +3043,7 @@ function Ticket({ orden, envioComprobante, cerrar }) {
             <elegido.icono size={13} /> {elegido.nombre}
           </div>
         )}
-        <EstadoComprobante estado={comprobante} envio={envioComprobante} C={C} />
+        <EstadoComprobante estado={comprobante} envio={envioComprobante} demorado={demorado} C={C} />
 
         <div style={{ textAlign: "left", maxWidth: 260, margin: "0 auto" }}>
           {ESTADOS_ORDEN.map((p, i) => (
@@ -3084,7 +3098,9 @@ export default function QuadroCafe() {
   const carritoBtnRef = useRef(null); // blanco del "fly to cart" de Carta (Fase 3)
   const badgeRef = useRetriggerAnim(carrito.length); // bounce del badge al sumar/restar (Fase 3)
   const [orden, setOrden] = useState(null);
-  const [envioComprobante, setEnvioComprobante] = useState(null); // null | subiendo | subido | error
+  // { ordenId, estado: subiendo | subido | error } — atado a la orden: una
+  // subida lenta de un pedido anterior no puede pisar el ticket del siguiente.
+  const [envioComprobante, setEnvioComprobante] = useState(null);
   const [lote, setLote] = useState(FINCAS[0]);
   // El tab Fincas puede estar mirando una finca placeholder (punto 3): barra,
   // Carta y carrito siempre usan una finca real.
@@ -3188,11 +3204,12 @@ export default function QuadroCafe() {
     setCarrito([]);
     // Comprobante (punto 13): recién ahora, con la orden ya en barra, y sin
     // esperarlo — el pedido nunca depende de que la subida o el OCR salgan bien.
-    setEnvioComprobante(comprobante ? "subiendo" : null);
+    setEnvioComprobante(comprobante ? { ordenId: data.id, estado: "subiendo" } : null);
     if (comprobante) {
+      const marcar = (estado) => setEnvioComprobante((prev) => (prev?.ordenId === data.id ? { ordenId: data.id, estado } : prev));
       subirComprobante(data.id, comprobante)
-        .then(() => setEnvioComprobante("subido"))
-        .catch((e) => { console.warn("[Comprobante] No se pudo subir:", e?.message || e); setEnvioComprobante("error"); });
+        .then(() => marcar("subido"))
+        .catch((e) => { console.warn("[Comprobante] No se pudo subir:", e?.message || e); marcar("error"); });
     }
     return { ok: true };
   };
@@ -3328,7 +3345,9 @@ export default function QuadroCafe() {
               cerrar={() => setVerCarrito(false)} quitar={quitar}
               enviarABarra={enviarABarra} />
           )}
-          {orden && <Ticket orden={orden} envioComprobante={envioComprobante} cerrar={() => setOrden(null)} />}
+          {orden && <Ticket key={orden.id} orden={orden}
+            envioComprobante={envioComprobante?.ordenId === orden.id ? envioComprobante.estado : null}
+            cerrar={() => setOrden(null)} />}
         </div>
       </div>
     </ThemeCtx.Provider>
@@ -3379,11 +3398,25 @@ function OrdenCard({ orden, onAvanzar, onCancelar }) {
     revisar: { texto: "Comprobante · revisar", color: C.brandAlt },
     sin_lectura: { texto: "Comprobante · sin lectura", color: C.warn },
   };
-  const comp = COMPROBANTE_UI[orden.comprobante_estado];
+  // 'pendiente' que pasó OCR_ESPERA_MS: el OCR no respondió — se muestra
+  // como "sin lectura" para que el barista lo revise a mano en vez de esperar.
+  const ocrPerdido = orden.comprobante_estado === "pendiente" && orden.creado_en
+    && Date.now() - new Date(orden.creado_en).getTime() > OCR_ESPERA_MS;
+  const comp = COMPROBANTE_UI[ocrPerdido ? "sin_lectura" : orden.comprobante_estado];
   const verComprobante = async () => {
+    // La pestaña se abre en el mismo toque (antes del await): abierta después,
+    // Safari y el bloqueador de popups la descartaban sin aviso.
+    const ventana = window.open("", "_blank");
+    if (ventana) ventana.opener = null;
     const { data, error } = await supabase.storage.from("comprobantes").createSignedUrl(`${orden.id}.jpg`, 300);
-    if (error || !data?.signedUrl) { console.warn("[Barra] No se pudo abrir el comprobante:", error?.message); return; }
-    window.open(data.signedUrl, "_blank", "noopener");
+    if (error || !data?.signedUrl) {
+      console.warn("[Barra] No se pudo abrir el comprobante:", error?.message);
+      ventana?.close();
+      window.alert("No se pudo abrir el comprobante. Intenta de nuevo.");
+      return;
+    }
+    if (ventana) ventana.location.href = data.signedUrl;
+    else window.alert("El navegador bloqueó la pestaña del comprobante. Permite ventanas emergentes para esta página.");
   };
 
   return (
