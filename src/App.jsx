@@ -400,20 +400,20 @@ const MENU = [
   { id: "m6", cat: "Espresso", nombre: "Latte de cascarilla", precio: 4.2, desc: "Con Coffee Husk Syrup orgánico de la casa.", finca: false, tag: "Casa" },
   { id: "m7", cat: "Frío", nombre: "Cold brew 18 h", precio: 4.0, desc: "Inmersión larga en frío. Servido sobre hielo prensado.", finca: true },
   { id: "m8", cat: "Frío", nombre: "Tónica de cascarilla", precio: 4.8, desc: "Cascarilla, tónica y cítrico. Sin alcohol.", finca: false },
-  { id: "m9", cat: "Panadería", nombre: "Croissant de mantequilla", precio: 2.8, desc: "Laminado de 3 días. Horneado a las 7:00.", finca: false },
-  { id: "m10", cat: "Panadería", nombre: "Pan de masa madre", precio: 5.5, desc: "Pieza de 800 g. Fermentación de 24 horas.", finca: false },
+  { id: "m9", cat: "Bollería", nombre: "Croissant de mantequilla", precio: 2.8, desc: "Laminado de 3 días. Horneado a las 7:00.", finca: false },
+  { id: "m10", cat: "Bollería", nombre: "Pan de masa madre", precio: 5.5, desc: "Pieza de 800 g. Fermentación de 24 horas.", finca: false },
   { id: "m11", cat: "Postres", nombre: "Tarta de café y nuez", precio: 4.6, desc: "Con espresso del lote Santa Cruz de Mora.", finca: false },
   { id: "m12", cat: "Postres", nombre: "Cheesecake de cascarilla", precio: 4.9, desc: "Base de galleta, sirope de cascarilla.", finca: false, tag: "Nuevo" },
 ];
 
-const CATS = ["Filtrado", "Espresso", "Frío", "Panadería", "Postres"];
+const CATS = ["Filtrado", "Espresso", "Frío", "Bollería", "Postres"];
 /* Banner de cada categoría de Carta — las cinco con foto propia, encuadrada
    a la caja de 3.25:1 (ver assetManifest.js). */
 const CAT_IMG = {
   Filtrado: "menu-filtrado",
   Espresso: "menu-espresso",
   Frío: "menu-frio",
-  Panadería: "menu-panaderia",
+  Bollería: "menu-panaderia", // asset conserva su nombre de archivo original
   Postres: "menu-postres-v2",
 };
 
