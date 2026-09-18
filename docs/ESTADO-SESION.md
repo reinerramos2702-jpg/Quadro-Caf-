@@ -17,7 +17,7 @@ Foto del estado para retomar en una sesión nueva. Se actualiza al cerrar cada p
 | 14 | Panadería → Bollería | ✅ Commiteado (`e78a0d9`) |
 | 12 | Binance Pay | ✅ Commiteado (`39435dd`) |
 | 13 | Comprobante + OCR | ✅ Commiteado (`b57b2b2` a `80b76ad`, 5 commits) |
-| 2 | Foto por producto (estructura) | ⏳ Pendiente |
+| 2 | Foto por producto (estructura) | ✅ Estructura lista, sin fotos todavía |
 | 11 | Productos nuevos (punto de entrada) | ⏳ Pendiente |
 | 3 | Roster de Fincas (Agua Fría + Los Naranjos + 2 placeholder) | ⏳ Pendiente |
 | 8 | Ficha técnica por finca | ⏳ Pendiente |

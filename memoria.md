@@ -724,3 +724,7 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 - **Punto 15**: entra al alcance.
 
 **Orden de trabajo restante**: 2, 11, 3, 8, 7, 10, 4, 15, 1. Después, la suite de verificación completa y push de la rama a `origin`. **Sin merge a `main` hasta la revisión final de Reiner.**
+
+### Avance post-apagón, punto por punto (2026-09-18)
+
+- **Punto 2, foto por producto (solo estructura)**: `FOTO_PRODUCTO` (junto a `CAT_IMG`) mapea el id del producto al id de `ASSET_MANIFEST`. Está **vacío a propósito**, porque no llegó ninguna foto. Si un producto tiene entrada, la tarjeta de Carta muestra una miniatura de 64×64 a la izquierda del título; si no, se ve exactamente igual que antes. Se eligió un mapa local y no una columna `foto_url` en `productos` porque las fotos van a pasar por el pipeline existente (`npm run assets:generar` → WebP responsivos + color dominante), que exige un deploy de todos modos. `ResponsiveImg` suma un prop `sizes` opcional (por defecto el mismo valor de siempre), así la miniatura pide 64px y no la variante de banner.

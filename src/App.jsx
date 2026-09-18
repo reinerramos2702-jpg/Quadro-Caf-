@@ -417,6 +417,14 @@ const CAT_IMG = {
   Postres: "menu-postres-v2",
 };
 
+/* Foto por producto (reunión 05/sept, punto 2): id del producto → id de
+   ASSET_MANIFEST. Vacío a propósito hasta que lleguen las fotos reales — no
+   se inventan. Para sumar una: `npm run assets:generar src/assets/producto-<x>.png`,
+   pegar la entrada en assetManifest.js y agregar `m9: "producto-<x>"` acá.
+   Funciona igual para productos creados desde el Panel Admin (se mapean por
+   su id). Sin entrada, la tarjeta de Carta se ve exactamente como antes. */
+const FOTO_PRODUCTO = {};
+
 /* Aviso de "estamos usando el respaldo local" — nunca silencioso. En consola
    siempre (el dueño puede revisarla en prod si algo no cuadra); en pantalla
    solo en dev, para no asustar a un cliente real con un banner de deploy. */
@@ -626,7 +634,7 @@ function SonidoToggle() {
    dibujado — hoy `lab-tubos`; las demás lo traen integrado en el producto
    (el bowl, el plato, la caja, el vaso) o en la propia escena, y una segunda
    marca encima quedaría duplicada. */
-function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, logo = false }) {
+function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, logo = false, sizes = "(max-width: 430px) calc(100vw - 56px), 374px" }) {
   const asset = ASSET_MANIFEST[id];
   if (!asset) return null;
   const { objectFit, objectPosition, ...wrapperStyle } = style;
@@ -655,7 +663,7 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, log
     }}>
       <source type="image/webp"
         srcSet={asset.webp.map(([src, w]) => `${src} ${w}w`).join(", ")}
-        sizes="(max-width: 430px) calc(100vw - 56px), 374px" />
+        sizes={sizes} />
       <img src={asset.jpg} alt={alt} loading={eager ? "eager" : "lazy"} style={{
         width: "100%", height: "100%", display: "block",
         objectFit: objectFit || "cover",
@@ -1371,6 +1379,11 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
                   opacity: agotado ? .55 : 1,
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                    {FOTO_PRODUCTO[m.id] && (
+                      <ResponsiveImg id={FOTO_PRODUCTO[m.id]} alt={m.nombre} sizes="64px" style={{
+                        width: 64, height: 64, aspectRatio: "1 / 1", borderRadius: 12, flexShrink: 0,
+                      }} />
+                    )}
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                         <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
