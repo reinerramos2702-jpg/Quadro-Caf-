@@ -2298,7 +2298,8 @@ function Club({ email, setEmail, onBack, onAdmin }) {
           <Lock size={18} color={C.brand} />
           <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Desbloquea tu ficha de cata</div>
           <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
-            Déjanos tu correo y te enviamos tu Guía de Cata Quadro — además te suma tu primer punto en el Club.
+            {/* Texto exacto pedido en la reunión 05/sept (punto 4) — no parafrasear. */}
+            Suscríbete a la Newsletter para recibir premios o descuentos especiales.
           </p>
           <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
             <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>

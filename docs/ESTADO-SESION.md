@@ -23,7 +23,7 @@ Foto del estado para retomar en una sesión nueva. Se actualiza al cerrar cada p
 | 8 | Ficha técnica por finca | ✅ Commiteado |
 | 7 | Comparar (se queda en FichaLote) | ✅ Sin código (alineado por el punto 8) |
 | 10 | Módulo Tienda ("Próximamente") | ✅ Commiteado |
-| 4 | Copy de Quadro Club | ⏳ Pendiente |
+| 4 | Copy de Quadro Club | ✅ Commiteado |
 | 15 | "E" de "Quadro Café" en el header | ⏳ Pendiente |
 | 1 | Pulido premium general | ⏳ Pendiente |
 

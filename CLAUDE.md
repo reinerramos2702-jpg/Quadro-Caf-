@@ -134,6 +134,7 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Punto 8, ficha técnica**: `FichaLote` ("Ficha técnica") muestra siempre Altura/Varietal/Proceso/Puntaje con "Por confirmar" para lo que falte, más Extensión (`hectareas`) si existe. Nunca se rellena con cifras inventadas.
 - **Punto 7, comparar**: sin código; se queda en `FichaLote`.
 - **Punto 10, Tienda**: tab nuevo después de Fincas (`Tienda`, `TIENDA_PROXIMAMENTE`). El nav inferior tiene ahora **6** pestañas. Solo tarjetas "Próximamente" por tipo (Café en grano, Accesorios) hasta que haya catálogo real.
+- **Punto 4, Club**: la tarjeta de captura de correo muestra el texto exacto "Suscríbete a la Newsletter para recibir premios o descuentos especiales." No parafrasear.
 - **Pendiente de Reiner en Supabase**: correr 0004 y 0005, desplegar la edge function y cargar el secret. 0003 va al hacer el merge.
 - **Decisiones para los puntos que faltan**: el punto 3 saca a Elio, Rosa y Mina de `FINCAS` (reemplaza la vieja regla de "no tocar Elio"); los puntos 2 y 11 quedan solo con estructura, sin inventar fotos ni productos; el punto 10 (Tienda) lleva tarjetas "Próximamente" sin nombre ni precio inventados.
 
