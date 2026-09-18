@@ -2473,12 +2473,13 @@ function AdminNuevoProducto({ siguienteOrden, onCreado }) {
   const [cat, setCat] = useState(CATS[0]);
   const [precio, setPrecio] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [tag, setTag] = useState(""); // etiqueta opcional ("Nuevo", "Casa"…) — punto 11, reunión 05/sept
   const [disponible, setDisponible] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
   const limpiar = () => {
-    setNombre(""); setCat(CATS[0]); setPrecio(""); setDescripcion(""); setDisponible(true);
+    setNombre(""); setCat(CATS[0]); setPrecio(""); setDescripcion(""); setTag(""); setDisponible(true);
   };
 
   const crear = async (e) => {
@@ -2493,7 +2494,7 @@ function AdminNuevoProducto({ siguienteOrden, onCreado }) {
     for (let intento = 0; intento < 5 && !fila; intento++) {
       const { data, error: err } = await supabase.from("productos").insert({
         id, cat, nombre: nombre.trim(), precio: n, descripcion: descripcion.trim(),
-        disponible, finca: false, orden: siguienteOrden,
+        tag: tag.trim() || null, disponible, finca: false, orden: siguienteOrden,
       }).select().single();
       if (!err) { fila = data; break; }
       if (err.code === "23505") { id = `${base}-${intento + 2}`; continue; } // id duplicado, prueba con sufijo
@@ -2538,6 +2539,8 @@ function AdminNuevoProducto({ siguienteOrden, onCreado }) {
         </div>
         <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} placeholder="Descripción" rows={2}
           style={{ border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", fontSize: 13, background: "transparent", color: C.text, resize: "none", fontFamily: "inherit" }} />
+        <input value={tag} onChange={(e) => setTag(e.target.value)} placeholder="Etiqueta (opcional, p. ej. Nuevo)" maxLength={14}
+          style={{ border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", fontSize: 13, background: "transparent", color: C.text }} />
         <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.text }}>
           <input type="checkbox" checked={disponible} onChange={(e) => setDisponible(e.target.checked)} />
           Disponible desde ya
