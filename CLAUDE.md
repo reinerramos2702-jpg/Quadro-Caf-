@@ -131,6 +131,7 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Punto 2, foto por producto**: la estructura está lista (`FOTO_PRODUCTO` id→asset + miniatura de 64px en la tarjeta de `Menu`). Vacío hasta que lleguen fotos reales; se suman con `npm run assets:generar` + una entrada en el manifiesto + una línea en el mapa.
 - **Punto 11, productos nuevos**: el punto de entrada es "Agregar producto" del Panel Admin (`AdminNuevoProducto`), que ahora también acepta una etiqueta opcional (`tag`). No se cargó contenido: la lista real está pendiente de Reiner.
 - **Punto 3, roster de Fincas**: ver "Roster actual" en Real-data policy más abajo.
+- **Punto 8, ficha técnica**: `FichaLote` ("Ficha técnica") muestra siempre Altura/Varietal/Proceso/Puntaje con "Por confirmar" para lo que falte, más Extensión (`hectareas`) si existe. Nunca se rellena con cifras inventadas.
 - **Pendiente de Reiner en Supabase**: correr 0004 y 0005, desplegar la edge function y cargar el secret. 0003 va al hacer el merge.
 - **Decisiones para los puntos que faltan**: el punto 3 saca a Elio, Rosa y Mina de `FINCAS` (reemplaza la vieja regla de "no tocar Elio"); los puntos 2 y 11 quedan solo con estructura, sin inventar fotos ni productos; el punto 10 (Tienda) lleva tarjetas "Próximamente" sin nombre ni precio inventados.
 

@@ -1474,11 +1474,17 @@ function FichaLote({ lote, compact, titulo }) {
   const dulzor = lote.score != null ? Math.round(lote.score - 12) : null;
   const acidez = lote.altura != null ? Math.round(lote.altura / 26) : null;
   const cuerpo = lote.proceso ? (lote.proceso.includes("Honey") ? 80 : 58) : null;
-  const campos = [];
-  if (lote.altura != null) campos.push(["Altura", `${lote.altura} msnm`]);
-  if (lote.varietal) campos.push(["Varietal", lote.varietal]);
-  if (lote.proceso) campos.push(["Proceso", lote.proceso]);
-  if (lote.score != null) campos.push(["Puntaje", `${lote.score} SCA`]);
+  // Ficha técnica (reunión 05/sept, punto 8): los cuatro campos siempre
+  // visibles, con "Por confirmar" en vez de ocultar lo que falta — así se ve
+  // qué dato está pendiente del dueño en vez de parecer que no existe. Nunca
+  // se rellena con un número inventado. Extensión solo si la finca la tiene.
+  const campos = [
+    ["Altura", lote.altura != null ? `${lote.altura} msnm` : null],
+    ["Varietal", lote.varietal || null],
+    ["Proceso", lote.proceso || null],
+    ["Puntaje", lote.score != null ? `${lote.score} SCA` : null],
+  ];
+  if (lote.hectareas != null) campos.push(["Extensión", `${lote.hectareas} ha`]);
   return (
     <div style={{
       flex: compact ? 1 : "initial", minWidth: 0, background: C.card, border: `1px solid ${C.line}`,
@@ -1487,16 +1493,20 @@ function FichaLote({ lote, compact, titulo }) {
       {titulo && (
         <div className="disp" style={{ fontSize: 14, lineHeight: 1.15, marginBottom: 8 }}>{titulo}</div>
       )}
-      <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: compact ? 8 : 12 }}>Ficha del lote</div>
+      <div className="mono" style={{ fontSize: 10, letterSpacing: ".18em", color: C.brandAlt, textTransform: "uppercase", marginBottom: compact ? 8 : 12 }}>Ficha técnica</div>
       <div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "1fr 1fr", gap: compact ? 8 : 14 }}>
         {campos.map(([k, v]) => (
           <div key={k}>
             <div className="mono" style={{ fontSize: 9.5, color: C.textMuted, letterSpacing: ".12em", textTransform: "uppercase" }}>{k}</div>
-            <div className="disp" style={{ fontSize: compact ? 13 : 16, lineHeight: 1.15, marginTop: 3 }}>{v}</div>
+            {v != null ? (
+              <div className="disp" style={{ fontSize: compact ? 13 : 16, lineHeight: 1.15, marginTop: 3 }}>{v}</div>
+            ) : (
+              <div className="mono" style={{ fontSize: compact ? 10.5 : 11.5, color: C.textMuted, fontStyle: "italic", marginTop: 4 }}>Por confirmar</div>
+            )}
           </div>
         ))}
       </div>
-      <div style={{ marginTop: compact ? 12 : 16 }}>
+      {(dulzor != null || acidez != null || cuerpo != null) && <div style={{ marginTop: compact ? 12 : 16 }}>
         {/* triggerKey={lote.id} (Fase 6): FichaLote no remonta al cambiar de
            finca (solo la card superior de arriba lo hace, vía su propio
            key={lote.id}), así que sin esto las barras saltaban directo al
@@ -1505,7 +1515,7 @@ function FichaLote({ lote, compact, titulo }) {
         {dulzor != null && <Meter label="Dulzor" value={dulzor} tone={C.brandAlt} triggerKey={lote.id} />}
         {acidez != null && <Meter label="Acidez" value={acidez} triggerKey={lote.id} />}
         {cuerpo != null && <Meter label="Cuerpo" value={cuerpo} tone={C.purple} triggerKey={lote.id} />}
-      </div>
+      </div>}
     </div>
   );
 }

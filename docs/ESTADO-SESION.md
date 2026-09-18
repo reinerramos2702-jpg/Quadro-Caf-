@@ -20,7 +20,7 @@ Foto del estado para retomar en una sesión nueva. Se actualiza al cerrar cada p
 | 2 | Foto por producto (estructura) | ✅ Estructura lista, sin fotos todavía |
 | 11 | Productos nuevos (punto de entrada) | ✅ Admin listo (+ etiqueta), sin contenido todavía |
 | 3 | Roster de Fincas (Agua Fría + Los Naranjos + 2 placeholder) | ✅ Commiteado |
-| 8 | Ficha técnica por finca | ⏳ Pendiente |
+| 8 | Ficha técnica por finca | ✅ Commiteado |
 | 7 | Comparar (se queda en FichaLote) | ⏳ Pendiente |
 | 10 | Módulo Tienda ("Próximamente") | ⏳ Pendiente |
 | 4 | Copy de Quadro Club | ⏳ Pendiente |
