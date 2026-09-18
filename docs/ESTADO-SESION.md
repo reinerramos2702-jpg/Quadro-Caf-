@@ -24,7 +24,7 @@ Foto del estado para retomar en una sesión nueva. Se actualiza al cerrar cada p
 | 7 | Comparar (se queda en FichaLote) | ✅ Sin código (alineado por el punto 8) |
 | 10 | Módulo Tienda ("Próximamente") | ✅ Commiteado |
 | 4 | Copy de Quadro Club | ✅ Commiteado |
-| 15 | "E" de "Quadro Café" en el header | ⚠️ No reproducible: falta captura del dispositivo |
+| 15 | "E" de "Quadro Café" en el header | ✅ Cerrado sin cambios (decisión de Reiner) |
 | 1 | Pulido premium general | ✅ Pasada acotada commiteada |
 
 ## Pendientes fuera del código (Reiner, a mano)
@@ -36,12 +36,14 @@ Verificado por lectura en Supabase el 2026-09-18:
 4. Revisar la rama y hacer el merge a `main` (solo Reiner).
 5. Correr `0003_categoria_bolleria.sql` **justo después** del deploy del merge.
 
-## Preguntas abiertas para Reiner
+## Decisiones de Reiner (2026-09-18), aplicadas
 
-- **Punto 15**: la "É" no se reproduce en Chrome ni en WebKit. Hace falta una captura del dispositivo donde se ve (modelo + iOS/navegador).
-- **Punto 4**: el título "Desbloquea tu ficha de cata", el botón "Quiero mi guía" y el subtítulo sobre puntos del Club siguen como estaban. ¿Se ajustan?
-- **Punto 3**: ¿"Falsir Durán" (el ROADMAP decía "Dúran") y el rol "Caficultor" están bien? ¿Tintes de color para Los Naranjos y un 4.º oscuro?
-- **Carta en producción**: hay un producto "Reiner" ($800, Filtrado, disponible), aparentemente de prueba, y el postre `m11` todavía menciona "lote Santa Cruz de Mora" (finca que salió del roster).
+- Producto de prueba "Reiner" borrado de `productos` (producción).
+- `m11`: "Con espresso." (base + `MENU`).
+- "Falsir Durán" confirmado. El rol "Caficultor" sigue sin confirmar.
+- Club: el resto queda intocado.
+- Punto 15 ("É"): cerrado sin cambios.
+- `docs/ROADMAP.html`: commiteado directo a `main` (y con contenido idéntico en la rama).
 
 ## Verificación
 
