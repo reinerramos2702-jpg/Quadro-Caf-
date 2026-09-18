@@ -121,6 +121,18 @@ Alcance confirmado por el dueño, 4 ítems, sin nada implícito más allá de es
 
 **Con esto el sprint "Alta Gama" (Fases 2–7) queda completo.**
 
+## Reunión 05/sept (rama `quadro-feature-reunion-05sept`, 2026-09-18, retomada tras apagón)
+
+El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 11, 12, 13, 14 y 15. Los puntos 5, 6 y 9 están diferidos y van con presupuesto aparte. Carta y Cart/Checkout son módulos production-stable con una excepción autorizada para esta reunión. `/#barra` solo recibe la pastilla del comprobante. **No se hace merge a `main` sin la aprobación explícita de Reiner.**
+
+- **Punto 14, Bollería**: "Panadería" pasa a "Bollería" (solo el nombre). `0003_categoria_bolleria.sql` **se corre en el momento del merge, no antes**: el código viejo filtra por "Panadería" y la Carta perdería esos productos.
+- **Punto 12, Binance Pay**: entrada nueva en `METODOS_PAGO`. `0004_metodo_binance.sql` amplía el CHECK de `ordenes.metodo_pago`; es aditiva y se puede correr antes del merge.
+- **Punto 13, comprobante + OCR**: `comprimirComprobante`/`subirComprobante` (en la sección CARRITO), uploader opcional en `Carrito` (todo método menos efectivo), `EstadoComprobante` en `Ticket` y pastilla en `OrdenCard` (`/#barra`, signed URL de 5 min). El backend está en `0005_comprobantes.sql`: bucket privado `comprobantes/{orden_id}.jpg`, trigger que marca `pendiente` y tabla `comprobantes` solo-staff con el detalle del OCR. `ordenes` (lectura pública) solo guarda el estado, el monto y los últimos 4 de la referencia. La edge function `verificar-comprobante` usa Gemini y requiere `verify_jwt = false`, el secret `GEMINI_API_KEY` y opcionalmente `GEMINI_MODEL`. Reglas: **el pedido nunca espera a la subida ni al OCR**, y **el OCR nunca confirma un pago** (solo marca `verificado`/`revisar`/`sin_lectura`; confirma el barista). Solo se compara contra el total en USD/USDT, porque en Bs depende de la tasa del día.
+- **Pendiente de Reiner en Supabase**: correr 0004 y 0005, desplegar la edge function y cargar el secret. 0003 va al hacer el merge.
+- **Decisiones para los puntos que faltan**: el punto 3 saca a Elio, Rosa y Mina de `FINCAS` (reemplaza la vieja regla de "no tocar Elio"); los puntos 2 y 11 quedan solo con estructura, sin inventar fotos ni productos; el punto 10 (Tienda) lleva tarjetas "Próximamente" sin nombre ni precio inventados.
+
+**Contexto de recuperación**: tercer apagón del proyecto. Git estaba limpio, con 7 commits completos sin pushear y sin documentar (ver `memoria.md` § "Reunión 05/sept"). Sesión a sesión, el estado vive en `docs/ESTADO-SESION.md`.
+
 ## Real-data policy
 
 Do not invent café/menu/finca/pricing data. Only use data that's either in `docs/HANDOFF.md`, confirmed by the owner in conversation, or already in `src/App.jsx`. When in doubt, ask before adding a new "fact" to the app.
@@ -136,7 +148,7 @@ Current confirmed-real data inventory (as of the v3 pass):
   - Elio/Rosa/Mina's 92px circle branch (`!lote.avatar.agentUrl`) is completely untouched throughout all three iterations — verified byte-identical via screenshot each time.
   - D-ID is on a free trial, so the iframe (inside the overlay) carries D-ID's watermark until a paid plan is activated — flag to Reiner if it looks bad once he's actually in a live call.
 - **"Ver guion" button copy (fixed 2026-08-16, app-wide, all 4 fincas)**: the button in `Fincas` said "Reproducir inducción" / "Pausar" as if playing real audio. It never did — there is no `<audio>` element or TTS anywhere in the app; `guion` has always been a plain text array whose lines auto-advance on a `setTimeout` (a subtitle simulation), for Elio/Rosa/Mina too, not just Agua Fría. The owner noticed this while testing Agua Fría's induction (progress bar advances, subtitle text changes, no sound) and asked to confirm whether it was a bug or a separate unconnected feature — confirmed it's the latter, and pre-existing (see `memoria.md`, "videos de avatar Higgsfield reemplazarían el reproductor de inducción actual" — the real fix was always meant to be recorded avatar video, never TTS). Fixed the misleading copy for all 4 fincas at once (it's shared code, not per-finca data): "Reproducir inducción" → **"Ver guion"** (`Play`/`Pause` icons kept — the guion still auto-advances when you press it, just doesn't claim to be audio), and the Inicio "Lote en barra hoy" card's link text "Escuchar la inducción de la finca" → **"Ver el guion de la finca"**. No logic changed, only copy. Real voice (Web Speech API, or waiting for the Higgsfield videos) is still an open option if the owner wants it later — not implemented.
-- Menu (`MENU`): real prices, categories (Filtrado/Espresso/Frío/Panadería/Postres), tags.
+- Menu (`MENU`): real prices, categories (Filtrado/Espresso/Frío/Bollería/Postres), tags. "Panadería" was renamed "Bollería" (reunión 05/sept, punto 14); see the migration-timing note in the "Reunión 05/sept" section above.
 - Equipo (`EQUIPO`): Comandante C40, AeroPress, Sifón de vacío, Copas de perfil (Pinot/Aroma/Barrel).
 - Location/contact: address, hours, Instagram — from `docs/HANDOFF.md`, rendered on Inicio.
 - Still placeholder/unconfirmed: Quadro Club tier thresholds/points math, exact loyalty pricing, Academia lesson copy (plausible but not owner-verified), the geometry-simulator formula (a reasonable model, not lab-measured).

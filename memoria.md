@@ -692,3 +692,35 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 **Comando para reproducir**: `npx lighthouse "https://quadro-cafe.reinerramos2702.workers.dev/" --output=html,json --output-path=./lighthouse/mobile --chrome-flags="--headless=new --no-sandbox"` (agregar `--preset=desktop` para el modo desktop). Nota: en este entorno Windows, Lighthouse tira un `EPERM` al final al intentar borrar su carpeta temp (`chrome-launcher` cleanup) — es cosmético, el reporte ya se generó antes de ese error; no hace falta reintentar.
 
 **Próximo**: ejecutar los quick wins de Track A (#1-4) — sin tocar Elio, según regla fija del proyecto.
+
+## Reunión 05/sept — rama `quadro-feature-reunion-05sept`, retomada tras un tercer apagón (2026-09-18)
+
+**Contexto**: se cortó la luz y la compu se apagó a mitad de sesión, mientras se cerraba el punto 13. Es el tercer apagón documentado en este proyecto (antes pasó en las Fases 6 y 7 del sprint "Alta Gama"). Se retomó con el mismo protocolo: reconstruir el estado **solo con git**, sin asumir nada del recuerdo de la sesión anterior.
+
+**Diagnóstico git al retomar**:
+- `git status --short`: limpio salvo `?? docs/ROADMAP.html` (el roadmap interno de Reiner con los 12 puntos de la reunión, del 17/9 a las 21:28, o sea anterior a todos los commits de la rama; se commitea tal cual). Nada corrupto ni a medio escribir.
+- 7 commits completos por delante de `main`, **nunca pusheados** (la rama no existe en `origin`):
+  - `e78a0d9` **punto 14**: categoría "Panadería" → "Bollería" en `App.jsx` + `supabase/migrations/0003_categoria_bolleria.sql`.
+  - `39435dd` **punto 12**: Binance Pay en `METODOS_PAGO` + `0004_metodo_binance.sql` (amplía el CHECK de `ordenes.metodo_pago`).
+  - `b57b2b2` **punto 13**: `0005_comprobantes.sql` (columnas `comprobante_estado/monto/ref` en `ordenes`, tabla `comprobantes` solo-staff, bucket privado `comprobantes`, trigger `marcar_comprobante_subido`).
+  - `1d925d0` **punto 13**: edge function `supabase/functions/verificar-comprobante` (OCR con Gemini).
+  - `0655d9e` **punto 13**: uploader opcional en `Carrito` (compresión con canvas en el teléfono) + estado `envioComprobante` en `QuadroCafe`.
+  - `041a6c9` **punto 13**: `EstadoComprobante` en `Ticket`. **Era el paso que no se sabía si había llegado a commitearse: sí llegó.** Se revisó el diff y el cableado `QuadroCafe` → `Ticket` está completo.
+  - `80b76ad` **punto 13**: un paso extra que no estaba en el recuerdo de la sesión: la pastilla del comprobante en `OrdenCard` de `/#barra`, que abre la imagen con una signed URL de 5 minutos.
+- **Discrepancias encontradas**: (1) `docs/ESTADO-SESION.md` no existía (ni en disco ni en el historial de git) y se creó en este paso; (2) ninguno de los 7 commits había actualizado `memoria.md`/`CLAUDE.md`, contra la regla permanente del 2026-08-11, y esta sección cubre ese hueco; (3) el ROADMAP incluye un **punto 15** (la "E" de "Quadro Café" en el header) que se había caído de la lista de pendientes, y Reiner confirmó que entra; (4) el `PROMPT_REUNION_05SEPT_12PUNTOS.md` original no está en esta máquina, así que el alcance se toma del ROADMAP.
+
+**Punto 13, cómo quedó armado** (para no tener que releer el diff):
+- Flujo que **nunca bloquea el pedido**: el carrito inserta la orden como siempre. Después, sin esperar, sube `comprobantes/{orden_id}.jpg` y dispara la edge function. El trigger de 0005 marca la orden `pendiente` apenas existe el archivo, así la barra sabe que hay comprobante aunque el OCR se caiga.
+- La edge function (`verify_jwt = false`, porque las publishable keys nuevas no son JWT) solo procesa órdenes de los últimos 30 min en estado `pendiente`, una sola vez cada una. Estados finales: `verificado` (monto en USD/USDT igual al total y confianza ≥ 0.6), `revisar` (no coincide, está en Bs o es dudoso) y `sin_lectura`.
+- Privacidad: `ordenes` es de lectura pública (la necesita el ticket por Realtime), así que ahí solo van el estado, el monto y los **últimos 4** caracteres de la referencia. El detalle completo del OCR vive en `comprobantes` (solo staff) y la imagen en un bucket privado.
+- **El OCR es una ayuda, no una prueba de pago**: el copy nunca dice "pago confirmado". La confirmación sigue siendo del barista mirando la imagen.
+
+**Pendiente operativo (lo hace Reiner, a mano en Supabase)**: correr 0004 y 0005 en el SQL Editor (son aditivas, se pueden correr antes del merge); **0003 recién en el momento del merge a `main`** (el código viejo filtra por "Panadería" y la Carta perdería esos productos si se corre antes); `supabase functions deploy verificar-comprobante --no-verify-jwt`; cargar el secret `GEMINI_API_KEY` (opcional `GEMINI_MODEL`, por defecto `gemini-2.5-flash`).
+
+**Decisiones de Reiner para lo que falta** (sesión del 2026-09-18):
+- **Punto 3**: se sacan Elio, Rosa y Mina de `FINCAS`. El roster queda en Agua Fría + Los Naranjos + Santa Rosa y Buenos Aires (estas dos con estructura y placeholder). **Esto reemplaza la regla fija anterior de "no tocar Elio"**, porque fue decisión de la reunión.
+- **Puntos 2 y 11**: solo la estructura (foto opcional por producto y punto de entrada para productos nuevos). No hay fotos ni lista en el repo ni en `_incoming/`, y no se inventa contenido.
+- **Punto 10 (Tienda)**: tarjetas "Próximamente" con tipo genérico, sin nombre ni precio inventados (política de datos reales).
+- **Punto 15**: entra al alcance.
+
+**Orden de trabajo restante**: 2, 11, 3, 8, 7, 10, 4, 15, 1. Después, la suite de verificación completa y push de la rama a `origin`. **Sin merge a `main` hasta la revisión final de Reiner.**
