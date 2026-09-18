@@ -2856,9 +2856,33 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
   );
 }
 
-function Ticket({ orden, cerrar }) {
+/* Estado del comprobante en el Ticket (punto 13). Combina lo que sabe el
+   cliente localmente (`envio`: subiendo/subido/error) con lo que escribe la
+   base por Realtime (`estado`: pendiente/verificado/revisar/sin_lectura).
+   El copy nunca dice "pago confirmado": el OCR solo compara el monto leído,
+   la confirmación del pago sigue siendo de la barra. */
+function EstadoComprobante({ estado, envio, C }) {
+  if (!envio && !estado) return null;
+  let icono = Clock, texto = "Verificando tu comprobante…", color = C.textMuted;
+  if (envio === "subiendo" && !estado) texto = "Subiendo tu comprobante…";
+  else if (estado === "verificado") { icono = Check; texto = "El monto del comprobante coincide"; color = C.brand; }
+  else if (estado === "revisar") { icono = Receipt; texto = "Comprobante recibido · la barra lo revisa"; color = C.brandAlt; }
+  else if (estado === "sin_lectura" || (envio === "error" && !estado)) { icono = Receipt; texto = "La barra verificará tu pago a mano"; }
+  const Icono = icono;
+  return (
+    <div key={texto} className="pop mono" style={{
+      display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+      fontSize: 10.5, color, marginTop: -10, marginBottom: 20, letterSpacing: ".04em",
+    }}>
+      <Icono size={13} /> {texto}
+    </div>
+  );
+}
+
+function Ticket({ orden, envioComprobante, cerrar }) {
   const { C } = useTheme();
   const [estado, setEstado] = useState(orden.estado);
+  const [comprobante, setComprobante] = useState(orden.comprobante_estado || null);
   const elegido = METODOS_PAGO.find((m) => m.id === orden.metodo_pago);
 
   // Escucha el estado real de la orden por Supabase Realtime — nada de
@@ -2869,7 +2893,10 @@ function Ticket({ orden, cerrar }) {
       .channel(`orden-${orden.id}`)
       .on("postgres_changes", {
         event: "UPDATE", schema: "public", table: "ordenes", filter: `id=eq.${orden.id}`,
-      }, (payload) => setEstado(payload.new.estado))
+      }, (payload) => {
+        setEstado(payload.new.estado);
+        setComprobante(payload.new.comprobante_estado || null);
+      })
       .subscribe();
     return () => supabase.removeChannel(canal);
   }, [orden.id]);
@@ -2921,6 +2948,7 @@ function Ticket({ orden, cerrar }) {
             <elegido.icono size={13} /> {elegido.nombre}
           </div>
         )}
+        <EstadoComprobante estado={comprobante} envio={envioComprobante} C={C} />
 
         <div style={{ textAlign: "left", maxWidth: 260, margin: "0 auto" }}>
           {ESTADOS_ORDEN.map((p, i) => (
