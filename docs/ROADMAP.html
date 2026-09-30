@@ -291,9 +291,9 @@
 
   <div class="stats">
     <div class="stat"><div class="num">12/12</div><div class="label">Puntos reunión 05/sept cerrados</div></div>
-    <div class="stat"><div class="num">48/48</div><div class="label">Fotos de producto generadas (JPG+WebP listo)</div></div>
-    <div class="stat"><div class="num">9</div><div class="label">Bloques trabajados (1–9), en producción</div></div>
-    <div class="stat"><div class="num">1</div><div class="label">Bloqueo activo: Supabase inactivo (FOTO_PRODUCTO)</div></div>
+    <div class="stat"><div class="num">48/48</div><div class="label">Fotos de producto mapeadas en Carta (FOTO_PRODUCTO)</div></div>
+    <div class="stat"><div class="num">57</div><div class="label">Productos en Carta (12 reales + 45 nuevos placeholder)</div></div>
+    <div class="stat"><div class="num">10</div><div class="label">Bloques trabajados (1–10), en producción</div></div>
   </div>
 
   <div class="progress-card">
@@ -339,14 +339,14 @@
             </div>
           </div>
 
-          <div class="item" data-id="p2">
-            <input type="checkbox" class="chk" id="chk-p2">
+          <div class="item done" data-id="p2">
+            <input type="checkbox" class="chk" id="chk-p2" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">02</span><label class="item-title" for="chk-p2">Más imágenes en Carta</label></div>
-                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">48/48 fotos procesadas</span><span class="tag warn">FOTO_PRODUCTO bloqueado</span></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">48/48 fotos mapeadas</span><span class="tag pending">Datos reales de 45 productos pendientes</span></div>
               </div>
-              <div class="item-desc">Las 48 fotos de producto (DALL-E, vía pipeline con ChatGPT Work — ver Bloque 9) ya están procesadas a JPG + 3 WebP responsivos y cargadas en <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. <strong>Falta el último paso: mapear cada foto al <span class="mono">id</span> real del producto en <span class="mono">FOTO_PRODUCTO</span> (App.jsx)</strong> — bloqueado porque el proyecto Supabase está inactivo (ver sección "Bloqueo — Supabase inactivo" abajo). No se inventan ids/mapeos.</div>
+              <div class="item-desc">Mapeo cerrado 30/sept (commit <span class="mono">221ba2b</span>): 3 fotos van a productos ya existentes (cortado/m5, espresso/m4, croissant/m9) y las 45 restantes correspondían a productos que aún no existían en la Carta — Reiner confirmó que sí son parte de la Carta y autorizó crearlos como placeholder (ver punto 11 y Bloque 10). Cada foto queda mapeada 1 a 1 en <span class="mono">FOTO_PRODUCTO</span> (App.jsx), tal cual estaba en <span class="mono">assetManifest.js</span> desde el Bloque 9. Único mapeo dudoso: la foto de "Cheesecake de cascarilla" (m12, producto ya existente) no tiene equivalente entre las 48 — Reiner debe confirmar si una de las 3 fotos de cheesecake (fresa/Nutella/pistacho) la reemplaza o si son productos aparte (ver "Preguntas pendientes para el dueño").</div>
             </div>
           </div>
 
@@ -410,9 +410,9 @@
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">11</span><label class="item-title" for="chk-p11">Nuevos productos en Carta</label></div>
-                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">Punto de entrada listo</span></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">45 placeholders creados</span><span class="tag pending">Nombre/precio/receta reales pendientes</span></div>
               </div>
-              <div class="item-desc">Etiqueta "Nuevo" lista en panel admin. <strong>Sin contenido a propósito</strong> — depende de que Reiner pase la lista completa. No inventar productos.</div>
+              <div class="item-desc">Resuelto 30/sept (commit <span class="mono">221ba2b</span>): Reiner confirmó que las 45 fotos sin producto correspondiente sí son para la Carta. Se agregaron como productos nuevos con <span class="mono">precio: 0, disponible: false, nuevo: true</span> — nombres genéricos de diccionario, sin inventar receta/precio/sourcing real. Se creó la categoría <span class="mono">Infusiones</span> (10 productos) porque ninguna de las 5 categorías existentes encajaba. En la Carta se ven con badge "Próximamente" y "Por confirmar" en vez de precio, y no se pueden agregar al carrito — no engañan al cliente. <strong>Falta que Reiner pase nombre/precio/descripción real de cada uno</strong> para sacarlos de estado placeholder.</div>
             </div>
           </div>
 
@@ -468,13 +468,13 @@
 
       <section class="card">
         <h2>Fase nueva — Papagayo (pagos en tiempo real)</h2>
-        <div class="card-sub">Iniciada 27/sept. "PROMPT MAESTRO" del dueño/Reiner pide un agente IA que verifique pagos vs. la plataforma Papagayo.</div>
+        <div class="card-sub">Iniciada 27/sept. "PROMPT MAESTRO" del dueño/Reiner pide un agente IA que verifique pagos vs. la plataforma Papagayo. Actualizado 30/sept.</div>
         <div class="timeline">
           <div class="tl-item block">
             <div class="tl-dot"></div>
             <div class="tl-body">
-              <div class="tl-title">Bloqueada por falta de información — sin inventar API</div>
-              <div class="tl-desc">Antes de diseñar arquitectura hace falta de Reiner/dueño: ¿Papagayo tiene API pública? ¿documentación/URL? ¿autenticación por API Key u OAuth? ¿webhooks o hay que hacer polling? Idealmente capturas del panel administrativo / sección de integraciones de Papagayo.</div>
+              <div class="tl-title">Bloqueada esperando login de Reiner en el dashboard</div>
+              <div class="tl-desc">Reiner pasó la URL del panel administrativo (<span class="mono">papagayo.digipay.com.ve/login</span>) — el banco le habilitó API propia y este dashboard es de donde se saca el endpoint. Reiner hace el login él mismo (credenciales bancarias — Claude nunca las escribe, es una prohibición del sistema, no una preferencia). Al 30/sept, la pestaña sigue mostrando el login vacío: aún no ha entrado. En cuanto confirme sesión iniciada, el siguiente paso es explorar configuración/API/endpoints del panel y diseñar la integración de verificación de pago — sin inventar ni guardar credenciales/keys en código o chat.</div>
             </div>
           </div>
           <div class="tl-item open">
@@ -488,28 +488,14 @@
       </section>
 
       <section class="card">
-        <h2>Bloqueo — Supabase inactivo (mapeo de fotos de producto)</h2>
-        <div class="card-sub">Detectado 30/sept, al intentar cerrar el punto 2 (fotos en Carta).</div>
+        <h2>Nota — por qué Supabase ya no bloquea el mapeo de fotos</h2>
+        <div class="card-sub">Resuelto 30/sept, al cerrar el punto 2 (fotos en Carta).</div>
         <div class="timeline">
-          <div class="tl-item block">
+          <div class="tl-item">
             <div class="tl-dot"></div>
             <div class="tl-body">
-              <div class="tl-title">Proyecto Supabase <span class="mono">wckufllomfmuwxptegvm</span> con estado INACTIVE</div>
-              <div class="tl-desc">Consulta a la tabla <span class="mono">productos</span> falla dos veces con <span class="mono">28P01: password authentication failed for user "postgres"</span>. Sin esto no se puede leer el <span class="mono">id</span> real de cada producto.</div>
-            </div>
-          </div>
-          <div class="tl-item open">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Por qué no se resuelve solo</div>
-              <div class="tl-desc"><span class="mono">FOTO_PRODUCTO = {}</span> en <span class="mono">App.jsx</span> está vacío a propósito (comentario del propio código: "no se inventan"). Las 48 fotos ya procesadas quedan en <span class="mono">assetManifest.js</span> con id <span class="mono">producto-&lt;slug&gt;</span>, listas para mapear en cuanto haya <span class="mono">id</span> reales — no se adivina la relación slug↔id.</div>
-            </div>
-          </div>
-          <div class="tl-item open">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Qué necesita Reiner</div>
-              <div class="tl-desc">Reactivar el proyecto desde el dashboard de Supabase (estaba pausado) o confirmar/rotar la contraseña de <span class="mono">postgres</span> si el password guardado quedó desactualizado.</div>
+              <div class="tl-title">Proyecto Supabase reactivado, pero no era el verdadero bloqueo</div>
+              <div class="tl-desc">El proyecto <span class="mono">wckufllomfmuwxptegvm</span> estaba pausado (INACTIVE) y se reactivó sin problema (<span class="mono">restore_project</span>, ~5 min). Pero al revisar la tabla <span class="mono">productos</span> se descubrió que tiene <strong>0 filas</strong> — es un espejo vacío de la constante <span class="mono">MENU</span> en <span class="mono">App.jsx</span> (así lo dice el propio comentario de la tabla). La app en producción corre 100% desde <span class="mono">MENU</span>, nunca leyó Supabase para productos. El bloqueo real no era de acceso/credenciales, era que solo 12 de los 48 productos con foto ya existían en <span class="mono">MENU</span> — eso se resolvió con la confirmación de Reiner (ver punto 2 y 11), no con Supabase.</div>
             </div>
           </div>
         </div>
@@ -524,6 +510,8 @@
           <div class="qa"><b>Encuadre del avatar:</b> ¿aprueba foto estática + botón "Hablar con José Tomás"?</div>
           <div class="qa"><b>Texto del "Ver guion":</b> confirmar que no hay errores de datos/nombres.</div>
           <div class="qa"><b>Otras confirmaciones sin resolver:</b> rol "Caficultor" para Falsir Dúran (Los Naranjos) correcto; a qué finca referenciar ahora el postre "m11" (Santa Cruz de Mora ya no es válida); si ajustar copy de Quadro Club al tono newsletter.</div>
+          <div class="qa"><b>Nuevo 30/sept — Cheesecake de cascarilla (m12):</b> no tiene foto equivalente entre las 48 nuevas. ¿Una de las 3 fotos de cheesecake (fresa/Nutella/pistacho) la reemplaza, o son sabores aparte y m12 se queda sin foto?</div>
+          <div class="qa"><b>Nuevo 30/sept — 45 productos placeholder de Carta:</b> faltan nombre definitivo (donde dice "variante 1/2" o "por confirmar"), precio y descripción/receta real para sacarlos de estado "Próximamente".</div>
         </div>
       </section>
 
@@ -538,7 +526,8 @@
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 6 — Lab 3D</div><div class="tl-desc">Espiral migrada a TubeGeometry Three.js real, lazy-load. En producción.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 7 — Fincas + fusión de roster</div><div class="tl-desc">Es el punto 3 de la reunión — cerrado 18/sept.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 8 — Dashboard de Barra (/#barra)</div><div class="tl-desc">Recibe y gestiona órdenes desde la compu del local. Confirmado en producción, sin pendientes.</div></div></div>
-          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 9 — Pipeline de fotos de producto (DALL-E + ChatGPT Work)</div><div class="tl-desc">48 fotos originales curadas en 8 categorías, editadas en batch por ChatGPT Work (DALL-E) con prompt genérico validado, procesadas a JPG (mozjpeg) + 3 WebP (480/900/1170) y cargadas a <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. Auditoría de seguridad hecha sobre las skills candidatas (4 limpias, 1 excluida — <span class="mono">browser-use</span>, requiere API key de pago y daemon en la nube de un tercero). Proceso completo guardado como skill reusable <span class="mono">pipeline-imagenes-work-dalle</span>. Avatar real de José Tomás (Agua Fría) reemplazó el placeholder — commit <span class="mono">c979f9b</span>, sin pushear aún. Falta solo el mapeo <span class="mono">id</span>→foto en <span class="mono">FOTO_PRODUCTO</span> (bloqueado por Supabase, ver sección de bloqueo arriba).</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 9 — Pipeline de fotos de producto (DALL-E + ChatGPT Work)</div><div class="tl-desc">48 fotos originales curadas en 8 categorías, editadas en batch por ChatGPT Work (DALL-E) con prompt genérico validado, procesadas a JPG (mozjpeg) + 3 WebP (480/900/1170) y cargadas a <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. Auditoría de seguridad hecha sobre las skills candidatas (4 limpias, 1 excluida — <span class="mono">browser-use</span>, requiere API key de pago y daemon en la nube de un tercero). Proceso completo guardado como skill reusable <span class="mono">pipeline-imagenes-work-dalle</span>. Avatar real de José Tomás (Agua Fría) reemplazó el placeholder — commit <span class="mono">c979f9b</span>.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 10 — Carta con foto + vista de producto completa (30/sept)</div><div class="tl-desc">Mapeo <span class="mono">id</span>→foto cerrado en <span class="mono">FOTO_PRODUCTO</span> (3 productos reales + 45 nuevos placeholder, categoría <span class="mono">Infusiones</span> agregada). Nueva pantalla <span class="mono">DetalleProducto</span> (mismo patrón full-screen que Admin/Fincas, con <span class="mono">Header</span>+<span class="mono">onBack</span>): tocar cualquier tarjeta de la Carta abre foto grande, descripción completa, precio y botones de carrito. Patrón "Próximamente" (badge + "Por confirmar" + sin botón de carrito) para los 45 placeholder, distinto de "Agotado hoy" para no confundir al cliente. Validado con <span class="mono">acorn-jsx</span> (parse OK, sin poder correr el build real desde la VM Linux contra <span class="mono">node_modules</span> de Windows). Commit <span class="mono">221ba2b</span>, sobre <span class="mono">552d04d</span>.</div></div></div>
         </div>
       </section>
 
