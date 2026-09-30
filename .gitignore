@@ -7,3 +7,10 @@ dist
 .env.*
 !.env.example
 lighthouse/
+
+# Material de trabajo del pipeline de fotos (no va a git, muy pesado)
+incoming/
+quadrocafe-assets/
+
+# Artefacto local del mecanismo de entrega de Cowork
+Claude outputs/
