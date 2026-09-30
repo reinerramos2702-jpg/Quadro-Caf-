@@ -401,9 +401,61 @@ const MENU = [
   { id: "m10", cat: "Bollería", nombre: "Pan de masa madre", precio: 5.5, desc: "Pieza de 800 g. Fermentación de 24 horas.", finca: false },
   { id: "m11", cat: "Postres", nombre: "Tarta de café y nuez", precio: 4.6, desc: "Con espresso.", finca: false }, // sin finca específica (Reiner, 2026-09-18): Santa Cruz de Mora salió del roster
   { id: "m12", cat: "Postres", nombre: "Cheesecake de cascarilla", precio: 4.9, desc: "Base de galleta, sirope de cascarilla.", finca: false, tag: "Nuevo" },
+
+  /* Productos nuevos (30/sept) — autorizado explícitamente por Reiner para
+     agregar ya con placeholder mientras confirma nombre/precio/receta real
+     de cada uno. precio:0 + disponible:false + nuevo:true → la Carta los
+     muestra con foto y "Próximamente" en vez de precio, sin poder agregarse
+     al carrito. Para activar uno: precio real, disponible:true, quitar
+     nuevo:true (o dejarlo, ya no se usa el flag si disponible es true). */
+  { id: "m13", cat: "Espresso", nombre: "Americano", precio: 0, desc: "Espresso alargado con agua caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m14", cat: "Espresso", nombre: "Capuchino", precio: 0, desc: "Espresso con leche vaporizada y espuma densa.", finca: false, disponible: false, nuevo: true },
+  { id: "m15", cat: "Espresso", nombre: "Flat White", precio: 0, desc: "Espresso con microespuma de leche, más concentrado que un latte.", finca: false, disponible: false, nuevo: true },
+  { id: "m16", cat: "Espresso", nombre: "Latte de pistacho", precio: 0, desc: "Espresso con leche vaporizada y jarabe de pistacho.", finca: false, disponible: false, nuevo: true },
+  { id: "m17", cat: "Espresso", nombre: "Latte de vainilla", precio: 0, desc: "Espresso con leche vaporizada y jarabe de vainilla.", finca: false, disponible: false, nuevo: true },
+  { id: "m18", cat: "Espresso", nombre: "Latte", precio: 0, desc: "Espresso con leche vaporizada, suave y cremoso.", finca: false, disponible: false, nuevo: true },
+  { id: "m19", cat: "Espresso", nombre: "Macchiato", precio: 0, desc: "Espresso \"manchado\" con un toque de espuma de leche.", finca: false, disponible: false, nuevo: true },
+  { id: "m20", cat: "Espresso", nombre: "Matcha latte", precio: 0, desc: "Té matcha con leche vaporizada, servido caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m21", cat: "Espresso", nombre: "Chocolate caliente", precio: 0, desc: "Chocolate caliente cremoso, receta de la casa.", finca: false, disponible: false, nuevo: true },
+  { id: "m22", cat: "Frío", nombre: "Matcha latte helado", precio: 0, desc: "Té matcha con leche fría, servido sobre hielo.", finca: false, disponible: false, nuevo: true },
+  { id: "m23", cat: "Frío", nombre: "Frappé", precio: 0, desc: "Café frappé batido con hielo, textura espumosa.", finca: false, disponible: false, nuevo: true },
+  { id: "m24", cat: "Frío", nombre: "Frappé de Nutella", precio: 0, desc: "Frappé de café con Nutella.", finca: false, disponible: false, nuevo: true },
+  { id: "m25", cat: "Frío", nombre: "Frappé de Oreo", precio: 0, desc: "Frappé de café con galleta Oreo.", finca: false, disponible: false, nuevo: true },
+  { id: "m26", cat: "Frío", nombre: "Frappé de pistacho", precio: 0, desc: "Frappé de café con pistacho.", finca: false, disponible: false, nuevo: true },
+  { id: "m27", cat: "Frío", nombre: "Ice latte", precio: 0, desc: "Espresso con leche fría, servido sobre hielo.", finca: false, disponible: false, nuevo: true },
+  { id: "m28", cat: "Frío", nombre: "Ice latte trío caramelo y Nutella", precio: 0, desc: "Ice latte con caramelo y Nutella.", finca: false, disponible: false, nuevo: true },
+  { id: "m29", cat: "Frío", nombre: "Green Crush", precio: 0, desc: "Bebida fría a base de frutas/vegetales verdes.", finca: false, disponible: false, nuevo: true },
+  { id: "m30", cat: "Bollería", nombre: "Empanada", precio: 0, desc: "Empanada horneada del día.", finca: false, disponible: false, nuevo: true },
+  { id: "m31", cat: "Bollería", nombre: "Media luna", precio: 0, desc: "Media luna de mantequilla, horneada del día.", finca: false, disponible: false, nuevo: true },
+  { id: "m32", cat: "Bollería", nombre: "Media luna de Nutella", precio: 0, desc: "Media luna rellena de Nutella.", finca: false, disponible: false, nuevo: true },
+  { id: "m33", cat: "Bollería", nombre: "Media luna de pistacho", precio: 0, desc: "Media luna rellena de crema de pistacho.", finca: false, disponible: false, nuevo: true },
+  { id: "m34", cat: "Postres", nombre: "Affogato", precio: 0, desc: "Helado \"ahogado\" en un shot de espresso.", finca: false, disponible: false, nuevo: true },
+  { id: "m35", cat: "Postres", nombre: "Affogato de matcha", precio: 0, desc: "Helado con un shot de matcha caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m36", cat: "Postres", nombre: "Affogato de pistacho", precio: 0, desc: "Helado de pistacho con un shot de espresso.", finca: false, disponible: false, nuevo: true },
+  { id: "m37", cat: "Postres", nombre: "Brownie con helado", precio: 0, desc: "Brownie de chocolate con bola de helado.", finca: false, disponible: false, nuevo: true },
+  { id: "m38", cat: "Postres", nombre: "Cheesecake de fresa", precio: 0, desc: "Cheesecake con cobertura de fresa.", finca: false, disponible: false, nuevo: true },
+  { id: "m39", cat: "Postres", nombre: "Cheesecake de Nutella", precio: 0, desc: "Cheesecake con cobertura de Nutella.", finca: false, disponible: false, nuevo: true },
+  { id: "m40", cat: "Postres", nombre: "Cheesecake de pistacho", precio: 0, desc: "Cheesecake con cobertura de pistacho.", finca: false, disponible: false, nuevo: true },
+  { id: "m41", cat: "Postres", nombre: "Marquesa de limón", precio: 0, desc: "Postre frío de galleta y limón, por capas.", finca: false, disponible: false, nuevo: true },
+  { id: "m42", cat: "Postres", nombre: "Brookie — variante 1", precio: 0, desc: "Cruce de brownie y cookie. Nombre y receta definitiva por confirmar.", finca: false, disponible: false, nuevo: true },
+  { id: "m43", cat: "Postres", nombre: "Brookie — variante 2", precio: 0, desc: "Cruce de brownie y cookie. Nombre y receta definitiva por confirmar.", finca: false, disponible: false, nuevo: true },
+  { id: "m44", cat: "Postres", nombre: "Cookie de chocolate y nuez — variante 1", precio: 0, desc: "Nombre y receta definitiva por confirmar.", finca: false, disponible: false, nuevo: true },
+  { id: "m45", cat: "Postres", nombre: "Cookie de chocolate y nuez — variante 2", precio: 0, desc: "Nombre y receta definitiva por confirmar.", finca: false, disponible: false, nuevo: true },
+  { id: "m46", cat: "Postres", nombre: "Cookie de chispas de chocolate — variante 1", precio: 0, desc: "Nombre y receta definitiva por confirmar.", finca: false, disponible: false, nuevo: true },
+  { id: "m47", cat: "Postres", nombre: "Cookie de chispas de chocolate — variante 2", precio: 0, desc: "Nombre y receta definitiva por confirmar.", finca: false, disponible: false, nuevo: true },
+  { id: "m48", cat: "Infusiones", nombre: "Infusión caliente de arándano", precio: 0, desc: "Infusión de fruta servida caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m49", cat: "Infusiones", nombre: "Infusión caliente Fireberry", precio: 0, desc: "Infusión de fruta servida caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m50", cat: "Infusiones", nombre: "Infusión caliente de jengibre y durazno", precio: 0, desc: "Infusión de fruta servida caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m51", cat: "Infusiones", nombre: "Infusión caliente de limón y jengibre", precio: 0, desc: "Infusión de fruta servida caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m52", cat: "Infusiones", nombre: "Infusión caliente de fresa y kiwi", precio: 0, desc: "Infusión de fruta servida caliente.", finca: false, disponible: false, nuevo: true },
+  { id: "m53", cat: "Infusiones", nombre: "Infusión helada de arándano", precio: 0, desc: "Infusión de fruta servida fría, sobre hielo.", finca: false, disponible: false, nuevo: true },
+  { id: "m54", cat: "Infusiones", nombre: "Infusión helada Fireberry", precio: 0, desc: "Infusión de fruta servida fría, sobre hielo.", finca: false, disponible: false, nuevo: true },
+  { id: "m55", cat: "Infusiones", nombre: "Infusión helada de jengibre y durazno", precio: 0, desc: "Infusión de fruta servida fría, sobre hielo.", finca: false, disponible: false, nuevo: true },
+  { id: "m56", cat: "Infusiones", nombre: "Infusión helada de limón y jengibre", precio: 0, desc: "Infusión de fruta servida fría, sobre hielo.", finca: false, disponible: false, nuevo: true },
+  { id: "m57", cat: "Infusiones", nombre: "Infusión helada de fresa y kiwi", precio: 0, desc: "Infusión de fruta servida fría, sobre hielo.", finca: false, disponible: false, nuevo: true },
 ];
 
-const CATS = ["Filtrado", "Espresso", "Frío", "Bollería", "Postres"];
+const CATS = ["Filtrado", "Espresso", "Frío", "Infusiones", "Bollería", "Postres"];
 /* Banner de cada categoría de Carta — las cinco con foto propia, encuadrada
    a la caja de 3.25:1 (ver assetManifest.js). */
 const CAT_IMG = {
@@ -420,7 +472,56 @@ const CAT_IMG = {
    pegar la entrada en assetManifest.js y agregar `m9: "producto-<x>"` acá.
    Funciona igual para productos creados desde el Panel Admin (se mapean por
    su id). Sin entrada, la tarjeta de Carta se ve exactamente como antes. */
-const FOTO_PRODUCTO = {};
+const FOTO_PRODUCTO = {
+  m5: "producto-cortado", // cortado (foto real, 30/sept)
+  m4: "producto-espresso", // espresso (foto real, 30/sept)
+  m9: "producto-croissant", // croissant (foto real, 30/sept)
+  m13: "producto-americano",
+  m14: "producto-capuccino",
+  m15: "producto-flat-white",
+  m16: "producto-latte-pistacho",
+  m17: "producto-latte-vainilla",
+  m18: "producto-latte",
+  m19: "producto-macchiato",
+  m20: "producto-matcha-latte",
+  m21: "producto-chocolate-caliente",
+  m22: "producto-matcha-latte-ice",
+  m23: "producto-frappe",
+  m24: "producto-frappe-nutella",
+  m25: "producto-frappe-oreo",
+  m26: "producto-frappe-pistacho",
+  m27: "producto-ice-latte",
+  m28: "producto-ice-latte-trio-caramelo-nutella",
+  m29: "producto-green-crush",
+  m30: "producto-empanada-frontal",
+  m31: "producto-media-luna",
+  m32: "producto-media-luna-nutella",
+  m33: "producto-media-luna-pistacho",
+  m34: "producto-affogato",
+  m35: "producto-affogato-matcha",
+  m36: "producto-affogato-pistacho",
+  m37: "producto-brownie-con-helado",
+  m38: "producto-cheesecake-fresa",
+  m39: "producto-cheesecake-nutella",
+  m40: "producto-cheesecake-pistacho",
+  m41: "producto-marquesa-limon",
+  m42: "producto-brookies-1",
+  m43: "producto-brookies-2",
+  m44: "producto-choco-nuez-cookie-1",
+  m45: "producto-choco-nuez-cookie-2",
+  m46: "producto-chocolate-chip-cookie-raw1",
+  m47: "producto-chocolate-chip-cookie-raw2",
+  m48: "producto-infusion-hot-blueberry",
+  m49: "producto-infusion-hot-fireberry",
+  m50: "producto-infusion-hot-ginger-peach",
+  m51: "producto-infusion-hot-lemon-ginger",
+  m52: "producto-infusion-hot-strawberry-kiwi",
+  m53: "producto-infusion-ice-blueberry",
+  m54: "producto-infusion-ice-fireberry",
+  m55: "producto-infusion-ice-ginger-peach",
+  m56: "producto-infusion-ice-lemon-ginger",
+  m57: "producto-infusion-ice-strawberry-kiwi",
+};
 
 /* Aviso de "estamos usando el respaldo local" — nunca silencioso. En consola
    siempre (el dueño puede revisarla en prod si algo no cuadra); en pantalla
@@ -1276,6 +1377,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   const { C } = useTheme();
   const [cat, setCat] = useState("Filtrado");
   const [abierto, setAbierto] = useState(null);
+  const [detalle, setDetalle] = useState(null);
   const { items: carta, fuente } = useCarta();
   const items = carta.filter((m) => m.cat === cat);
   const imgCategoria = CAT_IMG[cat];
@@ -1316,6 +1418,19 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
     const t = setTimeout(() => setCambiando(false), 260);
     return () => clearTimeout(t);
   }, [cambiando]);
+
+  if (detalle) {
+    return (
+      <DetalleProducto
+        m={detalle}
+        onBack={() => setDetalle(null)}
+        carrito={carrito}
+        add={add}
+        quitar={quitar}
+        carritoBtnRef={carritoBtnRef}
+      />
+    );
+  }
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
@@ -1371,13 +1486,17 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
               const n = carrito.filter((x) => x.id === m.id).length;
               const open = abierto === m.id;
               const agotado = m.disponible === false;
+              const proximamente = m.nuevo === true;
               return (
                 <div key={m.id} style={{
                   background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
                   borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
                   opacity: agotado ? .55 : 1,
                 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <div
+                    onClick={() => setDetalle(m)}
+                    style={{ display: "flex", justifyContent: "space-between", gap: 12, cursor: "pointer" }}
+                  >
                     {FOTO_PRODUCTO[m.id] && (
                       <ResponsiveImg id={FOTO_PRODUCTO[m.id]} alt={m.nombre} sizes="64px" style={{
                         width: 64, height: 64, aspectRatio: "1 / 1", borderRadius: 12, flexShrink: 0,
@@ -1386,7 +1505,9 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                         <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
-                        {agotado ? (
+                        {proximamente ? (
+                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Próximamente</span>
+                        ) : agotado ? (
                           <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Agotado hoy</span>
                         ) : m.tag && (
                           <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>{m.tag}</span>
@@ -1395,7 +1516,11 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
                       <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <div className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</div>
+                      {proximamente ? (
+                        <div className="mono" style={{ fontSize: 11, color: C.textMuted, fontWeight: 600 }}>Por confirmar</div>
+                      ) : (
+                        <div className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</div>
+                      )}
                     </div>
                   </div>
 
@@ -1408,7 +1533,9 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
                         {open ? "Ocultar opciones" : "Elegir finca y taza"}
                       </button>
                     ) : <span />}
-                    {agotado ? (
+                    {proximamente ? (
+                      <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Precio y receta por confirmar</span>
+                    ) : agotado ? (
                       <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Vuelve mañana</span>
                     ) : (
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -1456,6 +1583,75 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
               );
             })}
           </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Pantalla completa de un producto de Carta (toque en la card de Menu()).
+   Mismo patrón de "sub-pantalla con Header + onBack" que el resto de la app
+   (ver Admin/Fincas) — no se agrega router nuevo, es estado local de Menu(). */
+function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
+  const { C } = useTheme();
+  const n = carrito.filter((x) => x.id === m.id).length;
+  const agotado = m.disponible === false;
+  const proximamente = m.nuevo === true;
+  const foto = FOTO_PRODUCTO[m.id];
+
+  return (
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
+      <Header sub={m.cat} titulo={m.nombre} onBack={onBack} />
+      <div style={{ padding: "0 20px" }}>
+        {foto && (
+          <ResponsiveImg id={foto} alt={m.nombre} sizes="(max-width: 430px) calc(100vw - 40px), 390px" style={{
+            width: "100%", aspectRatio: "1 / 1", borderRadius: 18, marginBottom: 16,
+          }} />
+        )}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+          {proximamente ? (
+            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>Próximamente</span>
+          ) : agotado ? (
+            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600 }}>Agotado hoy</span>
+          ) : m.tag && (
+            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>
+          )}
+        </div>
+        <h2 style={{ fontFamily: "inherit", fontSize: 22, fontWeight: 700, margin: "0 0 6px", color: C.text }}>{m.nombre}</h2>
+        <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px" }}>{m.desc}</p>
+
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
+        }}>
+          <div>
+            <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 4 }}>Precio</div>
+            {proximamente ? (
+              <div className="mono" style={{ fontSize: 16, color: C.textMuted, fontWeight: 600 }}>Por confirmar</div>
+            ) : (
+              <div className="mono" style={{ fontSize: 20, color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
+            )}
+          </div>
+          {proximamente || agotado ? (
+            <span className="mono" style={{ fontSize: 11, color: C.textMuted, textTransform: "uppercase", letterSpacing: ".06em" }}>
+              {proximamente ? "Aún no disponible" : "Vuelve mañana"}
+            </span>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {n > 0 && (
+                <>
+                  <button onClick={() => quitar(m.id)} className="mo-press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={16} /></button>
+                  <span className="mono" style={{ width: 18, textAlign: "center", fontSize: 15 }}><AnimatedNumber value={n} /></span>
+                </>
+              )}
+              <button
+                onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
+                className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
+                style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand, width: 40, height: 40 }}>
+                <Plus size={18} />
+              </button>
+            </div>
           )}
         </div>
       </div>
