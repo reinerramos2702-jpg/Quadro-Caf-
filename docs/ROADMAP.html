@@ -291,9 +291,9 @@
 
   <div class="stats">
     <div class="stat"><div class="num">12/12</div><div class="label">Puntos reunión 05/sept cerrados</div></div>
-    <div class="stat"><div class="num">0</div><div class="label">Puntos pendientes de verificar</div></div>
-    <div class="stat"><div class="num">8</div><div class="label">Bloques trabajados (1–8), en producción</div></div>
-    <div class="stat"><div class="num">1</div><div class="label">Fase nueva iniciada: Papagayo (pagos)</div></div>
+    <div class="stat"><div class="num">48/48</div><div class="label">Fotos de producto generadas (JPG+WebP listo)</div></div>
+    <div class="stat"><div class="num">9</div><div class="label">Bloques trabajados (1–9), en producción</div></div>
+    <div class="stat"><div class="num">1</div><div class="label">Bloqueo activo: Supabase inactivo (FOTO_PRODUCTO)</div></div>
   </div>
 
   <div class="progress-card">
@@ -344,9 +344,9 @@
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">02</span><label class="item-title" for="chk-p2">Más imágenes en Carta</label></div>
-                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag progress">Estructura lista, contenedor vacío</span></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">48/48 fotos procesadas</span><span class="tag warn">FOTO_PRODUCTO bloqueado</span></div>
               </div>
-              <div class="item-desc">Estructura de 1 foto por producto lista. <strong>Contenedor queda vacío a propósito</strong> — Reiner integra las fotos reales (DALL-E, 9 prompts en <span class="mono">PROMPTS_DALLE_FOTOPRODUCTO_CARTA.md</span>) en otra sesión. No bloquea nada más.</div>
+              <div class="item-desc">Las 48 fotos de producto (DALL-E, vía pipeline con ChatGPT Work — ver Bloque 9) ya están procesadas a JPG + 3 WebP responsivos y cargadas en <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. <strong>Falta el último paso: mapear cada foto al <span class="mono">id</span> real del producto en <span class="mono">FOTO_PRODUCTO</span> (App.jsx)</strong> — bloqueado porque el proyecto Supabase está inactivo (ver sección "Bloqueo — Supabase inactivo" abajo). No se inventan ids/mapeos.</div>
             </div>
           </div>
 
@@ -488,6 +488,34 @@
       </section>
 
       <section class="card">
+        <h2>Bloqueo — Supabase inactivo (mapeo de fotos de producto)</h2>
+        <div class="card-sub">Detectado 30/sept, al intentar cerrar el punto 2 (fotos en Carta).</div>
+        <div class="timeline">
+          <div class="tl-item block">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Proyecto Supabase <span class="mono">wckufllomfmuwxptegvm</span> con estado INACTIVE</div>
+              <div class="tl-desc">Consulta a la tabla <span class="mono">productos</span> falla dos veces con <span class="mono">28P01: password authentication failed for user "postgres"</span>. Sin esto no se puede leer el <span class="mono">id</span> real de cada producto.</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Por qué no se resuelve solo</div>
+              <div class="tl-desc"><span class="mono">FOTO_PRODUCTO = {}</span> en <span class="mono">App.jsx</span> está vacío a propósito (comentario del propio código: "no se inventan"). Las 48 fotos ya procesadas quedan en <span class="mono">assetManifest.js</span> con id <span class="mono">producto-&lt;slug&gt;</span>, listas para mapear en cuanto haya <span class="mono">id</span> reales — no se adivina la relación slug↔id.</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Qué necesita Reiner</div>
+              <div class="tl-desc">Reactivar el proyecto desde el dashboard de Supabase (estaba pausado) o confirmar/rotar la contraseña de <span class="mono">postgres</span> si el password guardado quedó desactualizado.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
         <h2>Preguntas pendientes para el dueño</h2>
         <div class="card-sub">Finca Agua Fría — José Tomás Carrillo Batalla (copia de <span class="mono">PREGUNTAS_DUENO_AGUA_FRIA.md</span>).</div>
         <div class="qa-list">
@@ -510,6 +538,7 @@
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 6 — Lab 3D</div><div class="tl-desc">Espiral migrada a TubeGeometry Three.js real, lazy-load. En producción.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 7 — Fincas + fusión de roster</div><div class="tl-desc">Es el punto 3 de la reunión — cerrado 18/sept.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 8 — Dashboard de Barra (/#barra)</div><div class="tl-desc">Recibe y gestiona órdenes desde la compu del local. Confirmado en producción, sin pendientes.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 9 — Pipeline de fotos de producto (DALL-E + ChatGPT Work)</div><div class="tl-desc">48 fotos originales curadas en 8 categorías, editadas en batch por ChatGPT Work (DALL-E) con prompt genérico validado, procesadas a JPG (mozjpeg) + 3 WebP (480/900/1170) y cargadas a <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. Auditoría de seguridad hecha sobre las skills candidatas (4 limpias, 1 excluida — <span class="mono">browser-use</span>, requiere API key de pago y daemon en la nube de un tercero). Proceso completo guardado como skill reusable <span class="mono">pipeline-imagenes-work-dalle</span>. Avatar real de José Tomás (Agua Fría) reemplazó el placeholder — commit <span class="mono">c979f9b</span>, sin pushear aún. Falta solo el mapeo <span class="mono">id</span>→foto en <span class="mono">FOTO_PRODUCTO</span> (bloqueado por Supabase, ver sección de bloqueo arriba).</div></div></div>
         </div>
       </section>
 
@@ -555,6 +584,8 @@
       <section class="card">
         <h2 style="font-size:1.05rem;">Pasos manuales pendientes (solo Reiner)</h2>
         <div class="steps">
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Reactivar proyecto Supabase</div><div class="step-desc">Está en INACTIVE — reactivar desde el dashboard y/o confirmar la contraseña de <span class="mono">postgres</span>. Bloquea el mapeo de las 48 fotos de producto.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Push de <span class="mono">quadro-feature-reunion-05sept</span></div><div class="step-desc">Incluye avatar real de José Tomás (<span class="mono">c979f9b</span>) + las 48 fotos de producto + <span class="mono">assetManifest.js</span> actualizado. Cowork no tiene credenciales de GitHub en este equipo, lo corre Reiner.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Correr migraciones 0004 y 0005</div><div class="step-desc">Supabase SQL Editor.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Redeploy edge function <span class="mono">verificar-comprobante</span></div><div class="step-desc">Con <span class="mono">--no-verify-jwt</span>.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Confirmar secret <span class="mono">GEMINI_API_KEY</span></div><div class="step-desc">Verificar que está cargado.</div></div></div>
@@ -573,13 +604,15 @@
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Dashboard Barista (/#barra)</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Nav líquido (Bloque UI-1 v2)</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Fincas — avatar Agua Fría (José Tomás)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Pipeline fotos de producto (JPG+WebP, 48/48)</span></div></div>
         </div>
       </section>
 
       <section class="card">
         <h2 style="font-size:1.05rem;">Próximos pasos priorizados</h2>
         <div class="steps">
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Push de la rama con doc actualizado</div><div class="step-desc">12/12 puntos confirmados en repo — solo falta commit + push de <span class="mono">docs/ROADMAP.html</span>.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Reactivar Supabase → mapear FOTO_PRODUCTO</div><div class="step-desc">En cuanto haya acceso: leer <span class="mono">id</span>/nombre/categoría reales, cruzar con <span class="mono">producto-&lt;slug&gt;</span> del manifest, proponer el mapeo a Reiner antes de tocar <span class="mono">App.jsx</span>.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Push de la rama con doc actualizado</div><div class="step-desc">12/12 puntos + 48 fotos + avatar real confirmados en repo local — falta push (Reiner, sin credenciales de GitHub en este equipo).</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Responder preguntas Papagayo</div><div class="step-desc">API/doc/auth/webhooks — sin esto no se diseña arquitectura.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Resolver <span class="mono">fix/nav-dvh-viewport</span></div><div class="step-desc">26 commits, fix real de viewport dvh en mobile — decidir merge.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Depuración de código</div><div class="step-desc">Domingo (o miércoles puntual) — limpiar ramas viejas, revisar deuda técnica.</div></div></div>
