@@ -61,3 +61,21 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
 
     Total: **12 reales + 45 placeholders**, sin NaN, sin fallback y sin errores de consola (salvo el `sw.js` local).
 - **Siguiente**: 2. Migración 0006 (total en servidor).
+- **CI**: la primera corrida en GitHub falló porque Node 22 no acepta un directorio en `node --test test/`; en local tengo Node 26, que sí lo acepta. Se arregló con un glob (`aa3e884`) y **CI quedó en verde**: test, lint y build completo con service worker en Linux.
+
+## Iteración 2 — `0006_validar_total_orden.sql` (archivo, NO aplicada) (01/oct/2026)
+- **Objetivo**: deuda #1. El total lo decide el servidor (decisión de Reiner: recalcular y rechazar ids inválidos, no disponibles o con cantidad ≤ 0).
+- **Archivo**: `supabase/migrations/0006_validar_total_orden.sql`. Es un trigger `BEFORE INSERT` (SECURITY INVOKER, `search_path` fijo) que:
+  - valida 1–50 líneas, que el id exista y esté `disponible`, y que la cantidad sea un entero entre 1 y 50;
+  - reescribe `nombre`/`precio` de cada línea desde `productos` y **pisa `total`**;
+  - recorta `nombre_cliente` a 60 caracteres y rechaza uno vacío;
+  - conserva `finca`/`taza`, recortados.
+  - Trae documentados la verificación y la reversión.
+- **Verificación sin producción**: Postgres real en WASM (PGlite 0.5.8, solo en el scratchpad) con stubs mínimos de `auth`/`storage`, roles `anon`/`authenticated` y las migraciones 0001–0005 **tal cual están en el repo**. Insertando como `anon`, **17/17 casos OK**:
+  - un total de 0.01 sale recalculado a 10.20;
+  - rechaza: id inexistente, agotado, cantidades 0, -1, 1.5, "2" y 51, pedido vacío, 51 líneas y nombre vacío;
+  - el nombre se recorta a 60;
+  - los rechazados no consumen número de orden;
+  - el bloque de verificación de la migración devuelve `total=6.00 · precio=3.00` sin dejar filas.
+- **Cliente**: sin cambios. El carrito ya manda `cantidad` entera y el Ticket muestra la fila que devuelve el INSERT, o sea el total del servidor.
+- **Siguiente**: 3. `0007_rpc_obtener_orden.sql`.
