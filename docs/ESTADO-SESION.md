@@ -1,5 +1,5 @@
 # Estado de sesión — Quadro Café
-Última actualización: 30 sep 2026
+Última actualización: 1 oct 2026
 
 ## Hecho en la última sesión
 - docs/ROADMAP.html actualizado: feature Carta (fotos mapeadas + 45 productos placeholder + DetalleProducto), decisión Cheesecake m12, ficha PDF para el dueño. Commits 275b569 y 2d3ba1c (ya pusheados).
@@ -24,8 +24,9 @@
 - docs/ROADMAP.html, docs/Quadro_Cafe_Ficha_Productos_Nuevos.pdf, .gitignore, ROADMAP.md (raíz), claude/BUENAS_PRACTICAS_CLAUDE_CODE.md (§21 + §22 pendientes)
 
 ## Pendiente para la próxima sesión
-- Confirmar si el commit `b4631e4` ya se pusheó a origin.
-- Actualizar `ROADMAP.md` (raíz) marcando `[x]` en los puntos 12 y 14 — ya resueltos en código, docs/ROADMAP.html ya actualizado, solo falta sincronizar este archivo.
+- ~~Confirmar push de `b4631e4`~~ — hecho 1 oct: ya está en origin.
+- Decisión 1 oct: **`docs/ROADMAP.html` es el único roadmap.** `ROADMAP.md` (raíz) se elimina con `git rm ROADMAP.md` (no crear ni leer otro). Pasos manuales y orden de merge viven en el HTML.
+- `git merge main` desde la rama: GitHub marca conflictos (28 commits / 206 archivos) — resolver antes del merge final.
 - Decidir si se borra definitivamente `_to_delete/jose-tomas.OLD-placeholder.jpg` (dar permiso de borrado, o Reiner lo borra manualmente).
 - Esperar datos bancarios reales de Jonatha → completar cuenta en Papagayo (pestaña Banco).
 - Diseñar/implementar la integración técnica de verificación de pagos Papagayo↔app (no iniciada en código todavía).
