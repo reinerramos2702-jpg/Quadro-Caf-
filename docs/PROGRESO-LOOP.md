@@ -247,3 +247,12 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
   - Tinta: un pointerdown real en el botón "Entrar" escribe `--tx: 40px`, `data-ink=a` y la animación `qc-ink-a 0.56s`.
   - Cliente: `body` con margen 0 y fondo del tema.
   - Sin errores de consola.
+
+### 8.1 Inicio
+- Titular cinético: "El sabor / tiene una / geometría." entra palabra por palabra desde su propia línea (`PalabrasCineticas` + `.mo-linea`/`.mo-palabra`, escalonado de 90 ms, `aria-label` con la frase completa). "geometría." sigue en `UnaLinea`: su padre pasa a ser la `.mo-linea` (bloque), así que la medición de ancho no cambia (30 px a 390, igual que antes).
+- Banner del Club con `.mo-brillo` (destello cada ~5 s) y tinta; tinta también en "Simular vertido", en la tarjeta del lote y en `Chip` (compartido con Carta).
+- **2 regresiones encontradas en las capturas y corregidas**:
+  1. el `nbsp` entre palabras caía en una fuente de respaldo más ancha ("EL    SABOR"), así que ahora va un espacio normal entre `inline-block`;
+  2. `.mo-ink` (`overflow:hidden`) volvía `min-width` a 0 en los chips (ítems flex) y se cortaban ("PUNTO C…"). `Chip` lleva `flexShrink: 0`.
+  - La tilde de "GEOMETRÍA" no se recorta: `.mo-linea` tiene padding vertical compensado con margen negativo.
+- Verificado en los dos temas a 390 (a mitad de animación y asentado), sin errores de consola. Bundle 154.58 KB.

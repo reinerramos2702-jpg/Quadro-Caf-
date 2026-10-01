@@ -344,7 +344,7 @@ html,body{margin:0;background:${C.shell}}
   background:linear-gradient(100deg,transparent,${C.card}cc 45%,${C.brand}22 55%,transparent);
   transform:translateX(-160%) skewX(-12deg);animation:qc-brillo 4.8s var(--ease-in-out) infinite;animation-delay:var(--brillo-delay,0s)}
 @keyframes qc-brillo{0%,62%{transform:translateX(-160%) skewX(-12deg)}100%{transform:translateX(330%) skewX(-12deg)}}
-.mo-linea{display:block;overflow:hidden;padding-bottom:.06em}
+.mo-linea{display:block;overflow:hidden;padding:.16em 0 .1em;margin:-.16em 0 -.1em}
 .mo-palabra{display:inline-block;animation:qc-palabra 820ms var(--ease-out) both;animation-delay:calc(var(--i,0) * 90ms + 120ms)}
 @keyframes qc-palabra{from{transform:translateY(105%) rotate(4deg);opacity:0}to{transform:none;opacity:1}}
 .mo-flap{display:inline-block;transform-origin:50% 0;animation:qc-flap 620ms var(--ease-spring) both;animation-delay:calc(var(--i,0) * 110ms + 200ms)}
@@ -406,8 +406,11 @@ function PalabrasCineticas({ lineas, desde = 0 }) {
   let i = desde;
   return lineas.map((linea, li) => (
     <span key={li} className="mo-linea">
-      {linea.split(" ").map((p, pi, arr) => (
-        <span key={pi} className="mo-palabra" style={{ "--i": i++ }}>{p}{pi < arr.length - 1 ? " " : ""}</span>
+      {linea.split(" ").map((p, pi) => (
+        <React.Fragment key={pi}>
+          {pi > 0 && " "}
+          <span className="mo-palabra" style={{ "--i": i++ }}>{p}</span>
+        </React.Fragment>
       ))}
     </span>
   ));
@@ -933,7 +936,10 @@ function Chip({ children, active, onClick, tone, onTone }) {
   const bg = tone || C.brand;
   const fg = onTone || C.onBrand;
   return (
-    <button onClick={onClick} className="press mono" style={{
+    <button onClick={onClick} className="press mono mo-ink" style={{
+      // flexShrink 0: .mo-ink pone overflow:hidden, y en un ítem flex eso
+      // vuelve min-width a 0 — sin esto el chip se encogía y se cortaba.
+      flexShrink: 0,
       padding: "7px 13px", borderRadius: 999, fontSize: 11, letterSpacing: ".08em",
       textTransform: "uppercase", whiteSpace: "nowrap", cursor: "pointer",
       border: `1px solid ${active ? bg : C.line}`,
@@ -1236,7 +1242,8 @@ function Inicio({ ir, lote }) {
 
   return (
     <div className="qc-scroll" onScroll={onScrollParallax} style={{ overflowY: "auto", height: "100%", paddingBottom: 100 }}>
-      <button onClick={() => ir("club")} className="press tapfx rise" style={{
+      {/* Fase 8: destello que recorre el banner (cada ~5 s) + tinta al tocar. */}
+      <button onClick={() => ir("club")} className="press tapfx rise mo-brillo mo-ink" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
         width: "calc(100% - 40px)", margin: "12px 20px 0", textAlign: "left", cursor: "pointer",
         border: `1px solid ${C.brandAlt}`, borderRadius: 16, padding: "13px 16px",
@@ -1283,9 +1290,16 @@ function Inicio({ ir, lote }) {
              tracking negativo que hereda .disp además pegaba las letras
              entre sí. Aquí se sueltan las dos cosas. El remate va en
              <UnaLinea> porque a 44px se salía del ancho del teléfono. */}
-          <h1 className="disp" style={{ fontSize: 44, lineHeight: 1.02, letterSpacing: ".012em", margin: "10px 0 4px" }}>
-            El sabor<br />tiene una<br />
-            <UnaLinea className="script" max={44} min={24} style={{ color: C.brand }}>geometría.</UnaLinea>
+          {/* Fase 8: tipografía cinética — cada palabra sube desde su propia
+             línea (que recorta), escalonada. El remate sigue en <UnaLinea>:
+             su padre ahora es la .mo-linea (bloque, ancho completo), así que
+             la medición de ancho disponible no cambia. aria-label conserva la
+             frase entera para lectores de pantalla. */}
+          <h1 className="disp" aria-label="El sabor tiene una geometría." style={{ fontSize: 44, lineHeight: 1.02, letterSpacing: ".012em", margin: "10px 0 4px" }}>
+            <PalabrasCineticas lineas={["El sabor", "tiene una"]} />
+            <span className="mo-linea">
+              <UnaLinea className="script mo-palabra" max={44} min={24} style={{ color: C.brand, "--i": 4 }}>geometría.</UnaLinea>
+            </span>
           </h1>
           <p style={{ color: C.textMuted, fontSize: 14, lineHeight: 1.5, margin: "10px 0 0", maxWidth: 300 }}>
             Cada método dibuja una ruta distinta del agua sobre el café. Toca una ruta y mira cómo cambia la taza.
@@ -1325,7 +1339,7 @@ function Inicio({ ir, lote }) {
           </div>
         </div>
         <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.5, margin: "12px 0 12px" }}>{geo.lectura}</p>
-        <button onClick={simularVertido} disabled={corriendo} className="mo-press" style={{
+        <button onClick={simularVertido} disabled={corriendo} className="mo-press mo-ink" style={{
           width: "100%", marginBottom: 14, padding: "11px", borderRadius: 12, border: `1px solid ${C.brand}`,
           background: corriendo ? C.brand : "transparent", color: corriendo ? C.onBrand : C.brand,
           cursor: corriendo ? "default" : "pointer", fontWeight: 600, fontSize: 12.5,
@@ -1341,7 +1355,7 @@ function Inicio({ ir, lote }) {
 
       <div className="slide" style={{ margin: "16px 20px 0" }}>
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".2em", color: C.textMuted, textTransform: "uppercase", marginBottom: 8 }}>Lote en barra hoy</div>
-        <button onClick={() => ir("fincas")} className="press tapfx" style={{
+        <button onClick={() => ir("fincas")} className="press tapfx mo-ink" style={{
           width: "100%", textAlign: "left", cursor: "pointer", border: `1px solid ${C.line}`,
           borderRadius: 18, padding: 16, background: `linear-gradient(140deg, ${tint}44, ${C.card} 60%)`, color: C.text,
         }}>
