@@ -25,6 +25,9 @@
  * también agranda los px). Los selectores son genéricos a propósito, para
  * poder correrla también contra main y tener la columna "antes". */
 
+/* Las funciones que se pasan a page.evaluate corren dentro del navegador. */
+/* global document, window, getComputedStyle, NodeFilter */
+
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
