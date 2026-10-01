@@ -2779,13 +2779,16 @@ function AdminFila({ p, onCambio }) {
             fontSize: 13, fontWeight: 700, color: C.text,
           }} />
       </div>
-      <button onClick={toggleDisponible} disabled={guardando} className="press" aria-label="Disponible hoy" style={{
+      {/* Fase 8: la perilla se mueve con transform + spring (antes animaba
+         left) y el botón se anuncia como switch para lectores de pantalla. */}
+      <button onClick={toggleDisponible} disabled={guardando} className="press" role="switch" aria-checked={!!p.disponible} aria-label="Disponible hoy" style={{
         width: 40, height: 24, borderRadius: 99, border: "none", cursor: "pointer", flexShrink: 0,
         background: p.disponible ? C.brand : C.line, position: "relative", transition: "background .2s",
       }}>
         <span style={{
-          position: "absolute", top: 2, left: p.disponible ? 18 : 2, width: 20, height: 20, borderRadius: "50%",
-          background: C.card, transition: "left .2s",
+          position: "absolute", top: 2, left: 2, width: 20, height: 20, borderRadius: "50%",
+          background: C.card, transform: p.disponible ? "translateX(16px)" : "none",
+          transition: "transform var(--motion-base) var(--ease-spring)",
         }} />
       </button>
     </div>
@@ -3658,7 +3661,8 @@ function OrdenCard({ orden, onAvanzar, onCancelar }) {
   };
 
   return (
-    <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+    // Fase 8: la orden entra "cayendo y asentándose" (.mo-caer, solo transform/opacity).
+    <div className="mo-caer" style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
           <div className="disp" style={{ fontSize: 34, lineHeight: 1 }}>#{String(orden.numero_orden).padStart(3, "0")}</div>
@@ -3701,11 +3705,12 @@ function OrdenCard({ orden, onAvanzar, onCancelar }) {
         ))}
       </div>
 
-      <div className="mono" style={{ fontSize: 12.5, color: C.brandAlt, letterSpacing: ".08em" }}>
+      {/* key por estado: la etiqueta hace "pop" cada vez que la orden avanza. */}
+      <div key={orden.estado} className="mono pop" style={{ fontSize: 12.5, color: C.brandAlt, letterSpacing: ".08em" }}>
         {ESTADOS_ORDEN[paso]?.label || orden.estado}
       </div>
 
-      <button onClick={onAvanzar} className="press" style={{
+      <button onClick={onAvanzar} className="press mo-ink" style={{
         width: "100%", padding: "17px", borderRadius: 14, border: "none", cursor: "pointer",
         background: C.brand, color: C.onBrand, fontWeight: 700, fontSize: 17,
       }}>

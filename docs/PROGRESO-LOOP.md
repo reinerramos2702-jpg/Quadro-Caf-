@@ -303,3 +303,9 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
 - Tienda: destello desfasado sobre cada tarjeta "Próximamente" (`--brillo-delay` por tarjeta). Sin datos nuevos.
 - Club: tinta en "Quiero mi guía". El copy no se tocó (decisión del 18/sept).
 - Verificado (8.4–8.6) en los dos temas a 390, sin errores de consola. Bundle 155.25 KB.
+
+### 8.7 Barra y Admin
+- **Barra**: cada orden entra "cayendo y asentándose" (`.mo-caer`) y la etiqueta de estado hace pop cada vez que avanza (`key` por estado). "Avanzar a…" lleva tinta.
+- **Admin**: la perilla del switch "Disponible hoy" pasa de animar `left` a `translateX` con spring, y el botón ahora es `role="switch"` con `aria-checked` (lo anuncia bien un lector de pantalla).
+- Verificado con sesión inventada y **datos simulados en el navegador**: `staff`/`ordenes`/`productos` interceptados, Realtime bloqueado, nada real leído ni escrito. Barra a 1280×800 y Admin a 390×844, en los dos temas: 2 órdenes animadas, "Volver" presente, switches `aria-checked` true/false con `translateX(16px)`/`none` y foco de teclado OK. Sin errores. Bundle 155.30 KB.
+- Lógica de órdenes, precios y Supabase sin cambios.
