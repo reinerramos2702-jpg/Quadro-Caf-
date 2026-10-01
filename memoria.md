@@ -769,3 +769,9 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 4. **Club intocado**: el título "Desbloquea tu ficha de cata", el botón "Quiero mi guía" y el subtítulo sobre puntos quedan como están. Solo cambió el párrafo del punto 4.
 5. **"É" sin tocar**: el punto 15 queda cerrado sin cambios de tipografía (no reproducible; ver arriba).
 6. **`docs/ROADMAP.html` a `main`**: las ediciones de Reiner (decisiones del 18/sept en los puntos 3, 10 y 11) se commitean directo a `main`, por separado, como única excepción a "nada de merge a main". El mismo contenido exacto se commitea también en la rama, para que el merge futuro no choque (las dos ramas agregan el mismo archivo con contenido idéntico, así que no hay conflicto add/add).
+
+
+## 01/oct/2026 — 0004/0005 aplicadas; compat de categoría
+- 0004 y 0005 aplicadas en Supabase por Reiner (verificado por lectura: CHECK con binance, tabla `comprobantes` con RLS, bucket privado, 2 triggers, 3 policies). Edge function `verificar-comprobante` v2 con `--no-verify-jwt`; secret `GEMINI_API_KEY` cargado.
+- `useCarta` mapea `cat` "Panadería"→"Bollería" al leer `productos` (la base tiene 12 filas, 2 con "Panadería"): 0003 deja de tener ventana crítica tras el deploy. Nunca correr 0003 antes del deploy.
+- `docs/ROADMAP.html` es el único roadmap (ROADMAP.md eliminado).

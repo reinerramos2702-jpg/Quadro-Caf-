@@ -549,7 +549,7 @@ function useCarta() {
       if (error) { avisarFallbackCarta(`error de Supabase — ${error.message}`); return; }
       if (!data || !data.length) { avisarFallbackCarta("la tabla productos está vacía."); return; }
       setItems(data.map((p) => ({
-        id: p.id, cat: p.cat, nombre: p.nombre, precio: Number(p.precio),
+        id: p.id, cat: p.cat === "Panadería" ? "Bollería" : p.cat, nombre: p.nombre, // compat: hasta correr 0003 la base aún dice "Panadería" precio: Number(p.precio),
         desc: p.descripcion, tag: p.tag || undefined, geo: p.geo || undefined,
         finca: p.finca, disponible: p.disponible,
       })));

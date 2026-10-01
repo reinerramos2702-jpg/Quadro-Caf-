@@ -445,7 +445,7 @@
                 <div><span class="item-num">14</span><label class="item-title" for="chk-p14">Renombrar "Panadería" → "Bollería"</label></div>
                 <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Confirmado en el repo (commit <span class="mono">e78a0d9</span> — "renombra categoría Panadería → Bollería"). Solo cambio de copy/label, productos intactos. Migración <span class="mono">0003_categoria_bolleria.sql</span> va <strong>justo después del merge</strong>, no antes.</div>
+              <div class="item-desc">Confirmado en el repo (commit <span class="mono">e78a0d9</span> — "renombra categoría Panadería → Bollería"). Solo cambio de copy/label, productos intactos. El código ya trata "Panadería" como "Bollería" al leer de Supabase (compat), así que la migración <span class="mono">0003_categoria_bolleria.sql</span> puede correr <strong>en cualquier momento después del deploy</strong> — sin ventana en que la Carta pierda productos. Nunca antes del deploy (el código viejo en producción aún filtra por "Panadería").</div>
             </div>
           </div>
 
@@ -580,7 +580,7 @@
           <div class="step"><div class="step-num"></div><div><div class="step-title">Confirmar secret <span class="mono">GEMINI_API_KEY</span></div><div class="step-desc">Verificar que está cargado.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Resolver conflictos con <span class="mono">main</span></div><div class="step-desc">GitHub compare (01/oct): "Can't automatically merge" — 28 commits, 206 archivos. Correr <span class="mono">git merge main</span> desde la rama, resolver los archivos en conflicto y correr <span class="mono">npm run build</span> antes de seguir.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Merge <span class="mono">quadro-feature-reunion-05sept</span> → main</div><div class="step-desc">Dispara el auto-deploy de Cloudflare. Solo después de los pasos anteriores.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Correr migración 0003</div><div class="step-desc">Inmediatamente después del deploy del merge — antes rompe la Carta (filtra por "Panadería").</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Correr migración 0003</div><div class="step-desc">Después del deploy del merge (ya no es urgente: el código nuevo acepta ambos nombres). Nunca antes del deploy. La base tiene hoy 12 productos, 2 con "Panadería".</div></div></div>
         </div>
       </section>
 
