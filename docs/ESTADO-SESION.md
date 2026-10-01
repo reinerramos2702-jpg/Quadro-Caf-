@@ -1,5 +1,11 @@
 # Estado de sesión — Quadro Café
-Última actualización: 1 oct 2026 (tarde), sesión post-lote. El detalle por iteración está en `docs/PROGRESO-LOOP.md`.
+Última actualización: 1 oct 2026 (noche), bugs para la reunión del 2–3 oct. El detalle por iteración está en `docs/PROGRESO-LOOP.md`.
+
+## Bugs del 01/oct (noche) — reunión 2–3 oct
+1. **Avatar José Tomás**: el iframe ya no puede funcionar (D-ID manda `frame-ancestors 'self'`). Ahora se usa el SDK oficial de D-ID dentro del overlay, con capa de respaldo y "Abrir en pestaña nueva". **Falta una acción de Reiner** para que funcione dentro de la app: en D-ID Studio → agente → Embed → Allowed domains, agregar `https://quadro-cafe.reinerramos2702.workers.dev` (y `http://localhost:5173` para probar en local). Si el snippet de Embed trae otra `data-client-key`, pasármela para `avatar.didClientKey`. Mientras tanto, el botón "Abrir en pestaña nueva" lleva a la página de D-ID, que sí funciona.
+2. **Login /equipo con autocompletado**: corregido (sombra inset opaca; antes dependía de una transición que reduced-motion anulaba).
+- Pregunta abierta: la foto de la tarjeta (`jose-tomas.jpg`) no es la misma persona que muestra el agente de D-ID.
+- Los dos arreglos están en la rama; llegan a producción solo con el merge (Reiner).
 
 ## Estado real verificado (01/oct, 19:05 UTC, solo lectura)
 - Rama `quadro-feature-reunion-05sept`, sin conflictos con `main`. `main` no se tocó ni se mergeó.

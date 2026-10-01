@@ -102,7 +102,22 @@ export const CSS_EQUIPO = `
 .eq-input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--eq-hueso);
   font:400 16px/1.3 'Nexa',system-ui,sans-serif;padding:14px 46px 14px 15px}
 .eq-input::placeholder{color:var(--eq-crema);opacity:.55}
-.eq-input:-webkit-autofill{-webkit-text-fill-color:var(--eq-hueso);transition:background-color 9999s}
+.eq-input{caret-color:var(--eq-hueso)}
+/* Autocompletado de Chrome/Safari: el navegador fuerza un fondo celeste
+   (!important) y color FieldText. Antes solo se "retrasaba" ese fondo con una
+   transición de 9999s, pero la regla global de reduced-motion la baja a .001s
+   (esta PC y cualquier teléfono con "reducir movimiento"): fondo celeste al
+   instante + texto hueso = campos que parecían vacíos. Ahora una sombra inset
+   OPACA del color de la caja tapa el fondo sin depender de transiciones.
+   El color imita la caja translúcida sobre la tarjeta; el radio, el de la caja. */
+.eq-input:-webkit-autofill,.eq-input:-webkit-autofill:hover,.eq-input:-webkit-autofill:focus,.eq-input:-webkit-autofill:active{
+  -webkit-text-fill-color:var(--eq-hueso);caret-color:var(--eq-hueso);border-radius:13px;
+  -webkit-box-shadow:0 0 0 1000px var(--eq-tinta) inset;box-shadow:0 0 0 1000px var(--eq-tinta) inset;
+  -webkit-box-shadow:0 0 0 1000px color-mix(in srgb,var(--eq-tinta) 60%,var(--eq-profunda)) inset;
+  box-shadow:0 0 0 1000px color-mix(in srgb,var(--eq-tinta) 60%,var(--eq-profunda)) inset;
+  transition:background-color 600000s 0s,color 600000s 0s}
+.eq-input:autofill{-webkit-text-fill-color:var(--eq-hueso);caret-color:var(--eq-hueso);border-radius:13px;
+  box-shadow:0 0 0 1000px color-mix(in srgb,var(--eq-tinta) 60%,var(--eq-profunda)) inset}
 .eq-icono{position:absolute;right:8px;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;
   color:var(--eq-crema);opacity:.75;background:transparent;border:0;padding:0}
 button.eq-icono{cursor:pointer;opacity:.85;transition:transform var(--motion-fast) var(--ease-spring),opacity var(--motion-fast)}

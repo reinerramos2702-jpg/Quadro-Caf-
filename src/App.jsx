@@ -5,10 +5,11 @@ import {
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
   Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
   Banknote, Smartphone, Landmark, DollarSign, Coins, ImagePlus, Receipt, Clock,
-  Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame, Store,
+  Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame, Store, ExternalLink,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
+import { parsearAgenteDid, cargarSdkDid } from "./lib/did";
 import { fusionarCarta } from "./lib/carta";
 import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
@@ -469,6 +470,10 @@ const FINCAS = [
       // Agente conversacional real (D-ID Agents). Plan free trial: trae
       // watermark de marca hasta que se active un plan pago.
       agentUrl: "https://studio.d-id.com/agents/share?id=v2_agt_UyhXfVTo&key=Y2tfRWlCRVlEcTE3RlFlSThtSWc1dngw",
+      // Opcional: `data-client-key` del snippet de Embed de D-ID Studio, si
+      // difiere de la del link (que solo vale en studio.d-id.com). Es pública
+      // por diseño (D-ID la limita por dominio), no es un secreto.
+      // didClientKey: "ck_…",
     },
     guion: [
       "Bienvenido a Agua Fría. Soy José Tomás Carrillo Batalla, y esto es un café de familia.",
@@ -2150,31 +2155,96 @@ function Fincas({ lote, setLote, onBack }) {
 // Overlay a pantalla completa para el agente D-ID (mismo patrón
 // position:absolute inset:0 que usaba el módulo Estudio, eliminado
 // 2026-08-17 — sobre el frame de la app).
-// El iframe queda con ancho de sobra (solo 8px de aire a cada lado) para no
+// El agente queda con ancho de sobra (solo 8px de aire a cada lado) para no
 // pisar el piso de ~350px del widget de D-ID — ver el comentario largo en
 // `Fincas` sobre por qué ya no vive embebido dentro de la card angosta.
+// 01/oct/2026: ya no es un iframe. D-ID empezó a mandar `frame-ancestors
+// 'self'` en su página de share y Chrome la bloqueaba ("studio.d-id.com ha
+// rechazado la conexión", overlay en blanco). Ahora se usa su SDK oficial en
+// modo "full" sobre `hostRef` (ver src/lib/did.js). Debajo del agente siempre
+// hay una capa propia (cargando / error) con "Abrir en pestaña nueva": si D-ID
+// no dibuja nada, se ve esa capa, nunca un recuadro vacío.
+const DID_ESPERA_MS = 20000;
 function AgenteFincaOverlay({ lote, cerrar }) {
-  const { C } = useTheme();
+  const { C, tema } = useTheme();
+  const hostRef = useRef(null);
+  const [estado, setEstado] = useState("cargando"); // cargando | lento | error
+  const url = lote.avatar.agentUrl;
+
+  useEffect(() => {
+    const agente = parsearAgenteDid(url, lote.avatar.didClientKey);
+    if (!agente) { setEstado("error"); return; }
+    let vivo = true, instancia = null;
+    const destruir = () => { try { instancia?.destroy(); } catch { /* ya desmontado */ } instancia = null; };
+    // Ante un error, D-ID deja su propio "Looking for agent" girando encima:
+    // se desmonta para que quede a la vista nuestra capa con el botón.
+    const fallar = () => { if (!vivo) return; destruir(); setEstado("error"); };
+    const lento = setTimeout(() => vivo && setEstado((e) => (e === "cargando" ? "lento" : e)), DID_ESPERA_MS);
+    cargarSdkDid().then((init) => {
+      if (!vivo || !hostRef.current) return;
+      instancia = init({
+        ...agente, mode: "full", targetElement: hostRef.current,
+        track: false, monitor: false, lightMode: tema !== "oscuro", brandColor: C.brand,
+        onError: fallar,
+      });
+    }).catch(fallar);
+    return () => { vivo = false; clearTimeout(lento); destruir(); };
+    // Una sola instancia por apertura: cambiar de tema con el overlay abierto no la reinicia.
+  }, [url]);
+
+  const abrirFuera = (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="mo-press mono" style={{
+      display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: 99, textDecoration: "none",
+      background: C.brand, color: C.onBrand, fontWeight: 600, fontSize: 12, whiteSpace: "nowrap",
+    }}>
+      <ExternalLink size={13} /> Abrir en pestaña nueva
+    </a>
+  );
+  const mensaje = estado === "error"
+    ? `No se pudo abrir la conversación con ${lote.avatar.nombre} aquí.`
+    : estado === "lento" ? "Está tardando más de lo normal." : `Conectando con ${lote.avatar.nombre}…`;
+
   return (
     <div onClick={cerrar} style={{ position: "absolute", inset: 0, background: "rgba(5,8,7,.92)", zIndex: 45, display: "flex", flexDirection: "column" }}>
       {/* Fase 6: .pop (fade+scale, pensado para tarjetas) → .sheet (mismo
          keyframe qc-sheet que ya usa el carrito, translateY(100%)→0) — se
          lee más como "se abre una hoja a pantalla completa" que como una
          tarjeta apareciendo, coherente con lo que es: un overlay full-bleed. */}
-      <div onClick={(e) => e.stopPropagation()} className="sheet" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, padding: 8 }}>
+      {/* paddingBottom 100: el nav inferior flota encima (mismo aire que deja
+         cada pantalla); sin esto tapaba el botón de llamada de D-ID. */}
+      <div onClick={(e) => e.stopPropagation()} className="sheet" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, padding: "8px 8px 100px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px 10px" }}>
           <span className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase" }}>
             {lote.avatar.nombre} · {lote.finca}
           </span>
-          <button onClick={cerrar} className="mo-press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <a href={url} target="_blank" rel="noopener noreferrer" className="mo-press" aria-label="Abrir en pestaña nueva" title="Abrir en pestaña nueva"
+              style={{ ...btnMiniStyle(C), background: C.card, color: C.text, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+              <ExternalLink size={15} />
+            </a>
+            <button onClick={cerrar} className="mo-press" aria-label="Cerrar" style={{ ...btnMiniStyle(C), background: C.card }}><X size={15} /></button>
+          </div>
         </div>
-        <div style={{ flex: 1, minHeight: 0, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
-          <iframe
-            src={lote.avatar.agentUrl}
-            title={`${lote.avatar.nombre} · Finca ${lote.finca}`}
-            allow="microphone; camera"
-            style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-          />
+        <div style={{ flex: 1, minHeight: 0, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}`, position: "relative", background: C.surface }}>
+          {/* Capa propia, siempre debajo: lo que se ve si D-ID no dibuja. */}
+          <div data-agente-fallback={estado} role="status" aria-live="polite" style={{
+            position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            gap: 14, padding: 24, textAlign: "center",
+          }}>
+            {lote.avatar.foto && (
+              <img src={lote.avatar.foto} alt="" className={estado === "error" ? undefined : "pulse"}
+                style={{ width: 96, height: 120, objectFit: "cover", borderRadius: 14, opacity: estado === "error" ? .6 : 1 }} />
+            )}
+            <p style={{ margin: 0, color: C.text, fontSize: 14, lineHeight: 1.45, maxWidth: 280 }}>{mensaje}</p>
+            {estado !== "cargando" && (
+              <p className="mono" style={{ margin: 0, color: C.textMuted, fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase" }}>
+                Puedes hablar con él en la página de D-ID
+              </p>
+            )}
+            {abrirFuera}
+          </div>
+          {/* Aquí monta D-ID (modo "full", se posiciona sobre este nodo). */}
+          <div ref={hostRef} style={{ position: "absolute", inset: 0 }} />
         </div>
       </div>
     </div>
