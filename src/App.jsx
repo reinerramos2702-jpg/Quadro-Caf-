@@ -1592,7 +1592,7 @@ function CSS_CARTA(C) {
   return `
 .qc-raiz{min-height:100vh;min-height:100dvh}
 .qc-marco{height:100vh;height:100dvh}
-.pc-card{position:relative;min-width:0;scroll-margin-top:calc(var(--chips-alto,0px) + 8px);scroll-margin-bottom:calc(var(--nav-alto,80px) + 8px)}
+.qc-scroll{overscroll-behavior:contain}.pc-card{position:relative;min-width:0;scroll-margin-top:calc(var(--chips-alto,0px) + 8px);scroll-margin-bottom:calc(var(--nav-alto,80px) + 8px)}
 .pc-card *{min-width:0}
 .pc-abrir{display:block;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .pc-abrir::after{content:"";position:absolute;inset:0;border-radius:16px}
@@ -1854,7 +1854,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   }
 
   return (
-    <div ref={scrollRef} className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120, scrollPaddingTop: altoChips, "--chips-alto": `${altoChips}px` }}>
+    <div ref={scrollRef} className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: "calc(var(--nav-alto, 80px) + 24px)", scrollPaddingTop: altoChips, "--chips-alto": `${altoChips}px` }}>
       <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} compacto />
       {import.meta.env.DEV && fuente === "local" && (
         <div className="mono" style={{
@@ -1951,7 +1951,7 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
   const boton44 = { ...btnMiniStyle(C), width: 44, height: 44, borderRadius: 12, flexShrink: 0 };
 
   return (
-    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: "calc(var(--nav-alto, 80px) + 24px)" }}>
       <Header sub="Carta" titulo={m.cat} onBack={onBack} compacto backLabel="Volver a la carta" />
       <div style={{ padding: "0 20px" }}>
         {foto && (
@@ -3423,6 +3423,42 @@ export default function QuadroCafe() {
   // hook que ya usa el bounce del badge del carrito, sin tocarlo.
   const navPillSquishRef = useRetriggerAnim(tab, "mo-navpill-squish");
 
+  // Nav inferior siempre fijo (Carta premium · PR-1 · T5). Su alto real
+  // (crece con la fuente del sistema y con el safe-area de iOS) se publica
+  // como --nav-alto en el marco, para que la Carta y el detalle reserven
+  // exactamente ese espacio abajo y el último "+" nunca quede tapado.
+  const marcoRef = useRef(null);
+  const navRef = useRef(null);
+  useLayoutEffect(() => {
+    const nav = navRef.current, marco = marcoRef.current;
+    if (!nav || !marco) return;
+    const medir = () => marco.style.setProperty("--nav-alto", `${nav.offsetHeight}px`);
+    medir();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(medir);
+    ro.observe(nav);
+    return () => ro.disconnect();
+  }, []);
+  // Única excepción al nav fijo: teclado abierto en un campo de texto. Se
+  // oculta mientras dure (si no, en Android queda flotando sobre el teclado).
+  const [teclado, setTeclado] = useState(false);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const esCampo = (el) => el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && !["checkbox", "radio", "button", "submit", "file", "range"].includes(el.type)) || el.isContentEditable);
+    const revisar = () => {
+      const achicado = vv ? vv.height < window.innerHeight * 0.75 : false;
+      setTeclado(esCampo(document.activeElement) && achicado);
+    };
+    window.addEventListener("focusin", revisar);
+    window.addEventListener("focusout", revisar);
+    vv?.addEventListener("resize", revisar);
+    return () => {
+      window.removeEventListener("focusin", revisar);
+      window.removeEventListener("focusout", revisar);
+      vv?.removeEventListener("resize", revisar);
+    };
+  }, []);
+
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
   useEffect(() => { try { localStorage.setItem("qc-carrito", JSON.stringify(carrito)); } catch { /* noop */ } }, [carrito]);
   useEffect(() => { try { localStorage.setItem("qc-email", email); } catch { /* noop */ } }, [email]);
@@ -3493,7 +3529,7 @@ export default function QuadroCafe() {
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
       <div className="qc qc-raiz" onClick={manejarTapSonido} onPointerDown={manejarTinta} onPointerMove={manejarTilt} onPointerOut={soltarTilt} style={{ display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
         <style>{css}</style>
-        <div className="qc-marco" style={{
+        <div ref={marcoRef} className="qc-marco" style={{
           // Alto en la clase .qc-marco (100dvh, con 100vh solo de respaldo).
           position: "relative", width: "100%", maxWidth: 430, maxHeight: 940,
           background: C.surface, overflow: "hidden", display: "flex", flexDirection: "column",
@@ -3556,10 +3592,16 @@ export default function QuadroCafe() {
             </div>
           </main>
 
-          <div style={{
+          <nav ref={navRef} aria-label="Secciones" style={{
+            // PR-1 · T5: ninguna lógica de ocultar por scroll. El marco
+            // (.qc-marco, 100dvh) no hace scroll — solo lo hacen los
+            // .qc-scroll de adentro —, así que "absolute abajo del marco" es
+            // un nav fijo en pantalla. Sobre la lista y el detalle (zIndex
+            // 10) y debajo de carrito/ticket/overlays (40+).
             position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 10,
-            display: "flex", justifyContent: "space-around",
-            borderTop: `1px solid ${C.line}`, background: C.card, padding: "9px 4px 12px",
+            display: teclado ? "none" : "flex", justifyContent: "space-around",
+            borderTop: `1px solid ${C.line}`, background: C.card,
+            padding: "9px max(4px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left))",
           }}>
             {/* Nav fijo (2026-08-31): pasó de flex-item (flexShrink:0, dentro
                del flujo de la columna junto a `main`) a position:"absolute"
@@ -3604,7 +3646,7 @@ export default function QuadroCafe() {
                 </button>
               );
             })}
-          </div>
+          </nav>
 
           {verCarrito && (
             <Carrito carrito={carrito} lote={loteBarra} taza={taza}
