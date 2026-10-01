@@ -360,12 +360,14 @@ html,body{margin:0;background:${C.shell}}
 .mo-llenado[data-cargando="1"]::before{animation:qc-llenado 1.3s var(--ease-in-out) infinite}
 @keyframes qc-llenado{0%{transform:translateY(101%)}70%,100%{transform:translateY(0)}}
 .mo-late{animation:qc-late 420ms var(--ease-spring)}
+.mo-kenburns{animation:qc-kenburns 16s var(--ease-in-out) infinite alternate;transform-origin:50% 35%}
+@keyframes qc-kenburns{from{transform:scale(1) translateY(0)}to{transform:scale(1.07) translateY(-1.5%)}}
 @keyframes qc-late{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes qc-caer{0%{transform:translateY(-26px) scale(.96);opacity:0}70%{transform:translateY(3px) scale(1.005);opacity:1}100%{transform:none;opacity:1}}
 ::view-transition-group(*){animation-duration:var(--motion-slow);animation-timing-function:var(--ease-out)}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:var(--motion-base)}
 @media (prefers-reduced-motion:reduce){
-  .mo-ink::after,.mo-brillo::before,.mo-reveal,.mo-palabra,.mo-flap,.mo-caer,.mo-llenado::before,.mo-late{animation:none!important;opacity:1}
+  .mo-ink::after,.mo-brillo::before,.mo-reveal,.mo-palabra,.mo-flap,.mo-caer,.mo-llenado::before,.mo-late,.mo-kenburns{animation:none!important;opacity:1}
   .mo-tilt{transform:none!important}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
@@ -2010,11 +2012,12 @@ function Fincas({ lote, setLote, onBack }) {
             // 2026-08-17) — ahí sí tiene ancho de sobra y se ve como en la
             // página completa de D-ID (probado directo, sin iframe, se ve bien).
             <div style={{ padding: "18px 18px 4px" }}>
-              <button onClick={() => setAgenteAbierto(true)} className="mo-press tapfx" style={{
+              <button onClick={() => setAgenteAbierto(true)} className="mo-press tapfx mo-ink" style={{
                 width: "100%", aspectRatio: "4 / 5", borderRadius: 20, overflow: "hidden", position: "relative",
                 background: C.surface, border: `2px solid ${C.brandAlt}`, padding: 0, cursor: "pointer", display: "block",
               }}>
-                <img src={lote.avatar.foto} alt={`${lote.avatar.nombre}, ${lote.avatar.rol}`}
+                {/* Fase 8: Ken Burns lento (solo transform) — el retrato respira. */}
+                <img src={lote.avatar.foto} alt={`${lote.avatar.nombre}, ${lote.avatar.rol}`} className="mo-kenburns"
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 <span className="mono" style={{
                   position: "absolute", left: "50%", bottom: 14, transform: "translateX(-50%)",
@@ -2079,7 +2082,7 @@ function Fincas({ lote, setLote, onBack }) {
               ))}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
-              <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="mo-press"
+              <button onClick={() => { if (linea >= lote.guion.length - 1) setLinea(0); setRepro(!reproduciendo); }} className="mo-press mo-ink"
                 style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 15px", borderRadius: 99, border: "none", background: C.brand, color: C.onBrand, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
                 {reproduciendo ? <Pause size={14} /> : <Play size={14} />}
                 {/* Nunca hubo audio real acá — es un guion en texto que avanza solo.

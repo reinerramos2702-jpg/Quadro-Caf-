@@ -288,3 +288,8 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
 - **Dígitos en títulos**: VIOLA no trae números, así que caen al respaldo, y `font-size-adjust: from-font` los agranda ~1.6–1.7× (usa la x-height de VIOLA, que es unicase). En el Ticket, el "#027" pisaba "ORDEN".
   - Fix acotado: `fontSizeAdjust: "none"` **solo en el número del Ticket**, que ya estaba en esta fase.
   - **Quedan igual, pregunta para Reiner**: "V60" en Carta y el "#007" de la Barra. No se tocó la tipografía de la "É" (punto 15).
+
+### 8.4 Fincas
+- Retrato real del caficultor con **Ken Burns** lento (`.mo-kenburns`: zoom 1 → 1.07 y leve desplazamiento en 16 s, ida y vuelta, solo transform): el retrato "respira".
+- Tinta en el retrato ("Hablar con…") y en "Ver guion". Los chips de finca usan `Chip` (tinta + `flexShrink: 0`).
+- No se tocó el avatar D-ID, el guion ni los datos.
