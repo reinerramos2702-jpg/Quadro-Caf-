@@ -1600,10 +1600,10 @@ function CSS_CARTA(C) {
 .pc-abrir:focus-visible::after{outline:2px solid ${C.brand};outline-offset:2px}
 .pc-ctl{position:relative;z-index:1}
 .pc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
-.pc-nombre{font-size:clamp(16px,4.6vw,20px);line-height:1.12}
+.pc-nombre{font-size:clamp(16px,4.6vw,20px);line-height:1.2}
 .pc-desc{font-size:clamp(13px,3.5vw,14px);line-height:1.4;color:${C.textMuted};margin:4px 0 0}
 .pc-etiqueta{font-size:11px;letter-spacing:.06em;color:${C.brandAlt};margin-bottom:3px;overflow-wrap:anywhere}
-.pc-pill{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:4px 9px;border-radius:999px;font-size:12px;line-height:1.25;letter-spacing:.01em;font-weight:700;overflow-wrap:break-word;hyphens:auto}
+.pc-pill{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:4px 9px;border-radius:10px;font-size:12px;line-height:1.25;letter-spacing:.01em;font-weight:700;overflow-wrap:break-word;hyphens:auto}
 `;
 }
 
@@ -1614,34 +1614,46 @@ function almacenSesion() {
 }
 
 /* Foto 1:1 de la tarjeta, o el monograma de marca si el producto no tiene
-   foto (nunca un hueco ni una foto inventada). `pill` va sobre la esquina de
-   la foto y nunca en la línea del nombre. */
+   foto (nunca un hueco ni una foto inventada). `pill` va sobre la esquina
+   inferior izquierda de la foto y nunca en la línea del nombre. Está en el
+   flujo normal (margen negativo, no absolute dentro de la foto): con la
+   fuente del sistema al 130–200 % no entra en 96 px, y una pill absoluta
+   dentro de una caja con overflow:hidden quedaba recortada. Así crece
+   hacia abajo, donde la columna de la foto siempre tiene espacio. */
 function FotoProducto({ m, foto, pill, pillTono, desaturar, lado = 96 }) {
   const { C } = useTheme();
   const tono = pillTono === "warn" ? { background: C.warn, color: C.onBrandAlt } : { background: C.brand, color: C.onBrand };
   return (
-    <div style={{ position: "relative", width: lado, height: lado, flexShrink: 0, borderRadius: 12, overflow: "hidden", background: C.surface }}>
-      {foto ? (
-        <ResponsiveImg id={foto} alt={m.nombre} sizes={`${lado}px`} ancho={lado} alto={lado} style={{
-          width: lado, height: lado, aspectRatio: "1 / 1", borderRadius: 12,
-          viewTransitionName: `foto-${m.id}`,
-          filter: desaturar ? "grayscale(.4)" : undefined,
-        }} />
-      ) : (
-        <div role="img" aria-label={`${m.nombre} · sin foto todavía`} style={{
-          width: "100%", height: "100%", display: "grid", placeItems: "center",
-          border: `1px solid ${C.line}`, borderRadius: 12, boxSizing: "border-box",
-          viewTransitionName: `foto-${m.id}`,
-          filter: desaturar ? "grayscale(.4)" : undefined,
-        }}>
-          <span style={{ opacity: .85 }}><Marca size={Math.round(lado * .46)} /></span>
-        </div>
-      )}
+    <div style={{ width: lado, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+      <div style={{ width: lado, height: lado, borderRadius: 12, overflow: "hidden", background: C.surface }}>
+        {foto ? (
+          <ResponsiveImg id={foto} alt={m.nombre} sizes={`${lado}px`} ancho={lado} alto={lado} style={{
+            width: lado, height: lado, aspectRatio: "1 / 1", borderRadius: 12,
+            viewTransitionName: `foto-${m.id}`,
+            filter: desaturar ? "grayscale(.4)" : undefined,
+          }} />
+        ) : (
+          <div role="img" aria-label={`${m.nombre} · sin foto todavía`} style={{
+            width: "100%", height: "100%", display: "grid", placeItems: "center",
+            border: `1px solid ${C.line}`, borderRadius: 12, boxSizing: "border-box",
+            viewTransitionName: `foto-${m.id}`,
+            filter: desaturar ? "grayscale(.4)" : undefined,
+          }}>
+            <span style={{ opacity: .85 }}><Marca size={Math.round(lado * .46)} /></span>
+          </div>
+        )}
+      </div>
       {pill && (
         <span className="pc-pill" style={{
-          position: "absolute", top: 4, left: 4, maxWidth: "calc(100% - 8px)",
-          padding: "2px 5px", fontSize: 11, letterSpacing: 0, ...tono,
-        }}>{pill}</span>
+          // Solapa la foto en proporción a su propio texto (em): en una línea
+          // queda dentro de la esquina; con fuente grande baja y no la tapa.
+          position: "relative", zIndex: 1, marginTop: "calc(-1.25em - 10px)", marginLeft: 3, maxWidth: lado - 6,
+          padding: "2px 5px", fontSize: 11, letterSpacing: 0, overflowWrap: "anywhere",
+          boxShadow: `0 0 0 2px ${C.card}`, ...tono,
+        }}>
+          {/* Guion blando: si "Próximamente" no entra, corta "Próxima-mente". */}
+          {pill === "Próximamente" ? "Próxima\u00ADmente" : pill}
+        </span>
       )}
     </div>
   );
@@ -3450,6 +3462,12 @@ export default function QuadroCafe() {
   // useLayoutEffect que el underline de categorías de Carta (Fase 3).
   const tabBtnRefs = useRef({});
   const [navIndicador, setNavIndicador] = useState(null);
+  // PR-1: con la fuente del sistema muy grande (≈ 200 %) las 6 etiquetas no
+  // entran a 320–360 px y el nav se salía de la pantalla. `navCompacto` deja
+  // solo los íconos (las etiquetas siguen para lectores de pantalla).
+  // `navMedida` re-dispara el cálculo de la pill cuando el nav cambia de alto.
+  const [navCompacto, setNavCompacto] = useState(false);
+  const [navMedida, setNavMedida] = useState(0);
   useLayoutEffect(() => {
     const el = tabBtnRefs.current[tab];
     if (!el) { setNavIndicador(null); return; }
@@ -3471,7 +3489,7 @@ export default function QuadroCafe() {
       width: ancho,
       height: alto,
     });
-  }, [tab]);
+  }, [tab, navCompacto, navMedida]);
   // Squish de la pill del nav, retriggereado en cada cambio de tab — mismo
   // hook que ya usa el bounce del badge del carrito, sin tocarlo.
   const navPillSquishRef = useRetriggerAnim(tab, "mo-navpill-squish");
@@ -3485,8 +3503,30 @@ export default function QuadroCafe() {
   useLayoutEffect(() => {
     const nav = navRef.current, marco = marcoRef.current;
     if (!nav || !marco) return;
-    const medir = () => marco.style.setProperty("--nav-alto", `${nav.offsetHeight}px`);
+    let lienzo = null;
+    const medir = () => {
+      marco.style.setProperty("--nav-alto", `${nav.offsetHeight}px`);
+      // ¿Entran las etiquetas? Se mide el texto con canvas (no el DOM), así
+      // el resultado no depende de si ya están ocultas y no oscila.
+      const etiqueta = nav.querySelector("[data-nav-etiqueta]");
+      if (etiqueta) {
+        const cs = getComputedStyle(etiqueta);
+        lienzo = lienzo || document.createElement("canvas");
+        const c = lienzo.getContext("2d");
+        if (c) {
+          c.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          const ls = parseFloat(cs.letterSpacing) || 0;
+          const textos = [...nav.querySelectorAll("[data-nav-etiqueta]")].map((e) => e.textContent.toUpperCase());
+          // Suma de anchos reales (+16 px de padding por botón): los botones
+          // se reparten con space-around, no a ancho fijo.
+          const total = textos.reduce((s, t) => s + c.measureText(t).width + ls * t.length + 16, 0);
+          setNavCompacto(total > nav.clientWidth - 8);
+        }
+      }
+      setNavMedida((v) => v + 1);
+    };
     medir();
+    document.fonts?.ready.then(medir).catch(() => {});
     if (typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(medir);
     ro.observe(nav);
@@ -3692,13 +3732,18 @@ export default function QuadroCafe() {
             {TABS.map((x) => {
               const Icono = x.i, on = tab === x.k;
               return (
-                <button key={x.k} ref={(el) => { tabBtnRefs.current[x.k] = el; }} onClick={() => setTab(x.k)} className="press" style={{
+                <button key={x.k} ref={(el) => { tabBtnRefs.current[x.k] = el; }} onClick={() => setTab(x.k)} className="press" aria-current={on ? "page" : undefined} style={{
                   position: "relative", background: "none", border: "none", cursor: "pointer", padding: "5px 8px",
-                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4,
+                  minWidth: 44, minHeight: 44,
                   color: on ? C.onBrand : C.textMuted, transition: "color .2s",
                 }}>
                   <Icono size={19} />
-                  <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase", color: on ? C.onBrand : C.textMuted }}>{x.t}</span>
+                  <span data-nav-etiqueta className="mono" style={{
+                    fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase", color: on ? C.onBrand : C.textMuted,
+                    // Compacto: fuera de la vista pero accesible (nombre del botón).
+                    ...(navCompacto ? { position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" } : {}),
+                  }}>{x.t}</span>
                 </button>
               );
             })}
