@@ -1607,6 +1607,12 @@ function CSS_CARTA(C) {
 `;
 }
 
+/* sessionStorage puede tirar con solo leer la propiedad (modo privado,
+   almacenamiento bloqueado): se pide siempre por acá. */
+function almacenSesion() {
+  try { return window.sessionStorage; } catch { return null; }
+}
+
 /* Foto 1:1 de la tarjeta, o el monograma de marca si el producto no tiene
    foto (nunca un hueco ni una foto inventada). `pill` va sobre la esquina de
    la foto y nunca en la línea del nombre. */
@@ -1781,7 +1787,49 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   const { items: carta, fuente } = useCarta();
   const items = carta.filter((m) => m.cat === cat);
   const imgCategoria = CAT_IMG[cat];
-  const abrirDetalle = (m) => conTransicion(() => setDetalle(m));
+
+  // Volver del detalle al mismo lugar (PR-1 · T6). Al abrir se guarda
+  // {categoría, scrollTop del .qc-scroll de la lista, producto} en un ref y en
+  // sessionStorage (respaldo; todo con try/catch), y se empuja una entrada al
+  // historial: el botón/gesto atrás de Android y el swipe de iOS cierran el
+  // detalle en vez de salir de la app. Al cerrar, un useLayoutEffect
+  // restaura el scroll ANTES de pintar (dentro del flushSync de
+  // conTransicion, así que la View Transition ya captura la lista en su
+  // lugar). Cambiar de categoría a propósito borra la posición; recargar
+  // nunca restaura (solo se restaura al cerrar un detalle).
+  const posRef = useRef(null);
+  const volviendoRef = useRef(false);
+  const [sinEntrada, setSinEntrada] = useState(false);
+  const abrirDetalle = (m) => {
+    const pos = { cat, scrollTop: scrollRef.current?.scrollTop || 0, id: m.id };
+    posRef.current = pos;
+    guardarPosicion(almacenSesion(), pos);
+    conTransicion(() => setDetalle(m));
+    try { window.history.pushState({ ...(window.history.state || {}), tab: "menu", detalle: m.id }, ""); } catch { /* sin History API */ }
+  };
+  const cerrarDetalle = () => {
+    volviendoRef.current = true;
+    conTransicion(() => { setSinEntrada(true); setDetalle(null); });
+  };
+  // Volver de la cabecera = mismo camino que el atrás del sistema.
+  const volverDeDetalle = () => {
+    if (window.history.state?.detalle) window.history.back();
+    else cerrarDetalle();
+  };
+  useEffect(() => {
+    if (!detalle) return;
+    const onPop = (e) => { if (!e.state?.detalle) cerrarDetalle(); };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [detalle]);
+  useLayoutEffect(() => {
+    if (detalle || !volviendoRef.current) return;
+    volviendoRef.current = false;
+    const pos = posRef.current || leerPosicion(almacenSesion());
+    const sc = scrollRef.current;
+    if (!pos || !sc || pos.cat !== cat) return;
+    sc.scrollTop = scrollRestaurable(pos, sc.scrollHeight, sc.clientHeight);
+  }, [detalle]);
 
   // Underline animado que se desliza al chip de categoría activo — se mide
   // la posición real del chip tocado (offsetLeft/offsetWidth, en vez de
@@ -1828,7 +1876,10 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   const cambiarCategoria = (c) => {
     if (c === cat) return;
     setCambiando(true);
+    setSinEntrada(false);
     setCat(c);
+    posRef.current = null;
+    borrarPosicion(almacenSesion());
     // Si la lista ya pasó por debajo de los chips, la categoría nueva arranca
     // justo bajo ellos (scroll-margin-top = alto de los chips sticky).
     const sc = scrollRef.current, cont = contenidoRef.current;
@@ -1844,7 +1895,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
     return (
       <DetalleProducto
         m={detalle}
-        onBack={() => conTransicion(() => setDetalle(null))}
+        onBack={volverDeDetalle}
         carrito={carrito}
         add={add}
         quitar={quitar}
@@ -1904,7 +1955,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
            el banner y el contenido queden desincronizados entre sí. */}
         <div key={cat}>
           {imgCategoria && (
-            <ResponsiveImg id={imgCategoria} alt={cat} className="rise" style={{
+            <ResponsiveImg id={imgCategoria} alt={cat} className={sinEntrada ? undefined : "rise"} style={{
               width: "100%", height: 120, borderRadius: 14, marginBottom: 12,
             }} />
           )}
@@ -1913,7 +1964,9 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
               <div key={i} className="mo-skeleton" style={{ height: 122, borderRadius: 16, marginBottom: 10 }} />
             ))
           ) : (
-            <div className="slide">
+            // Al volver del detalle la lista aparece quieta en su lugar: sin
+            // la entrada .slide (que se usa al cambiar de categoría).
+            <div className={sinEntrada ? undefined : "slide"}>
               {items.map((m) => (
                 // Fase 8: el revelado por scroll va en este wrapper y la
                 // inclinación en la tarjeta — una animación con fill fija
@@ -3465,8 +3518,11 @@ export default function QuadroCafe() {
 
   // Botón/gesto de retroceso del dispositivo: navega entre tabs y cierra
   // el carrito o el ticket antes de salir de la app, como cualquier app nativa.
+  // replaceState solo al montar: antes vivía en el efecto de abajo y se
+  // repetía cada vez que se abría el carrito o el ticket, pisando la entrada
+  // actual (p. ej. la del detalle de un producto, PR-1 · T6) con {tab:"inicio"}.
+  useEffect(() => { window.history.replaceState({ tab: "inicio" }, ""); }, []);
   useEffect(() => {
-    window.history.replaceState({ tab: "inicio" }, "");
     const onPop = (e) => {
       if (orden) { setOrden(null); return; }
       if (verCarrito) { setVerCarrito(false); return; }
