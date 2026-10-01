@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Coffee, LayoutDashboard, LogOut, ShieldAlert } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import { PALETAS, ThemeCtx, buildCss, Admin, BarraDashboard, manejarTinta, conTransicion } from "../App.jsx";
+import { PALETAS, ThemeCtx, buildCss, BarraDashboard, manejarTinta, conTransicion } from "../App.jsx";
+import AdminPanel from "./AdminPanel.jsx";
 import { resolverRol, vistaInicial } from "./rol";
 import { CSS_EQUIPO, EscenaEquipo, LogoEquipo, LoginEquipo, variablesEquipo } from "./LoginEquipo.jsx";
 
@@ -184,24 +185,19 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
   );
 }
 
-/* Panel Admin dentro del equipo: mismo marco de teléfono que en la app del
-   cliente (el componente se diseñó para 430px), con el tema que eligió el
-   usuario. */
+/* Panel Admin dentro del equipo, con el tema que eligió el usuario. Desde el
+   01/oct/2026 ocupa todo el ancho (responsive, ver AdminPanel.jsx); antes
+   iba dentro del marco de teléfono de 430 px. */
 function AdminEquipo({ onVolver }) {
   const [tema, setTema] = useState(leerTema);
   useEffect(() => { try { localStorage.setItem("qc-tema", tema); } catch { /* noop */ } }, [tema]);
   const C = PALETAS[tema];
-  const css = useMemo(() => buildCss(C), [C]);
+  const css = useMemo(() => buildCss(C) + `html,body{background:${C.surface}}`, [C]);
   return (
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
-      <div className="qc" onPointerDown={manejarTinta} style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: C.shell }}>
+      <div className="qc" onPointerDown={manejarTinta}>
         <style>{css}</style>
-        <div className="mo-enter" style={{
-          position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940,
-          background: C.surface, overflow: "hidden", display: "flex", flexDirection: "column",
-        }}>
-          <Admin onBack={onVolver} />
-        </div>
+        <AdminPanel onBack={onVolver} />
       </div>
     </ThemeCtx.Provider>
   );

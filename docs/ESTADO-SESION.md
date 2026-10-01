@@ -1,6 +1,12 @@
 # Estado de sesión — Quadro Café
 Última actualización: 1 oct 2026 (noche), bugs para la reunión del 2–3 oct. El detalle por iteración está en `docs/PROGRESO-LOOP.md`.
 
+## Panel Admin responsive (01/oct, noche)
+- `src/equipo/AdminPanel.jsx` reemplaza al Admin de `App.jsx`: lista de 1 columna en móvil, 2 en tablet y tabla con cabecera fija, buscador y chips en escritorio. Precio inline (Enter/Esc), switch accesible, estados guardando/guardado/error visibles, panel lateral para "Agregar producto".
+- Verificado con sesión de admin **inventada** y Supabase **simulado** por CDP (nada real leído ni escrito): capturas a 375/768/1024/1440/1920 en los dos temas, antes y después, más búsqueda, chips, Enter/Esc, Espacio en el switch, error 403 (revierte + aviso) y el panel de alta. Tests 36/36, lint OK, build OK.
+- Bundle: principal 154.64 KB (antes 156.31); chunk `/equipo` 14.31 KB (antes 7.85).
+- **Falta probarlo con tu cuenta real** (cambiar y restaurar un precio): es también la prueba real de la RLS de 0009.
+
 ## Bugs del 01/oct (noche) — reunión 2–3 oct
 1. **Avatar José Tomás**: el iframe ya no puede funcionar (D-ID manda `frame-ancestors 'self'`). Ahora se usa el SDK oficial de D-ID dentro del overlay, con capa de respaldo y "Abrir en pestaña nueva". **Falta una acción de Reiner** para que funcione dentro de la app: en D-ID Studio → agente → Embed → Allowed domains, agregar `https://quadro-cafe.reinerramos2702.workers.dev` (y `http://localhost:5173` para probar en local). Si el snippet de Embed trae otra `data-client-key`, pasármela para `avatar.didClientKey`. Mientras tanto, el botón "Abrir en pestaña nueva" lleva a la página de D-ID, que sí funciona.
 2. **Login /equipo con autocompletado**: corregido (sombra inset opaca; antes dependía de una transición que reduced-motion anulaba).

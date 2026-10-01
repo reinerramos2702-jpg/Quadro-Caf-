@@ -235,6 +235,14 @@ Barra y Panel Admin ya no tienen login propio: pasan por **`/equipo`** (`src/equ
   - sin blur ni backdrop-filter y nada de ámbar; terracota solo en el error;
   - contraste AA medido sobre píxeles reales y verde ≥ 98% de los píxeles con color.
 - Los componentes `AdminLogin`/`AdminNuevaClave` se borraron. Barra y Admin se montan solo desde `EquipoApp`.
+- **Panel Admin responsive (01/oct)**: vive en `src/equipo/AdminPanel.jsx` (chunk diferido; se borró `Admin`/`AdminFila`/`AdminNuevoProducto` de `App.jsx`, que ahora exporta `CATS` y `slugify`). Ya no va dentro del marco de teléfono de 430 px.
+  - < 640 px: tarjetas en 1 columna, controles ≥ 44 px, inputs a 16 px (sin zoom en iOS), "Agregar producto" como botón flotante. 640–1023: 2 columnas. ≥ 1024: contenedor de 1180 px, cabecera `sticky` con buscador + chips de categoría (con conteo), tabla Producto · Categoría · Precio · Disponible con hover/focus de fila.
+  - Precio inline: Enter guarda, Esc cancela, blur guarda; inválido → "Precio no válido" y vuelve al valor. Switch `role="switch"` + `aria-checked` (Espacio/Enter) con texto "Disponible"/"Agotado" (ya no se baja la opacidad de la fila: no pasaba AA). Estados por fila (guardando/guardado/no se guardó) y aviso visible; si Supabase rechaza, la fila **vuelve al valor previo**. Estado vacío con "Limpiar filtros".
+  - Alta: panel lateral de 440 px en escritorio, pantalla completa en móvil; foco al abrir, Esc cierra y devuelve el foco.
+  - Datos sin cambios: `select("*").order("orden")`, `update(cambios).eq("id")`, el mismo insert con id por slug. Lógica pura en `src/equipo/adminLogica.js` (`test/admin.test.js`).
+  - Colores vía `--ad-*` desde `useTheme()`. AA medido: `textMuted` sobre `surface` en claro da 4.15:1, por eso el contador y el "$" van en `text`; la pista apagada del switch lleva borde `textMuted` (line sobre card daba 1.45:1).
+  - **No poner una clase con `transform` (p. ej. `mo-enter`) en la raíz del Admin**: vuelve relativo a ella el panel `position: fixed`.
+  - Bundle: principal 156.31 → 154.64 KB gzip; chunk `/equipo` 7.85 → 14.31 KB (≈3 KB son el CSS del panel y ≈1.7 KB el Admin que se mudó del principal).
 
 ## Bloque 8 — Barista Dashboard (`/#barra`, merged 2026-08-16)
 
