@@ -1586,6 +1586,11 @@ function vibrar(ms) {
    - .pc-abrir: el nombre es el <button> que abre el detalle; su ::after se
      estira sobre la tarjeta entera. Los controles (.pc-ctl) quedan encima.
    - .pc-clamp: máx. 2 líneas; el nombre completo sigue en el detalle.
+   - Nombre truncado: la 3.ª línea sigue pintada debajo del clamp y sus
+     dígitos (respaldo de VIOLA, ~1,6× más altos por font-size-adjust:
+     decisión de Reiner, no se tocan) asomaban dentro de la línea 2.
+     ProductCard envuelve lo que cae fuera de las 2 líneas en un span con
+     visibility:hidden (ocupa su lugar, no se pinta). Ver `corte`.
    - Todo hijo de flex/grid con min-width:0 y textos con overflow-wrap:
      ninguna palabra larga empuja la tarjeta fuera de la pantalla. */
 function CSS_CARTA(C) {
@@ -1688,6 +1693,37 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
   // Personalizable (V60…): el "+" primero abre el selector de finca y taza
   // que ya existía; con el selector abierto, agrega con esa elección.
   const mas = (e) => { if (v.abreSelector && !abierto) onSelector(); else agregar(e); };
+  // Índice del primer carácter del nombre que cae fuera de las 2 líneas del
+  // clamp (null si entra completo). Se mide con Range sobre los nodos de
+  // texto, así da igual si ya está partido en dos (ver CSS_CARTA).
+  const nombreRef = useRef(null);
+  const [corte, setCorte] = useState(null);
+  useLayoutEffect(() => {
+    const el = nombreRef.current;
+    if (!el) return;
+    const medir = () => {
+      const lh = parseFloat(getComputedStyle(el).lineHeight);
+      if (!lh) return;
+      const limite = el.getBoundingClientRect().top + 2 * lh - 1;
+      const rango = document.createRange();
+      const recorre = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let i = 0;
+      for (let n = recorre.nextNode(); n; n = recorre.nextNode()) {
+        for (let j = 0; j < n.length; j++, i++) {
+          rango.setStart(n, j);
+          rango.setEnd(n, j + 1);
+          const r = rango.getClientRects()[0];
+          if (r && r.top >= limite) { setCorte(i); return; }
+        }
+      }
+      setCorte(null);
+    };
+    medir();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [m.nombre]);
 
   return (
     <article className="pc-card mo-tilt" data-producto={m.id} data-estado={estado} style={{
@@ -1703,7 +1739,11 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
           )}
           <h3 style={{ margin: 0, fontWeight: 400 }}>
             <button type="button" className="pc-abrir" onClick={onAbrir}>
-              <span className="disp pc-clamp pc-nombre" title={m.nombre} style={{ viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</span>
+              <span ref={nombreRef} className="disp pc-clamp pc-nombre" title={m.nombre} style={{ viewTransitionName: `nombre-${m.id}` }}>
+                {corte == null ? m.nombre : (
+                  <>{m.nombre.slice(0, corte)}<span style={{ visibility: "hidden" }}>{m.nombre.slice(corte)}</span></>
+                )}
+              </span>
             </button>
           </h3>
           {m.desc && <p className="pc-clamp pc-desc">{m.desc}</p>}
