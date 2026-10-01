@@ -79,3 +79,15 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
   - el bloque de verificación de la migración devuelve `total=6.00 · precio=3.00` sin dejar filas.
 - **Cliente**: sin cambios. El carrito ya manda `cantidad` entera y el Ticket muestra la fila que devuelve el INSERT, o sea el total del servidor.
 - **Siguiente**: 3. `0007_rpc_obtener_orden.sql`.
+
+## Iteración 3 — `0007_rpc_obtener_orden.sql` (archivo, NO aplicada) (01/oct/2026)
+- **Objetivo**: preparar el cierre de la lectura pública de `ordenes` (deuda #2) **sin tocar la policy ni el cliente** (decisión de Reiner: el Ticket depende de ella).
+- **Archivo**: `obtener_orden(p_id uuid)`, SQL `stable`, SECURITY DEFINER, `search_path` fijo. Devuelve una sola fila con columnas mínimas: **sin `nombre_cliente` ni `items`**. `revoke … from public` + `grant execute` a anon/authenticated. La migración trae documentado el plan de cierre en 3 pasos (RPC `crear_orden` → Ticket por RPC → drop de la policy), además de la verificación y la reversión.
+- **Verificación (PGlite, 0001–0007)**:
+  - anon lee su orden con el total ya recalculado por 0006 (3.00), sin nombre ni items;
+  - un id inexistente devuelve 0 filas y un parámetro que no es uuid se rechaza por tipo;
+  - las 3 policies de `ordenes` quedan intactas;
+  - `public` no tiene EXECUTE y `anon` sí;
+  - 0006 se re-corrió: 17/17.
+- **Nota**: el advisor "anon can execute SECURITY DEFINER" la va a listar. Es intencional y queda documentado en el archivo.
+- **Siguiente**: 4. Confirmar por SELECT el email del admin y escribir 0008/0009.

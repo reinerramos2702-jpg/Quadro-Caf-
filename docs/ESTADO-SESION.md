@@ -12,10 +12,10 @@
 - Iteración 1: la Carta en producción muestra 12 reales + 45 placeholders (`fusionarCarta`).
 - Iteración 2: `0006_validar_total_orden.sql` escrita y probada en Postgres local (17/17). **No aplicada.**
 
+- Iteración 3: `0007_rpc_obtener_orden.sql` escrita y probada. **No aplicada.** No toca la policy ni el cliente.
+
 ## Pendiente (en el orden del plan)
-1. Base: assets del login, lint y CI.
-2. Fusión de placeholders en `useCarta` (12 de la base + 45 `nuevo:true`).
-3. Migraciones **como archivos, sin aplicar**: 0006 (total en servidor), 0007 (RPC `obtener_orden`), 0008 (staff/roles + siembra de admin), 0009 (RLS por rol, con candado).
+3. Migraciones **como archivos, sin aplicar**: 0008 (staff/roles + siembra de admin) y 0009 (RLS por rol, con candado).
 4. Login del equipo (`/equipo`) con ruta protegida.
 5. Revisión de seguridad y de la edge function (CORS + tope de OCR).
 6. Docs.
