@@ -20,6 +20,8 @@
     --pending-bg:#eee6d8;
     --deferred:#a4553c;
     --deferred-bg:#f3e1da;
+    --warn:#a4553c;
+    --warn-bg:#f3e1da;
     --shadow: 0 1px 2px rgba(35,29,21,.06), 0 8px 24px rgba(35,29,21,.06);
     --radius: 14px;
   }
@@ -42,6 +44,8 @@
       --pending-bg:#233029;
       --deferred:#e39178;
       --deferred-bg:#3a241d;
+      --warn:#e39178;
+      --warn-bg:#3a241d;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
     }
   }
@@ -63,6 +67,8 @@
     --pending-bg:#233029;
     --deferred:#e39178;
     --deferred-bg:#3a241d;
+    --warn:#e39178;
+    --warn-bg:#3a241d;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
   }
 
@@ -79,6 +85,14 @@
   h1,h2,h3{font-family:'Fraunces',Georgia,serif;text-wrap:balance;margin:0;}
   a{color:var(--accent);}
   .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+
+  /* ---------- Protocol banner ---------- */
+  .protocol{
+    background:var(--surface-2);border:1px dashed var(--accent);border-radius:var(--radius);
+    padding:16px 20px;margin-bottom:24px;font-size:.85rem;line-height:1.6;
+  }
+  .protocol strong{color:var(--accent);}
+  .protocol h2{font-size:1rem;margin-bottom:6px;}
 
   /* ---------- Top bar ---------- */
   .topbar{
@@ -177,6 +191,7 @@
   .tag.progress{background:var(--progress-bg);color:var(--progress);}
   .tag.done{background:var(--done-bg);color:var(--done);}
   .tag.stable{background:var(--deferred-bg);color:var(--deferred);}
+  .tag.warn{background:var(--warn-bg);color:var(--warn);}
 
   .diff-note{
     margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--surface-2);
@@ -200,6 +215,7 @@
   .tl-dot{width:12px;height:12px;border-radius:50%;background:var(--done);flex:none;margin-top:5px;}
   .tl-item.warn .tl-dot{background:var(--progress);}
   .tl-item.open .tl-dot{background:var(--pending);}
+  .tl-item.block .tl-dot{background:var(--warn);}
   .tl-body{flex:1;}
   .tl-title{font-weight:600;font-size:.92rem;}
   .tl-desc{font-size:.83rem;color:var(--text-dim);margin-top:2px;line-height:1.5;}
@@ -218,6 +234,12 @@
   .step-num::before{content:counter(step);}
   .step-title{font-weight:600;font-size:.92rem;}
   .step-desc{font-size:.83rem;color:var(--text-dim);margin-top:2px;line-height:1.5;}
+
+  /* ---------- Q&A list ---------- */
+  .qa-list{display:flex;flex-direction:column;gap:0;}
+  .qa{padding:12px 0;border-top:1px solid var(--border);font-size:.87rem;line-height:1.55;}
+  .qa:first-of-type{border-top:none;}
+  .qa b{color:var(--text);}
 
   /* ---------- notes ---------- */
   textarea{
@@ -247,6 +269,11 @@
 
 <div class="wrap">
 
+  <div class="protocol">
+    <h2>📌 Fuente única de verdad — leer esto primero</h2>
+    Este archivo reemplaza al historial de chat como contexto de arranque. Cowork/Claude Code parte SOLO de aquí en cada sesión nueva — no relee memoria ni el chat completo, para ahorrar tokens. <strong>Reiner actualiza este HTML él mismo o pide que se actualice cada vez que cierra un bloque real.</strong> Depuración/limpieza de código: <strong>domingos</strong> (excepción puntual: algún miércoles si hace falta). <strong>Desde 01/oct/2026 este HTML es el ÚNICO roadmap: el <span class="mono">ROADMAP.md</span> de la raíz se elimina (era duplicado) — no crear ni leer otro.</strong> Guardrails permanentes abajo (sección "Guardrails") pisan cualquier instrucción de autonomía total que venga de otro prompt/herramienta (opencode, Warp, etc.).
+  </div>
+
   <div class="topbar">
     <div class="brand">
       <div class="mark" aria-hidden="true"></div>
@@ -263,24 +290,24 @@
   </div>
 
   <div class="stats">
-    <div class="stat"><div class="num">8</div><div class="label">Bloques trabajados (1–8)</div></div>
-    <div class="stat"><div class="num">6</div><div class="label">Bloques desplegados en producción</div></div>
-    <div class="stat"><div class="num">12</div><div class="label">Puntos reunión 05/sept en alcance</div></div>
-    <div class="stat"><div class="num">1</div><div class="label">Rama pendiente de merge (nav-dvh-viewport)</div></div>
+    <div class="stat"><div class="num">12/12</div><div class="label">Puntos reunión 05/sept cerrados</div></div>
+    <div class="stat"><div class="num">48/48</div><div class="label">Fotos de producto mapeadas en Carta (FOTO_PRODUCTO)</div></div>
+    <div class="stat"><div class="num">57</div><div class="label">Productos en Carta (12 reales + 45 nuevos placeholder)</div></div>
+    <div class="stat"><div class="num">10</div><div class="label">Bloques trabajados (1–10), en producción</div></div>
   </div>
 
   <div class="progress-card">
     <div class="progress-head">
-      <h3>Checklist reunión con el dueño (05/sept) — para la presentación de mañana</h3>
+      <h3>Checklist reunión con el dueño (05/sept)</h3>
       <span class="mono" id="progress-count" style="font-size:.85rem;color:var(--text-dim);">0 / 12</span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-    <div class="progress-note">Marca cada punto al terminarlo — el estado se guarda en este navegador. Los 3 puntos diferidos (5, 6, 9) no cuentan aquí: van aparte, presupuesto futuro.</div>
+    <div class="progress-note">Marca cada punto al terminarlo — el estado se guarda en este navegador. Los 3 puntos diferidos (5, 6, 9) no cuentan aquí: presupuesto futuro, no tocar.</div>
   </div>
 
   <div class="palette-section">
     <h2 style="font-size:1.15rem;margin-bottom:4px;">Paleta de marca — Quadro Café</h2>
-    <div class="card-sub">Colores oficiales confirmados + referencia visual de las 5 tazas (codifican categoría de menú).</div>
+    <div class="card-sub">Verde #3B574C + crema #E9D8C6 oficiales. Tipografía real en la app: Nexa Bold/Light + VIOLA (VIOLA sin tildes/ñ → fallback automático a Fraunces en esas letras). Logo: cuadrado dentro de cuadrado con pico de montaña, recorte esquina inferior derecha — se usa como clip-path en tarjetas.</div>
     <div class="palette-grid">
       <div class="swatch"><div class="fill" style="background:#3b574c;"></div><div class="info"><div class="name">Verde primario</div><div class="hex">#3B574C — oficial</div></div></div>
       <div class="swatch"><div class="fill" style="background:#e9d8c6;"></div><div class="info"><div class="name">Crema secundario</div><div class="hex">#E9D8C6 — oficial</div></div></div>
@@ -298,255 +325,235 @@
 
       <section class="card">
         <h2>Los 12 puntos en alcance (reunión 05/sept)</h2>
-        <div class="card-sub">Prompt completo para Claude Code ya escrito (<span class="mono">PROMPT_REUNION_05SEPT_12PUNTOS.md</span>). Regla de git: rama nueva <span class="mono">quadro-feature-reunion-05sept</span> desde <span class="mono">main</span>, modo plan primero, nunca merge sin tu aprobación explícita.</div>
+        <div class="card-sub">Rama activa: <span class="mono">quadro-feature-reunion-05sept</span> (desde <span class="mono">main</span>), pusheada a <span class="mono">origin</span>. Nunca merge a <span class="mono">main</span> ni deploy sin aprobación explícita de Reiner.</div>
 
         <div id="checklist">
-          <div class="item" data-id="p1">
-            <input type="checkbox" class="chk" id="chk-p1">
+          <div class="item done" data-id="p1">
+            <input type="checkbox" class="chk" id="chk-p1" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">01</span><label class="item-title" for="chk-p1">UI/UX Premium general</label></div>
-                <div class="tags"><span class="tag pending">Dirección general</span></div>
+                <div class="tags"><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Reforzar el look premium ya establecido (sistema de animaciones <span class="mono">qc-*</span>, dark UI) en los módulos que sí están en este batch — sin librerías nuevas, sin tocar módulos fuera de alcance.</div>
+              <div class="item-desc">Look premium reforzado (sistema <span class="mono">qc-*</span>, dark UI) en los módulos del batch, sin librerías nuevas.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p2">
-            <input type="checkbox" class="chk" id="chk-p2">
+          <div class="item done" data-id="p2">
+            <input type="checkbox" class="chk" id="chk-p2" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">02</span><label class="item-title" for="chk-p2">Más imágenes en Carta</label></div>
-                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag progress">En curso</span></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">48/48 fotos mapeadas</span><span class="tag pending">Datos reales de 45 productos pendientes</span></div>
               </div>
-              <div class="item-desc">1 foto real por producto, junto al título/descripción (no en el banner). Fotoproducto de Bollería vía DALL-E ya en marcha con los 9 prompts entregados — se van integrando por producto.</div>
+              <div class="item-desc">Mapeo cerrado 30/sept (commit <span class="mono">221ba2b</span>): 3 fotos van a productos ya existentes (cortado/m5, espresso/m4, croissant/m9) y las 45 restantes correspondían a productos que aún no existían en la Carta — Reiner confirmó que sí son parte de la Carta y autorizó crearlos como placeholder (ver punto 11 y Bloque 10). Cada foto queda mapeada 1 a 1 en <span class="mono">FOTO_PRODUCTO</span> (App.jsx), tal cual estaba en <span class="mono">assetManifest.js</span> desde el Bloque 9. <strong>Decidido 30/sept:</strong> "Cheesecake de cascarilla" (m12) se queda sin foto — ninguna de las 3 fotos de cheesecake nuevas la reemplaza, son sabores aparte.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p3">
-            <input type="checkbox" class="chk" id="chk-p3">
+          <div class="item done" data-id="p3">
+            <input type="checkbox" class="chk" id="chk-p3" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">03</span><label class="item-title" for="chk-p3">Curar roster de Fincas</label></div>
-                <div class="tags"><span class="tag pending">Pendiente</span></div>
+                <div class="tags"><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Dejar solo "Agua Fría" (avatar D-ID intacto). Integrar "Los Naranjos" (Falsir Dúran, Mérida, 99ha, Castilla/Caturra/Villa Nueva). "Santa Rosa" y "Buenos Aires" con estructura lista + placeholder — faltan datos reales. <strong>Decidido 18/sept: se saca a Elio/Rosa/Mina</strong>, reemplaza la regla vieja "no tocar Elio".</div>
+              <div class="item-desc">Roster final: Agua Fría + Los Naranjos (datos reales) + Santa Rosa y Buenos Aires (estructura + placeholder). Elio, Rosa y Mina salieron (decisión 18/sept). <strong>Actualización 19/sept: el dueño autorizó el uso de fotos/rostros reales de los caficultores dueños de las fincas</strong> en los avatares de la app (aplica a Agua Fría/José Tomás y cualquier finca futura con foto real) — resuelve la autorización de imagen. Lo que falta de Agua Fría son solo datos técnicos (ver punto 8), no el permiso.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p4">
-            <input type="checkbox" class="chk" id="chk-p4">
+          <div class="item done" data-id="p4">
+            <input type="checkbox" class="chk" id="chk-p4" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">04</span><label class="item-title" for="chk-p4">Renombrar copy Quadro Club</label></div>
-                <div class="tags"><span class="tag pending">Quick win</span></div>
+                <div class="tags"><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Texto exacto: "Suscríbete a la Newsletter para recibir premios o descuentos especiales."</div>
+              <div class="item-desc">Texto actualizado: "Suscríbete a la Newsletter para recibir premios o descuentos especiales." Pendiente de confirmar si hay que ajustar el copy del botón ("Desbloquea tu ficha de cata" / "Quiero mi guía") al nuevo tono newsletter.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p7">
-            <input type="checkbox" class="chk" id="chk-p7">
+          <div class="item done" data-id="p7">
+            <input type="checkbox" class="chk" id="chk-p7" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">07</span><label class="item-title" for="chk-p7">Ubicación de "comparar"</label></div>
-                <div class="tags"><span class="tag done">Ya decidido</span></div>
+                <div class="tags"><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Se queda en Fincas, dentro de <span class="mono">FichaLote</span> — sin módulo nuevo. Solo pulir UI (punto 1) si hay margen.</div>
+              <div class="item-desc">Se queda en Fincas, dentro de <span class="mono">FichaLote</span>, sin módulo nuevo.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p8">
-            <input type="checkbox" class="chk" id="chk-p8">
+          <div class="item done" data-id="p8">
+            <input type="checkbox" class="chk" id="chk-p8" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">08</span><label class="item-title" for="chk-p8">Ficha técnica por finca</label></div>
-                <div class="tags"><span class="tag pending">Pendiente</span></div>
+                <div class="tags"><span class="tag done">Cerrado</span><span class="tag pending">Datos reales pendientes</span></div>
               </div>
-              <div class="item-desc">Altura, variedad, proceso, puntaje SCA por finca. Santa Rosa / Buenos Aires: estructura con placeholder.</div>
+              <div class="item-desc">Campos listos (altura, variedad, proceso, SCA) con "Por confirmar" donde faltan datos reales. Agua Fría: falta proceso de beneficio, SCA, notas de cata de la Geisha, altitud exacta, disponibilidad/precio del lote — pendiente de que el dueño (Ing. José Gutiérrez) los pase, no bloquea código. Santa Rosa/Buenos Aires: sin datos todavía.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p10">
-            <input type="checkbox" class="chk" id="chk-p10">
+          <div class="item done" data-id="p10">
+            <input type="checkbox" class="chk" id="chk-p10" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">10</span><label class="item-title" for="chk-p10">Nuevo módulo "Tienda"</label></div>
-                <div class="tags"><span class="tag pending">Módulo nuevo</span></div>
+                <div class="tags"><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Merchandising (bolsas de grano, accesorios). Nav: justo después de "Fincas". Sin catálogo real aún → <strong>decidido 18/sept: tarjetas "Próximamente"</strong> (tipo genérico, sin nombre ni precio inventado — coherente con la política anti-invención del proyecto).</div>
+              <div class="item-desc">Tarjetas "Próximamente" (tipo genérico), sin nombre ni precio inventado. Nav justo después de Fincas.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p11">
-            <input type="checkbox" class="chk" id="chk-p11">
+          <div class="item done" data-id="p11">
+            <input type="checkbox" class="chk" id="chk-p11" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">11</span><label class="item-title" for="chk-p11">Nuevos productos en Carta</label></div>
-                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag pending">Bloqueado</span></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">45 placeholders creados</span><span class="tag pending">Nombre/precio/receta reales pendientes</span></div>
               </div>
-              <div class="item-desc">Falta que pases la lista completa — solo se deja el punto de entrada listo, no se inventa contenido. <strong>Confirmado 18/sept:</strong> sin fotos ni lista en repo ni <span class="mono">_incoming/</span> todavía, se sigue con solo estructura.</div>
+              <div class="item-desc">Resuelto 30/sept (commit <span class="mono">221ba2b</span>): Reiner confirmó que las 45 fotos sin producto correspondiente sí son para la Carta. Se agregaron como productos nuevos con <span class="mono">precio: 0, disponible: false, nuevo: true</span> — nombres genéricos de diccionario, sin inventar receta/precio/sourcing real. Se creó la categoría <span class="mono">Infusiones</span> (10 productos) porque ninguna de las 5 categorías existentes encajaba. En la Carta se ven con badge "Próximamente" y "Por confirmar" en vez de precio, y no se pueden agregar al carrito — no engañan al cliente. <strong>Falta que Reiner pase nombre/precio/descripción real de cada uno</strong> para sacarlos de estado placeholder. <strong>01/oct:</strong> con Supabase activo la Carta los perdía (la base tiene solo 12): ahora <span class="mono">fusionarCarta()</span> los suma y cada uno se retira solo cuando se carga desde el Admin con el mismo nombre. Verificado con Supabase real: 12 + 45.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p12">
-            <input type="checkbox" class="chk" id="chk-p12">
+          <div class="item done" data-id="p12">
+            <input type="checkbox" class="chk" id="chk-p12" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">12</span><label class="item-title" for="chk-p12">Método de pago Binance</label></div>
-                <div class="tags"><span class="tag stable">Cart/Checkout — autorizado</span><span class="tag pending">Quick win</span></div>
+                <div class="tags"><span class="tag stable">Cart/Checkout — autorizado</span><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Sumar junto a Efectivo / Pago móvil / Zelle / Transferencia — mismo patrón de UI, extender el componente existente.</div>
+              <div class="item-desc">Confirmado en el repo (commit <span class="mono">39435dd</span> — "agrega Binance Pay como método de pago"), junto a Efectivo / Pago móvil / Zelle / Transferencia. Migración <span class="mono">0004_metodo_binance.sql</span> (aditiva, la corre Reiner a mano) amplía el CHECK de <span class="mono">ordenes.metodo_pago</span>; sin ella Binance falla en producción.</div>
             </div>
           </div>
 
-          <div class="item" data-id="p13">
-            <input type="checkbox" class="chk" id="chk-p13">
+          <div class="item done" data-id="p13">
+            <input type="checkbox" class="chk" id="chk-p13" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">13</span><label class="item-title" for="chk-p13">OCR de comprobante de pago</label></div>
-                <div class="tags"><span class="tag stable">Cart/Checkout — autorizado</span><span class="tag progress">Mayor esfuerzo</span></div>
+                <div class="tags"><span class="tag done">Cerrado y reforzado</span></div>
               </div>
-              <div class="item-desc">Subir captura del comprobante y verificarla vía OCR. Definir si va client-side o edge function (cuidado con peso del bundle) + fallback manual si el OCR falla.</div>
+              <div class="item-desc">4 fallas de seguridad corregidas (la más grave: se podía marcar un pedido como pagado sin comprobante real). Fix vive en migración <span class="mono">0005</span> — Reiner la corre manualmente (ver Guardrails).</div>
             </div>
           </div>
 
-          <div class="item" data-id="p14">
-            <input type="checkbox" class="chk" id="chk-p14">
+          <div class="item done" data-id="p14">
+            <input type="checkbox" class="chk" id="chk-p14" checked>
             <div class="item-body">
               <div class="item-top">
                 <div><span class="item-num">14</span><label class="item-title" for="chk-p14">Renombrar "Panadería" → "Bollería"</label></div>
-                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag pending">Quick win</span></div>
+                <div class="tags"><span class="tag stable">Carta — autorizado</span><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">Solo cambio de copy/label — no reestructurar la categoría.</div>
+              <div class="item-desc">Confirmado en el repo (commit <span class="mono">e78a0d9</span> — "renombra categoría Panadería → Bollería"). Solo cambio de copy/label, productos intactos. El código ya trata "Panadería" como "Bollería" al leer de Supabase (compat), así que la migración <span class="mono">0003_categoria_bolleria.sql</span> puede correr <strong>en cualquier momento después del deploy</strong> — sin ventana en que la Carta pierda productos. Nunca antes del deploy (el código viejo en producción aún filtra por "Panadería").</div>
             </div>
           </div>
 
-          <div class="item" data-id="p15">
-            <input type="checkbox" class="chk" id="chk-p15">
+          <div class="item done" data-id="p15">
+            <input type="checkbox" class="chk" id="chk-p15" checked>
             <div class="item-body">
               <div class="item-top">
-                <div><span class="item-num">15</span><label class="item-title" for="chk-p15">Fix visual: "E" de "Quadro Café"</label></div>
-                <div class="tags"><span class="tag pending">Quick win</span></div>
+                <div><span class="item-num">15</span><label class="item-title" for="chk-p15">Fix visual "É" de "Quadro Café"</label></div>
+                <div class="tags"><span class="tag done">Cerrado</span></div>
               </div>
-              <div class="item-desc">La "E" del banner se ve más chica que el resto — corregir tamaño/alineación en la tipografía del header. Confirmar con captura antes/después.</div>
+              <div class="item-desc">Corregido en Chrome/WebKit desktop. Reportado en Safari/iPhone sin poder reproducir — no volver a tocar tipografía sin evidencia nueva (captura + modelo/iOS) de Reiner.</div>
             </div>
           </div>
         </div>
 
         <div class="diff-note">
-          <strong>Diferido (presupuesto aparte, no tocar ahora):</strong> punto 5 — sistema de puntos de fidelidad (1pt/$1, canje en tienda) · punto 6 — quiz de trivia en Academia · punto 9 — minijuego estilo Pokémon en Carta.
+          <strong>Diferido (presupuesto aparte, no tocar):</strong> punto 5 — puntos de fidelidad · punto 6 — quiz de trivia en Academia · punto 9 — minijuego estilo Pokémon en Carta.
         </div>
       </section>
 
       <section class="card">
-        <h2>Pendientes técnicos previos a esta reunión</h2>
-        <div class="card-sub">No forman parte del batch 05/sept, pero afectan lo que se muestra mañana.</div>
+        <h2>Fase nueva — Papagayo (pagos en tiempo real)</h2>
+        <div class="card-sub">Iniciada 27/sept. "PROMPT MAESTRO" del dueño/Reiner pide un agente IA que verifique pagos vs. la plataforma Papagayo. Actualizado 30/sept.</div>
         <div class="timeline">
-          <div class="tl-item warn">
+          <div class="tl-item block">
             <div class="tl-dot"></div>
             <div class="tl-body">
-              <div class="tl-title">Fase 1/6 "Alta Gama" — fotos de tazas, reabierta</div>
-              <div class="tl-desc">Se dio por cerrada pero producción seguía mostrando el SVG viejo. Falta confirmar con evidencia (commit en <span class="mono">origin/main</span>, deploy actual, o descartar caché de PWA) antes de mostrarla como resuelta.</div>
+              <div class="tl-title">Bloqueada esperando login de Reiner en el dashboard</div>
+              <div class="tl-desc">Reiner pasó la URL del panel administrativo (<span class="mono">papagayo.digipay.com.ve/login</span>) — el banco le habilitó API propia y este dashboard es de donde se saca el endpoint. Reiner hace el login él mismo (credenciales bancarias — Claude nunca las escribe, es una prohibición del sistema, no una preferencia). Al 30/sept, la pestaña sigue mostrando el login vacío: aún no ha entrado. En cuanto confirme sesión iniciada, el siguiente paso es explorar configuración/API/endpoints del panel y diseñar la integración de verificación de pago — sin inventar ni guardar credenciales/keys en código o chat.</div>
             </div>
           </div>
           <div class="tl-item open">
             <div class="tl-dot"></div>
             <div class="tl-body">
-              <div class="tl-title">Rama <span class="mono">fix/nav-dvh-viewport</span> sin mergear</div>
-              <div class="tl-desc">26 commits, fix real de viewport dvh en mobile. Única rama realmente pendiente de tu revisión/decisión.</div>
+              <div class="tl-title">Construir respetando Bloque 1 y Bloque 2</div>
+              <div class="tl-desc">Reusar tokens de diseño (Fraunces/Inter Tight–Nexa/VIOLA, verde #3B574C / crema #E9D8C6) y el pipeline de assets (WebP, sin blur) ya en producción — no rehacerlos.</div>
             </div>
           </div>
-          <div class="tl-item open">
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Nota — por qué Supabase ya no bloquea el mapeo de fotos</h2>
+        <div class="card-sub">Resuelto 30/sept, al cerrar el punto 2 (fotos en Carta).</div>
+        <div class="timeline">
+          <div class="tl-item">
             <div class="tl-dot"></div>
             <div class="tl-body">
-              <div class="tl-title">Sonido real en botón "+" de Carta</div>
-              <div class="tl-desc">Esperando que subas el video a <span class="mono">_incoming/</span> para extraer el audio. Incluye migrar el toggle de sonido de <span class="mono">localStorage</span> a algo que no persista el mute entre cierres (ON por defecto cada sesión nueva).</div>
+              <div class="tl-title">Proyecto Supabase reactivado, pero no era el verdadero bloqueo</div>
+              <div class="tl-desc">El proyecto <span class="mono">wckufllomfmuwxptegvm</span> estaba pausado (INACTIVE) y se reactivó sin problema (<span class="mono">restore_project</span>, ~5 min). Pero al revisar la tabla <span class="mono">productos</span> se descubrió que tenía <strong>0 filas</strong> (al 30/sept; <strong>al 01/oct tiene 12</strong>, verificado) — es un espejo vacío de la constante <span class="mono">MENU</span> en <span class="mono">App.jsx</span> (así lo dice el propio comentario de la tabla). La app en producción corre 100% desde <span class="mono">MENU</span>, nunca leyó Supabase para productos. El bloqueo real no era de acceso/credenciales, era que solo 12 de los 48 productos con foto ya existían en <span class="mono">MENU</span> — eso se resolvió con la confirmación de Reiner (ver punto 2 y 11), no con Supabase.</div>
             </div>
           </div>
-          <div class="tl-item open">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Avatar / mascota de marca</div>
-              <div class="tl-desc">Sin decidir entre "Cafetito" (grano antropomorfo) y "Cosechero" (niño cafetalero) — confirmar qué se habló en la reunión.</div>
-            </div>
-          </div>
-          <div class="tl-item open">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque UI-4 (cards/carrusel en Fincas)</div>
-              <div class="tl-desc">Siguiente en la cola de animaciones, sin empezar. UI-2, UI-3 (Carta) y UI-6 (login) en pausa — tocan módulos production-stable.</div>
-            </div>
-          </div>
-          <div class="tl-item open">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">CLS 0.102 mobile sin resolver</div>
-              <div class="tl-desc">3 layout shifts sin identificar el elemento exacto — resolver antes de sumar más bloques de animación.</div>
-            </div>
-          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Preguntas pendientes para el dueño</h2>
+        <div class="card-sub">Finca Agua Fría — José Tomás Carrillo Batalla (copia de <span class="mono">PREGUNTAS_DUENO_AGUA_FRIA.md</span>).</div>
+        <div class="qa-list">
+          <div class="qa"><b>Imagen y voz:</b> autorización formal explícita de foto + voz (agente D-ID) en producción final.</div>
+          <div class="qa"><b>Datos técnicos del lote</b> (bloquean la ficha, no se pueden inventar): proceso de beneficio, puntaje SCA, notas de cata de la Geisha, altitud exacta, disponibilidad/cantidad, precio de referencia.</div>
+          <div class="qa"><b>Encuadre del avatar:</b> ¿aprueba foto estática + botón "Hablar con José Tomás"?</div>
+          <div class="qa"><b>Texto del "Ver guion":</b> confirmar que no hay errores de datos/nombres.</div>
+          <div class="qa"><b>Dígitos en títulos (01/oct):</b> la fuente VIOLA no trae números, así que "V60" en la Carta y el "#0xx" de la Barra se ven más grandes que el texto. ¿Normalizarlos (recomendado), pasarlos a Nexa o dejarlos así? En el Ticket ya está corregido.</div>
+          <div class="qa"><b>Otras confirmaciones sin resolver:</b> rol "Caficultor" para Falsir Dúran (Los Naranjos) correcto; a qué finca referenciar ahora el postre "m11" (Santa Cruz de Mora ya no es válida); si ajustar copy de Quadro Club al tono newsletter.</div>
+          <div class="qa"><b>Resuelto 30/sept — 45 productos placeholder de Carta:</b> faltan nombre definitivo (donde dice "variante 1/2" o "por confirmar"), precio y descripción/receta real para sacarlos de estado "Próximamente". Se reúne con el dueño jueves/viernes (ver PDF de recolección de datos, Bloque 11).</div>
         </div>
       </section>
 
       <section class="card">
         <h2>Bloques completados — historial</h2>
         <div class="timeline">
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 1 — Design tokens, tipografía, splash</div>
-              <div class="tl-desc">Marco Quadro, splash animado. En producción.</div>
-            </div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 2 — Pipeline de assets</div>
-              <div class="tl-desc">18 WebP responsivos en 3 tamaños, color dominante como placeholder (sin blur). En producción.</div>
-            </div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 3 — Carta conectada a Supabase</div>
-              <div class="tl-desc">Tabla <span class="mono">productos</span> real, badge "Agotado hoy" cuando se apaga disponibilidad desde Admin. Confirmado en producción.</div>
-            </div>
-          </div>
-          <div class="tl-item warn">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 4 — Carrito y pago (parcial)</div>
-              <div class="tl-desc">Picker de método de pago (Efectivo/Pago móvil/Zelle/Transferencia) verificado. Faltan los puntos 12 (Binance) y 13 (OCR) de esta reunión.</div>
-            </div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 5 — Panel Admin</div>
-              <div class="tl-desc">Login Supabase, edición de precio/disponibilidad en línea, "Agregar producto", recuperación de clave. En producción.</div>
-            </div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 6 — Lab 3D</div>
-              <div class="tl-desc">Espiral del simulador migrada a TubeGeometry Three.js real, aislada en lazy-load. En producción.</div>
-            </div>
-          </div>
-          <div class="tl-item open">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 7 — Fincas + fusión de roster</div>
-              <div class="tl-desc">Es exactamente el punto 3 de esta reunión — pendiente.</div>
-            </div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-body">
-              <div class="tl-title">Bloque 8 — Dashboard de Barra (/#barra)</div>
-              <div class="tl-desc">Recibe y gestiona órdenes desde la computadora del local. Confirmado funcionando en producción, sin pendientes.</div>
-            </div>
-          </div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 1 — Design tokens, tipografía, splash</div><div class="tl-desc">Marco Quadro, splash animado. En producción.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 2 — Pipeline de assets</div><div class="tl-desc">18 WebP responsivos, color dominante como placeholder (sin blur). En producción.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 3 — Carta conectada a Supabase</div><div class="tl-desc">Tabla <span class="mono">productos</span>, badge "Agotado hoy". Confirmado en producción.</div></div></div>
+          <div class="tl-item warn"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 4 — Carrito y pago (parcial)</div><div class="tl-desc">Picker Efectivo/Pago móvil/Zelle/Transferencia verificado. Binance (12) y OCR (13) sumados en el batch 05/sept.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 5 — Panel Admin</div><div class="tl-desc">Login Supabase, edición de precio/disponibilidad, "Agregar producto", recuperación de clave. En producción.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 6 — Lab 3D</div><div class="tl-desc">Espiral migrada a TubeGeometry Three.js real, lazy-load. En producción.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 7 — Fincas + fusión de roster</div><div class="tl-desc">Es el punto 3 de la reunión — cerrado 18/sept.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 8 — Dashboard de Barra (/#barra)</div><div class="tl-desc">Recibe y gestiona órdenes desde la compu del local. Confirmado en producción, sin pendientes.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 9 — Pipeline de fotos de producto (DALL-E + ChatGPT Work)</div><div class="tl-desc">48 fotos originales curadas en 8 categorías, editadas en batch por ChatGPT Work (DALL-E) con prompt genérico validado, procesadas a JPG (mozjpeg) + 3 WebP (480/900/1170) y cargadas a <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. Auditoría de seguridad hecha sobre las skills candidatas (4 limpias, 1 excluida — <span class="mono">browser-use</span>, requiere API key de pago y daemon en la nube de un tercero). Proceso completo guardado como skill reusable <span class="mono">pipeline-imagenes-work-dalle</span>. Avatar real de José Tomás (Agua Fría) reemplazó el placeholder — commit <span class="mono">c979f9b</span>.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 10 — Carta con foto + vista de producto completa (30/sept)</div><div class="tl-desc">Mapeo <span class="mono">id</span>→foto cerrado en <span class="mono">FOTO_PRODUCTO</span> (3 productos reales + 45 nuevos placeholder, categoría <span class="mono">Infusiones</span> agregada). Nueva pantalla <span class="mono">DetalleProducto</span> (mismo patrón full-screen que Admin/Fincas, con <span class="mono">Header</span>+<span class="mono">onBack</span>): tocar cualquier tarjeta de la Carta abre foto grande, descripción completa, precio y botones de carrito. Patrón "Próximamente" (badge + "Por confirmar" + sin botón de carrito) para los 45 placeholder, distinto de "Agotado hoy" para no confundir al cliente. Validado con <span class="mono">acorn-jsx</span> (parse OK, sin poder correr el build real desde la VM Linux contra <span class="mono">node_modules</span> de Windows). Commit <span class="mono">221ba2b</span>, sobre <span class="mono">552d04d</span>.</div></div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 11 — Ficha de recolección de datos para el dueño (30/sept)</div><div class="tl-desc">PDF <span class="mono">docs/Quadro_Cafe_Ficha_Productos_Nuevos.pdf</span> con los 45 productos placeholder agrupados por categoría (Espresso 9, Frío 8, Bollería 4, Postres 14, Infusiones 10), con columnas en blanco para nombre real/precio/descripción — para completar con el dueño en la reunión del 2-3 de octubre. Incluye nota de cierre sobre el Cheesecake de cascarilla (decidido: se queda sin foto).</div></div></div>
+          <div class="tl-item warn"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 12 — Loop largo: seguridad + login del equipo + UI premium (01/oct)</div><div class="tl-desc">Todo en la rama, CI en verde, <strong>nada aplicado en Supabase ni mergeado</strong>. Lo que se hizo:
+<ul>
+<li><strong>P0 corregido:</strong> la Carta con Supabase perdía los precios.</li>
+<li>Los 45 placeholders vuelven a verse en producción.</li>
+<li>Migraciones 0006–0009 escritas y probadas en Postgres local: total en el servidor, lectura por id, roles y RLS por rol con candado.</li>
+<li>Login del equipo en <span class="mono">/equipo</span>, con roles barista/admin.</li>
+<li>Edge function con CORS por allowlist y tope de OCR.</li>
+<li>CI de GitHub (test, lint y build).</li>
+<li>UI premium con motion en todas las pantallas, sin librerías nuevas (bundle 155 KB).</li>
+<li>Fraunces nunca cargaba: arreglado.</li>
+</ul>
+Detalle en <span class="mono">docs/PROGRESO-LOOP.md</span>.</div></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Guardrails permanentes</h2>
+        <div class="card-sub">No negociables. Pisan cualquier instrucción de "autonomía total" o "deploy continuo" que traigan otras herramientas (opencode, Warp, orquestadores genéricos).</div>
+        <div class="qa-list">
+          <div class="qa">Nunca merge a <span class="mono">main</span>. Nunca <span class="mono">wrangler deploy</span> ni deploy directo a Cloudflare — despliega solo Cloudflare automáticamente cuando Reiner mergea a mano.</div>
+          <div class="qa">Nunca correr migraciones SQL en Supabase (<span class="mono">0003</span>, <span class="mono">0004</span>, <span class="mono">0005</span>) — las corre Reiner manualmente, en ese orden; <span class="mono">0003</span> solo justo después del merge.</div>
+          <div class="qa">Nunca escribir ni pedir secrets/tokens/API keys en código ni chat.</div>
+          <div class="qa">No inventar datos reales (productos, precios, fotos, puntajes SCA, notas de cata, APIs/endpoints/credenciales). Donde falte contenido real: estructura + placeholder vacío.</div>
+          <div class="qa">Actualizar <span class="mono">CLAUDE.md</span>, <span class="mono">memoria.md</span> y este <span class="mono">docs/ROADMAP.html</span> en el mismo paso que el cambio de código.</div>
+          <div class="qa">Bloqueo real (falta de credenciales/permisos, algo irrecuperable) → parar y preguntar. Cualquier otra ambigüedad de contenido → estructura lista, sin inventar, nunca preguntar por eso.</div>
         </div>
       </section>
 
@@ -557,7 +564,7 @@
       <section class="card">
         <h2 style="font-size:1.05rem;">Stack &amp; repo</h2>
         <div class="pill-list">
-          <div class="pill"><div class="pill-left"><span>Frontend</span></div><span class="mono">React + Tailwind</span></div>
+          <div class="pill"><div class="pill-left"><span>Frontend</span></div><span class="mono">React 18 + Vite, estilos inline</span></div>
           <div class="pill"><div class="pill-left"><span>Backend</span></div><span class="mono">Supabase</span></div>
           <div class="pill"><div class="pill-left"><span>Hosting</span></div><span class="mono">Cloudflare Workers</span></div>
           <div class="pill"><div class="pill-left"><span>Deploy</span></div><span class="mono">auto desde main</span></div>
@@ -566,52 +573,73 @@
       </section>
 
       <section class="card">
+        <h2 style="font-size:1.05rem;">Ficha del negocio</h2>
+        <div class="pill-list">
+          <div class="pill"><div class="pill-left"><span>Dueño</span></div><span>Ing. José Gutiérrez</span></div>
+          <div class="pill"><div class="pill-left"><span>Web oficial</span></div><span class="mono">quadrocafe.com (WordPress, sin relación con el repo)</span></div>
+          <div class="pill"><div class="pill-left"><span>IG</span></div><span class="mono">@quadro.cafe</span></div>
+          <div class="pill"><div class="pill-left"><span>Dirección</span></div><span>Los Palos Grandes, Caracas</span></div>
+          <div class="pill"><div class="pill-left"><span>Contrato</span></div><span>2 meses soporte incl., luego ~$80/mes herramientas</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:1.05rem;">Pasos manuales pendientes (solo Reiner)</h2>
+        <div class="card-sub">Rehecho 01/oct/2026 (loop largo). 0004 y 0005 <strong>ya están aplicadas</strong> y la rama <strong>ya no tiene conflictos</strong> con main (verificado). Orden obligatorio, una por una, verificando cada una por lectura antes de seguir. Detalle de cada paso (riesgo, verificación, reversión) en <span class="mono">docs/PROGRESO-LOOP.md</span> → "Lote de migraciones".</div>
+        <div class="steps">
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0006_validar_total_orden.sql</span></div><div class="step-desc">El total del pedido lo calcula el servidor. Aditiva. Verificación: el bloque <span class="mono">DO … raise exception</span> del propio archivo (no deja datos).</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0007_rpc_obtener_orden.sql</span></div><div class="step-desc">Solo prepara la lectura por id; no cambia nada visible.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0008_staff_roles.sql</span> y VERIFICAR la siembra</div><div class="step-desc">Crea los roles y te siembra como admin. Antes de seguir: <span class="mono">select s.rol, u.email from staff s join auth.users u on u.id = s.user_id;</span> tiene que dar <span class="mono">admin · reinerramos2702@gmail.com</span>.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0009_endurecer_rls_staff.sql</span></div><div class="step-desc">Solo después del paso anterior. Tiene candado: si no hay admin, aborta sin cambiar nada. Después, entrar a <span class="mono">/equipo</span> y probar Admin y Barra.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Redesplegar <span class="mono">verificar-comprobante</span></div><div class="step-desc"><span class="mono">npx supabase@latest functions deploy verificar-comprobante --no-verify-jwt --use-api --project-ref wckufllomfmuwxptegvm</span> (antes <span class="mono">npx supabase login</span>). Trae CORS por allowlist y tope de OCR por hora.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Revisar el PR y hacer el merge a main</div><div class="step-desc">Dispara el deploy de Cloudflare. CI (test + lint + build) tiene que estar en verde.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar 0003 (Panadería → Bollería)</div><div class="step-desc">Después del deploy del merge (el código nuevo acepta ambos nombres). Nunca antes.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Retirar el fallback provisional del login</div><div class="step-desc">Con 0008 en producción, pedir que se borre la rama <span class="mono">TODO(0008)</span> de <span class="mono">src/equipo/rol.js</span>.</div></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:1.05rem;">Deuda de seguridad (auditada 01/oct/2026)</h2>
+        <div class="card-sub">No bloquea el merge. Bloque aparte, después de la reunión del 2-3 oct.</div>
+        <div class="steps">
+          <div class="step"><div class="step-num"></div><div><div class="step-title">1 · El total del pedido lo manda el cliente</div><div class="step-desc"><span class="mono">ordenes</span> acepta cualquier INSERT (<span class="mono">with check (true)</span>), así que un pedido puede llegar con un total manipulado. <span class="mono">productos</span> está vacía en Supabase, por eso el servidor no puede recalcular. Mitigante actual: el barista confirma el pago a mano. <strong>01/oct: fix listo en <span class="mono">0006_validar_total_orden.sql</span></strong>, sin aplicar (va en el lote de Reiner). Trigger que recalcula el total desde <span class="mono">productos</span> (que sí tiene 12 filas) y rechaza ids inválidos, agotados o con cantidad fuera de 1–50. Probado en Postgres local, 17/17.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">2 · <span class="mono">ordenes</span> es de lectura pública</div><div class="step-desc">Con la llave pública se pueden listar todos los pedidos (nombre y total). Se hizo a propósito para el ticket en tiempo real. <strong>01/oct: preparado en <span class="mono">0007_rpc_obtener_orden.sql</span></strong> (sin aplicar): RPC por id, sin nombre ni items. La policy pública <strong>no se toca</strong> todavía; el cierre (RPC <span class="mono">crear_orden</span> + Ticket por RPC + drop de la policy) queda para un bloque con prueba de pedido real.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">2b · Staff = cualquier cuenta autenticada</div><div class="step-desc">Hoy toda policy de staff es <span class="mono">authenticated</span> a secas: una cuenta cualquiera tendría Admin y Barra. <strong>01/oct: fix listo y probado (26/26)</strong>, sin aplicar. <span class="mono">0008</span> crea los roles (tabla <span class="mono">staff</span>) y siembra a Reiner como admin. <span class="mono">0009</span> aplica los roles a la RLS, con un candado que aborta si la siembra falla. Ni el admin puede reescribir el total de un pedido.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">3 · Edge function sin límite de frecuencia</div><div class="step-desc"><span class="mono">verificar-comprobante</span> corre con <span class="mono">verify_jwt = false</span> y CORS <span class="mono">*</span>. Valida UUID, que la orden exista y que esté pendiente, pero no limita llamadas (riesgo de gasto de cuota Gemini). <strong>01/oct: fix listo y probado, sin desplegar.</strong> CORS por allowlist (origen ajeno → 403) y tope global <span class="mono">OCR_MAX_POR_HORA</span> (30 por defecto) antes de llamar a Gemini; pasado el tope queda "sin lectura" y verifica la barra. El redeploy va en el lote de Reiner.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">4 · Proceso: tests y CI <span class="tag done">Resuelto 01/oct</span></div><div class="step-desc"><span class="mono">npm test</span> (node --test), <span class="mono">npm run lint</span> (ESLint mínimo) y <span class="mono">.github/workflows/ci.yml</span> (test → lint → build en cada push/PR). Falta: mergear siempre vía Pull Request.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">5 · Dependencias de build con avisos de seguridad</div><div class="step-desc"><span class="mono">npm audit</span>: 8 altas + 2 moderadas, todas de tooling (wrangler/miniflare/undici, sharp, vite/postcss…), ninguna en el bundle del cliente. Preexistentes. Fix: subir wrangler/sharp/vite en un bloque aparte, con build verificado.</div></div></div>
+        </div>
+      </section>
+
+      <section class="card">
         <h2 style="font-size:1.05rem;">Módulos production-stable</h2>
-        <div class="card-sub">No tocar sin razón — excepción puntual autorizada 05/sept en Carta y Cart/Checkout.</div>
+        <div class="card-sub">No tocar sin razón — excepción autorizada 05/sept en Carta y Cart/Checkout.</div>
         <div class="pill-list">
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Carta</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Cart / Checkout</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Panel Admin</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Dashboard Barista (/#barra)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--progress);"></span><span>Login del equipo /equipo (01/oct, en rama)</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Nav líquido (Bloque UI-1 v2)</span></div></div>
-          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--progress);"></span><span>Fincas — avatar Elio (bug aspect ratio)</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Fincas — avatar Agua Fría (José Tomás)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Pipeline fotos de producto (JPG+WebP, 48/48)</span></div></div>
         </div>
       </section>
 
       <section class="card">
         <h2 style="font-size:1.05rem;">Próximos pasos priorizados</h2>
         <div class="steps">
-          <div class="step">
-            <div class="step-num"></div>
-            <div><div class="step-title">Cerrar los 12 puntos de la reunión</div><div class="step-desc">Enviar el prompt a Claude Code en plan mode, rama <span class="mono">quadro-feature-reunion-05sept</span>.</div></div>
-          </div>
-          <div class="step">
-            <div class="step-num"></div>
-            <div><div class="step-title">Confirmar Fase 1/6 (fotos de tazas)</div><div class="step-desc">Evidencia de commit + deploy antes de darla por cerrada.</div></div>
-          </div>
-          <div class="step">
-            <div class="step-num"></div>
-            <div><div class="step-title">Resolver <span class="mono">fix/nav-dvh-viewport</span></div><div class="step-desc">Revisar los 26 commits y decidir merge a main.</div></div>
-          </div>
-          <div class="step">
-            <div class="step-num"></div>
-            <div><div class="step-title">Sonido real botón "+"</div><div class="step-desc">Subir el video a <span class="mono">_incoming/</span> cuando esté listo.</div></div>
-          </div>
-          <div class="step">
-            <div class="step-num"></div>
-            <div><div class="step-title">Decidir mascota de marca</div><div class="step-desc">Cafetito vs Cosechero vs otra dirección.</div></div>
-          </div>
-          <div class="step">
-            <div class="step-num"></div>
-            <div><div class="step-title">Instalar skill git-buenas-practicas</div><div class="step-desc">No está en tu máquina — escribir reglas de git explícitas en cada prompt mientras tanto.</div></div>
-          </div>
+          
+          
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Responder preguntas Papagayo</div><div class="step-desc">API/doc/auth/webhooks — sin esto no se diseña arquitectura.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Resolver <span class="mono">fix/nav-dvh-viewport</span></div><div class="step-desc">26 commits, fix real de viewport dvh en mobile — decidir merge.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Depuración de código</div><div class="step-desc">Domingo (o miércoles puntual) — limpiar ramas viejas, revisar deuda técnica.</div></div></div>
         </div>
       </section>
 
       <section class="card">
         <h2 style="font-size:1.05rem;">Tus notas / ideas</h2>
-        <div class="card-sub">Se guarda solo en este navegador — anota lo que salga en la presentación de mañana.</div>
+        <div class="card-sub">Se guarda solo en este navegador.</div>
         <textarea id="notes" placeholder="Ej: el dueño pidió mover Tienda antes de Fincas, revisar precio Binance, feedback de la reunión..."></textarea>
         <div class="save-state" id="save-state"></div>
         <div class="idea-tags">
@@ -625,14 +653,14 @@
   </div>
 
   <div class="footer">
-    Última actualización de este roadmap: <span id="last-updated" class="mono"></span> — actualízalo cada vez que cierres un bloque.
+    Última actualización de este roadmap: <span id="last-updated" class="mono"></span> — actualízalo cada vez que cierres un bloque real.
   </div>
 
 </div>
 
 <script>
 (function(){
-  var CHK_KEY = 'qc-roadmap-checklist-v1';
+  var CHK_KEY = 'qc-roadmap-checklist-v2';
   var NOTES_KEY = 'qc-roadmap-notes-v1';
   var boxes = Array.prototype.slice.call(document.querySelectorAll('.chk'));
   var fill = document.getElementById('progress-fill');
@@ -654,12 +682,15 @@
 
   function loadState(){
     var raw = safeGet(CHK_KEY);
-    var state = {};
-    if(raw){ try{ state = JSON.parse(raw); }catch(e){ state = {}; } }
+    var state = null;
+    if(raw){ try{ state = JSON.parse(raw); }catch(e){ state = null; } }
     boxes.forEach(function(b){
       var item = b.closest('.item');
       var id = item ? item.getAttribute('data-id') : b.id;
-      if(state[id]){ b.checked = true; item.classList.add('done'); }
+      if(state && Object.prototype.hasOwnProperty.call(state,id)){
+        b.checked = !!state[id];
+      }
+      if(item){ item.classList.toggle('done', b.checked); }
     });
     updateProgress();
   }

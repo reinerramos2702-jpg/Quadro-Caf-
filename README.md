@@ -9,7 +9,13 @@ npm install
 npm run dev       # servidor de desarrollo
 npm run build     # build de producción a dist/
 npm run preview   # sirve el build de producción localmente
+npm test          # tests de lógica pura (node --test, sin dependencias)
+npm run lint      # ESLint mínimo (también corre en CI: .github/workflows/ci.yml)
 ```
+
+## Acceso del equipo (staff)
+
+El cliente nunca hace login. Barra y Panel Admin viven en **`/equipo`**, que también abren `#barra` y `#admin`. Ahí entra el staff con su cuenta de Supabase Auth, y el rol (`barista` / `admin`) sale de la tabla `staff` (migración 0008). Las cuentas las crea el administrador en Supabase → Authentication → Users, más una fila en `staff` (plantilla SQL en `supabase/migrations/0008_staff_roles.sql`). La pantalla no es la seguridad: la RLS del servidor (0009) es la que permite o niega cada acción.
 
 ## Variables de entorno
 
