@@ -1,0 +1,6864 @@
+{
+ "etiqueta": "despues",
+ "fecha": "2026-10-01T23:40:02.230Z",
+ "url": "http://localhost:5173/",
+ "datos": "supabase",
+ "filas": [
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 320,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 360,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 390,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 412,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "100 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "130 %",
+   "fallos": []
+  },
+  {
+   "producto": "V60 de origen",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "AeroPress campeonato",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Sifón a la mesa",
+   "categoria": "Filtrado",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Espresso doble",
+   "categoria": "Espresso",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cortado",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de cascarilla",
+   "categoria": "Espresso",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Americano",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Capuchino",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Flat White",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de pistacho",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte de vainilla",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Macchiato",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Chocolate caliente",
+   "categoria": "Espresso",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cold brew 18 h",
+   "categoria": "Frío",
+   "estado": "personalizable",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tónica de cascarilla",
+   "categoria": "Frío",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Matcha latte helado",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de Oreo",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Frappé de pistacho",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Ice latte trío caramelo y Nutella",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Green Crush",
+   "categoria": "Frío",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión caliente de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de arándano",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada Fireberry",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de jengibre y durazno",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de limón y jengibre",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Infusión helada de fresa y kiwi",
+   "categoria": "Infusiones",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Croissant de mantequilla",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Pan de masa madre",
+   "categoria": "Bollería",
+   "estado": "disponible",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Empanada",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de Nutella",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Media luna de pistacho",
+   "categoria": "Bollería",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Tarta de café y nuez",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de cascarilla",
+   "categoria": "Postres",
+   "estado": "agotado",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de matcha",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Affogato de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brownie con helado",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de fresa",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de Nutella",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cheesecake de pistacho",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Marquesa de limón",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Brookie — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chocolate y nuez — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 1",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  },
+  {
+   "producto": "Cookie de chispas de chocolate — variante 2",
+   "categoria": "Postres",
+   "estado": "proximamente",
+   "ancho": 430,
+   "fuente": "200 %",
+   "fallos": []
+  }
+ ],
+ "fallosScroll": [],
+ "capturas": [
+  "claro-filtrado.jpg",
+  "claro-espresso.jpg",
+  "claro-frio.jpg",
+  "claro-infusiones.jpg",
+  "claro-bolleria.jpg",
+  "claro-postres.jpg",
+  "oscuro-espresso.jpg",
+  "oscuro-infusiones.jpg",
+  "detalle-normal.jpg",
+  "detalle-por-confirmar.jpg",
+  "flujo-1-final-de-postres.jpg",
+  "flujo-2-detalle-penultimo.jpg",
+  "flujo-3-atras.jpg"
+ ]
+}
