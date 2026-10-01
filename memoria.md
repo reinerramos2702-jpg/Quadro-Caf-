@@ -782,4 +782,8 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 - **Iteración 1, placeholders en producción**: `useCarta` usa `fusionarCarta()`. La base manda y se suman los `nuevo:true` del MENU que no estén en la base por id ni por nombre normalizado. Con Supabase real: 12 reales + 45 "Próximamente". Para retirar un placeholder alcanza con cargar el producto real desde el Admin con el mismo nombre.
 - **Iteración 2, 0006 (archivo, sin aplicar)**: trigger `ordenes_validar_total` que recalcula el total desde `productos` y rechaza ids inválidos, agotados o con cantidad fuera de 1–50. Las migraciones se prueban en **PGlite** (Postgres en WASM, solo en el scratchpad) sobre 0001–0005 reales con stubs de auth/storage. Nunca contra producción.
 - **Iteración 3, 0007 (archivo, sin aplicar)**: RPC `obtener_orden(id)` sin nombre ni items. Solo prepara el cierre de `ordenes_lectura_publica`; no cambian la policy ni el cliente.
+- **Iteración 4, roles del equipo (archivos, sin aplicar)**:
+  - **0008**: tabla `staff`, `es_staff()`/`es_admin()`, siembra de `reinerramos2702@gmail.com` como admin (confirmado por SELECT: es la única cuenta de Auth) y el endurecimiento de funciones que pedían los advisors.
+  - **0009**: candado y después RLS por rol (admin: `productos`; staff: estado/comprobante de `ordenes`, `comprobantes` y la imagen). Privilegio por columna en `ordenes`. Las policies públicas del cliente no se tocan.
+  - Probadas 26/26 en PGlite.
 - Estado real de Supabase el 01/oct (solo lectura): `productos` 12 filas, `ordenes` 15 (la última del 18/ago), 0 comprobantes. 0004 y 0005 están aplicadas; la edge function va en la v3.

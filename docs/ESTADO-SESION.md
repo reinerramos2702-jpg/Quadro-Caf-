@@ -14,8 +14,9 @@
 
 - Iteración 3: `0007_rpc_obtener_orden.sql` escrita y probada. **No aplicada.** No toca la policy ni el cliente.
 
+- Iteración 4: `0008_staff_roles.sql` (siembra de Reiner como admin, confirmado por SELECT) y `0009_endurecer_rls_staff.sql` (con candado). Probadas 26/26. **No aplicadas.**
+
 ## Pendiente (en el orden del plan)
-3. Migraciones **como archivos, sin aplicar**: 0008 (staff/roles + siembra de admin) y 0009 (RLS por rol, con candado).
 4. Login del equipo (`/equipo`) con ruta protegida.
 5. Revisión de seguridad y de la edge function (CORS + tope de OCR).
 6. Docs.

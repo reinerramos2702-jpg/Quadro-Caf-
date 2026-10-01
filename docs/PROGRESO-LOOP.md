@@ -91,3 +91,35 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
   - 0006 se re-corrió: 17/17.
 - **Nota**: el advisor "anon can execute SECURITY DEFINER" la va a listar. Es intencional y queda documentado en el archivo.
 - **Siguiente**: 4. Confirmar por SELECT el email del admin y escribir 0008/0009.
+
+## Iteración 4 — staff/roles: `0008_staff_roles.sql` + `0009_endurecer_rls_staff.sql` (archivos, NO aplicados) (01/oct/2026)
+- **Confirmación previa por SELECT (solo lectura, pedida por Reiner)**: `reinerramos2702@gmail.com` existe, está confirmado y es la **única** cuenta de `auth.users` (total 1, otras 0, último acceso 25/ago). Es la cuenta del Admin.
+- **Advisors antes (lectura, inicio de sesión)**:
+  - `rls_enabled_no_policy`: `ordenes_contador`. Intencional.
+  - `function_search_path_mutable`: ×2.
+  - `anon/authenticated_security_definer_function_executable`: `asignar_numero_orden` y `marcar_comprobante_subido`.
+  - `auth_leaked_password_protection`: desactivado.
+- **0008 (aditiva)**:
+  - tabla `staff`, con RLS que deja leer solo la fila propia y sin escritura por API;
+  - `es_staff()` y `es_admin()`, SECURITY DEFINER, solo para authenticated;
+  - **siembra de Reiner como admin** (email en minúsculas, idempotente);
+  - `search_path` fijo en las 2 funciones del advisor;
+  - `REVOKE EXECUTE` en las 2 funciones de trigger;
+  - plantilla SQL para dar de alta y de baja a un barista.
+- **0009 (endurecimiento)**:
+  - **candado** como primera sentencia (aborta si falta `staff` o no hay ningún admin);
+  - `productos` escritura → `es_admin()`;
+  - `ordenes` update → `es_staff()` y **privilegio por columna** (solo `estado` y `comprobante_*`);
+  - `comprobantes` y la imagen en storage → `es_staff()`;
+  - **no toca** la lectura ni la inserción públicas de `ordenes` ni la subida del cliente;
+  - reversión exacta documentada en el archivo.
+- **Verificación (PGlite, 0001–0009, usuarios Reiner/barista/intruso): 26/26 OK**.
+  - Candado: aborta sin admin y sin 0008; las policies quedan idénticas.
+  - Clientes anónimos: siguen pidiendo, leyendo y subiendo comprobantes, y los triggers disparan aunque EXECUTE esté revocado.
+  - RPC: las 2 funciones de trigger ya no son llamables.
+  - Intruso autenticado: no ve staff, no se auto-asigna admin y no edita productos, órdenes ni comprobantes.
+  - Barista: mueve estados y ve comprobantes, pero no edita productos ni puede subirse a admin.
+  - Admin: edita productos. **Ni el admin reescribe `total`/`items`** de un pedido.
+  - La reversión de 0009 vuelve al estado previo.
+- **Riesgo marcado**: 0009 se aplica **solo** después de leer `select s.rol, u.email from staff s join auth.users u on u.id=s.user_id` y ver `admin · reinerramos2702@gmail.com`.
+- **Siguiente**: 5. UI de login del equipo + ruta protegida.
