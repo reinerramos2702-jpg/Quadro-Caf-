@@ -4,11 +4,15 @@
 /* Fila de la tabla `productos` → forma que usan los componentes de la Carta.
    `precio` llega como string desde Postgres (numeric) y tiene que salir
    número: si no, money() pinta "$NaN" y el total del carrito sale NaN. */
+/* "Panadería" ya no existe en ningún lado: se llama "Bollería" (reunión
+   05/sept, punto 14). Hasta correr 0003 la base todavía dice "Panadería";
+   la Carta y el Panel Admin la traducen al leer. */
+export const normalizarCategoria = (cat) => (cat === "Panadería" ? "Bollería" : cat);
+
 export function mapearProducto(p) {
   return {
     id: p.id,
-    // Compat: hasta correr 0003 la base todavía dice "Panadería".
-    cat: p.cat === "Panadería" ? "Bollería" : p.cat,
+    cat: normalizarCategoria(p.cat),
     nombre: p.nombre,
     precio: Number(p.precio),
     desc: p.descripcion,

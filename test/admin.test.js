@@ -43,6 +43,18 @@ test("categorías presentes: orden de la Carta primero, luego las desconocidas (
   assert.deepEqual(categoriasDe([], CATS), []);
 });
 
+test("'Panadería' no aparece en ningún lado: el Admin la muestra como 'Bollería', en su lugar de la Carta", async () => {
+  const { normalizarCategoria } = await import("../src/lib/carta.js");
+  const { filasParaAdmin } = await import("../src/equipo/adminLogica.js");
+  assert.equal(normalizarCategoria("Panadería"), "Bollería");
+  assert.equal(normalizarCategoria("Postres"), "Postres");
+  const filas = filasParaAdmin(P);
+  assert.equal(filas.find((p) => p.id === "m9").cat, "Bollería");
+  assert.equal(P.find((p) => p.id === "m9").cat, "Panadería", "no muta las filas originales");
+  assert.deepEqual(categoriasDe(filas, CATS), ["Filtrado", "Espresso", "Bollería", "Postres", "Rara"]);
+  assert.ok(!categoriasDe(filas, CATS).includes("Panadería"));
+});
+
 test("precio: acepta coma, $ y espacios; rechaza vacío, negativo y no numérico", () => {
   assert.equal(parsearPrecio("4,5"), 4.5);
   assert.equal(parsearPrecio(" $ 4.50 "), 4.5);

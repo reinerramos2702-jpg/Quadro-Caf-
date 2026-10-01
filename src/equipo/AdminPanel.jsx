@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useId } from "react";
 import { ArrowLeft, LogOut, Plus, Search, X, Sun, Moon, Check, AlertCircle, RotateCcw } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useTheme, CATS, slugify } from "../App.jsx";
-import { filtrarProductos, contarProductos, textoContador, categoriasDe, parsearPrecio } from "./adminLogica";
+import { filtrarProductos, contarProductos, textoContador, categoriasDe, parsearPrecio, filasParaAdmin } from "./adminLogica";
 
 /* ============================ PANEL ADMIN (/equipo#admin) ============================
    Responsive de 360 a 1920 px (01/oct/2026). Antes era la misma columna de
@@ -352,7 +352,7 @@ export default function AdminPanel({ onBack }) {
     const { data, error } = await supabase.from("productos").select("*").order("orden");
     setCargando(false);
     if (error) setErrorCarga("No se pudo cargar la carta. Revisa la conexión e intenta de nuevo.");
-    else setProductos(data || []);
+    else setProductos(filasParaAdmin(data || []));
   };
   useEffect(() => {
     if (supabase) cargarProductos(); else setCargando(false);
@@ -386,7 +386,7 @@ export default function AdminPanel({ onBack }) {
   const abrirAlta = () => setAltaAbierta(true);
   const cerrarAlta = useMemo(() => () => { setAltaAbierta(false); requestAnimationFrame(() => botonAlta.current?.focus()); }, []);
   const agregarProducto = (fila) => {
-    setProductos((ps) => [...ps, fila]);
+    setProductos((ps) => [...ps, ...filasParaAdmin([fila])]);
     cerrarAlta();
     setAviso({ tipo: "ok", texto: `«${fila.nombre}» se agregó a la carta.` });
   };

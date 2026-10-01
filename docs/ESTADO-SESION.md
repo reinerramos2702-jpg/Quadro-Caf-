@@ -5,6 +5,7 @@
 - `src/equipo/AdminPanel.jsx` reemplaza al Admin de `App.jsx`: lista de 1 columna en móvil, 2 en tablet y tabla con cabecera fija, buscador y chips en escritorio. Precio inline (Enter/Esc), switch accesible, estados guardando/guardado/error visibles, panel lateral para "Agregar producto".
 - Verificado con sesión de admin **inventada** y Supabase **simulado** por CDP (nada real leído ni escrito): capturas a 375/768/1024/1440/1920 en los dos temas, antes y después, más búsqueda, chips, Enter/Esc, Espacio en el switch, error 403 (revierte + aviso) y el panel de alta. Tests 36/36, lint OK, build OK.
 - Bundle: principal 154.64 KB (antes 156.31); chunk `/equipo` 14.31 KB (antes 7.85).
+- "Panadería" ya no se muestra en ningún lado: el Admin la traduce a "Bollería" igual que la Carta. En la base sigue "Panadería" hasta correr 0003 (después del merge).
 - **Falta probarlo con tu cuenta real** (cambiar y restaurar un precio): es también la prueba real de la RLS de 0009.
 
 ## Bugs del 01/oct (noche) — reunión 2–3 oct

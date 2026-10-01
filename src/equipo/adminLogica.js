@@ -1,5 +1,10 @@
 /* Lógica pura del Panel Admin (búsqueda, filtro, contador, precio).
    Sin React ni Supabase: se prueba con `npm test` (test/admin.test.js). */
+import { normalizarCategoria } from "../lib/carta.js";
+
+/* Filas de `productos` tal como las muestra el Admin: "Panadería" → "Bollería"
+   (solo visual; el Admin nunca escribe `cat` al editar precio/disponible). */
+export const filasParaAdmin = (filas) => filas.map((p) => ({ ...p, cat: normalizarCategoria(p.cat) }));
 
 export const normalizar = (s) =>
   String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
@@ -19,7 +24,7 @@ export function textoContador({ total, disponibles }) {
 }
 
 /* Categorías que existen en la base, en el orden de la Carta; las que no
-   están en `orden` (p. ej. "Panadería" mientras 0003 no corra) van al final. */
+   están en `orden` van al final. */
 export function categoriasDe(productos, orden = []) {
   const presentes = [...new Set(productos.map((p) => p.cat).filter(Boolean))];
   const conocidas = orden.filter((c) => presentes.includes(c));
