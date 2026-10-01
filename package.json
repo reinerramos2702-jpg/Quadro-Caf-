@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test test/",
+    "test": "node --test \"test/**/*.test.js\"",
     "lint": "eslint .",
     "fuente:acentos": "node scripts/generar-acentos-viola.mjs",
     "modelo:comprimir": "node scripts/comprimir-espiral-glb.mjs",
