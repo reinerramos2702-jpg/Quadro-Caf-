@@ -17,6 +17,7 @@
 - Iteración 4: `0008_staff_roles.sql` (siembra de Reiner como admin, confirmado por SELECT) y `0009_endurecer_rls_staff.sql` (con candado). Probadas 26/26. **No aplicadas.**
 
 - Iteración 5: login del equipo en `/equipo` con ruta protegida por rol (Barra/Admin ya no tienen login propio). Fallback provisional con TODO(0008).
+- Iteración 6: edge function con CORS por allowlist + tope de OCR por hora (probada en Deno local, **sin desplegar**). Revisión de secretos limpia.
 
 ## Pendiente (en el orden del plan)
 5. Revisión de seguridad y de la edge function (CORS + tope de OCR).

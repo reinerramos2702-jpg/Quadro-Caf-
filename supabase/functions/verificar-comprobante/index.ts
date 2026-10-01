@@ -17,16 +17,23 @@
 // Secretos (los carga el dueño, nunca van en el código):
 //   GEMINI_API_KEY   — obligatorio (Google AI Studio)
 //   GEMINI_MODEL     — opcional, default "gemini-2.5-flash"
+//   ALLOWED_ORIGINS  — opcional, orígenes CORS separados por comas (ver origen.js)
+//   OCR_MAX_POR_HORA — opcional, tope global de lecturas con Gemini por hora (default 30)
 // SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY los inyecta Supabase solo.
+//
+// Endurecimiento 01/oct/2026 (deuda de seguridad #3):
+//   · CORS: solo los orígenes de la app (antes "*"). Un Origin ajeno → 403.
+//   · Tope de gasto: cualquiera puede crear una orden y subir una imagen, así
+//     que antes de llamar a Gemini se cuentan las lecturas de la última hora;
+//     pasado el tope la orden queda "sin_lectura" (la barra verifica a mano)
+//     y no se gasta cuota.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { encodeBase64 } from "jsr:@std/encoding@1/base64";
+import { origenesPermitidos, origenRechazado, cabecerasCors } from "./origen.js";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const PERMITIDOS = origenesPermitidos(Deno.env.get("ALLOWED_ORIGINS"));
+const MAX_POR_HORA = Math.max(1, Number(Deno.env.get("OCR_MAX_POR_HORA")) || 30);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const VENTANA_MS = 30 * 60 * 1000;
 const TIMEOUT_MS = 20_000;
@@ -54,10 +61,13 @@ const SCHEMA = {
   required: ["es_comprobante", "confianza"],
 };
 
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
-
 Deno.serve(async (req) => {
+  const origen = req.headers.get("origin");
+  const CORS = cabecerasCors(origen, PERMITIDOS);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
+
+  if (origenRechazado(origen, PERMITIDOS)) return json({ error: "origen no permitido" }, 403);
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "método no permitido" }, 405);
 
@@ -86,6 +96,18 @@ Deno.serve(async (req) => {
 
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) return cerrar("sin_lectura", { motivo: "GEMINI_API_KEY no configurada" });
+
+  // Tope global de gasto: lecturas ya hechas (detalle escrito) en la última
+  // hora. Si falla el conteo, se trata como tope alcanzado (cerrado por
+  // defecto): sin lectura, la barra verifica a mano, cero cuota gastada.
+  const haceUnaHora = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count, error: errConteo } = await sb.from("comprobantes")
+    .select("orden_id", { count: "exact", head: true })
+    .not("detalle", "is", null)
+    .gte("actualizado_en", haceUnaHora);
+  if (errConteo || count == null || count >= MAX_POR_HORA) {
+    return cerrar("sin_lectura", { motivo: errConteo ? "no se pudo contar el uso del OCR" : `tope de ${MAX_POR_HORA} lecturas por hora alcanzado` });
+  }
 
   const { data: archivo, error: errDescarga } = await sb.storage.from("comprobantes").download(`${ordenId}.jpg`);
   if (errDescarga || !archivo) return cerrar("sin_lectura", { motivo: "no se pudo descargar la imagen" });

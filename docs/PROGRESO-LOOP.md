@@ -168,3 +168,27 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
   - test 19/19; lint 0 errores; build OK. Bundle principal **152.98 KB** (−0.88 KB: salió el login viejo) + chunk del equipo 7.66 KB diferido.
 - **Pendiente**: el login con una cuenta real (Reiner) no se probó, porque no se usan contraseñas reales. Va en el Bloque 2 del reporte.
 - **Siguiente**: 6. Revisión de seguridad + edge function.
+
+## Iteración 6 — endurecimiento de `verificar-comprobante` + revisión de seguridad (01/oct/2026)
+- **Objetivo**: deuda #3. La función corría con `verify_jwt = false` y CORS `*`, sin límite de gasto de Gemini.
+- **Archivos**:
+  - `supabase/functions/verificar-comprobante/origen.js` (nuevo, JS puro, testeado en CI): allowlist con producción `workers.dev`, previews `*-quadro-cafe…workers.dev` y localhost 5173/4173. Se reemplaza con el secret opcional `ALLOWED_ORIGINS`.
+  - `index.ts`:
+    - CORS por origen con `Vary: Origin`; un Origin ajeno recibe **403** y las peticiones sin Origin (no navegador) siguen;
+    - **tope global** `OCR_MAX_POR_HORA` (por defecto 30) contado en `comprobantes` (`detalle` no nulo, última hora) **antes** de descargar la imagen o llamar a Gemini. Si se pasa, o si falla el conteo (cerrado por defecto), deja `sin_lectura` y la barra verifica a mano.
+  - `test/origen.test.js`: 6 tests, incluidos orígenes trampa (`…workers.dev.evil.example`, `http://`, subdominio con punto, `null`).
+- **Verificación**:
+  - test 25/25.
+  - `deno check` OK (Deno 2.9.6 desde npm, en el scratchpad).
+  - **Función real corriendo en Deno local**:
+    - origen ajeno → 403 sin `Allow-Origin`;
+    - producción → 200 con `Allow-Origin` exacto;
+    - preview → permitido;
+    - sin Origin → sigue (405 a GET).
+  - **Tope, con PostgREST/Storage simulados en Node** (Gemini nunca llamado, nada real):
+    - 30 lecturas/hora → `sin_lectura` "tope de 30 lecturas por hora alcanzado" **sin pedir la imagen**;
+    - 5 lecturas/hora → pasa el tope y llega a Storage.
+    - El conteo usa `detalle=not.is.null&actualizado_en=gte.<hace 1 h>`.
+- **Revisión de secretos**: grep de JWT/`sb_secret_`/`AIza`/`sb_publishable_`/`GEMINI_API_KEY=` sobre todo lo trackeado y el diff de la sesión → **0 hallazgos**. Solo está trackeado `.env.example`, con placeholders.
+- **Deploy**: **no se desplegó**. Va al lote final para Reiner, con el comando `--no-verify-jwt`. Hasta entonces sigue la v3 (CORS `*`, sin tope).
+- **Siguiente**: code review del diff de la sesión → docs → UI premium.
