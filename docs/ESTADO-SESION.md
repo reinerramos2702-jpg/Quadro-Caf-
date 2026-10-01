@@ -20,11 +20,9 @@
 - Iteración 6: edge function con CORS por allowlist + tope de OCR por hora (probada en Deno local, **sin desplegar**). Revisión de secretos limpia.
 
 ## Pendiente (en el orden del plan)
-5. Revisión de seguridad y de la edge function (CORS + tope de OCR).
-6. Docs.
-7. UI premium con motion en toda la app.
+- Iteración 7: docs sincronizados (CLAUDE.md, README, ROADMAP con los pasos manuales reales, lote en PROGRESO-LOOP). Hecho.
+- Code review del diff de la sesión (en curso).
+- UI premium con motion en toda la app (al final, commits por pantalla, tope de bundle 170 KB).
 
-## Pasos manuales de Reiner (se consolidan en el reporte final)
-- Aplicar el lote de migraciones en orden (0009 solo después de verificar la siembra de 0008).
-- Correr 0003 después del deploy del merge.
-- Revisar el PR y hacer el merge a `main`.
+## Pasos manuales de Reiner
+Lote ordenado, con riesgo/verificación/reversión, en `docs/PROGRESO-LOOP.md` → "Lote de migraciones" (y en ROADMAP.html → "Pasos manuales"): 0006 → 0007 → 0008 (+ verificar la siembra) → 0009 → redeploy de la edge function → merge → 0003 → retirar el fallback TODO(0008).

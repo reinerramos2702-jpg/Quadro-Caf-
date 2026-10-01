@@ -8,6 +8,23 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
 
 ---
 
+## Lote de migraciones y deploy para Reiner (NO aplicado en el loop)
+
+Hay que aplicarlo **uno por uno, en este orden**, verificando cada paso por lectura antes de pasar al siguiente. Todo está probado en PGlite (Postgres real en WASM) sobre 0001–0005 tal cual están en el repo, con stubs de `auth`/`storage`.
+
+| # | Paso | Qué hace | Riesgo | Verificación | Reversión |
+|---|---|---|---|---|---|
+| 1 | `0006_validar_total_orden.sql` | Trigger BEFORE INSERT: el total y los precios salen de `productos`; rechaza ids desconocidos, agotados o con cantidad fuera de 1–50 | Bajo. Un pedido con un producto recién agotado falla con el mensaje genérico | El bloque `DO … raise exception` del archivo → `OK rollback · total=6.00 · precio=3.00` (sin dejar filas) | `drop trigger ordenes_validar_total on ordenes; drop function validar_total_orden();` |
+| 2 | `0007_rpc_obtener_orden.sql` | RPC de lectura de una orden por id, sin nombre ni items. No cambia nada visible | Bajo. El advisor la lista a propósito | `select * from obtener_orden('00000000-0000-4000-8000-000000000000');` → 0 filas | `drop function obtener_orden(uuid);` |
+| 3 | `0008_staff_roles.sql` | Tabla `staff`, `es_staff()`/`es_admin()`, **siembra de Reiner como admin**, `search_path` fijo y EXECUTE revocado en las funciones de trigger | Bajo (aditiva) | `select s.rol, u.email from staff s join auth.users u on u.id = s.user_id;` → `admin · reinerramos2702@gmail.com`. Correr también los advisors | Script de reversión dentro del archivo |
+| 4 | `0009_endurecer_rls_staff.sql` | RLS de staff: de "cualquier authenticated" a roles. `ordenes` se actualiza solo en `estado`/`comprobante_*` | **Alto si el paso 3 no sembró**: lo frena el candado, que aborta sin cambiar nada | Entrar a `/equipo` con la cuenta de Reiner: Admin (cambiar y restaurar un precio) y Barra; `pg_policies` | Script de reversión dentro del archivo (probado: vuelve al estado previo) |
+| 5 | Redeploy de `verificar-comprobante` | CORS por allowlist + tope `OCR_MAX_POR_HORA` | Bajo | `list_edge_functions` → v4, `verify_jwt=false` | Redesplegar desde el commit anterior a `0d76d97` |
+| 6 | Merge del PR a `main` | Deploy de Cloudflare | Medio. CI en verde antes | Probar `/`, Carta, pedido de prueba y `/equipo` en producción | Revert del merge |
+| 7 | `0003_categoria_bolleria.sql` | Panadería → Bollería en la base | Solo **después** del deploy del merge | `select distinct cat from productos;` | `update productos set cat='Panadería' where cat='Bollería' and id in ('m9','m10');` |
+| 8 | Retirar el fallback `TODO(0008)` | Borrar la rama legacy de `resolverRol` y su test | Ninguno con 0008 aplicada | `npm test` | — |
+
+---
+
 ## Iteración 0 — P0: precio comentado en `useCarta` (01/oct/2026)
 - **Objetivo**: arreglar `src/App.jsx:552`. El comentario `// compat…` de `91dc218` quedó en la misma línea que `precio: Number(p.precio),` y lo dejaba comentado.
 - **Impacto si se mergeaba**: con Supabase activo, todos los productos llegaban sin `precio`. La Carta mostraba `$NaN`, el total del carrito era `NaN` y el INSERT a `ordenes` fallaba, porque `total` es NOT NULL y `NaN` se serializa como `null`. Reproducido con el mapeo viejo: `precio: undefined → $NaN`.
