@@ -123,3 +123,48 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
   - La reversión de 0009 vuelve al estado previo.
 - **Riesgo marcado**: 0009 se aplica **solo** después de leer `select s.rol, u.email from staff s join auth.users u on u.id=s.user_id` y ver `admin · reinerramos2702@gmail.com`.
 - **Siguiente**: 5. UI de login del equipo + ruta protegida.
+
+## Iteración 5 — login del equipo (`/equipo`) + ruta protegida (01/oct/2026)
+- **Discrepancia resuelta con Reiner**: por la API, Supabase **nunca** devuelve `42P01` para una tabla ausente. Devuelve `PGRST205` (HTTP 404, "Could not find the table 'public.staff' in the schema cache"), verificado con un GET de solo lectura en producción. Decisión: el fallback acepta `PGRST205` **o** `42P01` **solo si el mensaje o el detalle nombran la tabla `staff`**. Cualquier otro error (red, permisos, JWT, otra tabla) **deniega el acceso**.
+- **⚠ TODO retirar el fallback**: `src/equipo/rol.js` → `resolverRol()`, marcado `TODO(0008)`. Mientras falte 0008, una sesión válida sin tabla `staff` entra como admin. No abre nada nuevo: sin 0008/0009, la RLS vigente ya es "cualquier authenticated". **En cuanto 0008 esté aplicada en producción**, borrar esa rama y su test.
+- **El gate es UX, no seguridad**: lo dice el código (`rol.js`, `EquipoApp.jsx`). La seguridad real es la RLS de 0008/0009.
+- **Archivos**:
+  - `src/equipo/rol.js`: `resolverRol`, `esTablaStaffAusente`, `vistaInicial`.
+  - `src/equipo/ruta.js`: `rutaEquipo`. Decide desde la URL si va el equipo o el cliente: `/equipo`, `#barra`/`#admin`, `?equipo|barra|admin=1` y la vuelta de recuperación.
+  - `src/equipo/LoginEquipo.jsx`: escena + formulario + CSS.
+  - `src/equipo/EquipoApp.jsx`: sesión → rol → vista. Selector para admin, "Sin acceso" para los demás, Barra/Admin adentro.
+  - `src/main.jsx`: `EquipoApp` en un **chunk diferido** (7.66 KB gzip); el cliente no lo descarga.
+  - `src/App.jsx`:
+    - `MARCA_FIJA` (verde, verde profundo, Mocotíes, crema, hueso, tinta, panel y terracota) en **los dos temas** de `PALETAS`;
+    - Admin y Barra sin login propio; se borraron `AdminLogin`/`AdminNuevaClave`, que reemplaza la recuperación del equipo;
+    - `#admin` dejó de ser un tab del cliente; el engranaje de Club lleva a `/equipo#admin`;
+    - "Volver" en Barra para el admin; botones "Cerrar sesión" con aria;
+    - exports para el módulo, sin ciclo de imports.
+  - `test/rol.test.js` + `test/ruta.test.js`: incluyen los 4 casos pedidos (PGRST205 de staff, 42P01 de staff, error de red, PGRST205 de otra tabla) + permisos, sin fila y rutas.
+- **Diseño y motion**:
+  - Siempre `PALETAS.oscuro`; colores solo vía variables `--eq-*` desde tokens (cero hex en el módulo).
+  - Tarjeta verde profundo al 84% con borde crema al 25% y radio 28; **sin blur ni backdrop-filter**.
+  - Botón con degradado verde marca → Mocotíes → profundo, texto hueso y anillo crema; nada de ámbar. Terracota solo en el borde de error.
+  - `<picture>` mobile/desktop sin las versiones "-con-logo"; velo verde profundo/tinta (35% → 85%) + tinte `mix-blend-mode: color` de marca; degradado de respaldo si la imagen falla.
+  - Logo real con `srcset` a `icon-512` (escalado 1.21: el PNG trae 16 px de margen blanco, medido).
+  - Motion: logo con spring, tarjeta que sube, 16 estrellas que titilan, "vertido" dentro del botón mientras carga, temblor en el error, View Transitions entre vistas (si no hay soporte, cambio directo). Todo `transform`/`opacity` y apagado con `prefers-reduced-motion`.
+  - Accesibilidad: labels reales, ojo con `aria-pressed`/`aria-controls`, `role=alert`, `aria-invalid`, foco al cambiar de modo (no al montar, para que el teclado no tape la escena en el móvil), `:focus-visible` crema y safe-area.
+- **Verificación** (Chrome headless sobre `vite preview`):
+  - Textos pedidos presentes, sin "Crear cuenta" y sin errores de consola, a 390×844 y 1440×900.
+  - Ojo: `password → text`, `aria-pressed=true`.
+  - **Login real contra Supabase Auth con un email inventado** → "No pudimos iniciar sesión. Revisa tus datos e intenta de nuevo.", `aria-invalid=true`. "¿Olvidaste…?" pasa a "Recuperar contraseña" con foco en el email (no se envió nada).
+  - **Gate** con sesión inventada y respuestas de `/rest/v1/staff` interceptadas en el navegador:
+    - PGRST205 de staff → selector;
+    - PGRST205 de otra tabla → denegado;
+    - sin fila → denegado;
+    - barista que pide `#admin` → barra;
+    - admin con `#admin` → panel;
+    - `/#barra` viejo → barra.
+    - Sin interceptar, un JWT inválido real (401) → denegado.
+    - **Red caída** → denegado tras ~7 s: `postgrest-js` reintenta 3 veces (1/2/4 s) antes de devolver el error. Comportamiento correcto; anotado.
+  - **Contraste AA medido sobre píxeles reales** (fondo semitransparente sobre la escena), peor caso: título 10.9, subtítulo 6.5, labels 9.2, botón 6.8, enlace 9.5, nota 5.5. Todos ≥ 4.5.
+  - **Predominio de verde**: 98.2% (móvil) / 99.5% (escritorio) de los píxeles con color, **0% azul**, ámbar 0.5–1.8% (luna y ventanas). El tinte alcanza; no hace falta regenerar el fondo.
+  - Cliente `/`: sin login visible ni errores.
+  - test 19/19; lint 0 errores; build OK. Bundle principal **152.98 KB** (−0.88 KB: salió el login viejo) + chunk del equipo 7.66 KB diferido.
+- **Pendiente**: el login con una cuenta real (Reiner) no se probó, porque no se usan contraseñas reales. Va en el Bloque 2 del reporte.
+- **Siguiente**: 6. Revisión de seguridad + edge function.

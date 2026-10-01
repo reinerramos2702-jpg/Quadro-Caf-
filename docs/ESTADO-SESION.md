@@ -16,8 +16,9 @@
 
 - Iteración 4: `0008_staff_roles.sql` (siembra de Reiner como admin, confirmado por SELECT) y `0009_endurecer_rls_staff.sql` (con candado). Probadas 26/26. **No aplicadas.**
 
+- Iteración 5: login del equipo en `/equipo` con ruta protegida por rol (Barra/Admin ya no tienen login propio). Fallback provisional con TODO(0008).
+
 ## Pendiente (en el orden del plan)
-4. Login del equipo (`/equipo`) con ruta protegida.
 5. Revisión de seguridad y de la edge function (CORS + tope de OCR).
 6. Docs.
 7. UI premium con motion en toda la app.

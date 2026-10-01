@@ -1,18 +1,22 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import QuadroCafe, { BarraDashboard } from "./App.jsx";
+import QuadroCafe, { PALETAS } from "./App.jsx";
+import { rutaEquipo } from "./equipo/ruta.js";
 
-// /#barra es un "app" separada del cliente: dashboard de barra para
-// tablet/computadora del local, sin el frame de teléfono. Se decide una
-// sola vez al cargar, no es ruteo cliente dentro de QuadroCafe.
-// "?barra=1" cubre la vuelta del enlace de "olvidé mi clave": Supabase pisa
-// el hash con su propio #access_token=...&type=recovery, así que ese viaje
-// de ida y vuelta no puede depender de "#barra" — ver AdminLogin/"origen".
-const esBarra = typeof window !== "undefined"
-  && (window.location.hash === "#barra" || window.location.search.includes("barra=1"));
+// /equipo (y los accesos de siempre #barra / #admin, más la vuelta del enlace
+// de recuperación de clave) es la app del STAFF: login con rol de Supabase
+// Auth, Barra y Panel Admin. Se decide una sola vez al cargar; el cliente
+// nunca ve un login. El módulo del equipo va en un chunk aparte: un cliente
+// pidiendo un café no lo descarga.
+const EquipoApp = lazy(() => import("./equipo/EquipoApp.jsx"));
+const ruta = typeof window !== "undefined" ? rutaEquipo(window.location) : { esEquipo: false };
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    {esBarra ? <BarraDashboard /> : <QuadroCafe />}
+    {ruta.esEquipo ? (
+      <Suspense fallback={<div style={{ minHeight: "100vh", background: PALETAS.oscuro.tinta }} />}>
+        <EquipoApp pedido={ruta.pedido} recuperacion={ruta.recuperacion} />
+      </Suspense>
+    ) : <QuadroCafe />}
   </React.StrictMode>
 );

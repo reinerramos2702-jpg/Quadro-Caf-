@@ -786,4 +786,8 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
   - **0008**: tabla `staff`, `es_staff()`/`es_admin()`, siembra de `reinerramos2702@gmail.com` como admin (confirmado por SELECT: es la única cuenta de Auth) y el endurecimiento de funciones que pedían los advisors.
   - **0009**: candado y después RLS por rol (admin: `productos`; staff: estado/comprobante de `ordenes`, `comprobantes` y la imagen). Privilegio por columna en `ordenes`. Las policies públicas del cliente no se tocan.
   - Probadas 26/26 en PGlite.
+- **Iteración 5, login del equipo**: `/equipo` (`src/equipo/`) reemplaza los logins propios de Barra y Admin; el cliente nunca hace login.
+  - Fallback del gate: solo con PGRST205/42P01 que nombren `staff` (Supabase devuelve PGRST205, nunca 42P01, por la API), con **TODO(0008)** para retirarlo.
+  - Escena de marca verde sobre los fondos nocturnos, con contraste AA medido en píxeles (peor caso 5.5) y verde en el 98–99.5% de los píxeles con color.
+  - Gate verificado con respuestas simuladas, más un 401 real y la red caída. El login con la cuenta real queda para Reiner.
 - Estado real de Supabase el 01/oct (solo lectura): `productos` 12 filas, `ordenes` 15 (la última del 18/ago), 0 comprobantes. 0004 y 0005 están aplicadas; la edge function va en la v3.

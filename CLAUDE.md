@@ -195,7 +195,22 @@ Two consequences to respect:
 
 Its material is genuinely dark (baseColor averages 31/255), which is why in the dark theme the Inicio hero tints it — see `PALETAS[].modelo` / `veloHero` and `tenirModelo()`. A `material.color` alone can't lighten it: in three.js that value *multiplies* the baseColor texture, so it can only darken; the tint works by dropping `map` and letting the color apply over white. The relief is unaffected — it lives in the normal map.
 
+## Equipo: login del staff + roles (`/equipo`, 01/oct/2026)
+
+Barra y Panel Admin ya no tienen login propio: pasan por **`/equipo`** (`src/equipo/`). El cliente **nunca** hace login.
+- **Ruteo** (`src/equipo/ruta.js`, decidido una vez en `main.jsx`): `/equipo`, `#barra`, `#admin`, `?equipo=1`, los viejos `?barra=1`/`?admin=1` y la vuelta `type=recovery` cargan `EquipoApp` en un **chunk diferido**. Todo lo demás es `QuadroCafe`. El engranaje de Club lleva a `/equipo#admin`.
+- **Flujo** (`EquipoApp.jsx`): sesión de Supabase Auth → rol en `staff` (`resolverRol`, `rol.js`) → barista va a Barra; admin va al selector (Barra / Panel Admin) o a lo que pida la URL. Con sesión pero sin rol, ve "Sin acceso". Sin sesión, ve el login (`LoginEquipo.jsx`): "Acceso del equipo", Email, Contraseña con ojo, "¿Olvidaste tu contraseña?" (`redirectTo` = `/?equipo=1`) y "Entrar". Los errores son siempre genéricos.
+- **El gate es UX; la seguridad es la RLS** de 0008/0009. Todo error al leer el rol deniega. Única excepción, con **TODO(0008)**: `PGRST205`/`42P01` cuyo mensaje nombra la tabla `staff` (0008 sin aplicar) entra como admin, igual que la RLS vigente. **Borrarla en cuanto 0008 esté en producción** (ver `docs/PROGRESO-LOOP.md`, iteración 5).
+- **Diseño**:
+  - escena nocturna fija (`PALETAS.oscuro`), pero los colores son los de marca vía `MARCA_FIJA` (en los dos temas de `PALETAS`) → variables `--eq-*`;
+  - fondos `/img/login-bg-{mobile,desktop}.webp` (nunca las versiones `-con-logo`), con velo verde y tinte `mix-blend-mode: color`;
+  - sin blur ni backdrop-filter y nada de ámbar; terracota solo en el error;
+  - contraste AA medido sobre píxeles reales y verde ≥ 98% de los píxeles con color.
+- Los componentes `AdminLogin`/`AdminNuevaClave` se borraron. Barra y Admin se montan solo desde `EquipoApp`.
+
 ## Bloque 8 — Barista Dashboard (`/#barra`, merged 2026-08-16)
+
+> Desde el 01/oct/2026 el login de la Barra es el del equipo (`/equipo`, sección de arriba). `#barra` sigue funcionando como acceso.
 
 Real orders now exist end to end: `Carrito` collects name + para acá/llevar + payment method and calls `enviarABarra` (in `QuadroCafe`), which inserts into the Supabase `ordenes` table (`supabase/migrations/0002_ordenes.sql`) instead of faking a random ticket number. `Ticket` shows the real order and listens to its `estado` via Supabase Realtime (`postgres_changes` on `ordenes`) — no more simulated 4-step timer. `src/main.jsx` renders `BarraDashboard` (a separate export from `App.jsx`, own component tree, no phone frame) instead of `QuadroCafe` when `window.location.hash === "#barra"` — it's a staff-facing queue (login shared with Panel Admin for now) with Realtime updates, a Web Audio beep + border flash on new orders, and advance/cancel per order.
 

@@ -35,6 +35,22 @@ const EspiralHero = lazy(() => import("./lib/espiral3d.jsx").then((m) => ({ defa
    oscuro  ink #0B0F0D · mocoties #1E5C4A · latón #C9873A · nebulosa #5B2E8C · alien #7FE3C0
    ============================================================ */
 
+/* Colores de marca que NO cambian con el tema (login del equipo, 01/oct/2026).
+   La escena del login es nocturna y siempre usa PALETAS.oscuro, pero su
+   paleta tiene que ser la de marca (verde/crema), no el menta/latón del tema
+   oscuro. Se exponen en los dos temas con el mismo valor, para que cualquier
+   componente los lea vía useTheme() sin hardcodear hex. */
+const MARCA_FIJA = {
+  marca: "#3b574c",         // verde Quadro oficial
+  marcaProfunda: "#26382f", // verde profundo (capas superpuestas)
+  mocoties: "#1E5C4A",      // verde Mocotíes
+  crema: "#e9d8c6",
+  hueso: "#f5efe6",
+  tinta: "#0B0F0D",
+  panel: "#131A17",
+  terracota: "#b5613c",     // acento mínimo (foco de error)
+};
+
 const PALETAS = {
   claro: {
     id: "claro", shell: "#1a1f1c",
@@ -53,6 +69,7 @@ const PALETAS = {
     // fondo claro es el caso de MÁS contraste, y sin velo el cono compite con
     // "EL SABOR / TIENE UNA".
     veloHero: "cc",
+    ...MARCA_FIJA,
   },
   oscuro: {
     id: "oscuro", shell: "#07100D",
@@ -81,6 +98,7 @@ const PALETAS = {
     // 1.21:1. A 8c vuelve a 1.38:1 sin tocar el titular — su luminancia no
     // cambia (p95 = 237 en las tres variantes medidas), solo sube la del cono.
     veloHero: "8c",
+    ...MARCA_FIJA,
   },
 };
 
@@ -2545,136 +2563,6 @@ function Club({ email, setEmail, onBack, onAdmin }) {
 
 /* ============================ ADMIN ============================ */
 
-function AdminLogin({ onLogged, origen = "admin" }) {
-  const { C } = useTheme();
-  const [modo, setModo] = useState("login"); // "login" | "recuperar" | "enviado"
-  const [correo, setCorreo] = useState("");
-  const [clave, setClave] = useState("");
-  const [error, setError] = useState("");
-  const [cargando, setCargando] = useState(false);
-
-  const entrar = async (e) => {
-    e.preventDefault();
-    setError(""); setCargando(true);
-    const { error: err } = await supabase.auth.signInWithPassword({ email: correo, password: clave });
-    setCargando(false);
-    if (err) setError("Correo o clave incorrectos.");
-    else onLogged();
-  };
-
-  const enviarRecuperacion = async (e) => {
-    e.preventDefault();
-    setError(""); setCargando(true);
-    // El enlace de recuperación de Supabase pisa el hash con su propio
-    // #access_token=...&type=recovery, así que "a dónde volver" no puede
-    // viajar en el hash (por eso "?admin=1", ya existente, usa query string).
-    // "origen" hace lo mismo para /#barra: sin esto, el dueño que pide la
-    // clave desde el Dashboard de Barra volvía siempre al Panel Admin.
-    await supabase.auth.resetPasswordForEmail(correo, {
-      redirectTo: `${window.location.origin}${window.location.pathname}?${origen}=1`,
-    });
-    setCargando(false);
-    setModo("enviado"); // Supabase nunca confirma si el correo existe — el mensaje es siempre el mismo.
-  };
-
-  if (modo === "enviado") {
-    return (
-      <div style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
-        <Mail size={18} color={C.brand} />
-        <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Revisa tu correo</div>
-        <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
-          Si <strong style={{ color: C.text }}>{correo}</strong> tiene una cuenta, te enviamos un enlace para elegir una clave nueva.
-        </p>
-        <button onClick={() => setModo("login")} className="press mono" style={{
-          marginTop: 12, fontSize: 10.5, letterSpacing: ".08em", textTransform: "uppercase", color: C.brand,
-          background: "none", border: "none", cursor: "pointer", padding: 0,
-        }}>Volver a entrar</button>
-      </div>
-    );
-  }
-
-  const recuperando = modo === "recuperar";
-
-  return (
-    <form onSubmit={recuperando ? enviarRecuperacion : entrar} style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
-      <Lock size={18} color={C.brand} />
-      <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>{recuperando ? "Recuperar clave" : "Entrar como dueño"}</div>
-      <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
-        {recuperando ? "Te mandamos un enlace a tu correo para elegir una clave nueva." : "Acceso privado para editar la carta. Pide tu usuario si no lo tienes."}
-      </p>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
-          <Mail size={15} color={C.textMuted} />
-          <input type="email" required value={correo} onChange={(e) => setCorreo(e.target.value)} placeholder="dueño@quadrocafe.com"
-            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
-        </div>
-        {!recuperando && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
-            <Lock size={15} color={C.textMuted} />
-            <input type="password" required value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Clave"
-              style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
-          </div>
-        )}
-      </div>
-      {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 8 }}>{error}</p>}
-      <button type="submit" disabled={cargando} className="press" style={{
-        marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", cursor: "pointer",
-        background: C.brand, color: C.onBrand, fontSize: 13.5, fontWeight: 700, opacity: cargando ? .6 : 1,
-      }}>{cargando ? "Enviando…" : recuperando ? "Enviar enlace" : "Entrar"}</button>
-      <button type="button" onClick={() => { setModo(recuperando ? "login" : "recuperar"); setError(""); }} className="press mono" style={{
-        marginTop: 10, width: "100%", textAlign: "center", fontSize: 10.5, letterSpacing: ".06em", textTransform: "uppercase",
-        color: C.textMuted, background: "none", border: "none", cursor: "pointer", padding: 4,
-      }}>{recuperando ? "Volver a entrar" : "¿Olvidaste tu clave?"}</button>
-    </form>
-  );
-}
-
-function AdminNuevaClave({ onListo }) {
-  const { C } = useTheme();
-  const [clave, setClave] = useState("");
-  const [clave2, setClave2] = useState("");
-  const [error, setError] = useState("");
-  const [guardando, setGuardando] = useState(false);
-
-  const guardar = async (e) => {
-    e.preventDefault();
-    if (clave.length < 6) { setError("La clave debe tener al menos 6 caracteres."); return; }
-    if (clave !== clave2) { setError("Las claves no coinciden."); return; }
-    setGuardando(true); setError("");
-    const { error: err } = await supabase.auth.updateUser({ password: clave });
-    setGuardando(false);
-    if (err) setError("No se pudo actualizar la clave. Pide un enlace nuevo e intenta de nuevo.");
-    else onListo();
-  };
-
-  return (
-    <form onSubmit={guardar} style={{ margin: "16px 20px 0", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18 }}>
-      <Lock size={18} color={C.brand} />
-      <div className="disp" style={{ fontSize: 15, marginTop: 8 }}>Elige una clave nueva</div>
-      <p style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>
-        Veniste desde el enlace de recuperación. Escribe tu clave nueva dos veces.
-      </p>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
-          <Lock size={15} color={C.textMuted} />
-          <input type="password" required value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Clave nueva"
-            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 12px" }}>
-          <Lock size={15} color={C.textMuted} />
-          <input type="password" required value={clave2} onChange={(e) => setClave2(e.target.value)} placeholder="Repite la clave"
-            style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
-        </div>
-      </div>
-      {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 8 }}>{error}</p>}
-      <button type="submit" disabled={guardando} className="press" style={{
-        marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", cursor: "pointer",
-        background: C.brand, color: C.onBrand, fontSize: 13.5, fontWeight: 700, opacity: guardando ? .6 : 1,
-      }}>{guardando ? "Guardando…" : "Guardar clave"}</button>
-    </form>
-  );
-}
-
 function AdminFila({ p, onCambio }) {
   const { C } = useTheme();
   const [precio, setPrecio] = useState(String(p.precio));
@@ -2813,23 +2701,14 @@ function AdminNuevoProducto({ siguienteOrden, onCreado }) {
   );
 }
 
+/* Panel Admin. Desde el 01/oct/2026 lo monta solo EquipoApp (src/equipo/)
+   con sesión de rol admin ya verificada: acá ya no hay login ni recuperación
+   de clave. La seguridad real sigue siendo la RLS (0009: es_admin()). */
 function Admin({ onBack }) {
   const { C } = useTheme();
-  const [sesion, setSesion] = useState(undefined); // undefined = cargando, null = sin sesión
-  const [recuperando, setRecuperando] = useState(false);
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (!supabase) { setSesion(null); return; }
-    supabase.auth.getSession().then(({ data }) => setSesion(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((evento, s) => {
-      setSesion(s);
-      if (evento === "PASSWORD_RECOVERY") setRecuperando(true);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
 
   const cargarProductos = async () => {
     setCargando(true); setError("");
@@ -2839,7 +2718,7 @@ function Admin({ onBack }) {
     else setProductos(data || []);
   };
 
-  useEffect(() => { if (sesion) cargarProductos(); }, [sesion]);
+  useEffect(() => { if (supabase) cargarProductos(); }, []);
 
   const cambiarProducto = async (id, cambios) => {
     setProductos((ps) => ps.map((p) => (p.id === id ? { ...p, ...cambios } : p)));
@@ -2861,36 +2740,10 @@ function Admin({ onBack }) {
     );
   }
 
-  if (sesion === undefined) {
-    return (
-      <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-        <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
-      </div>
-    );
-  }
-
-  if (sesion && recuperando) {
-    return (
-      <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-        <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
-        <AdminNuevaClave onListo={() => setRecuperando(false)} />
-      </div>
-    );
-  }
-
-  if (!sesion) {
-    return (
-      <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
-        <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} />
-        <AdminLogin onLogged={cargarProductos} />
-      </div>
-    );
-  }
-
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 110 }}>
       <Header sub="Panel del dueño" titulo="Admin" onBack={onBack} right={
-        <button onClick={() => supabase.auth.signOut()} className="press" aria-label="Salir" style={{ ...btnMiniStyle(C), marginBottom: 3 }}>
+        <button onClick={() => supabase.auth.signOut()} className="press" aria-label="Cerrar sesión" title="Cerrar sesión" style={{ ...btnMiniStyle(C), marginBottom: 3 }}>
           <LogOut size={15} />
         </button>
       } />
@@ -3276,14 +3129,9 @@ export default function QuadroCafe() {
   const C = PALETAS[tema];
   const css = useMemo(() => buildCss(C), [C]);
 
-  const [tab, setTab] = useState(() => {
-    if (typeof window === "undefined") return "inicio";
-    const { hash, search } = window.location;
-    // #admin: acceso directo. ?admin=1 y type=recovery: vuelta desde el enlace
-    // de "olvidé mi clave" de Supabase (que agrega su propio access_token al hash).
-    const esAdmin = hash === "#admin" || search.includes("admin=1") || hash.includes("type=recovery");
-    return esAdmin ? "admin" : "inicio";
-  });
+  // #admin / ?admin=1 / type=recovery ya no llegan acá: main.jsx los manda a
+  // EquipoApp (/equipo, login del equipo con rol). El cliente nunca hace login.
+  const [tab, setTab] = useState("inicio");
   const [carrito, setCarrito] = useState(() => {
     try { return JSON.parse(localStorage.getItem("qc-carrito")) || []; } catch { return []; }
   });
@@ -3478,8 +3326,7 @@ export default function QuadroCafe() {
               {tab === "tienda" && <Tienda onBack={irInicio} />}
               {tab === "maquinas" && <Laboratorio onBack={irInicio} />}
               {tab === "academia" && <Academia taza={taza} setTaza={setTaza} onBack={irInicio} />}
-              {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} onAdmin={() => setTab("admin")} />}
-              {tab === "admin" && <Admin onBack={irInicio} />}
+              {tab === "club" && <Club email={email} setEmail={setEmail} onBack={irInicio} onAdmin={() => window.location.assign("/equipo#admin")} />}
             </div>
           </main>
 
@@ -3670,7 +3517,10 @@ function OrdenCard({ orden, onAvanzar, onCancelar }) {
   );
 }
 
-export function BarraDashboard() {
+/* Tablero de barra. Desde el 01/oct/2026 lo monta solo EquipoApp
+   (src/equipo/), después de verificar sesión + rol: acá ya no hay login ni
+   recuperación de clave. `onVolver` (solo admin) regresa al selector. */
+export function BarraDashboard({ onVolver } = {}) {
   const [tema, setTema] = useState(() => {
     try {
       const saved = localStorage.getItem("qc-tema");
@@ -3683,12 +3533,6 @@ export function BarraDashboard() {
   const C = PALETAS[tema];
   const css = useMemo(() => buildCss(C), [C]);
 
-  // undefined = verificando sesión, null = sin sesión. Login compartido con
-  // el Panel Admin por ahora — cuando existan roles separados (staff vs
-  // dueño), este es el punto donde filtrar por user.app_metadata.rol antes
-  // de dar acceso al dashboard.
-  const [sesion, setSesion] = useState(undefined);
-  const [recuperando, setRecuperando] = useState(false);
   const [ordenes, setOrdenes] = useState([]);
   const [silenciado, setSilenciado] = useState(() => {
     try { return localStorage.getItem("qc-barra-silenciado") === "1"; } catch { return false; }
@@ -3701,16 +3545,6 @@ export function BarraDashboard() {
   useEffect(() => { try { localStorage.setItem("qc-barra-silenciado", silenciado ? "1" : "0"); } catch { /* noop */ } }, [silenciado]);
   useEffect(() => { const t = setInterval(() => setAhora(Date.now()), 60000); return () => clearInterval(t); }, []);
 
-  useEffect(() => {
-    if (!supabase) { setSesion(null); return; }
-    supabase.auth.getSession().then(({ data }) => setSesion(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((evento, s) => {
-      setSesion(s);
-      if (evento === "PASSWORD_RECOVERY") setRecuperando(true);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
   const cargar = async () => {
     const { data, error: err } = await supabase.from("ordenes").select("*")
       .in("estado", ["recibido", "moliendo", "extrayendo", "listo"])
@@ -3719,7 +3553,7 @@ export function BarraDashboard() {
   };
 
   useEffect(() => {
-    if (!sesion || !supabase) return;
+    if (!supabase) return;
     cargar();
     const canal = supabase.channel("barra-ordenes")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "ordenes" }, (payload) => {
@@ -3733,7 +3567,7 @@ export function BarraDashboard() {
       })
       .subscribe();
     return () => supabase.removeChannel(canal);
-  }, [sesion]);
+  }, []);
 
   const avanzar = async (o) => {
     const idx = ESTADOS_ORDEN.findIndex((e) => e.id === o.estado);
@@ -3760,32 +3594,6 @@ export function BarraDashboard() {
         </p>
       </div>
     );
-  } else if (sesion === undefined) {
-    contenido = <div style={{ minHeight: "100vh" }} />;
-  } else if (sesion && recuperando) {
-    contenido = (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
-        <div style={{ width: "100%", maxWidth: 380 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 10 }}>
-            <Marca size={34} />
-            <span className="disp" style={{ fontSize: 22 }}>Dashboard de barra</span>
-          </div>
-          <AdminNuevaClave onListo={() => setRecuperando(false)} />
-        </div>
-      </div>
-    );
-  } else if (!sesion) {
-    contenido = (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
-        <div style={{ width: "100%", maxWidth: 380 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 10 }}>
-            <Marca size={34} />
-            <span className="disp" style={{ fontSize: 22 }}>Dashboard de barra</span>
-          </div>
-          <AdminLogin onLogged={() => {}} origen="barra" />
-        </div>
-      </div>
-    );
   } else {
     const activas = ordenes
       .filter((o) => o.estado !== "completada" && o.estado !== "cancelada")
@@ -3801,6 +3609,14 @@ export function BarraDashboard() {
           boxShadow: destello ? `0 0 0 3px ${C.brand} inset` : "none", transition: "box-shadow .3s",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {onVolver && (
+              <button onClick={onVolver} className="press" aria-label="Volver al acceso del equipo" style={{
+                display: "grid", placeItems: "center", width: 48, height: 48, borderRadius: 14,
+                border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer",
+              }}>
+                <ArrowLeft size={20} />
+              </button>
+            )}
             <Marca size={38} />
             <div>
               <div className="disp" style={{ fontSize: 24 }}>Dashboard de barra</div>
@@ -3817,7 +3633,7 @@ export function BarraDashboard() {
             }}>
               {silenciado ? <VolumeX size={20} /> : <Volume2 size={20} />}
             </button>
-            <button onClick={() => supabase.auth.signOut()} className="press" aria-label="Salir" style={{
+            <button onClick={() => supabase.auth.signOut()} className="press" aria-label="Cerrar sesión" title="Cerrar sesión" style={{
               display: "grid", placeItems: "center", width: 48, height: 48, borderRadius: 14,
               border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer",
             }}>
@@ -3849,3 +3665,7 @@ export function BarraDashboard() {
     </ThemeCtx.Provider>
   );
 }
+
+/* Piezas compartidas con el módulo del equipo (src/equipo/, login + roles).
+   EquipoApp importa de acá; App.jsx nunca importa de src/equipo/ (sin ciclo). */
+export { PALETAS, ThemeCtx, useTheme, buildCss, Admin, Marca, ThemeToggle };
