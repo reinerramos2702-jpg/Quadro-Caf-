@@ -775,3 +775,7 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 - 0004 y 0005 aplicadas en Supabase por Reiner (verificado por lectura: CHECK con binance, tabla `comprobantes` con RLS, bucket privado, 2 triggers, 3 policies). Edge function `verificar-comprobante` v2 con `--no-verify-jwt`; secret `GEMINI_API_KEY` cargado.
 - `useCarta` mapea `cat` "Panadería"→"Bollería" al leer `productos` (la base tiene 12 filas, 2 con "Panadería"): 0003 deja de tener ventana crítica tras el deploy. Nunca correr 0003 antes del deploy.
 - `docs/ROADMAP.html` es el único roadmap (ROADMAP.md eliminado).
+
+## 01/oct/2026 — Loop largo: seguridad + login del equipo + UI (bitácora en `docs/PROGRESO-LOOP.md`)
+- **P0 corregido (iteración 0)**: en `91dc218`, el comentario de compat de `useCarta` quedó en la misma línea que `precio: Number(p.precio),` y lo comentaba. Con Supabase activo, la Carta mostraba `$NaN` y los pedidos fallaban, porque `total` llegaba NaN y se serializaba como null. El mapeo pasó a `src/lib/carta.js` (`mapearProducto`), cubierto por `test/carta.test.js` (`npm test`). Verificado con Supabase real y con el POST de la orden interceptado (nada insertado).
+- Estado real de Supabase el 01/oct (solo lectura): `productos` 12 filas, `ordenes` 15 (la última del 18/ago), 0 comprobantes. 0004 y 0005 están aplicadas; la edge function va en la v3.

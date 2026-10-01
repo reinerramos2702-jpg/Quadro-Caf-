@@ -143,6 +143,8 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Pendiente de Reiner en Supabase (verificado por lectura el 2026-09-18)**: 0003/0004/0005 **sin aplicar**. La edge function está desplegada pero en una versión vieja, y hay que redesplegarla con `--no-verify-jwt`. El secret `GEMINI_API_KEY` no se verificó. Orden: 0004 + 0005 → redeploy → secret → merge (lo hace Reiner) → 0003 justo después.
 - **Decisiones para los puntos que faltan**: el punto 3 saca a Elio, Rosa y Mina de `FINCAS` (reemplaza la vieja regla de "no tocar Elio"); los puntos 2 y 11 quedan solo con estructura, sin inventar fotos ni productos; el punto 10 (Tienda) lleva tarjetas "Próximamente" sin nombre ni precio inventados.
 
+- **Mapeo de la Carta (01/oct)**: la fila de `productos` → ítem de Carta vive en `src/lib/carta.js` (`mapearProducto`, puro y testeado con `npm test` → `node --test test/`). No vuelvas a inlinear el mapeo dentro de `useCarta`: un comentario en la misma línea ya dejó afuera `precio` una vez (P0, ver `docs/PROGRESO-LOOP.md`).
+
 **Contexto de recuperación**: tercer apagón del proyecto. Git estaba limpio, con 7 commits completos sin pushear y sin documentar (ver `memoria.md` § "Reunión 05/sept"). Sesión a sesión, el estado vive en `docs/ESTADO-SESION.md`.
 
 ## Real-data policy
