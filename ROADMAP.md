@@ -39,14 +39,14 @@ Tarjetas "Próximamente" (tipo genérico), sin nombre ni precio inventado. Nav j
 ### [x] 11. Nuevos productos en Carta
 Punto de entrada listo (etiqueta "Nuevo" en el panel admin). **Sin contenido a propósito** — depende de que Reiner pase la lista completa, mismo criterio que el punto 2. No inventar productos.
 
-### [ ] 12. Método de pago Binance
-Verificar en el código si ya está implementado (hay indicios de un batch anterior, pero no confirmado en la sesión del 18/sept). Si falta: sumarlo junto a Efectivo / Pago móvil / Zelle / Transferencia, mismo patrón de UI del componente existente — no reinventar el selector.
+### [x] 12. Método de pago Binance
+Ya implementado — confirmado en código el 30/sept. Commit `39435dd` (18/sept): entrada `binance` ("Binance Pay") en `METODOS_PAGO` de `App.jsx`, mismo patrón del selector existente. Migración `0004_metodo_binance.sql` amplía el CHECK de `ordenes.metodo_pago` (aditiva; la corre Reiner a mano, ver guardrails).
 
 ### [x] 13. OCR de comprobante de pago
 Cerrado y reforzado — 4 fallas de seguridad corregidas en la revisión de código (la más grave: se podía marcar un pedido como pagado sin comprobante real). Fix vive en la migración `0005` (Reiner la corre manualmente, ver guardrails).
 
-### [ ] 14. Renombrar "Panadería" → "Bollería"
-Verificar en el código si ya está hecho. Si falta: es solo cambio de copy/label en la categoría de Carta — no reestructurar productos.
+### [x] 14. Renombrar "Panadería" → "Bollería"
+Ya implementado — confirmado en código el 30/sept. Commit `e78a0d9` (18/sept): categoría renombrada en `MENU` de `App.jsx`, solo el nombre. Migración `0003_categoria_bolleria.sql` va **justo después del merge**, no antes (el código viejo filtra por "Panadería"); la corre Reiner a mano.
 
 ### [x] 15. Fix visual "É" de "Quadro Café"
 Corregido en Chrome/WebKit desktop. Caso reportado en Safari/iPhone sin poder reproducir — no volver a tocar la tipografía sin evidencia nueva (captura + modelo/iOS) de Reiner.
