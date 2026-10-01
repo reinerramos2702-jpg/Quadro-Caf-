@@ -35,7 +35,7 @@ const ESTRELLAS = [
 ];
 
 export const CSS_EQUIPO = `
-html,body{margin:0;background:var(--eq-tinta)}
+
 .eq{position:relative;min-height:100vh;min-height:100dvh;overflow:hidden;color:var(--eq-hueso);
   background:linear-gradient(180deg,var(--eq-profunda),var(--eq-tinta))}
 .eq-fondo,.eq-fondo img{position:absolute;inset:0;width:100%;height:100%}

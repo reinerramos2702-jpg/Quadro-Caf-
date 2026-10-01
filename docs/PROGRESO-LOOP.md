@@ -144,6 +144,7 @@ Hay que aplicarlo **uno por uno, en este orden**, verificando cada paso por lect
 ## Iteración 5 — login del equipo (`/equipo`) + ruta protegida (01/oct/2026)
 - **Discrepancia resuelta con Reiner**: por la API, Supabase **nunca** devuelve `42P01` para una tabla ausente. Devuelve `PGRST205` (HTTP 404, "Could not find the table 'public.staff' in the schema cache"), verificado con un GET de solo lectura en producción. Decisión: el fallback acepta `PGRST205` **o** `42P01` **solo si el mensaje o el detalle nombran la tabla `staff`**. Cualquier otro error (red, permisos, JWT, otra tabla) **deniega el acceso**.
 - **⚠ TODO retirar el fallback**: `src/equipo/rol.js` → `resolverRol()`, marcado `TODO(0008)`. Mientras falte 0008, una sesión válida sin tabla `staff` entra como admin. No abre nada nuevo: sin 0008/0009, la RLS vigente ya es "cualquier authenticated". **En cuanto 0008 esté aplicada en producción**, borrar esa rama y su test.
+- **Error al leer el rol (code review)**: red, timeout o 5xx → pantalla "Sin conexión" con **Reintentar**, no "Sin acceso" (`resolverRol` → `error: true`).
 - **El gate es UX, no seguridad**: lo dice el código (`rol.js`, `EquipoApp.jsx`). La seguridad real es la RLS de 0008/0009.
 - **Archivos**:
   - `src/equipo/rol.js`: `resolverRol`, `esTablaStaffAusente`, `vistaInicial`.
@@ -209,3 +210,21 @@ Hay que aplicarlo **uno por uno, en este orden**, verificando cada paso por lect
 - **Revisión de secretos**: grep de JWT/`sb_secret_`/`AIza`/`sb_publishable_`/`GEMINI_API_KEY=` sobre todo lo trackeado y el diff de la sesión → **0 hallazgos**. Solo está trackeado `.env.example`, con placeholders.
 - **Deploy**: **no se desplegó**. Va al lote final para Reiner, con el comando `--no-verify-jwt`. Hasta entonces sigue la v3 (CORS `*`, sin tope).
 - **Siguiente**: code review del diff de la sesión → docs → UI premium.
+
+## Iteración 7 — docs sincronizados (01/oct/2026)
+- Lo que estaba desactualizado:
+  - ROADMAP: pasos manuales rehechos con el lote real; stack correcto ("inline", no Tailwind); `productos` con 12 filas.
+  - CLAUDE.md: estado de Supabase, bundle e Infusiones.
+  - README: `/equipo`, `npm test`/`lint`.
+  - Tabla "Lote de migraciones" arriba en este archivo. Commit `b56fd7e`.
+
+## Iteración 7b — code review del diff de la sesión (`/code-review medium 91dc218..HEAD`) (01/oct/2026)
+Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre el UPDATE de la Barra, los nombres de función de 0005/0008, el hash `type=recovery` y que el regex de CORS no matchea de más. Encontró **3 problemas reales, todos corregidos**:
+1. **(Medio) El tope de OCR contaba todo cierre, no solo las llamadas a Gemini.** Cada rechazo por tope renovaba la ventana: con tráfico sostenido el OCR quedaba apagado para todos, y un atacante podía apagarlo a propósito con 30 órdenes basura por hora.
+   - Fix: contar solo `detalle->>modelo` no nulo. Solo los cierres posteriores a Gemini (éxito, HTTP de error, timeout, respuesta rara) guardan `modelo`; los previos (sin key, sin imagen, el propio tope) no.
+   - Verificado: `deno check` OK y la función en Deno local manda `detalle->>modelo=not.is.null` en el conteo.
+2. **(Bajo) Un error transitorio al leer el rol dejaba "Sin acceso" sin salida.**
+   - Fix: `resolverRol` devuelve `error: true` en los errores de lectura. `EquipoApp` muestra **"Sin conexión"** con un botón **Reintentar** (vuelve a pedir el rol) además de "Cerrar sesión"; "Sin acceso" queda solo para "sin fila en staff".
+   - Verificado en Chrome: red caída → "Sin conexión"; red de vuelta + Reintentar → selector. Tests actualizados (25/25).
+3. **(Bajo) `html,body{background:var(--eq-tinta)}` nunca aplicaba**: las variables viven en un descendiente.
+   - Fix: el valor del token se inyecta directo (`PALETAS.oscuro.tinta`). Verificado: `rgb(11,15,13)` en `html` y `body`.

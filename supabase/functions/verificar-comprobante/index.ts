@@ -97,13 +97,17 @@ Deno.serve(async (req) => {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) return cerrar("sin_lectura", { motivo: "GEMINI_API_KEY no configurada" });
 
-  // Tope global de gasto: lecturas ya hechas (detalle escrito) en la última
-  // hora. Si falla el conteo, se trata como tope alcanzado (cerrado por
-  // defecto): sin lectura, la barra verifica a mano, cero cuota gastada.
+  // Tope global de gasto: llamadas REALES a Gemini en la última hora. Solo
+  // los cierres que pasaron por Gemini guardan `detalle.modelo` (éxito, HTTP
+  // de error, timeout, respuesta rara); los cierres previos (sin key, sin
+  // imagen, este mismo tope) no lo llevan, así que no se cuentan — si se
+  // contaran, cada rechazo por tope renovaría la ventana y el OCR quedaría
+  // apagado para siempre con tráfico sostenido (hallazgo del code review).
+  // Si falla el conteo, se trata como tope alcanzado (cerrado por defecto).
   const haceUnaHora = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const { count, error: errConteo } = await sb.from("comprobantes")
     .select("orden_id", { count: "exact", head: true })
-    .not("detalle", "is", null)
+    .not("detalle->>modelo", "is", null)
     .gte("actualizado_en", haceUnaHora);
   if (errConteo || count == null || count >= MAX_POR_HORA) {
     return cerrar("sin_lectura", { motivo: errConteo ? "no se pudo contar el uso del OCR" : `tope de ${MAX_POR_HORA} lecturas por hora alcanzado` });

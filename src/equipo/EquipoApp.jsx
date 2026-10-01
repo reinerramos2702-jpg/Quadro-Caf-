@@ -39,12 +39,16 @@ function leerTema() {
 export default function EquipoApp({ pedido = null, recuperacion = false }) {
   // La escena del login es nocturna: siempre PALETAS.oscuro, sin el toggle.
   const N = PALETAS.oscuro;
-  const cssEscena = useMemo(() => buildCss(N) + CSS_EQUIPO, [N]);
+  // html/body son ancestros del .qc donde viven las variables --eq-*, así que
+  // no las heredan: el fondo de rebote (overscroll iOS/Android) va con el
+  // valor del token inyectado directo (hallazgo del code review).
+  const cssEscena = useMemo(() => buildCss(N) + `html,body{margin:0;background:${N.tinta}}` + CSS_EQUIPO, [N]);
 
   const [sesion, setSesion] = useState(undefined); // undefined = verificando
   const [recuperando, setRecuperando] = useState(recuperacion);
   const [rolInfo, setRolInfo] = useState(undefined); // undefined = leyendo rol
   const [vista, setVista] = useState(null);
+  const [intento, setIntento] = useState(0); // "Reintentar" tras un error al leer el rol
 
   useEffect(() => {
     if (!supabase) { setSesion(null); return; }
@@ -61,6 +65,7 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
   useEffect(() => {
     if (!uid) { setRolInfo(undefined); return; }
     let cancelado = false;
+    setRolInfo(undefined);
     supabase.from("staff").select("rol").eq("user_id", uid).maybeSingle()
       .then((res) => res, (error) => ({ data: null, error }))
       .then((res) => {
@@ -70,7 +75,7 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
         setRolInfo(info);
       });
     return () => { cancelado = true; };
-  }, [uid]);
+  }, [uid, intento]);
 
   const rol = rolInfo?.rol ?? null;
   const vistaActual = vista ?? vistaInicial(rol, pedido);
@@ -114,6 +119,26 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
     contenido = <LoginEquipo inicial="nueva" onClaveNueva={() => transicion(() => setRecuperando(false))} />;
   } else if (!sesion) {
     contenido = <LoginEquipo key="login" inicial="login" />;
+  } else if (!rol && rolInfo.error) {
+    contenido = (
+      <>
+        <LogoEquipo />
+        <section className="eq-tarjeta" aria-labelledby="eq-titulo">
+          <div className="eq-paso">
+            <h1 id="eq-titulo" className="eq-titulo">Sin conexión</h1>
+            <p className="eq-sub" role="alert">
+              No pudimos verificar tu acceso. Revisa la conexión e intenta de nuevo.
+            </p>
+            <button type="button" className="eq-boton" onClick={() => setIntento((n) => n + 1)}><span>Reintentar</span></button>
+            <div className="eq-pie">
+              <button type="button" className="eq-link" onClick={salir}>
+                <LogOut size={13} style={{ verticalAlign: "-2px", marginRight: 6 }} />Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </section>
+      </>
+    );
   } else if (!rol) {
     contenido = (
       <>

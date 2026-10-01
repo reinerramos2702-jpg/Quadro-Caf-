@@ -21,7 +21,7 @@
 
 ## Pendiente (en el orden del plan)
 - Iteración 7: docs sincronizados (CLAUDE.md, README, ROADMAP con los pasos manuales reales, lote en PROGRESO-LOOP). Hecho.
-- Code review del diff de la sesión (en curso).
+- Code review del diff de la sesión: 3 hallazgos, todos corregidos.
 - UI premium con motion en toda la app (al final, commits por pantalla, tope de bundle 170 KB).
 
 ## Pasos manuales de Reiner

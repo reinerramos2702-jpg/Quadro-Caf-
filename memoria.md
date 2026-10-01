@@ -786,6 +786,7 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
   - **0008**: tabla `staff`, `es_staff()`/`es_admin()`, siembra de `reinerramos2702@gmail.com` como admin (confirmado por SELECT: es la única cuenta de Auth) y el endurecimiento de funciones que pedían los advisors.
   - **0009**: candado y después RLS por rol (admin: `productos`; staff: estado/comprobante de `ordenes`, `comprobantes` y la imagen). Privilegio por columna en `ordenes`. Las policies públicas del cliente no se tocan.
   - Probadas 26/26 en PGlite.
+- **Code review de la sesión**: 3 hallazgos corregidos (tope de OCR que se autorrenovaba, "Sin acceso" sin reintento, fondo de body que no aplicaba). Detalle en PROGRESO-LOOP, iteración 7b.
 - **Iteración 6, edge function**: `origen.js` (allowlist CORS, testeado) + tope global `OCR_MAX_POR_HORA` (30) contado en `comprobantes` antes de llamar a Gemini; si falla el conteo, cierra por defecto. Probada en Deno local con PostgREST simulado. Falta desplegar (Reiner).
 - **Iteración 5, login del equipo**: `/equipo` (`src/equipo/`) reemplaza los logins propios de Barra y Admin; el cliente nunca hace login.
   - Fallback del gate: solo con PGRST205/42P01 que nombren `staff` (Supabase devuelve PGRST205, nunca 42P01, por la API), con **TODO(0008)** para retirarlo.

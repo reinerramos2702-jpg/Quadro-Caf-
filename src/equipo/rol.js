@@ -22,7 +22,11 @@ export function esTablaStaffAusente(error) {
   return NOMBRA_STAFF.test(texto);
 }
 
-/* → { rol: "admin" | "barista" | null, legacy: boolean, motivo } */
+/* → { rol: "admin" | "barista" | null, legacy: boolean, error: boolean, motivo }
+   `error: true` = no se pudo LEER el rol (red, timeout, 5xx, permisos): el
+   acceso se niega igual, pero la UI ofrece reintentar en vez de decir "tu
+   cuenta no tiene acceso" (hallazgo del code review: con Wi-Fi inestable,
+   un fallo transitorio dejaba al barista en un "Sin acceso" definitivo). */
 export function resolverRol({ data, error } = {}) {
   if (error) {
     // TODO(0008): retirar este fallback en cuanto 0008_staff_roles.sql esté
@@ -30,11 +34,11 @@ export function resolverRol({ data, error } = {}) {
     // solo para que el merge no deje a Reiner sin Barra/Admin si llega antes
     // que la migración: sin la tabla, la RLS vigente sigue siendo la de
     // siempre ("cualquier authenticated"), así que esto no abre nada nuevo.
-    if (esTablaStaffAusente(error)) return { rol: "admin", legacy: true, motivo: "tabla staff ausente (0008 sin aplicar)" };
-    return { rol: null, legacy: false, motivo: "error al leer el rol" };
+    if (esTablaStaffAusente(error)) return { rol: "admin", legacy: true, error: false, motivo: "tabla staff ausente (0008 sin aplicar)" };
+    return { rol: null, legacy: false, error: true, motivo: "error al leer el rol" };
   }
-  if (data && ROLES.includes(data.rol)) return { rol: data.rol, legacy: false, motivo: "staff" };
-  return { rol: null, legacy: false, motivo: "sin fila en staff" };
+  if (data && ROLES.includes(data.rol)) return { rol: data.rol, legacy: false, error: false, motivo: "staff" };
+  return { rol: null, legacy: false, error: false, motivo: "sin fila en staff" };
 }
 
 /* A qué vista va cada rol. `pedido` sale de la URL (#barra / #admin). */

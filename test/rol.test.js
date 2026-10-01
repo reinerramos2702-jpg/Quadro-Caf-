@@ -7,7 +7,7 @@ const PGRST205_STAFF = { code: "PGRST205", details: null, hint: null, message: "
 
 test("tabla staff ausente con PGRST205 → fallback admin (legacy)", () => {
   assert.ok(esTablaStaffAusente(PGRST205_STAFF));
-  assert.deepEqual(resolverRol({ error: PGRST205_STAFF }), { rol: "admin", legacy: true, motivo: "tabla staff ausente (0008 sin aplicar)" });
+  assert.deepEqual(resolverRol({ error: PGRST205_STAFF }), { rol: "admin", legacy: true, error: false, motivo: "tabla staff ausente (0008 sin aplicar)" });
 });
 
 test("tabla staff ausente con 42P01 → fallback admin (legacy)", () => {
@@ -27,6 +27,7 @@ test("error de red → acceso denegado", () => {
     const r = resolverRol({ error });
     assert.equal(r.rol, null, JSON.stringify(error));
     assert.equal(r.legacy, false);
+    assert.equal(r.error, true, "error de lectura → la UI ofrece reintentar");
   }
 });
 
@@ -48,7 +49,8 @@ test("permisos u otro código que nombre staff → acceso denegado", () => {
 });
 
 test("con la tabla: rol según la fila; sin fila o rol raro → denegado", () => {
-  assert.deepEqual(resolverRol({ data: { rol: "admin" } }), { rol: "admin", legacy: false, motivo: "staff" });
+  assert.deepEqual(resolverRol({ data: { rol: "admin" } }), { rol: "admin", legacy: false, error: false, motivo: "staff" });
+  assert.equal(resolverRol({ data: null }).error, false, "sin fila = sin acceso real, no error");
   assert.equal(resolverRol({ data: { rol: "barista" } }).rol, "barista");
   assert.equal(resolverRol({ data: null }).rol, null);
   assert.equal(resolverRol({ data: { rol: "dueño" } }).rol, null);
