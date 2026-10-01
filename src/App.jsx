@@ -2409,15 +2409,23 @@ function Academia({ taza, setTaza, onBack }) {
           <span className="disp" style={{ fontSize: 24, color: C.brand }}>{pct}%</span>
         </div>
         <div style={{ height: 5, background: C.line, borderRadius: 99, marginTop: 10, overflow: "hidden" }}>
-          <div style={{ height: "100%", width: `${pct}%`, background: C.brand, borderRadius: 99, transition: "width .5s cubic-bezier(.2,.8,.2,1)" }} />
+          {/* Fase 8: scaleX en vez de width (regla de la fase: solo transform/opacity). */}
+          <div style={{ height: "100%", width: "100%", background: C.brand, borderRadius: 99, transformOrigin: "0 50%", transform: `scaleX(${pct / 100})`, transition: "transform var(--motion-slow) var(--ease-out)" }} />
         </div>
         {racha.dias > 0 && (
           // Racha visual/local (ver comentario junto al estado más arriba) —
           // solo aparece una vez que hay al menos 1 día contado, para no
           // mostrar "0 días de racha" a alguien que recién entra.
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 12 }}>
-            <span ref={flameRef} className="mo-bounce" style={{ display: "grid", placeItems: "center", color: C.brandAlt }}>
+            <span ref={flameRef} className="mo-bounce" style={{ position: "relative", display: "grid", placeItems: "center", color: C.brandAlt }}>
               <Flame size={14} fill={C.brandAlt} />
+              {/* Fase 8: chispas que suben de la llama (reusa .steam: transform/opacity). */}
+              {[0, 1, 2].map((k) => (
+                <span key={k} className="steam" aria-hidden="true" style={{
+                  position: "absolute", top: -2, left: 3 + k * 4, width: 2.5, height: 2.5, borderRadius: "50%",
+                  background: C.brandAlt, animationDelay: `${k * .7}s`, animationDuration: "2.1s",
+                }} />
+              ))}
             </span>
             <span className="mono" style={{ fontSize: 10.5, color: C.textMuted, letterSpacing: ".06em" }}>
               {racha.dias} {racha.dias === 1 ? "día de racha" : "días de racha"}
@@ -2427,7 +2435,7 @@ function Academia({ taza, setTaza, onBack }) {
       </div>
 
       {insigniaLista && (
-        <div className="pop" style={{
+        <div className="pop mo-brillo" style={{
           margin: "0 20px 18px", background: C.brand, color: C.onBrand, borderRadius: 18,
           padding: 15, display: "flex", gap: 12, alignItems: "center",
         }}>
@@ -2454,7 +2462,7 @@ function Academia({ taza, setTaza, onBack }) {
           const aciertos = info.respuestas.filter((r, qi) => r === a.quiz[qi]?.correcta).length;
           return (
             <div key={a.id} className="rise" style={{ animationDelay: `${i * 55}ms`, marginBottom: 10 }}>
-              <button onClick={() => setAbierta(abierto ? null : a.id)} className="mo-press tapfx" style={{
+              <button onClick={() => setAbierta(abierto ? null : a.id)} className="mo-press tapfx mo-ink" style={{
                 width: "100%", textAlign: "left", cursor: "pointer",
                 background: C.card, border: `1px solid ${done ? C.brand : C.line}`,
                 borderRadius: abierto ? "16px 16px 0 0" : 16, padding: 15, color: C.text,

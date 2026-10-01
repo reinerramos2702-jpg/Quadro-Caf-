@@ -293,3 +293,8 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
 - Retrato real del caficultor con **Ken Burns** lento (`.mo-kenburns`: zoom 1 → 1.07 y leve desplazamiento en 16 s, ida y vuelta, solo transform): el retrato "respira".
 - Tinta en el retrato ("Hablar con…") y en "Ver guion". Los chips de finca usan `Chip` (tinta + `flexShrink: 0`).
 - No se tocó el avatar D-ID, el guion ni los datos.
+
+### 8.5 Aula
+- "Tu avance": la barra pasa de animar `width` a `scaleX` (regla de la fase: solo transform/opacity).
+- Chispas que suben de la llama de la racha (3 puntos que reusan `.steam`).
+- Destello sobre la insignia desbloqueada y tinta en las tarjetas de lección.
