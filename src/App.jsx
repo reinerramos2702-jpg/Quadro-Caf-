@@ -124,12 +124,17 @@ const FINCA_TINTS = {
    letra base REAL de VIOLA con el acento compuesto encima. Va justo después
    de 'VIOLA' en el stack para que el navegador lo use solo en los codepoints
    que faltan — ver el bloque de .disp más abajo. */
+/* 01/oct/2026: el @import TIENE que ir primero. Antes estaba después de los
+   @font-face y, por spec, un @import que no encabeza la hoja se ignora:
+   Fraunces nunca cargó en producción (0 reglas @import, 0 peticiones a Google
+   Fonts, verificado por CDP) y el .script y los dígitos de los títulos se
+   dibujaban en Times New Roman. */
 const FONTS = `
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap');
 @font-face{font-family:'VIOLA';src:url(${violaFont}) format('opentype');font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:'VIOLA Acentos';src:url(${violaAcentosFont}) format('opentype');font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:'Nexa';src:url(${nexaLightFont}) format('opentype');font-weight:300;font-style:normal;font-display:swap}
 @font-face{font-family:'Nexa';src:url(${nexaBoldFont}) format('opentype');font-weight:700;font-style:normal;font-display:swap}
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap');
 `;
 
 function buildCss(C) {
@@ -3249,7 +3254,9 @@ function Ticket({ orden, envioComprobante, cerrar }) {
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase" }}>Orden</div>
         {/* Fase 8: el número entra dígito por dígito, tipo split-flap
            (aria-label con el número entero para lectores de pantalla). */}
-        <div className="disp" aria-label={`Orden número ${orden.numero_orden}`} style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px" }}>
+        {/* fontSizeAdjust none: VIOLA no trae dígitos y from-font agrandaba
+           el respaldo ~1.7× (el número pisaba "ORDEN"). */}
+        <div className="disp" aria-label={`Orden número ${orden.numero_orden}`} style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px", fontSizeAdjust: "none" }}>
           {("#" + String(orden.numero_orden).padStart(3, "0")).split("").map((d, i) => (
             <span key={i} className="mo-flap" aria-hidden="true" style={{ "--i": i }}>{d}</span>
           ))}

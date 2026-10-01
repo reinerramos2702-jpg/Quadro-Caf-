@@ -280,3 +280,11 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
 - **Conflicto evitado**: animar cada fila de pasos con `.rise` (fill both → `opacity: 1`) pisaba el `opacity: .35` de los pasos pendientes. La entrada va en el contenedor.
 - Verificado con el pedido **interceptado** en el navegador (POST a `ordenes` respondido en local, nada insertado), en los dos temas: total 10.2, 4 dígitos con aria, opacidades 1/1/.35/.35, línea `scaleY(1/3)` en "moliendo", sin errores.
 - La lógica de pedido, precios y Supabase no cambió.
+
+### 8.3b Hallazgo y arreglo de tipografía (preexistente, verificado por CDP)
+- **Fraunces nunca cargó en producción.** En `FONTS` el `@import` de Google Fonts iba **después** de los `@font-face`, y por spec un `@import` que no encabeza la hoja se ignora.
+  - Verificado: 0 reglas `@import` en las hojas y 0 peticiones a Google Fonts. `CSS.getPlatformFontsForNode` mostraba que "geometría." (`.script`) se dibujaba en **Times New Roman**.
+  - Fix: el `@import` pasa primero. Ahora hay 1 regla `@import`, peticiones a fonts.googleapis/gstatic y "geometría." con **Fraunces SemiBold** (lo que siempre documentó CLAUDE.md).
+- **Dígitos en títulos**: VIOLA no trae números, así que caen al respaldo, y `font-size-adjust: from-font` los agranda ~1.6–1.7× (usa la x-height de VIOLA, que es unicase). En el Ticket, el "#027" pisaba "ORDEN".
+  - Fix acotado: `fontSizeAdjust: "none"` **solo en el número del Ticket**, que ya estaba en esta fase.
+  - **Quedan igual, pregunta para Reiner**: "V60" en Carta y el "#007" de la Barra. No se tocó la tipografía de la "É" (punto 15).
