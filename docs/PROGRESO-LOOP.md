@@ -298,3 +298,8 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
 - "Tu avance": la barra pasa de animar `width` a `scaleX` (regla de la fase: solo transform/opacity).
 - Chispas que suben de la llama de la racha (3 puntos que reusan `.steam`).
 - Destello sobre la insignia desbloqueada y tinta en las tarjetas de lección.
+
+### 8.6 Tienda y Club
+- Tienda: destello desfasado sobre cada tarjeta "Próximamente" (`--brillo-delay` por tarjeta). Sin datos nuevos.
+- Club: tinta en "Quiero mi guía". El copy no se tocó (decisión del 18/sept).
+- Verificado (8.4–8.6) en los dos temas a 390, sin errores de consola. Bundle 155.25 KB.

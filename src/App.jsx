@@ -2637,7 +2637,8 @@ function Tienda({ onBack }) {
         {TIENDA_PROXIMAMENTE.map((p, i) => {
           const Icono = p.icono;
           return (
-            <div key={p.id} className="rise" style={{
+            <div key={p.id} className="rise mo-brillo" style={{
+              "--brillo-delay": `${1.2 + i * 1.6}s`,
               animationDelay: `${i * 60}ms`, display: "flex", alignItems: "center", gap: 14,
               background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
             }}>
@@ -2703,7 +2704,7 @@ function Club({ email, setEmail, onBack, onAdmin }) {
                 style={{ border: "none", outline: "none", fontSize: 13, flex: 1, background: "transparent", color: C.text }} />
             </div>
           </div>
-          <button onClick={() => { if (valor.includes("@")) { setEmail(valor); setEnviado(true); } }} className="press" style={{
+          <button onClick={() => { if (valor.includes("@")) { setEmail(valor); setEnviado(true); } }} className="press mo-ink" style={{
             marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", cursor: "pointer",
             background: C.brand, color: C.onBrand, fontSize: 13.5, fontWeight: 700,
           }}>Quiero mi guía</button>
