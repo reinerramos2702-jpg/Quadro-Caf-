@@ -152,7 +152,7 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Punto 14, Bollería**: "Panadería" pasa a "Bollería" (solo el nombre). `0003_categoria_bolleria.sql` **se corre después del deploy del merge, nunca antes**: el código viejo filtra por "Panadería" y la Carta perdería esos productos. Desde 01/oct el código nuevo mapea "Panadería"→"Bollería" al leer de Supabase, así que tras el deploy ya no hay ventana crítica: 0003 puede correr cuando sea. La traducción es una sola función, `normalizarCategoria` (`src/lib/carta.js`), que usan la Carta (`mapearProducto`) y el Panel Admin (`filasParaAdmin`). **Regla de Reiner (01/oct): "Panadería" no se muestra en ningún lado; siempre "Bollería".** El nombre interno del asset `menu-panaderia` no se ve y no se renombró.
 - **Punto 12, Binance Pay**: entrada nueva en `METODOS_PAGO`. `0004_metodo_binance.sql` amplía el CHECK de `ordenes.metodo_pago`; es aditiva y se puede correr antes del merge.
 - **Punto 13, comprobante + OCR**: `comprimirComprobante`/`subirComprobante` (en la sección CARRITO), uploader opcional en `Carrito` (todo método menos efectivo), `EstadoComprobante` en `Ticket` y pastilla en `OrdenCard` (`/#barra`, signed URL de 5 min). El backend está en `0005_comprobantes.sql`: bucket privado `comprobantes/{orden_id}.jpg`, trigger que marca `pendiente` y tabla `comprobantes` solo-staff con el detalle del OCR. `ordenes` (lectura pública) solo guarda el estado, el monto y los últimos 4 de la referencia. La edge function `verificar-comprobante` usa Gemini y requiere `verify_jwt = false`, el secret `GEMINI_API_KEY` y opcionalmente `GEMINI_MODEL`. Reglas: **el pedido nunca espera a la subida ni al OCR**, y **el OCR nunca confirma un pago** (solo marca `verificado`/`revisar`/`sin_lectura`; confirma el barista). Solo se compara contra el total en USD/USDT, porque en Bs depende de la tasa del día.
-- **Punto 2, foto por producto**: la estructura está lista (`FOTO_PRODUCTO` id→asset + miniatura de 64px en la tarjeta de `Menu`). Vacío hasta que lleguen fotos reales; se suman con `npm run assets:generar` + una entrada en el manifiesto + una línea en el mapa.
+- **Punto 2, foto por producto**: la estructura está lista (`FOTO_PRODUCTO` id→asset + miniatura en la tarjeta de `Menu`, 96 px desde Carta premium · PR-1). Vacío hasta que lleguen fotos reales; se suman con `npm run assets:generar` + una entrada en el manifiesto + una línea en el mapa.
 - **Punto 11, productos nuevos**: el punto de entrada es "Agregar producto" del Panel Admin (`AdminNuevoProducto`), que ahora también acepta una etiqueta opcional (`tag`). No se cargó contenido: la lista real está pendiente de Reiner.
 - **Punto 3, roster de Fincas**: ver "Roster actual" en Real-data policy más abajo.
 - **Punto 8, ficha técnica**: `FichaLote` ("Ficha técnica") muestra siempre Altura/Varietal/Proceso/Puntaje con "Por confirmar" para lo que falte, más Extensión (`hectareas`) si existe. Nunca se rellena con cifras inventadas.
@@ -174,6 +174,35 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Mapeo de la Carta (01/oct)**: la fila de `productos` → ítem de Carta vive en `src/lib/carta.js` (`mapearProducto`, puro y testeado con `npm test`). No vuelvas a inlinear el mapeo dentro de `useCarta`: un comentario en la misma línea ya dejó afuera `precio` una vez (P0, ver `docs/PROGRESO-LOOP.md`). `useCarta` usa `fusionarCarta(filasDB, MENU)`: Supabase manda y se suman los placeholders `nuevo:true` del MENU que la base no tenga (por id **o** nombre normalizado). Un placeholder se retira cargando el producto real desde el Admin con el mismo nombre.
 
 **Contexto de recuperación**: tercer apagón del proyecto. Git estaba limpio, con 7 commits completos sin pushear y sin documentar (ver `memoria.md` § "Reunión 05/sept"). Sesión a sesión, el estado vive en `docs/ESTADO-SESION.md`.
+
+## Carta premium · PR-1 (rama `quadro-feature-carta-premium`, 01/oct/2026, sin merge)
+
+Brief en `docs/BRIEF-CARTA-PREMIUM-PR1.md`; bitácora en `docs/PROGRESO-LOOP.md`.
+
+- **`ProductCard`** (`App.jsx`, junto a `FotoProducto`, `PrecioPorConfirmar` y `PorConfirmarDetalle`): una sola tarjeta para todos los productos.
+  - El estado sale **solo** de `estadoProducto(m)` y lo que se pinta, de `vistaTarjeta(estado)` (`src/lib/productoCard.js`, testeado). No vuelvas a calcular `m.nuevo` / `m.disponible` inline.
+  - Los 4 estados son: `proximamente` (también precio ≤ 0 o inválido), `agotado`, `personalizable` (`finca: true`; el "+" abre el selector de finca y taza, y con el selector abierto agrega) y `disponible`.
+  - Foto de 96 px o monograma de marca.
+  - La pill de estado va **en el flujo**, montada sobre la esquina inferior de la foto. No la vuelvas `absolute` dentro de la caja con `overflow:hidden`: con la fuente del sistema grande quedaba recortada.
+  - Toda la tarjeta abre el detalle: el nombre es un `<button class="pc-abrir">` con `::after` estirado, y los controles van en `.pc-ctl`.
+  - Lo que el `line-clamp` deja fuera del nombre se envuelve en un span `visibility:hidden` (`corte`), porque los dígitos 1,6× de la 3.ª línea asomaban. No se tocó `font-size-adjust`.
+- **Estilos**: `CSS_CARTA(C)`, dentro de `buildCss`.
+- **Alto de la app**: `.qc-marco`/`.qc-raiz` en `100dvh`. **No vuelvas a `100vh`**: era la causa de que el nav "se escondiera" (el documento hacía scroll). `.qc-scroll` lleva `overscroll-behavior: contain`.
+- **Nav inferior**:
+  - es `<nav aria-label="Secciones">`;
+  - su alto real se publica como `--nav-alto` (`ResizeObserver`) y la Carta y el detalle reservan `calc(var(--nav-alto) + 24px)`;
+  - se oculta solo con el teclado abierto;
+  - pasa a solo íconos (`navCompacto`, medido con canvas) si las etiquetas no entran.
+- **Chips de la Carta**: sticky dentro del `.qc-scroll`, fila a todo el ancho con su propio padding, activo centrado e indicador solo con `transform`.
+- **Volver del detalle**:
+  - `abrirDetalle` guarda la posición (ref + `guardarPosicion` en sessionStorage) y hace `pushState({tab:"menu", detalle:id})`;
+  - `popstate` cierra el detalle y un `useLayoutEffect` restaura el `scrollTop` antes de pintar;
+  - cambiar de categoría borra la posición.
+  - En `QuadroCafe`, `replaceState({tab:"inicio"})` corre **solo al montar** (antes pisaba la entrada actual al abrir el carrito o el ticket).
+- **Auditoría**: `npm run audit:carta` (`scripts/audit-carta.mjs`, `playwright-core` + Chrome del sistema) cubre 57 productos × 5 anchos × 3 tamaños de fuente.
+  - Córrela después de tocar la Carta. Debe dar 0 fallos.
+  - `--url … --etiqueta antes` audita otra versión.
+- **Bundle**: 154.65 → 158.44 KB gzip.
 
 ## Real-data policy
 

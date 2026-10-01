@@ -6,11 +6,16 @@ import {
   Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
   Banknote, Smartphone, Landmark, DollarSign, Coins, ImagePlus, Receipt, Clock,
   Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame, Store, ExternalLink,
+  Hourglass,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
 import { parsearAgenteDid, cargarSdkDid } from "./lib/did";
 import { fusionarCarta } from "./lib/carta";
+import {
+  estadoProducto, vistaTarjeta, fotoDeProducto,
+  guardarPosicion, leerPosicion, borrarPosicion, scrollRestaurable,
+} from "./lib/productoCard";
 import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
@@ -295,6 +300,7 @@ ${FONTS}
 .mo-skeleton{background:linear-gradient(90deg, ${C.line} 25%, ${C.surface} 50%, ${C.line} 75%);background-size:200% 100%;animation:qc-shimmer 1.1s ease-in-out infinite}
 :focus-visible{outline:2px solid ${C.brand};outline-offset:2px;border-radius:6px}
 ${CSS_MOTION_V2(C)}
+${CSS_CARTA(C)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}}
 `;
 }
@@ -890,7 +896,7 @@ function SonidoToggle() {
    dibujado — hoy `lab-tubos`; las demás lo traen integrado en el producto
    (el bowl, el plato, la caja, el vaso) o en la propia escena, y una segunda
    marca encima quedaría duplicada. */
-function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, logo = false, sizes = "(max-width: 430px) calc(100vw - 56px), 374px" }) {
+function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, logo = false, sizes = "(max-width: 430px) calc(100vw - 56px), 374px", ancho, alto }) {
   const asset = ASSET_MANIFEST[id];
   if (!asset) return null;
   const { objectFit, objectPosition, ...wrapperStyle } = style;
@@ -920,7 +926,10 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, log
       <source type="image/webp"
         srcSet={asset.webp.map(([src, w]) => `${src} ${w}w`).join(", ")}
         sizes={sizes} />
-      <img src={asset.jpg} alt={alt} loading={eager ? "eager" : "lazy"} style={{
+      {/* ancho/alto (opcionales): atributos explícitos para que el navegador
+         reserve la caja antes de cargar (miniaturas de la Carta, PR-1). */}
+      <img src={asset.jpg} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async"
+        width={ancho} height={alto} style={{
         width: "100%", height: "100%", display: "block",
         objectFit: objectFit || "cover",
         ...(objectPosition ? { objectPosition } : {}),
@@ -949,16 +958,19 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, log
   );
 }
 
-function Chip({ children, active, onClick, tone, onTone }) {
+// `tactil` (Carta premium · PR-1): alto mínimo de 44 px para que el chip sea
+// un objetivo táctil completo. Sin él, el chip conserva su alto de siempre.
+function Chip({ children, active, onClick, tone, onTone, tactil = false, ...resto }) {
   const { C } = useTheme();
   const bg = tone || C.brand;
   const fg = onTone || C.onBrand;
   return (
-    <button onClick={onClick} className="press mono mo-ink" style={{
+    <button type="button" onClick={onClick} className="press mono mo-ink" aria-pressed={active} {...resto} style={{
       // flexShrink 0: .mo-ink pone overflow:hidden, y en un ítem flex eso
       // vuelve min-width a 0 — sin esto el chip se encogía y se cortaba.
       flexShrink: 0,
-      padding: "7px 13px", borderRadius: 999, fontSize: 11, letterSpacing: ".08em",
+      ...(tactil ? { minHeight: 44, padding: "0 16px" } : { padding: "7px 13px" }),
+      borderRadius: 999, fontSize: 11, letterSpacing: ".06em",
       textTransform: "uppercase", whiteSpace: "nowrap", cursor: "pointer",
       border: `1px solid ${active ? bg : C.line}`,
       background: active ? bg : "transparent",
@@ -994,19 +1006,28 @@ function Meter({ label, value, tone, delay = 0, triggerKey }) {
   );
 }
 
-function Header({ titulo, sub, right, onBack }) {
+// `compacto` (Carta premium · PR-1): etiqueta con tracking ≤ .06em, título
+// fluido que nunca desborda y botón de volver de 44 px con su propio texto
+// (`backLabel`). Las demás pantallas siguen viéndose igual que antes.
+function Header({ titulo, sub, right, onBack, compacto = false, backLabel = "Volver a inicio" }) {
   const { C } = useTheme();
   return (
     <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "22px 20px 14px", gap: 12 }}>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 10, minWidth: 0 }}>
         {onBack && (
-          <button onClick={onBack} className="press" aria-label="Volver a inicio" style={{ ...btnMiniStyle(C), flexShrink: 0, marginBottom: 3 }}>
-            <ArrowLeft size={15} />
+          <button type="button" onClick={onBack} className="press" aria-label={backLabel} style={{
+            ...btnMiniStyle(C), flexShrink: 0, marginBottom: 3,
+            ...(compacto ? { width: 44, height: 44, borderRadius: 12, marginBottom: 0 } : {}),
+          }}>
+            <ArrowLeft size={compacto ? 18 : 15} />
           </button>
         )}
         <div style={{ minWidth: 0 }}>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6 }}>{sub}</div>
-          <h1 className="disp" style={{ fontSize: 30, lineHeight: .95, margin: 0 }}>{titulo}</h1>
+          <div className="mono" style={{ fontSize: compacto ? 11 : 10, letterSpacing: compacto ? ".06em" : ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6, overflowWrap: "anywhere" }}>{sub}</div>
+          <h1 className="disp" style={{
+            fontSize: compacto ? "clamp(24px, 7.5vw, 30px)" : 30, lineHeight: compacto ? 1 : .95, margin: 0,
+            ...(compacto ? { overflowWrap: "anywhere" } : {}),
+          }}>{titulo}</h1>
         </div>
       </div>
       {right}
@@ -1555,6 +1576,261 @@ function vibrar(ms) {
 
 /* ============================ MENÚ ============================ */
 
+/* Carta premium · PR-1 (01/oct/2026): estilos de la tarjeta de producto.
+   .qc-raiz/.qc-marco: alto de la app en dvh (100vh queda solo de respaldo
+   para navegadores viejos). Con 100vh, en Chrome móvil el marco medía más
+   que la pantalla visible y el documento hacía scroll: eso "escondía" el
+   nav inferior.
+   Van en CSS y no inline porque necesitan ::after (toda la tarjeta abre el
+   detalle sin anidar botones dentro de otro botón) y line-clamp.
+   - .pc-abrir: el nombre es el <button> que abre el detalle; su ::after se
+     estira sobre la tarjeta entera. Los controles (.pc-ctl) quedan encima.
+   - .pc-clamp: máx. 2 líneas; el nombre completo sigue en el detalle.
+   - Nombre truncado: la 3.ª línea sigue pintada debajo del clamp y sus
+     dígitos (respaldo de VIOLA, ~1,6× más altos por font-size-adjust:
+     decisión de Reiner, no se tocan) asomaban dentro de la línea 2.
+     ProductCard envuelve lo que cae fuera de las 2 líneas en un span con
+     visibility:hidden (ocupa su lugar, no se pinta). Ver `corte`.
+   - Todo hijo de flex/grid con min-width:0 y textos con overflow-wrap:
+     ninguna palabra larga empuja la tarjeta fuera de la pantalla. */
+function CSS_CARTA(C) {
+  return `
+.qc-raiz{min-height:100vh;min-height:100dvh}
+.qc-marco{height:100vh;height:100dvh}
+.qc-scroll{overscroll-behavior:contain}.pc-card{position:relative;min-width:0;scroll-margin-top:calc(var(--chips-alto,0px) + 8px);scroll-margin-bottom:calc(var(--nav-alto,80px) + 8px)}
+.pc-card *{min-width:0}
+.pc-abrir{display:block;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.pc-abrir::after{content:"";position:absolute;inset:0;border-radius:16px}
+.pc-abrir:focus-visible{outline:none}
+.pc-abrir:focus-visible::after{outline:2px solid ${C.brand};outline-offset:2px}
+.pc-ctl{position:relative;z-index:1}
+.pc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.pc-nombre{font-size:clamp(16px,4.6vw,20px);line-height:1.2}
+.pc-desc{font-size:clamp(13px,3.5vw,14px);line-height:1.4;color:${C.textMuted};margin:4px 0 0}
+.pc-etiqueta{font-size:11px;letter-spacing:.06em;color:${C.brandAlt};margin-bottom:3px;overflow-wrap:anywhere}
+.pc-pill{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:4px 9px;border-radius:10px;font-size:12px;line-height:1.25;letter-spacing:.01em;font-weight:700;overflow-wrap:break-word;hyphens:auto}
+`;
+}
+
+/* sessionStorage puede tirar con solo leer la propiedad (modo privado,
+   almacenamiento bloqueado): se pide siempre por acá. */
+function almacenSesion() {
+  try { return window.sessionStorage; } catch { return null; }
+}
+
+/* Foto 1:1 de la tarjeta, o el monograma de marca si el producto no tiene
+   foto (nunca un hueco ni una foto inventada). `pill` va sobre la esquina
+   inferior izquierda de la foto y nunca en la línea del nombre. Está en el
+   flujo normal (margen negativo, no absolute dentro de la foto): con la
+   fuente del sistema al 130–200 % no entra en 96 px, y una pill absoluta
+   dentro de una caja con overflow:hidden quedaba recortada. Así crece
+   hacia abajo, donde la columna de la foto siempre tiene espacio. */
+function FotoProducto({ m, foto, pill, pillTono, desaturar, lado = 96 }) {
+  const { C } = useTheme();
+  const tono = pillTono === "warn" ? { background: C.warn, color: C.onBrandAlt } : { background: C.brand, color: C.onBrand };
+  return (
+    <div style={{ width: lado, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+      <div style={{ width: lado, height: lado, borderRadius: 12, overflow: "hidden", background: C.surface }}>
+        {foto ? (
+          <ResponsiveImg id={foto} alt={m.nombre} sizes={`${lado}px`} ancho={lado} alto={lado} style={{
+            width: lado, height: lado, aspectRatio: "1 / 1", borderRadius: 12,
+            viewTransitionName: `foto-${m.id}`,
+            filter: desaturar ? "grayscale(.4)" : undefined,
+          }} />
+        ) : (
+          <div role="img" aria-label={`${m.nombre} · sin foto todavía`} style={{
+            width: "100%", height: "100%", display: "grid", placeItems: "center",
+            border: `1px solid ${C.line}`, borderRadius: 12, boxSizing: "border-box",
+            viewTransitionName: `foto-${m.id}`,
+            filter: desaturar ? "grayscale(.4)" : undefined,
+          }}>
+            <span style={{ opacity: .85 }}><Marca size={Math.round(lado * .46)} /></span>
+          </div>
+        )}
+      </div>
+      {pill && (
+        <span className="pc-pill" style={{
+          // Solapa la foto en proporción a su propio texto (em): en una línea
+          // queda dentro de la esquina; con fuente grande baja y no la tapa.
+          position: "relative", zIndex: 1, marginTop: "calc(-1.25em - 10px)", marginLeft: 3, maxWidth: lado - 6,
+          padding: "2px 5px", fontSize: 11, letterSpacing: 0, overflowWrap: "anywhere",
+          boxShadow: `0 0 0 2px ${C.card}`, ...tono,
+        }}>
+          {/* Guion blando: si "Próximamente" no entra, corta "Próxima-mente". */}
+          {pill === "Próximamente" ? "Próxima\u00ADmente" : pill}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* La única etiqueta "por confirmar" de la tarjeta: compacta, en el flujo
+   normal (nunca absolute), capitalización normal, borde punteado tenue. */
+function PrecioPorConfirmar() {
+  const { C } = useTheme();
+  return (
+    <span className="pc-pill" style={{
+      border: `1px dashed ${C.brandAlt}99`, background: `${C.brandAlt}14`, color: C.text,
+    }}>
+      <Hourglass size={14} strokeWidth={1.75} aria-hidden style={{ color: C.brandAlt, flexShrink: 0 }} />
+      Precio por confirmar
+    </span>
+  );
+}
+
+/* Tarjeta única de producto (Carta premium · PR-1). Jerarquía: foto >
+   nombre > precio/estado. El estado sale de estadoProducto() y qué se pinta
+   de vistaTarjeta() (src/lib/productoCard.js), así no hay dos caminos que
+   puedan mostrar dos etiquetas a la vez. La lógica del carrito (add/quitar)
+   no cambia. */
+function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoBtnRef, lote, setLote, taza, setTaza }) {
+  const { C } = useTheme();
+  const estado = estadoProducto(m);
+  const v = vistaTarjeta(estado);
+  const foto = fotoDeProducto(m.id, FOTO_PRODUCTO, ASSET_MANIFEST);
+  const boton44 = { ...btnMiniStyle(C), width: 44, height: 44, borderRadius: 12, flexShrink: 0 };
+  const agregar = (e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); };
+  // Personalizable (V60…): el "+" primero abre el selector de finca y taza
+  // que ya existía; con el selector abierto, agrega con esa elección.
+  const mas = (e) => { if (v.abreSelector && !abierto) onSelector(); else agregar(e); };
+  // Índice del primer carácter del nombre que cae fuera de las 2 líneas del
+  // clamp (null si entra completo). Se mide con Range sobre los nodos de
+  // texto, así da igual si ya está partido en dos (ver CSS_CARTA).
+  const nombreRef = useRef(null);
+  const [corte, setCorte] = useState(null);
+  useLayoutEffect(() => {
+    const el = nombreRef.current;
+    if (!el) return;
+    const medir = () => {
+      const lh = parseFloat(getComputedStyle(el).lineHeight);
+      if (!lh) return;
+      const limite = el.getBoundingClientRect().top + 2 * lh - 1;
+      const rango = document.createRange();
+      const recorre = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let i = 0;
+      for (let n = recorre.nextNode(); n; n = recorre.nextNode()) {
+        for (let j = 0; j < n.length; j++, i++) {
+          rango.setStart(n, j);
+          rango.setEnd(n, j + 1);
+          const r = rango.getClientRects()[0];
+          if (r && r.top >= limite) { setCorte(i); return; }
+        }
+      }
+      setCorte(null);
+    };
+    medir();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [m.nombre]);
+
+  return (
+    <article className="pc-card mo-tilt" data-producto={m.id} data-estado={estado} style={{
+      background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
+      borderRadius: 16, padding: 12, marginBottom: 10,
+      transition: "border-color .25s, transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out)",
+    }}>
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <FotoProducto m={m} foto={foto} pill={v.pillFoto} pillTono={estado === "agotado" ? "warn" : "brand"} desaturar={v.desaturar} />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 96 }}>
+          {m.tag && estado !== "proximamente" && (
+            <div className="mono pc-etiqueta">{m.tag}</div>
+          )}
+          <h3 style={{ margin: 0, fontWeight: 400 }}>
+            <button type="button" className="pc-abrir" onClick={onAbrir}>
+              <span ref={nombreRef} className="disp pc-clamp pc-nombre" title={m.nombre} style={{ viewTransitionName: `nombre-${m.id}` }}>
+                {corte == null ? m.nombre : (
+                  <>{m.nombre.slice(0, corte)}<span style={{ visibility: "hidden" }}>{m.nombre.slice(corte)}</span></>
+                )}
+              </span>
+            </button>
+          </h3>
+          {m.desc && <p className="pc-clamp pc-desc">{m.desc}</p>}
+
+          <div style={{ marginTop: "auto", paddingTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+            {v.precio ? (
+              <span className="mono" style={{ fontSize: 15, letterSpacing: ".02em", color: C.text, fontWeight: 700 }}>{money(m.precio)}</span>
+            ) : <span />}
+            {v.porConfirmar && <PrecioPorConfirmar />}
+            {v.agregar && (
+              <div className="pc-ctl" style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
+                {n > 0 && (
+                  <>
+                    <button type="button" onClick={() => quitar(m.id)} className="mo-press" aria-label={`Quitar un ${m.nombre}`} style={boton44}><Minus size={16} /></button>
+                    <span className="mono" aria-live="polite" style={{ minWidth: 20, textAlign: "center", fontSize: 14 }}><AnimatedNumber value={n} /></span>
+                  </>
+                )}
+                <button
+                  type="button" onClick={mas} className="mo-press" data-sonido={v.abreSelector && !abierto ? undefined : "carrito"}
+                  aria-label={v.abreSelector && !abierto ? `Elegir finca y taza para ${m.nombre}` : `Agregar ${m.nombre}`}
+                  aria-expanded={v.abreSelector ? abierto : undefined}
+                  style={{ ...boton44, background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                  <Plus size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {v.abreSelector && (
+        <>
+          <button type="button" onClick={onSelector} className="mo-press mono pc-ctl" aria-expanded={abierto} style={{
+            minHeight: 44, marginTop: 4, padding: "0 2px", fontSize: 11, letterSpacing: ".06em", color: C.brand,
+            background: "none", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center",
+          }}>
+            {abierto ? "Ocultar opciones" : "Elegir finca y taza"}
+          </button>
+          <div className="pc-ctl" style={{ display: "grid", gridTemplateRows: abierto ? "1fr" : "0fr", transition: "grid-template-rows var(--motion-base) var(--ease-in-out)" }} aria-hidden={!abierto} inert={abierto ? undefined : ""}>
+            <div style={{ overflow: "hidden" }}>
+              <div style={{ marginTop: 6, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
+                <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", marginBottom: 8 }}>Finca</div>
+                <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
+                  {FINCAS_EN_BARRA.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+                </div>
+                <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", margin: "14px 0 8px" }}>Taza</div>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                  {TAZAS.map((t) => (
+                    <button key={t.id} type="button" onClick={() => setTaza(t)} className="mo-press" aria-label={`Taza ${t.nombre}`} aria-pressed={taza.id === t.id} style={{
+                      width: 44, height: 44, borderRadius: 10, background: t.hex, cursor: "pointer",
+                      border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
+                    }} />
+                  ))}
+                </div>
+                <p style={{ fontSize: 13, color: C.textMuted, marginTop: 10, lineHeight: 1.45, overflowWrap: "anywhere" }}>
+                  <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </article>
+  );
+}
+
+/* Detalle de un producto "por confirmar": que se lea como algo en
+   preparación, no como un error. Sin botón de agregar. */
+function PorConfirmarDetalle() {
+  const { C } = useTheme();
+  return (
+    <div style={{
+      display: "flex", gap: 14, alignItems: "flex-start",
+      background: C.card, border: `1px dashed ${C.brandAlt}80`, borderRadius: 16, padding: 16,
+    }}>
+      <span aria-hidden style={{
+        width: 40, height: 40, flexShrink: 0, borderRadius: 12, display: "grid", placeItems: "center",
+        background: `${C.brandAlt}14`, color: C.brandAlt,
+      }}><Hourglass size={18} strokeWidth={1.75} /></span>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 4, overflowWrap: "anywhere" }}>Estamos afinando este producto</div>
+        <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.5, margin: 0, overflowWrap: "anywhere" }}>Precio y receta por confirmar. Pronto en la carta.</p>
+      </div>
+    </div>
+  );
+}
+
 function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carritoBtnRef }) {
   const { C } = useTheme();
   const [cat, setCat] = useState("Filtrado");
@@ -1564,15 +1840,74 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   const items = carta.filter((m) => m.cat === cat);
   const imgCategoria = CAT_IMG[cat];
 
+  // Volver del detalle al mismo lugar (PR-1 · T6). Al abrir se guarda
+  // {categoría, scrollTop del .qc-scroll de la lista, producto} en un ref y en
+  // sessionStorage (respaldo; todo con try/catch), y se empuja una entrada al
+  // historial: el botón/gesto atrás de Android y el swipe de iOS cierran el
+  // detalle en vez de salir de la app. Al cerrar, un useLayoutEffect
+  // restaura el scroll ANTES de pintar (dentro del flushSync de
+  // conTransicion, así que la View Transition ya captura la lista en su
+  // lugar). Cambiar de categoría a propósito borra la posición; recargar
+  // nunca restaura (solo se restaura al cerrar un detalle).
+  const posRef = useRef(null);
+  const volviendoRef = useRef(false);
+  const [sinEntrada, setSinEntrada] = useState(false);
+  const abrirDetalle = (m) => {
+    const pos = { cat, scrollTop: scrollRef.current?.scrollTop || 0, id: m.id };
+    posRef.current = pos;
+    guardarPosicion(almacenSesion(), pos);
+    conTransicion(() => setDetalle(m));
+    try { window.history.pushState({ ...(window.history.state || {}), tab: "menu", detalle: m.id }, ""); } catch { /* sin History API */ }
+  };
+  const cerrarDetalle = () => {
+    volviendoRef.current = true;
+    conTransicion(() => { setSinEntrada(true); setDetalle(null); });
+  };
+  // Volver de la cabecera = mismo camino que el atrás del sistema.
+  const volverDeDetalle = () => {
+    if (window.history.state?.detalle) window.history.back();
+    else cerrarDetalle();
+  };
+  useEffect(() => {
+    if (!detalle) return;
+    const onPop = (e) => { if (!e.state?.detalle) cerrarDetalle(); };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [detalle]);
+  useLayoutEffect(() => {
+    if (detalle || !volviendoRef.current) return;
+    volviendoRef.current = false;
+    const pos = posRef.current || leerPosicion(almacenSesion());
+    const sc = scrollRef.current;
+    if (!pos || !sc || pos.cat !== cat) return;
+    sc.scrollTop = scrollRestaurable(pos, sc.scrollHeight, sc.clientHeight);
+  }, [detalle]);
+
   // Underline animado que se desliza al chip de categoría activo — se mide
   // la posición real del chip tocado (offsetLeft/offsetWidth, en vez de
   // asumir un ancho fijo) porque cada nombre de categoría mide distinto.
+  // PR-1 · T4: el indicador vive DENTRO de la fila que hace scroll (se mueve
+  // con los chips) y se anima solo con transform (translateX + scaleX sobre
+  // una barra de 100 px), nunca con left/width.
   const chipRefs = useRef({});
+  const filaChipsRef = useRef(null);
+  const barraChipsRef = useRef(null);
+  const scrollRef = useRef(null);
+  const contenidoRef = useRef(null);
   const [indicador, setIndicador] = useState(null);
+  const [altoChips, setAltoChips] = useState(0);
   useLayoutEffect(() => {
     const el = chipRefs.current[cat];
     if (el) setIndicador({ left: el.offsetLeft, width: el.offsetWidth });
-  }, [cat]);
+    if (barraChipsRef.current) setAltoChips(barraChipsRef.current.offsetHeight);
+  }, [cat, detalle]);
+  // El chip activo se centra en su fila (scroll suave salvo reduced-motion).
+  useEffect(() => {
+    const fila = filaChipsRef.current, el = chipRefs.current[cat];
+    if (!fila || !el) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    fila.scrollTo({ left: el.offsetLeft - (fila.clientWidth - el.offsetWidth) / 2, behavior: reduce ? "auto" : "smooth" });
+  }, [cat, detalle]);
 
   // Skeleton breve al cambiar de categoría. useCarta() ya tiene todo en
   // memoria (no hay fetch por categoría, es un filtro local), así que esto
@@ -1593,7 +1928,14 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   const cambiarCategoria = (c) => {
     if (c === cat) return;
     setCambiando(true);
+    setSinEntrada(false);
     setCat(c);
+    posRef.current = null;
+    borrarPosicion(almacenSesion());
+    // Si la lista ya pasó por debajo de los chips, la categoría nueva arranca
+    // justo bajo ellos (scroll-margin-top = alto de los chips sticky).
+    const sc = scrollRef.current, cont = contenidoRef.current;
+    if (sc && cont && sc.scrollTop > cont.offsetTop - altoChips) sc.scrollTop = cont.offsetTop - altoChips;
   };
   useEffect(() => {
     if (!cambiando) return;
@@ -1605,7 +1947,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
     return (
       <DetalleProducto
         m={detalle}
-        onBack={() => conTransicion(() => setDetalle(null))}
+        onBack={volverDeDetalle}
         carrito={carrito}
         add={add}
         quitar={quitar}
@@ -1615,8 +1957,8 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   }
 
   return (
-    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
-      <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} />
+    <div ref={scrollRef} className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: "calc(var(--nav-alto, 80px) + 24px)", scrollPaddingTop: altoChips, "--chips-alto": `${altoChips}px` }}>
+      <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} compacto />
       {import.meta.env.DEV && fuente === "local" && (
         <div className="mono" style={{
           margin: "0 20px 12px", padding: "8px 12px", borderRadius: 10, fontSize: 10.5,
@@ -1625,24 +1967,35 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
           ⚠ Modo dev: mostrando MENU local — Supabase no respondió. Revisa la consola.
         </div>
       )}
-      <div style={{ position: "relative", padding: "0 20px 14px" }}>
-        <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto" }}>
+      {/* Chips sticky (PR-1 · T4): pegados arriba del contenedor que hace
+         scroll, que ya empieza justo debajo de la cabecera de la app — la
+         cabecera nunca los tapa. Fila a todo el ancho con padding propio al
+         inicio y al final (antes el padding era del padre y los recortaba). */}
+      <div ref={barraChipsRef} style={{ position: "sticky", top: 0, zIndex: 2, background: C.surface }}>
+        <nav aria-label="Categorías de la carta" ref={filaChipsRef} className="qc-scroll" style={{
+          position: "relative", display: "flex", gap: 8, overflowX: "auto", overscrollBehaviorX: "contain",
+          padding: "6px 20px 12px", scrollPaddingInline: 20,
+        }}>
           {CATS.map((c) => (
-            <div key={c} ref={(el) => { chipRefs.current[c] = el; }}>
-              <Chip active={c === cat} onClick={() => cambiarCategoria(c)}>{c}</Chip>
+            <div key={c} ref={(el) => { chipRefs.current[c] = el; }} style={{ flexShrink: 0 }}>
+              <Chip tactil active={c === cat} onClick={() => cambiarCategoria(c)}>{c}</Chip>
             </div>
           ))}
-        </div>
-        {indicador && (
-          <span style={{
-            position: "absolute", bottom: 8, left: indicador.left, width: indicador.width,
-            height: 2, borderRadius: 99, background: C.brand, pointerEvents: "none",
-            transition: "left var(--motion-base) var(--ease-in-out), width var(--motion-base) var(--ease-in-out)",
-          }} />
-        )}
+          {/* Espaciador final: algunos WebKit ignoran el padding derecho
+             de un contenedor flex con scroll. */}
+          <span aria-hidden style={{ flex: "0 0 1px" }} />
+          {indicador && (
+            <span aria-hidden style={{
+              position: "absolute", left: 0, bottom: 6, width: 100, height: 2, borderRadius: 99,
+              background: C.brand, pointerEvents: "none", transformOrigin: "0 0",
+              transform: `translateX(${indicador.left}px) scaleX(${indicador.width / 100})`,
+              transition: "transform var(--motion-base) var(--ease-in-out)",
+            }} />
+          )}
+        </nav>
       </div>
 
-      <div style={{ padding: "0 20px" }}>
+      <div ref={contenidoRef} style={{ padding: "0 20px", scrollMarginTop: altoChips }}>
         {/* Un solo wrapper con key={cat} en vez de dos hermanos con su
            propia key cada uno (el banner por un lado, el slide de items
            por el otro) — con dos keys independientes en el mismo nivel,
@@ -1654,123 +2007,34 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
            el banner y el contenido queden desincronizados entre sí. */}
         <div key={cat}>
           {imgCategoria && (
-            <ResponsiveImg id={imgCategoria} alt={cat} className="rise" style={{
+            <ResponsiveImg id={imgCategoria} alt={cat} className={sinEntrada ? undefined : "rise"} style={{
               width: "100%", height: 120, borderRadius: 14, marginBottom: 12,
             }} />
           )}
           {cambiando ? (
             [0, 1, 2].map((i) => (
-              <div key={i} className="mo-skeleton" style={{ height: 92, borderRadius: 16, marginBottom: 10 }} />
+              <div key={i} className="mo-skeleton" style={{ height: 122, borderRadius: 16, marginBottom: 10 }} />
             ))
           ) : (
-            <div className="slide">
-              {items.map((m) => {
-              const n = carrito.filter((x) => x.id === m.id).length;
-              const open = abierto === m.id;
-              const agotado = m.disponible === false;
-              const proximamente = m.nuevo === true;
-              return (
+            // Al volver del detalle la lista aparece quieta en su lugar: sin
+            // la entrada .slide (que se usa al cambiar de categoría).
+            <div className={sinEntrada ? undefined : "slide"}>
+              {items.map((m) => (
                 // Fase 8: el revelado por scroll va en este wrapper y la
                 // inclinación en la tarjeta — una animación con fill fija
                 // transform:none y anularía la inclinación si fueran el mismo nodo.
                 <div key={m.id} className="mo-reveal">
-                <div className="mo-tilt" style={{
-                  background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
-                  borderRadius: 16, padding: 14, marginBottom: 10,
-                  transition: "border-color .25s, transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out)",
-                  opacity: agotado ? .55 : 1,
-                }}>
-                  <div
-                    onClick={() => conTransicion(() => setDetalle(m))}
-                    style={{ display: "flex", justifyContent: "space-between", gap: 12, cursor: "pointer" }}
-                  >
-                    {FOTO_PRODUCTO[m.id] && (
-                      <ResponsiveImg id={FOTO_PRODUCTO[m.id]} alt={m.nombre} sizes="64px" style={{
-                        width: 64, height: 64, aspectRatio: "1 / 1", borderRadius: 12, flexShrink: 0,
-                        viewTransitionName: `foto-${m.id}`,
-                      }} />
-                    )}
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                        <span className="disp" style={{ fontSize: 15, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</span>
-                        {proximamente ? (
-                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Próximamente</span>
-                        ) : agotado ? (
-                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Agotado hoy</span>
-                        ) : m.tag && (
-                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>{m.tag}</span>
-                        )}
-                      </div>
-                      <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      {proximamente ? (
-                        <div className="mono" style={{ fontSize: 11, color: C.textMuted, fontWeight: 600 }}>Por confirmar</div>
-                      ) : (
-                        <div className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-                    {agotado ? <span /> : m.finca ? (
-                      <button onClick={() => setAbierto(open ? null : m.id)} className="mo-press mono" style={{
-                        fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: C.brand,
-                        background: "none", border: "none", cursor: "pointer", padding: 0,
-                      }}>
-                        {open ? "Ocultar opciones" : "Elegir finca y taza"}
-                      </button>
-                    ) : <span />}
-                    {proximamente ? (
-                      <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Precio y receta por confirmar</span>
-                    ) : agotado ? (
-                      <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Vuelve mañana</span>
-                    ) : (
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        {n > 0 && (
-                          <>
-                            <button onClick={() => quitar(m.id)} className="mo-press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={14} /></button>
-                            <span className="mono" style={{ width: 16, textAlign: "center", fontSize: 13 }}><AnimatedNumber value={n} /></span>
-                          </>
-                        )}
-                        <button
-                          onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
-                          className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
-                          style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
-                          <Plus size={14} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {!agotado && m.finca && (
-                    <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows var(--motion-base) var(--ease-in-out)" }} aria-hidden={!open}>
-                      <div style={{ overflow: "hidden" }}>
-                        <div style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
-                          <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 8 }}>Finca</div>
-                          <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
-                            {FINCAS_EN_BARRA.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
-                          </div>
-                          <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", margin: "14px 0 8px" }}>Taza</div>
-                          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                            {TAZAS.map((t) => (
-                              <button key={t.id} onClick={() => setTaza(t)} className="mo-press" aria-label={`Taza ${t.nombre}`} style={{
-                                width: 30, height: 30, borderRadius: 8, background: t.hex, cursor: "pointer",
-                                border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
-                              }} />
-                            ))}
-                          </div>
-                          <p style={{ fontSize: 12, color: C.textMuted, marginTop: 10, lineHeight: 1.45 }}>
-                            <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <ProductCard
+                    m={m}
+                    n={carrito.filter((x) => x.id === m.id).length}
+                    abierto={abierto === m.id}
+                    onSelector={() => setAbierto(abierto === m.id ? null : m.id)}
+                    onAbrir={() => abrirDetalle(m)}
+                    add={add} quitar={quitar} carritoBtnRef={carritoBtnRef}
+                    lote={lote} setLote={setLote} taza={taza} setTaza={setTaza}
+                  />
                 </div>
-                </div>
-              );
-            })}
+              ))}
           </div>
           )}
         </div>
@@ -1785,65 +2049,63 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
 function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
   const { C } = useTheme();
   const n = carrito.filter((x) => x.id === m.id).length;
-  const agotado = m.disponible === false;
-  const proximamente = m.nuevo === true;
-  const foto = FOTO_PRODUCTO[m.id];
+  // Mismo estado y misma vista que la tarjeta (src/lib/productoCard.js).
+  const estado = estadoProducto(m);
+  const v = vistaTarjeta(estado);
+  const foto = fotoDeProducto(m.id, FOTO_PRODUCTO, ASSET_MANIFEST);
+  const boton44 = { ...btnMiniStyle(C), width: 44, height: 44, borderRadius: 12, flexShrink: 0 };
 
   return (
-    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
-      <Header sub={m.cat} titulo={m.nombre} onBack={onBack} />
+    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: "calc(var(--nav-alto, 80px) + 24px)" }}>
+      <Header sub="Carta" titulo={m.cat} onBack={onBack} compacto backLabel="Volver a la carta" />
       <div style={{ padding: "0 20px" }}>
         {foto && (
           <ResponsiveImg id={foto} alt={m.nombre} sizes="(max-width: 430px) calc(100vw - 40px), 390px" style={{
             width: "100%", aspectRatio: "1 / 1", borderRadius: 18, marginBottom: 16,
             viewTransitionName: `foto-${m.id}`,
+            filter: v.desaturar ? "grayscale(.4)" : undefined,
           }} />
         )}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-          {proximamente ? (
-            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>Próximamente</span>
-          ) : agotado ? (
-            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600 }}>Agotado hoy</span>
-          ) : m.tag && (
-            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>
-          )}
-        </div>
-        <h2 style={{ fontFamily: "inherit", fontSize: 22, fontWeight: 700, margin: "0 0 6px", color: C.text, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
-        <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px" }}>{m.desc}</p>
-
-        <div style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
-        }}>
-          <div>
-            <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 4 }}>Precio</div>
-            {proximamente ? (
-              <div className="mono" style={{ fontSize: 16, color: C.textMuted, fontWeight: 600 }}>Por confirmar</div>
+        {(v.pillFoto || m.tag) && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+            {v.pillFoto ? (
+              <span className="pc-pill" style={estado === "agotado" ? { background: C.warn, color: C.onBrandAlt } : { background: C.brand, color: C.onBrand }}>{v.pillFoto}</span>
             ) : (
-              <div className="mono" style={{ fontSize: 20, color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
+              <span className="mono pc-etiqueta" style={{ margin: 0 }}>{m.tag}</span>
             )}
           </div>
-          {proximamente || agotado ? (
-            <span className="mono" style={{ fontSize: 11, color: C.textMuted, textTransform: "uppercase", letterSpacing: ".06em" }}>
-              {proximamente ? "Aún no disponible" : "Vuelve mañana"}
-            </span>
-          ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {n > 0 && (
-                <>
-                  <button onClick={() => quitar(m.id)} className="mo-press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={16} /></button>
-                  <span className="mono" style={{ width: 18, textAlign: "center", fontSize: 15 }}><AnimatedNumber value={n} /></span>
-                </>
-              )}
-              <button
-                onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
-                className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
-                style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand, width: 40, height: 40 }}>
-                <Plus size={18} />
-              </button>
+        )}
+        <h2 style={{ fontFamily: "inherit", fontSize: "clamp(20px, 6vw, 24px)", lineHeight: 1.2, fontWeight: 700, margin: "0 0 6px", color: C.text, overflowWrap: "anywhere", viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
+        {m.desc && <p style={{ fontSize: "clamp(14px, 3.8vw, 15px)", color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px", overflowWrap: "anywhere" }}>{m.desc}</p>}
+
+        {v.porConfirmar ? <PorConfirmarDetalle /> : (
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
+            background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
+          }}>
+            <div style={{ minWidth: 0 }}>
+              <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", marginBottom: 4 }}>Precio</div>
+              <div className="mono" style={{ fontSize: 20, letterSpacing: ".02em", color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
             </div>
-          )}
-        </div>
+            {v.agregar && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
+                {n > 0 && (
+                  <>
+                    <button type="button" onClick={() => quitar(m.id)} className="mo-press" aria-label={`Quitar un ${m.nombre}`} style={boton44}><Minus size={16} /></button>
+                    <span className="mono" aria-live="polite" style={{ minWidth: 22, textAlign: "center", fontSize: 15 }}><AnimatedNumber value={n} /></span>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
+                  className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
+                  style={{ ...boton44, background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                  <Plus size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -3240,6 +3502,12 @@ export default function QuadroCafe() {
   // useLayoutEffect que el underline de categorías de Carta (Fase 3).
   const tabBtnRefs = useRef({});
   const [navIndicador, setNavIndicador] = useState(null);
+  // PR-1: con la fuente del sistema muy grande (≈ 200 %) las 6 etiquetas no
+  // entran a 320–360 px y el nav se salía de la pantalla. `navCompacto` deja
+  // solo los íconos (las etiquetas siguen para lectores de pantalla).
+  // `navMedida` re-dispara el cálculo de la pill cuando el nav cambia de alto.
+  const [navCompacto, setNavCompacto] = useState(false);
+  const [navMedida, setNavMedida] = useState(0);
   useLayoutEffect(() => {
     const el = tabBtnRefs.current[tab];
     if (!el) { setNavIndicador(null); return; }
@@ -3261,10 +3529,68 @@ export default function QuadroCafe() {
       width: ancho,
       height: alto,
     });
-  }, [tab]);
+  }, [tab, navCompacto, navMedida]);
   // Squish de la pill del nav, retriggereado en cada cambio de tab — mismo
   // hook que ya usa el bounce del badge del carrito, sin tocarlo.
   const navPillSquishRef = useRetriggerAnim(tab, "mo-navpill-squish");
+
+  // Nav inferior siempre fijo (Carta premium · PR-1 · T5). Su alto real
+  // (crece con la fuente del sistema y con el safe-area de iOS) se publica
+  // como --nav-alto en el marco, para que la Carta y el detalle reserven
+  // exactamente ese espacio abajo y el último "+" nunca quede tapado.
+  const marcoRef = useRef(null);
+  const navRef = useRef(null);
+  useLayoutEffect(() => {
+    const nav = navRef.current, marco = marcoRef.current;
+    if (!nav || !marco) return;
+    let lienzo = null;
+    const medir = () => {
+      marco.style.setProperty("--nav-alto", `${nav.offsetHeight}px`);
+      // ¿Entran las etiquetas? Se mide el texto con canvas (no el DOM), así
+      // el resultado no depende de si ya están ocultas y no oscila.
+      const etiqueta = nav.querySelector("[data-nav-etiqueta]");
+      if (etiqueta) {
+        const cs = getComputedStyle(etiqueta);
+        lienzo = lienzo || document.createElement("canvas");
+        const c = lienzo.getContext("2d");
+        if (c) {
+          c.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          const ls = parseFloat(cs.letterSpacing) || 0;
+          const textos = [...nav.querySelectorAll("[data-nav-etiqueta]")].map((e) => e.textContent.toUpperCase());
+          // Suma de anchos reales (+16 px de padding por botón): los botones
+          // se reparten con space-around, no a ancho fijo.
+          const total = textos.reduce((s, t) => s + c.measureText(t).width + ls * t.length + 16, 0);
+          setNavCompacto(total > nav.clientWidth - 8);
+        }
+      }
+      setNavMedida((v) => v + 1);
+    };
+    medir();
+    document.fonts?.ready.then(medir).catch(() => {});
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(medir);
+    ro.observe(nav);
+    return () => ro.disconnect();
+  }, []);
+  // Única excepción al nav fijo: teclado abierto en un campo de texto. Se
+  // oculta mientras dure (si no, en Android queda flotando sobre el teclado).
+  const [teclado, setTeclado] = useState(false);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const esCampo = (el) => el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && !["checkbox", "radio", "button", "submit", "file", "range"].includes(el.type)) || el.isContentEditable);
+    const revisar = () => {
+      const achicado = vv ? vv.height < window.innerHeight * 0.75 : false;
+      setTeclado(esCampo(document.activeElement) && achicado);
+    };
+    window.addEventListener("focusin", revisar);
+    window.addEventListener("focusout", revisar);
+    vv?.addEventListener("resize", revisar);
+    return () => {
+      window.removeEventListener("focusin", revisar);
+      window.removeEventListener("focusout", revisar);
+      vv?.removeEventListener("resize", revisar);
+    };
+  }, []);
 
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1700); return () => clearTimeout(t); }, []);
   useEffect(() => { try { localStorage.setItem("qc-carrito", JSON.stringify(carrito)); } catch { /* noop */ } }, [carrito]);
@@ -3272,8 +3598,11 @@ export default function QuadroCafe() {
 
   // Botón/gesto de retroceso del dispositivo: navega entre tabs y cierra
   // el carrito o el ticket antes de salir de la app, como cualquier app nativa.
+  // replaceState solo al montar: antes vivía en el efecto de abajo y se
+  // repetía cada vez que se abría el carrito o el ticket, pisando la entrada
+  // actual (p. ej. la del detalle de un producto, PR-1 · T6) con {tab:"inicio"}.
+  useEffect(() => { window.history.replaceState({ tab: "inicio" }, ""); }, []);
   useEffect(() => {
-    window.history.replaceState({ tab: "inicio" }, "");
     const onPop = (e) => {
       if (orden) { setOrden(null); return; }
       if (verCarrito) { setVerCarrito(false); return; }
@@ -3334,10 +3663,11 @@ export default function QuadroCafe() {
 
   return (
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
-      <div className="qc" onClick={manejarTapSonido} onPointerDown={manejarTinta} onPointerMove={manejarTilt} onPointerOut={soltarTilt} style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
+      <div className="qc qc-raiz" onClick={manejarTapSonido} onPointerDown={manejarTinta} onPointerMove={manejarTilt} onPointerOut={soltarTilt} style={{ display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
         <style>{css}</style>
-        <div style={{
-          position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940,
+        <div ref={marcoRef} className="qc-marco" style={{
+          // Alto en la clase .qc-marco (100dvh, con 100vh solo de respaldo).
+          position: "relative", width: "100%", maxWidth: 430, maxHeight: 940,
           background: C.surface, overflow: "hidden", display: "flex", flexDirection: "column",
         }}>
           {splash ? (
@@ -3362,7 +3692,7 @@ export default function QuadroCafe() {
             </div>
           ) : null}
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px 0", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "max(14px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 0 max(20px, env(safe-area-inset-left))", flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
               <Marca size={26} />
               <span className="disp" style={{ fontSize: 15 }}>Quadro Café</span>
@@ -3398,10 +3728,16 @@ export default function QuadroCafe() {
             </div>
           </main>
 
-          <div style={{
+          <nav ref={navRef} aria-label="Secciones" style={{
+            // PR-1 · T5: ninguna lógica de ocultar por scroll. El marco
+            // (.qc-marco, 100dvh) no hace scroll — solo lo hacen los
+            // .qc-scroll de adentro —, así que "absolute abajo del marco" es
+            // un nav fijo en pantalla. Sobre la lista y el detalle (zIndex
+            // 10) y debajo de carrito/ticket/overlays (40+).
             position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 10,
-            display: "flex", justifyContent: "space-around",
-            borderTop: `1px solid ${C.line}`, background: C.card, padding: "9px 4px 12px",
+            display: teclado ? "none" : "flex", justifyContent: "space-around",
+            borderTop: `1px solid ${C.line}`, background: C.card,
+            padding: "9px max(4px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left))",
           }}>
             {/* Nav fijo (2026-08-31): pasó de flex-item (flexShrink:0, dentro
                del flujo de la columna junto a `main`) a position:"absolute"
@@ -3436,17 +3772,22 @@ export default function QuadroCafe() {
             {TABS.map((x) => {
               const Icono = x.i, on = tab === x.k;
               return (
-                <button key={x.k} ref={(el) => { tabBtnRefs.current[x.k] = el; }} onClick={() => setTab(x.k)} className="press" style={{
+                <button key={x.k} ref={(el) => { tabBtnRefs.current[x.k] = el; }} onClick={() => setTab(x.k)} className="press" aria-current={on ? "page" : undefined} style={{
                   position: "relative", background: "none", border: "none", cursor: "pointer", padding: "5px 8px",
-                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4,
+                  minWidth: 44, minHeight: 44,
                   color: on ? C.onBrand : C.textMuted, transition: "color .2s",
                 }}>
                   <Icono size={19} />
-                  <span className="mono" style={{ fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase", color: on ? C.onBrand : C.textMuted }}>{x.t}</span>
+                  <span data-nav-etiqueta className="mono" style={{
+                    fontSize: 9, letterSpacing: ".06em", textTransform: "uppercase", color: on ? C.onBrand : C.textMuted,
+                    // Compacto: fuera de la vista pero accesible (nombre del botón).
+                    ...(navCompacto ? { position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" } : {}),
+                  }}>{x.t}</span>
                 </button>
               );
             })}
-          </div>
+          </nav>
 
           {verCarrito && (
             <Carrito carrito={carrito} lote={loteBarra} taza={taza}

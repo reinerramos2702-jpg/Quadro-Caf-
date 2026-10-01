@@ -326,3 +326,37 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
 - **META**: build OK; cliente implementado; migraciones preparadas y **no aplicadas**; login del equipo funcionando contra Supabase Auth sin crear usuarios (verificado el camino de error real); paleta verde verificada; docs sincronizados; deuda de seguridad actualizada. **Cumplida.**
 - Tareas bloqueadas: **ninguna**.
 - Lo que queda es de Reiner: ver el "Lote de migraciones" arriba y el Bloque 2 del reporte final.
+
+---
+
+# Bloque · Carta premium · PR-1 (rama `quadro-feature-carta-premium`, 01/oct/2026)
+
+Brief: `docs/BRIEF-CARTA-PREMIUM-PR1.md`. Línea base del chunk principal en `main` (`f7d8aba`): **154.65 KB gzip**; tope del bloque +8 KB.
+
+| Commit | Tarea | Qué |
+|---|---|---|
+| `18be8de` | T1 | `ProductCard` único con 4 estados + `src/lib/productoCard.js` (14 tests) + detalle "Estamos afinando este producto" |
+| `8b9b8f3` | T2 | `producto-choco-nuez-cookie-1-480.webp` 48.4 → 38.9 KB (WebP q80, sin blur, mismo nombre) |
+| `63c13df` | T3 | `100dvh`, safe-area, `Header compacto`, `Chip tactil`, tipografía `clamp()` |
+| `c32e16f` | T4 | Chips sticky, centrados, indicador solo con `transform` |
+| `45e6c6b` | T5 | Nav siempre fijo; `--nav-alto` medido; excepción del teclado |
+| `ab348e6` | T6 | Volver del detalle a la misma posición (`pushState`/`popstate`, `useLayoutEffect`); `replaceState` solo al montar |
+| `0626fae` | T6b | Detalle responsive |
+| `a96f31f` | Auditoría → fixes | Pill de estado en el flujo (no recortada con fuente grande), nav compacto si las etiquetas no entran, `line-height` 1.2 |
+| `417e23f` | Auditoría → fix | La 3.ª línea oculta del nombre (dígitos 1,6×) ya no asoma |
+| `e958b18` | Auditoría | `npm run audit:carta` + `docs/capturas-pr1/` |
+
+**Hallazgos**
+- El nav no tenía lógica de ocultarse. El marco medía `100vh`, que en Chrome móvil supera la pantalla visible, así que el documento hacía scroll.
+- `replaceState({tab:"inicio"})` se repetía al abrir el carrito o el ticket.
+- La foto mapeada a "Cookie de chispas de chocolate — variante 2" es una vitrina completa.
+
+**Trampas de la auditoría (anotadas para no repetirlas)**
+1. Escalar la fuente nodo por nodo multiplica k² a los hijos que heredan el tamaño: hay que leer todos los tamaños primero y escalar solo los propios.
+2. En dev la Carta arranca con el MENU local hasta que responde Supabase: hay que esperar a que desaparezca el aviso "Modo dev".
+3. Un chequeo de "texto recortado" basado en `scrollWidth` no ve el texto que desborda una caja visible y lo recorta un ancestro: hay que medir con `Range`.
+
+**Resultado**
+- Auditoría: rama **0 / 855**; main **743 / 855** tarjetas con fallo + 36 fallos de nav.
+- Tests 51/51, lint limpio, build OK (solo falla el SW por el apóstrofo).
+- **Chunk principal 158.44 KB gzip (+3.79 KB)**; `/equipo` 14.35 KB.

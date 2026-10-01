@@ -293,7 +293,7 @@
     <div class="stat"><div class="num">12/12</div><div class="label">Puntos reunión 05/sept cerrados</div></div>
     <div class="stat"><div class="num">48/48</div><div class="label">Fotos de producto mapeadas en Carta (FOTO_PRODUCTO)</div></div>
     <div class="stat"><div class="num">57</div><div class="label">Productos en Carta (12 reales + 45 nuevos placeholder)</div></div>
-    <div class="stat"><div class="num">10</div><div class="label">Bloques trabajados (1–10), en producción</div></div>
+    <div class="stat"><div class="num">12</div><div class="label">Bloques trabajados (1–12), todo en main y producción</div></div>
   </div>
 
   <div class="progress-card">
@@ -467,6 +467,34 @@
       </section>
 
       <section class="card">
+        <h2>Carta premium · PR-1</h2>
+        <div class="card-sub">01/oct/2026 · rama <span class="mono">quadro-feature-carta-premium</span> · PR contra main <strong>sin merge</strong> (espera el OK de Reiner). <span class="tag progress">En revisión</span></div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Hecho: tarjeta única, chips, nav fijo y volver al mismo lugar</div>
+              <div class="tl-desc"><span class="mono">ProductCard</span> con 4 estados (disponible, agotado hoy, próximamente/precio por confirmar, personalizable): foto 96 px o monograma, una sola pill "Precio por confirmar" dentro de la tarjeta, sin "POR CONFIRMAR" desbordado. Chips sticky y centrados, sin recorte. Barra inferior siempre fija (la causa era <span class="mono">100vh</span>; ahora <span class="mono">100dvh</span>). Abrir un producto y volver con atrás (botón, gesto de Android, swipe de iOS) deja la lista donde estaba. Detalle responsive con bloque "Estamos afinando este producto".</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Auditoría automatizada: 0 fallos (main: 743 de 855)</div>
+              <div class="tl-desc"><span class="mono">npm run audit:carta</span> revisa los 57 productos a 320–430 px con fuente al 100, 130 y 200 %. Informe y capturas en <span class="mono">docs/capturas-pr1/</span>. Chunk principal 154,65 → 158,44 KB gzip (+3,79 KB, tope +8).</div>
+            </div>
+          </div>
+          <div class="tl-item open">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <div class="tl-title">Falta: prueba en celular real (Reiner)</div>
+              <div class="tl-desc">El nav fijo se validó con Playwright de escritorio en modo móvil; falta Chrome de Android real con la barra de URL visible y colapsada, y el gesto atrás. 9 productos siguen sin foto (V60, AeroPress, Sifón, Latte de cascarilla, Cold brew 18 h, Tónica de cascarilla, Pan de masa madre, Tarta de café y nuez, Cheesecake de cascarilla): llevan el monograma.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
         <h2>Fase nueva — Papagayo (pagos en tiempo real)</h2>
         <div class="card-sub">Iniciada 27/sept. "PROMPT MAESTRO" del dueño/Reiner pide un agente IA que verifique pagos vs. la plataforma Papagayo. Actualizado 30/sept.</div>
         <div class="timeline">
@@ -529,18 +557,20 @@
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 9 — Pipeline de fotos de producto (DALL-E + ChatGPT Work)</div><div class="tl-desc">48 fotos originales curadas en 8 categorías, editadas en batch por ChatGPT Work (DALL-E) con prompt genérico validado, procesadas a JPG (mozjpeg) + 3 WebP (480/900/1170) y cargadas a <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. Auditoría de seguridad hecha sobre las skills candidatas (4 limpias, 1 excluida — <span class="mono">browser-use</span>, requiere API key de pago y daemon en la nube de un tercero). Proceso completo guardado como skill reusable <span class="mono">pipeline-imagenes-work-dalle</span>. Avatar real de José Tomás (Agua Fría) reemplazó el placeholder — commit <span class="mono">c979f9b</span>.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 10 — Carta con foto + vista de producto completa (30/sept)</div><div class="tl-desc">Mapeo <span class="mono">id</span>→foto cerrado en <span class="mono">FOTO_PRODUCTO</span> (3 productos reales + 45 nuevos placeholder, categoría <span class="mono">Infusiones</span> agregada). Nueva pantalla <span class="mono">DetalleProducto</span> (mismo patrón full-screen que Admin/Fincas, con <span class="mono">Header</span>+<span class="mono">onBack</span>): tocar cualquier tarjeta de la Carta abre foto grande, descripción completa, precio y botones de carrito. Patrón "Próximamente" (badge + "Por confirmar" + sin botón de carrito) para los 45 placeholder, distinto de "Agotado hoy" para no confundir al cliente. Validado con <span class="mono">acorn-jsx</span> (parse OK, sin poder correr el build real desde la VM Linux contra <span class="mono">node_modules</span> de Windows). Commit <span class="mono">221ba2b</span>, sobre <span class="mono">552d04d</span>.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 11 — Ficha de recolección de datos para el dueño (30/sept)</div><div class="tl-desc">PDF <span class="mono">docs/Quadro_Cafe_Ficha_Productos_Nuevos.pdf</span> con los 45 productos placeholder agrupados por categoría (Espresso 9, Frío 8, Bollería 4, Postres 14, Infusiones 10), con columnas en blanco para nombre real/precio/descripción — para completar con el dueño en la reunión del 2-3 de octubre. Incluye nota de cierre sobre el Cheesecake de cascarilla (decidido: se queda sin foto).</div></div></div>
-          <div class="tl-item warn"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 12 — Loop largo: seguridad + login del equipo + UI premium (01/oct)</div><div class="tl-desc">Todo en la rama, CI en verde, <strong>nada aplicado en Supabase ni mergeado</strong>. Lo que se hizo:
+          <div class="tl-item warn"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 12 — Seguridad + login del equipo + UI premium + avatar en vivo (01/oct)</div><div class="tl-desc">Código en la rama <span class="mono">quadro-feature-reunion-05sept</span>, CI en verde. <strong>Migraciones 0006–0009 ya aplicadas y verificadas en producción</strong>; falta el PR/merge a main. Lo que se hizo:
 <ul>
-<li><strong>P0 corregido:</strong> la Carta con Supabase perdía los precios.</li>
-<li>Los 45 placeholders vuelven a verse en producción.</li>
-<li>Migraciones 0006–0009 escritas y probadas en Postgres local: total en el servidor, lectura por id, roles y RLS por rol con candado.</li>
-<li>Login del equipo en <span class="mono">/equipo</span>, con roles barista/admin.</li>
-<li>Edge function con CORS por allowlist y tope de OCR.</li>
-<li>CI de GitHub (test, lint y build).</li>
-<li>UI premium con motion en todas las pantallas, sin librerías nuevas (bundle 155 KB).</li>
-<li>Fraunces nunca cargaba: arreglado.</li>
+<li><strong>P0 corregido:</strong> la Carta con Supabase perdía los precios; los 45 placeholders vuelven a verse.</li>
+<li>0006–0009 aplicadas: total calculado en servidor (trigger), lectura por id (RPC), tabla <span class="mono">staff</span> con roles, RLS por rol. Admin sembrado: reinerramos2702@gmail.com. Verificado: trigger 1, RPC 1, policies 4.</li>
+<li>Login del equipo en <span class="mono">/equipo</span> con roles barista/admin: <strong>funciona</strong> (entrada a Admin y Barra probada).</li>
+<li>Edge function <span class="mono">verificar-comprobante</span> v4 desplegada (CORS por allowlist + tope OCR).</li>
+<li>Fallback provisional <span class="mono">TODO(0008)</span> retirado de <span class="mono">src/equipo/rol.js</span> — commit <span class="mono">1e52550</span>.</li>
+<li>Auth de Supabase: Site URL y Redirect URLs corregidas al dominio workers.dev (antes apuntaban a localhost:3000 y rompían el reset de contraseña).</li>
+<li>Cloudflare Workers Builds: token de build repuesto; build verde.</li>
+<li>Bugs corregidos — commit <span class="mono">4a35d70</span>: pantalla en blanco del avatar (iframe de D-ID bloqueado → embed oficial por SDK con respaldo) y autofill de Chrome que dejaba campos blancos con texto invisible. Tests 30/30, bundle 156 KB.</li>
+<li>CI de GitHub (test, lint, build) y UI premium con motion, sin librerías nuevas.</li>
 </ul>
 Detalle en <span class="mono">docs/PROGRESO-LOOP.md</span>.</div></div></div>
+          <div class="tl-item warn"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Avatar José Tomás en tiempo real — D-ID (01/oct)</div><div class="tl-desc">Código listo (SDK <span class="mono">agent.d-id.com/v2/index.js</span>, <span class="mono">src/lib/did.js</span>). Hecho: dominio permitido agregado en el agente, client key obtenida, foto de lentes y polo azul elegida. <strong>Pendiente:</strong> (1) pulsar "Update agent" en el editor y revisar la voz; (2) <strong>decidir estrategia de costo antes de comprar</strong> (ver decisión abierta en Pasos manuales; la cuenta de prueba tiene 0 créditos); (3) pegar la client key y el agent id en Claude Code para conectarlos. Planes vistos (facturación anual): Lite $4.7/mes (10 min/mes), Pro $16/mes (15 min/mes), Advanced $108/mes (100 min/mes), Enterprise a medida. Elegir según minutos de conversación esperados.</div></div></div>
         </div>
       </section>
 
@@ -585,16 +615,13 @@ Detalle en <span class="mono">docs/PROGRESO-LOOP.md</span>.</div></div></div>
 
       <section class="card">
         <h2 style="font-size:1.05rem;">Pasos manuales pendientes (solo Reiner)</h2>
-        <div class="card-sub">Rehecho 01/oct/2026 (loop largo). 0004 y 0005 <strong>ya están aplicadas</strong> y la rama <strong>ya no tiene conflictos</strong> con main (verificado). Orden obligatorio, una por una, verificando cada una por lectura antes de seguir. Detalle de cada paso (riesgo, verificación, reversión) en <span class="mono">docs/PROGRESO-LOOP.md</span> → "Lote de migraciones".</div>
+        <div class="card-sub">Actualizado 01/oct/2026 (tarde). <strong>Hechos:</strong> 0004–0009 aplicadas y verificadas; <span class="mono">verificar-comprobante</span> v4 desplegada; fallback del login retirado; Site URL / Redirect URLs corregidas; token de Workers Builds repuesto. <strong>También hechos 01/oct:</strong> signup OFF guardado; PR #8 mergeado a main (commit <span class="mono">f7d8aba</span>, revisado: sin secretos, RLS y edge function OK); 0003 aplicada (2 productos pasaron a Bollería). Quedan solo estos:</div>
         <div class="steps">
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0006_validar_total_orden.sql</span></div><div class="step-desc">El total del pedido lo calcula el servidor. Aditiva. Verificación: el bloque <span class="mono">DO … raise exception</span> del propio archivo (no deja datos).</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0007_rpc_obtener_orden.sql</span></div><div class="step-desc">Solo prepara la lectura por id; no cambia nada visible.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0008_staff_roles.sql</span> y VERIFICAR la siembra</div><div class="step-desc">Crea los roles y te siembra como admin. Antes de seguir: <span class="mono">select s.rol, u.email from staff s join auth.users u on u.id = s.user_id;</span> tiene que dar <span class="mono">admin · reinerramos2702@gmail.com</span>.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar <span class="mono">0009_endurecer_rls_staff.sql</span></div><div class="step-desc">Solo después del paso anterior. Tiene candado: si no hay admin, aborta sin cambiar nada. Después, entrar a <span class="mono">/equipo</span> y probar Admin y Barra.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Redesplegar <span class="mono">verificar-comprobante</span></div><div class="step-desc"><span class="mono">npx supabase@latest functions deploy verificar-comprobante --no-verify-jwt --use-api --project-ref wckufllomfmuwxptegvm</span> (antes <span class="mono">npx supabase login</span>). Trae CORS por allowlist y tope de OCR por hora.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Revisar el PR y hacer el merge a main</div><div class="step-desc">Dispara el deploy de Cloudflare. CI (test + lint + build) tiene que estar en verde.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Aplicar 0003 (Panadería → Bollería)</div><div class="step-desc">Después del deploy del merge (el código nuevo acepta ambos nombres). Nunca antes.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">Retirar el fallback provisional del login</div><div class="step-desc">Con 0008 en producción, pedir que se borre la rama <span class="mono">TODO(0008)</span> de <span class="mono">src/equipo/rol.js</span>.</div></div></div>
+          
+          <div class="step"><div class="step-num"></div><div><div class="step-title">D-ID: "Update agent" + revisar voz</div><div class="step-desc">Guardar la foto de lentes y polo azul en el agente.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">DECISIÓN ABIERTA · Costo del avatar en vivo (D-ID) <span class="tag">Por decidir</span></div><div class="step-desc">D-ID en vivo cobra por minuto: no escala a miles de clientes. <strong>No comprar plan todavía.</strong> Opciones: <strong>A)</strong> videos pregrabados por finca, servidos estáticos desde Cloudflare (costo único; recomendada); <strong>B)</strong> A + botón "Hablar con José Tomás" con tope (60–90 s, 1 por dispositivo al día, tope mensual global en Edge Function; revisar en D-ID Studio si hay duración máxima); <strong>C)</strong> chat de texto + voz TTS sobre la foto animada; <strong>D)</strong> comparar otros proveedores (HeyGen, Tavus, Simli…). Llevar a la reunión del 2–3 oct. Nota: la client key es pública; el límite real va en servidor y en la cuenta D-ID.</div></div></div>
+          
+          
         </div>
       </section>
 
@@ -602,10 +629,10 @@ Detalle en <span class="mono">docs/PROGRESO-LOOP.md</span>.</div></div></div>
         <h2 style="font-size:1.05rem;">Deuda de seguridad (auditada 01/oct/2026)</h2>
         <div class="card-sub">No bloquea el merge. Bloque aparte, después de la reunión del 2-3 oct.</div>
         <div class="steps">
-          <div class="step"><div class="step-num"></div><div><div class="step-title">1 · El total del pedido lo manda el cliente</div><div class="step-desc"><span class="mono">ordenes</span> acepta cualquier INSERT (<span class="mono">with check (true)</span>), así que un pedido puede llegar con un total manipulado. <span class="mono">productos</span> está vacía en Supabase, por eso el servidor no puede recalcular. Mitigante actual: el barista confirma el pago a mano. <strong>01/oct: fix listo en <span class="mono">0006_validar_total_orden.sql</span></strong>, sin aplicar (va en el lote de Reiner). Trigger que recalcula el total desde <span class="mono">productos</span> (que sí tiene 12 filas) y rechaza ids inválidos, agotados o con cantidad fuera de 1–50. Probado en Postgres local, 17/17.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">2 · <span class="mono">ordenes</span> es de lectura pública</div><div class="step-desc">Con la llave pública se pueden listar todos los pedidos (nombre y total). Se hizo a propósito para el ticket en tiempo real. <strong>01/oct: preparado en <span class="mono">0007_rpc_obtener_orden.sql</span></strong> (sin aplicar): RPC por id, sin nombre ni items. La policy pública <strong>no se toca</strong> todavía; el cierre (RPC <span class="mono">crear_orden</span> + Ticket por RPC + drop de la policy) queda para un bloque con prueba de pedido real.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">2b · Staff = cualquier cuenta autenticada</div><div class="step-desc">Hoy toda policy de staff es <span class="mono">authenticated</span> a secas: una cuenta cualquiera tendría Admin y Barra. <strong>01/oct: fix listo y probado (26/26)</strong>, sin aplicar. <span class="mono">0008</span> crea los roles (tabla <span class="mono">staff</span>) y siembra a Reiner como admin. <span class="mono">0009</span> aplica los roles a la RLS, con un candado que aborta si la siembra falla. Ni el admin puede reescribir el total de un pedido.</div></div></div>
-          <div class="step"><div class="step-num"></div><div><div class="step-title">3 · Edge function sin límite de frecuencia</div><div class="step-desc"><span class="mono">verificar-comprobante</span> corre con <span class="mono">verify_jwt = false</span> y CORS <span class="mono">*</span>. Valida UUID, que la orden exista y que esté pendiente, pero no limita llamadas (riesgo de gasto de cuota Gemini). <strong>01/oct: fix listo y probado, sin desplegar.</strong> CORS por allowlist (origen ajeno → 403) y tope global <span class="mono">OCR_MAX_POR_HORA</span> (30 por defecto) antes de llamar a Gemini; pasado el tope queda "sin lectura" y verifica la barra. El redeploy va en el lote de Reiner.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">1 · El total del pedido lo manda el cliente</div><div class="step-desc"><span class="mono">ordenes</span> acepta cualquier INSERT (<span class="mono">with check (true)</span>), así que un pedido puede llegar con un total manipulado. <span class="mono">productos</span> está vacía en Supabase, por eso el servidor no puede recalcular. Mitigante actual: el barista confirma el pago a mano. <strong>01/oct: <span class="mono">0006_validar_total_orden.sql</span> APLICADA y verificada</strong> <span class="tag done">Resuelto</span>. Trigger que recalcula el total desde <span class="mono">productos</span> (que sí tiene 12 filas) y rechaza ids inválidos, agotados o con cantidad fuera de 1–50. Probado en Postgres local, 17/17.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">2 · <span class="mono">ordenes</span> es de lectura pública</div><div class="step-desc">Con la llave pública se pueden listar todos los pedidos (nombre y total). Se hizo a propósito para el ticket en tiempo real. <strong>01/oct: <span class="mono">0007_rpc_obtener_orden.sql</span> aplicada</strong>: RPC por id, sin nombre ni items. La policy pública <strong>no se toca</strong> todavía; el cierre (RPC <span class="mono">crear_orden</span> + Ticket por RPC + drop de la policy) queda para un bloque con prueba de pedido real.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">2b · Staff = cualquier cuenta autenticada</div><div class="step-desc">Hoy toda policy de staff es <span class="mono">authenticated</span> a secas: una cuenta cualquiera tendría Admin y Barra. <strong>01/oct: 0008 y 0009 APLICADAS y verificadas</strong> <span class="tag done">Resuelto</span>. <span class="mono">0008</span> crea los roles (tabla <span class="mono">staff</span>) y siembra a Reiner como admin. <span class="mono">0009</span> aplica los roles a la RLS, con un candado que aborta si la siembra falla. Ni el admin puede reescribir el total de un pedido.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">3 · Edge function sin límite de frecuencia</div><div class="step-desc"><span class="mono">verificar-comprobante</span> corre con <span class="mono">verify_jwt = false</span> y CORS <span class="mono">*</span>. Valida UUID, que la orden exista y que esté pendiente, pero no limita llamadas (riesgo de gasto de cuota Gemini). <strong>01/oct: v4 DESPLEGADA</strong> <span class="tag done">Resuelto</span>. CORS por allowlist (origen ajeno → 403) y tope global <span class="mono">OCR_MAX_POR_HORA</span> (30 por defecto) antes de llamar a Gemini; pasado el tope queda "sin lectura" y verifica la barra. </div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">4 · Proceso: tests y CI <span class="tag done">Resuelto 01/oct</span></div><div class="step-desc"><span class="mono">npm test</span> (node --test), <span class="mono">npm run lint</span> (ESLint mínimo) y <span class="mono">.github/workflows/ci.yml</span> (test → lint → build en cada push/PR). Falta: mergear siempre vía Pull Request.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">5 · Dependencias de build con avisos de seguridad</div><div class="step-desc"><span class="mono">npm audit</span>: 8 altas + 2 moderadas, todas de tooling (wrangler/miniflare/undici, sharp, vite/postcss…), ninguna en el bundle del cliente. Preexistentes. Fix: subir wrangler/sharp/vite en un bloque aparte, con build verificado.</div></div></div>
         </div>
@@ -619,9 +646,11 @@ Detalle en <span class="mono">docs/PROGRESO-LOOP.md</span>.</div></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Cart / Checkout</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Panel Admin</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Dashboard Barista (/#barra)</span></div></div>
-          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--progress);"></span><span>Login del equipo /equipo (01/oct, en rama)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Login del equipo /equipo con roles (01/oct, funciona; falta merge)</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Nav líquido (Bloque UI-1 v2)</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Fincas — avatar Agua Fría (José Tomás)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--progress);"></span><span>Avatar en vivo D-ID (código listo; falta decidir modelo de costo)</span></div></div>
+          <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--progress);"></span><span>Panel Admin responsive de escritorio (en cola)</span></div></div>
           <div class="pill"><div class="pill-left"><span class="dot" style="background:var(--done);"></span><span>Pipeline fotos de producto (JPG+WebP, 48/48)</span></div></div>
         </div>
       </section>
@@ -631,6 +660,9 @@ Detalle en <span class="mono">docs/PROGRESO-LOOP.md</span>.</div></div></div>
         <div class="steps">
           
           
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Reunión 2–3 oct: decidir costo del avatar con el cliente</div><div class="step-desc">Opciones A–D (pregrabado, en vivo con tope, chat+voz, otro proveedor). Luego conectar client key + agent id si aplica.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Panel Admin 100% responsive</div><div class="step-desc">Que en compu no se vea como móvil. Prompt listo para Claude Code.</div></div></div>
+          <div class="step"><div class="step-num"></div><div><div class="step-title">Cerrar lectura pública de <span class="mono">ordenes</span></div><div class="step-desc">RPC <span class="mono">crear_orden</span> + Ticket por RPC + drop de policy. Requiere OK y pedido real de prueba.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Responder preguntas Papagayo</div><div class="step-desc">API/doc/auth/webhooks — sin esto no se diseña arquitectura.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Resolver <span class="mono">fix/nav-dvh-viewport</span></div><div class="step-desc">26 commits, fix real de viewport dvh en mobile — decidir merge.</div></div></div>
           <div class="step"><div class="step-num"></div><div><div class="step-title">Depuración de código</div><div class="step-desc">Domingo (o miércoles puntual) — limpiar ramas viejas, revisar deuda técnica.</div></div></div>
