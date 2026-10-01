@@ -812,3 +812,17 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 - **Panel Admin responsive**: `src/equipo/AdminPanel.jsx` (+ `adminLogica.js`, `test/admin.test.js`). Antes era la columna de 430 px del teléfono centrada en cualquier pantalla. Mismas consultas a Supabase; ahora revierte la fila si el UPDATE falla. Hallazgos en el camino: la fila no disponible al 50% de opacidad no pasaba AA (reemplazada por el texto "Agotado"); `textMuted` sobre `surface` en claro da 4.15:1; `mo-enter` en la raíz rompía el `position: fixed` del panel de alta. Verificado con Supabase simulado por CDP (sesión inventada, fixture con los 12 productos reales leídos por SELECT).
 - **"Bollería" en todos lados (pedido de Reiner)**: el Admin nuevo mostraba "Panadería" (la base todavía la tiene porque 0003 no corre hasta el merge). `normalizarCategoria` en `carta.js`, compartida por la Carta y el Admin (`filasParaAdmin`); solo cambia lo que se muestra, el Admin nunca escribe `cat` al editar. Test nuevo en `admin.test.js`. La corrección definitiva en la base sigue siendo 0003, después del merge.
 - **Login /equipo con autocompletado en blanco**: la regla `:-webkit-autofill` solo "retrasaba" el fondo celeste con `transition 9999s`, y la regla global de reduced-motion la baja a .001s → celeste + texto hueso. Fix: sombra inset opaca del color de la caja + text-fill/caret hueso en hover/focus/active y `:autofill`. Verificado con simulación fiel del estilo UA de Chrome (`#E8F0FE !important` + `FieldText`) con y sin reduced-motion; `test/login-autofill.test.js` falla con el CSS viejo.
+
+## 01/oct/2026 (noche) — Carta premium · PR-1 (rama `quadro-feature-carta-premium`)
+- Brief de Reiner en `docs/BRIEF-CARTA-PREMIUM-PR1.md`. Detalle por commit en `docs/PROGRESO-LOOP.md` § "Carta premium · PR-1".
+- **`ProductCard`**: un solo componente con 4 estados. La lógica pura vive en `src/lib/productoCard.js` (`estadoProducto`, `vistaTarjeta`, `fotoDeProducto`, posición en sessionStorage).
+  - Precio 0 o inválido cuenta como "por confirmar": nunca muestra $0.00.
+  - "Vuelve mañana" ya no se muestra: era un texto fijo, no un dato.
+- **Nav "que se escondía"**: no había JS. La causa era el marco a `100vh`; ahora es `100dvh` con `overscroll-behavior: contain`.
+- **Atrás**: el detalle hace `pushState`. Se corrigió que `replaceState({tab:"inicio"})` se repitiera al abrir carrito o ticket.
+- **Fuente del sistema grande**:
+  - la pill de estado va en el flujo, montada sobre la esquina de la foto;
+  - el nav pasa a solo íconos si las etiquetas no entran;
+  - lo que el clamp deja fuera del nombre va en `visibility:hidden`, porque los dígitos 1,6× de la 3.ª línea asomaban.
+- `npm run audit:carta` (`playwright-core` + Chrome del sistema): rama 0/855, main 743/855.
+- Fotos: 48 mapeadas y 0 huérfanas. 9 productos sin foto, con monograma. La foto de "Cookie… variante 2" es una vitrina, pregunta abierta para Reiner.
