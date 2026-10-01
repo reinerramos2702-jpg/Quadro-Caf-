@@ -256,3 +256,13 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
   2. `.mo-ink` (`overflow:hidden`) volvía `min-width` a 0 en los chips (ítems flex) y se cortaban ("PUNTO C…"). `Chip` lleva `flexShrink: 0`.
   - La tilde de "GEOMETRÍA" no se recorta: `.mo-linea` tiene padding vertical compensado con margen negativo.
 - Verificado en los dos temas a 390 (a mitad de animación y asentado), sin errores de consola. Bundle 154.58 KB.
+
+### 8.2 Carta
+- **Foto y nombre compartidos tarjeta → detalle** con View Transitions (`view-transition-name: foto-<id>` / `nombre-<id>`; abrir y volver pasan por `conTransicion`). Sin soporte o con reduced-motion: cambio directo, como antes.
+- **Inclinación 3D + elevación** (`.mo-tilt`) que sigue al mouse, solo con `(hover:hover) and (pointer:fine)`. En táctil la tarjeta queda con `transform: none` (verificado con emulación táctil).
+- **Revelado por scroll** (`.mo-reveal`) en un wrapper aparte: una animación con fill fijaría `transform:none` sobre la tarjeta y anularía la inclinación.
+- Sin cambios de lógica: precios, carrito, fly-to-cart, agotados y "Próximamente" intactos.
+- Verificado a 1440×900:
+  - mouse sobre la tarjeta → `--rx 1.80deg / --ry 2.45deg`;
+  - abrir Cortado dispara 1 View Transition con `foto-m5`; la captura a mitad muestra la foto creciendo.
+  - Sin errores. Bundle 154.69 KB.

@@ -331,7 +331,8 @@ html,body{margin:0;background:${C.shell}}
 @media (hover:hover) and (pointer:fine){
   .mo-lift{transition:transform var(--motion-base) var(--ease-spring),box-shadow var(--motion-base) var(--ease-out)}
   .mo-lift:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px ${C.text}66}
-  .mo-tilt{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform var(--motion-base) var(--ease-out);will-change:transform}
+  .mo-tilt{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--lift,0px));transition:transform var(--motion-base) var(--ease-out),box-shadow var(--motion-base) var(--ease-out)}
+  .mo-tilt:hover{--lift:-3px;box-shadow:0 18px 40px -22px ${C.text}70}
 }
 @keyframes qc-reveal{from{opacity:0;transform:translateY(26px) scale(.975)}to{opacity:1;transform:none}}
 @supports (animation-timeline: view()){
@@ -1587,7 +1588,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
     return (
       <DetalleProducto
         m={detalle}
-        onBack={() => setDetalle(null)}
+        onBack={() => conTransicion(() => setDetalle(null))}
         carrito={carrito}
         add={add}
         quitar={quitar}
@@ -1652,23 +1653,29 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
               const agotado = m.disponible === false;
               const proximamente = m.nuevo === true;
               return (
-                <div key={m.id} style={{
+                // Fase 8: el revelado por scroll va en este wrapper y la
+                // inclinación en la tarjeta — una animación con fill fija
+                // transform:none y anularía la inclinación si fueran el mismo nodo.
+                <div key={m.id} className="mo-reveal">
+                <div className="mo-tilt" style={{
                   background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
-                  borderRadius: 16, padding: 14, marginBottom: 10, transition: "border-color .25s",
+                  borderRadius: 16, padding: 14, marginBottom: 10,
+                  transition: "border-color .25s, transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out)",
                   opacity: agotado ? .55 : 1,
                 }}>
                   <div
-                    onClick={() => setDetalle(m)}
+                    onClick={() => conTransicion(() => setDetalle(m))}
                     style={{ display: "flex", justifyContent: "space-between", gap: 12, cursor: "pointer" }}
                   >
                     {FOTO_PRODUCTO[m.id] && (
                       <ResponsiveImg id={FOTO_PRODUCTO[m.id]} alt={m.nombre} sizes="64px" style={{
                         width: 64, height: 64, aspectRatio: "1 / 1", borderRadius: 12, flexShrink: 0,
+                        viewTransitionName: `foto-${m.id}`,
                       }} />
                     )}
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                        <span className="disp" style={{ fontSize: 15 }}>{m.nombre}</span>
+                        <span className="disp" style={{ fontSize: 15, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</span>
                         {proximamente ? (
                           <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Próximamente</span>
                         ) : agotado ? (
@@ -1744,6 +1751,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
                     </div>
                   )}
                 </div>
+                </div>
               );
             })}
           </div>
@@ -1771,6 +1779,7 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
         {foto && (
           <ResponsiveImg id={foto} alt={m.nombre} sizes="(max-width: 430px) calc(100vw - 40px), 390px" style={{
             width: "100%", aspectRatio: "1 / 1", borderRadius: 18, marginBottom: 16,
+            viewTransitionName: `foto-${m.id}`,
           }} />
         )}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
@@ -1782,7 +1791,7 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
             <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>
           )}
         </div>
-        <h2 style={{ fontFamily: "inherit", fontSize: 22, fontWeight: 700, margin: "0 0 6px", color: C.text }}>{m.nombre}</h2>
+        <h2 style={{ fontFamily: "inherit", fontSize: 22, fontWeight: 700, margin: "0 0 6px", color: C.text, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
         <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px" }}>{m.desc}</p>
 
         <div style={{
