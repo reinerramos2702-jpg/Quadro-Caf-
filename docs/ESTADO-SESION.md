@@ -9,6 +9,7 @@
 ## Hecho en esta sesión
 - Iteración 0: corregido el **P0 de `useCarta`**, que dejaba los productos sin precio. Lo cubre `npm test`.
 - Iteración 0b: fondos del login commiteados, `npm run lint` y CI (`.github/workflows/ci.yml`).
+- Iteración 1: la Carta en producción muestra 12 reales + 45 placeholders (`fusionarCarta`).
 
 ## Pendiente (en el orden del plan)
 1. Base: assets del login, lint y CI.

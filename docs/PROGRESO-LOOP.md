@@ -39,3 +39,25 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
   - Lockfile: las 26 entradas `@img/sharp*` (binarios opcionales por plataforma) siguen todas.
 - **Hallazgo — deuda de dependencias (preexistente)**: `npm audit` da 10 (2 moderadas, 8 altas) **idénticas antes y después** de agregar lint, comparando contra el lockfile previo. Todas son tooling de build/dev: `wrangler`/`miniflare`/`undici`, `sharp` (libvips), `vite`/`postcss`/`nanoid`, `browserslist`, `brace-expansion`, `fast-uri`, `baseline-browser-mapping`. Ninguna entra al bundle del cliente. No corrí `npm audit fix` porque sube majors de tooling (wrangler/sharp) sin pedido. Queda como deuda en el ROADMAP.
 - **Siguiente**: 1. Fusión de placeholders en `useCarta`.
+
+## Iteración 1 — fusión de placeholders en la Carta (01/oct/2026)
+- **Objetivo**: con Supabase activo, `useCarta` reemplazaba `MENU` por las 12 filas de la base, así que los 45 placeholders "Próximamente" (y sus fotos) no se veían en producción. Decisión de Reiner: fusionar en el cliente.
+- **Archivos**:
+  - `src/lib/carta.js`: `fusionarCarta(filasDB, MENU)`. Supabase manda. Se suman los `nuevo:true` del MENU local que la base no tenga ni por **id** ni por **nombre normalizado** (sin tildes ni mayúsculas): el Admin crea ids slug, así que lo normal es que coincida el nombre. Un placeholder desaparece solo cuando el dueño carga el producto real.
+  - `src/App.jsx`: `setItems(fusionarCarta(data, MENU))`.
+  - `test/carta.test.js`: +3 tests (fusión, retiro por id/nombre, 12+45=57).
+- **Verificación**:
+  - test 8/8; lint 0 errores; build OK (**153.86 KB gzip**, +0.13).
+  - Chrome headless con Supabase real, por categoría (`Agregar`/`Próximamente`/`Agotado`):
+
+    | Categoría | Agregar | Próximamente | Agotado |
+    |---|---|---|---|
+    | Filtrado | 0 | 0 | 3 |
+    | Espresso | 2 | 9 | 1 |
+    | Frío | 2 | 8 | 0 |
+    | Bollería | 2 | 4 | 0 |
+    | Postres | 0 | 14 | 2 |
+    | Infusiones | 0 | 10 | 0 |
+
+    Total: **12 reales + 45 placeholders**, sin NaN, sin fallback y sin errores de consola (salvo el `sw.js` local).
+- **Siguiente**: 2. Migración 0006 (total en servidor).

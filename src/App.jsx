@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
-import { mapearProducto } from "./lib/carta";
+import { fusionarCarta } from "./lib/carta";
 import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
@@ -549,7 +549,7 @@ function useCarta() {
       if (cancelado) return;
       if (error) { avisarFallbackCarta(`error de Supabase — ${error.message}`); return; }
       if (!data || !data.length) { avisarFallbackCarta("la tabla productos está vacía."); return; }
-      setItems(data.map(mapearProducto));
+      setItems(fusionarCarta(data, MENU));
       setFuente("supabase");
     }).catch((err) => {
       if (cancelado) return;

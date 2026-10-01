@@ -18,3 +18,18 @@ export function mapearProducto(p) {
     disponible: p.disponible,
   };
 }
+
+const normalizar = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+
+/* Carta final = filas reales de Supabase + los placeholders "Próximamente"
+   (`nuevo: true`) del MENU local que todavía no existen en la base.
+   Supabase manda: un placeholder se retira solo en cuanto aparece en la base
+   con el mismo id o con el mismo nombre (el Panel Admin crea ids tipo slug,
+   así que el nombre es lo que normalmente va a coincidir). */
+export function fusionarCarta(filasDB, menuLocal) {
+  const reales = filasDB.map(mapearProducto);
+  const ids = new Set(reales.map((p) => p.id));
+  const nombres = new Set(reales.map((p) => normalizar(p.nombre)));
+  const pendientes = menuLocal.filter((m) => m.nuevo && !ids.has(m.id) && !nombres.has(normalizar(m.nombre)));
+  return [...reales, ...pendientes];
+}
