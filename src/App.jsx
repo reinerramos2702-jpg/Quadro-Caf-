@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, useContext, createContext, Suspense, lazy } from "react";
+import { flushSync } from "react-dom";
 import {
   Coffee, Mountain, Waves, ShoppingBag, GraduationCap, Award,
   Plus, Minus, X, Play, Pause, Check, ChevronRight, ChevronLeft, MapPin, Instagram,
@@ -287,8 +288,129 @@ ${FONTS}
 .mo-bounce{animation:qc-badge-bounce var(--motion-base) var(--ease-spring)}
 .mo-skeleton{background:linear-gradient(90deg, ${C.line} 25%, ${C.surface} 50%, ${C.line} 75%);background-size:200% 100%;animation:qc-shimmer 1.1s ease-in-out infinite}
 :focus-visible{outline:2px solid ${C.brand};outline-offset:2px;border-radius:6px}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
+${CSS_MOTION_V2(C)}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}}
 `;
+}
+
+/* ============================ MOTION — FASE 8 "UI PREMIUM" (01/oct/2026) ============================
+   Capa transversal NUEVA, centralizada en este único bloque. Igual que en las
+   fases 2–7: aditiva, no reescribe ninguna clase existente (.rise/.pop/.press/
+   .mo-press/…). Reglas de la fase (pedidas por Reiner):
+   · solo transform y opacity (nada de width/height/top/left/filtros);
+   · colores siempre de PALETAS (C.*), nunca un hex suelto;
+   · prefers-reduced-motion lo apaga todo (y la regla global de arriba ahora
+     también fuerza animation-iteration-count:1: antes, las animaciones
+     infinitas a .001s seguían "parpadeando" en bucle con reduced-motion);
+   · CSS/HTML moderno primero, cero librerías nuevas (ver PROGRESO-LOOP).
+   Piezas:
+   .mo-ink      tinta que nace donde toca el dedo (--tx/--ty los escribe el
+                delegado manejarTinta en pointerdown; opt-in por clase porque
+                necesita overflow:hidden y hay botones con badges afuera)
+   .mo-lift     tarjetas que se levantan con el puntero (solo hover real)
+   .mo-tilt     inclinación 3D sutil siguiendo el puntero (solo mouse/lápiz)
+   .mo-reveal   aparición atada al scroll (animation-timeline: view(), con
+                @supports: sin soporte el contenido simplemente está ahí)
+   .mo-aparece  entrada con @starting-style para nodos que se insertan
+   .mo-brillo   destello que recorre una tarjeta (transform, no background)
+   .mo-palabra  tipografía cinética: cada palabra sube desde su línea
+   .mo-flap     dígitos tipo split-flap (rotateX por dígito, escalonado)
+   .mo-caer     entrada "cae y asienta" (órdenes nuevas en la barra)
+   View Transitions: tokens de duración/easing para ::view-transition-*. */
+function CSS_MOTION_V2(C) {
+  return `
+html,body{margin:0;background:${C.shell}}
+.mo-ink{position:relative;overflow:hidden;isolation:isolate}
+.mo-ink::after{content:"";position:absolute;left:var(--tx,50%);top:var(--ty,50%);width:var(--tr,180px);height:var(--tr,180px);
+  margin:calc(var(--tr,180px) / -2) 0 0 calc(var(--tr,180px) / -2);border-radius:50%;background:currentColor;
+  opacity:0;transform:scale(0);pointer-events:none;z-index:-1}
+.mo-ink[data-ink="a"]::after{animation:qc-ink-a 560ms var(--ease-out)}
+.mo-ink[data-ink="b"]::after{animation:qc-ink-b 560ms var(--ease-out)}
+@keyframes qc-ink-a{from{transform:scale(0);opacity:.2}to{transform:scale(1);opacity:0}}
+@keyframes qc-ink-b{from{transform:scale(0);opacity:.2}to{transform:scale(1);opacity:0}}
+@media (hover:hover) and (pointer:fine){
+  .mo-lift{transition:transform var(--motion-base) var(--ease-spring),box-shadow var(--motion-base) var(--ease-out)}
+  .mo-lift:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px ${C.text}66}
+  .mo-tilt{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform var(--motion-base) var(--ease-out);will-change:transform}
+}
+@keyframes qc-reveal{from{opacity:0;transform:translateY(26px) scale(.975)}to{opacity:1;transform:none}}
+@supports (animation-timeline: view()){
+  .mo-reveal{animation:qc-reveal linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+}
+.mo-aparece{transition:opacity var(--motion-base) var(--ease-out),transform var(--motion-base) var(--ease-spring)}
+@starting-style{.mo-aparece{opacity:0;transform:translateY(8px) scale(.96)}}
+.mo-brillo{position:relative;overflow:hidden;isolation:isolate}
+.mo-brillo::before{content:"";position:absolute;inset:-20% auto -20% 0;width:45%;z-index:-1;pointer-events:none;
+  background:linear-gradient(100deg,transparent,${C.card}cc 45%,${C.brand}22 55%,transparent);
+  transform:translateX(-160%) skewX(-12deg);animation:qc-brillo 4.8s var(--ease-in-out) infinite;animation-delay:var(--brillo-delay,0s)}
+@keyframes qc-brillo{0%,62%{transform:translateX(-160%) skewX(-12deg)}100%{transform:translateX(330%) skewX(-12deg)}}
+.mo-linea{display:block;overflow:hidden;padding-bottom:.06em}
+.mo-palabra{display:inline-block;animation:qc-palabra 820ms var(--ease-out) both;animation-delay:calc(var(--i,0) * 90ms + 120ms)}
+@keyframes qc-palabra{from{transform:translateY(105%) rotate(4deg);opacity:0}to{transform:none;opacity:1}}
+.mo-flap{display:inline-block;transform-origin:50% 0;animation:qc-flap 620ms var(--ease-spring) both;animation-delay:calc(var(--i,0) * 110ms + 200ms)}
+@keyframes qc-flap{0%{transform:perspective(300px) rotateX(-92deg);opacity:0}60%{opacity:1}100%{transform:perspective(300px) rotateX(0);opacity:1}}
+.mo-caer{animation:qc-caer 640ms var(--ease-spring) both}
+@keyframes qc-caer{0%{transform:translateY(-26px) scale(.96);opacity:0}70%{transform:translateY(3px) scale(1.005);opacity:1}100%{transform:none;opacity:1}}
+::view-transition-group(*){animation-duration:var(--motion-slow);animation-timing-function:var(--ease-out)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:var(--motion-base)}
+@media (prefers-reduced-motion:reduce){
+  .mo-ink::after,.mo-brillo::before,.mo-reveal,.mo-palabra,.mo-flap,.mo-caer{animation:none!important;opacity:1}
+  .mo-tilt{transform:none!important}
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+}
+`;
+}
+
+/* Tinta al tocar (.mo-ink): un único delegado en pointerdown por raíz de app
+   (cliente, barra, admin, equipo). Escribe dónde tocó el dedo y alterna
+   data-ink entre a/b para reiniciar la animación sin forzar reflow. */
+function manejarTinta(e) {
+  const el = e.target.closest?.(".mo-ink");
+  if (!el || el.disabled) return;
+  const r = el.getBoundingClientRect();
+  el.style.setProperty("--tx", `${e.clientX - r.left}px`);
+  el.style.setProperty("--ty", `${e.clientY - r.top}px`);
+  el.style.setProperty("--tr", `${Math.ceil(Math.hypot(r.width, r.height) * 2)}px`);
+  el.dataset.ink = el.dataset.ink === "a" ? "b" : "a";
+}
+
+/* Inclinación 3D (.mo-tilt) siguiendo el puntero: solo con mouse/lápiz real
+   (en táctil no hay "hover" que seguir y se sentiría como un bug). */
+function manejarTilt(e) {
+  if (e.pointerType === "touch") return;
+  const el = e.target.closest?.(".mo-tilt");
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+  el.style.setProperty("--ry", `${(x * 7).toFixed(2)}deg`);
+  el.style.setProperty("--rx", `${(-y * 6).toFixed(2)}deg`);
+}
+function soltarTilt(e) {
+  const el = e.target.closest?.(".mo-tilt");
+  if (!el || el.contains(e.relatedTarget)) return;
+  el.style.setProperty("--rx", "0deg"); el.style.setProperty("--ry", "0deg");
+}
+
+/* Cambios de vista con View Transitions donde existan (Chrome/Edge 111+,
+   Safari 18+); sin soporte o con reduced-motion, cambio directo — cada vista
+   ya trae su propia entrada CSS, así que nunca queda "sin animación rota". */
+function conTransicion(fn) {
+  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  if (document.startViewTransition && !reduce) document.startViewTransition(() => flushSync(fn));
+  else fn();
+}
+
+/* Separa un texto en palabras animables (.mo-palabra) dentro de una línea
+   que recorta (.mo-linea), con retardo escalonado por índice global. */
+function PalabrasCineticas({ lineas, desde = 0 }) {
+  let i = desde;
+  return lineas.map((linea, li) => (
+    <span key={li} className="mo-linea">
+      {linea.split(" ").map((p, pi, arr) => (
+        <span key={pi} className="mo-palabra" style={{ "--i": i++ }}>{p}{pi < arr.length - 1 ? " " : ""}</span>
+      ))}
+    </span>
+  ));
 }
 
 /* ============================ DATOS REALES ============================ */
@@ -1381,9 +1503,22 @@ const sonarCarrito = () => sonar(880, .09, .06);
 // genérico, salvo que el propio botón marque `data-sonido="carrito"` (el
 // "+"/agregar de Carta), que usa el tono distinto de `sonarCarrito`.
 function manejarTapSonido(e) {
-  const el = e.target.closest(".press, .mo-press, .mo-tap");
+  const el = e.target.closest(".press, .mo-press, .mo-tap, .mo-ink");
   if (!el) return;
-  if (el.dataset.sonido === "carrito") sonarCarrito(); else sonarTap();
+  const carrito = el.dataset.sonido === "carrito";
+  if (carrito) sonarCarrito(); else sonarTap();
+  vibrar(carrito ? 14 : 8);
+}
+
+// Háptica (Fase 8): un pulso cortísimo en el tap, atado al MISMO opt-in que
+// el sonido (apagado por defecto). Android/Chrome lo soportan; iOS Safari no
+// expone navigator.vibrate y simplemente no pasa nada.
+function vibrar(ms) {
+  try {
+    if (localStorage.getItem("qc-sonido") !== "1") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    navigator.vibrate?.(ms);
+  } catch { /* sin vibración disponible */ }
 }
 
 /* ============================ MENÚ ============================ */
@@ -3266,7 +3401,7 @@ export default function QuadroCafe() {
 
   return (
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
-      <div className="qc" onClick={manejarTapSonido} style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
+      <div className="qc" onClick={manejarTapSonido} onPointerDown={manejarTinta} onPointerMove={manejarTilt} onPointerOut={soltarTilt} style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
         <style>{css}</style>
         <div style={{
           position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940,
@@ -3658,7 +3793,7 @@ export function BarraDashboard({ onVolver } = {}) {
 
   return (
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
-      <div className="qc" style={{ minHeight: "100vh", background: C.surface, color: C.text }}>
+      <div className="qc" onPointerDown={manejarTinta} style={{ minHeight: "100vh", background: C.surface, color: C.text }}>
         <style>{css}</style>
         {contenido}
       </div>
@@ -3668,4 +3803,4 @@ export function BarraDashboard({ onVolver } = {}) {
 
 /* Piezas compartidas con el módulo del equipo (src/equipo/, login + roles).
    EquipoApp importa de acá; App.jsx nunca importa de src/equipo/ (sin ciclo). */
-export { PALETAS, ThemeCtx, useTheme, buildCss, Admin, Marca, ThemeToggle };
+export { PALETAS, ThemeCtx, useTheme, buildCss, Admin, Marca, ThemeToggle, manejarTinta, conTransicion };

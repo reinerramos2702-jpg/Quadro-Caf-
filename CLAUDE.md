@@ -122,6 +122,16 @@ Alcance confirmado por el dueño, 4 ítems, sin nada implícito más allá de es
 
 **Con esto el sprint "Alta Gama" (Fases 2–7) queda completo.**
 
+## Motion system — Fase 8: "UI premium" (01/oct/2026, rama quadro-feature-reunion-05sept)
+
+Capa transversal **nueva y centralizada** en `CSS_MOTION_V2(C)` (la inyecta `buildCss`; colores solo de `PALETAS`). No reescribe ninguna clase de las fases 2–7. Reglas: solo `transform`/`opacity`, todo apagado con `prefers-reduced-motion` y **cero librerías nuevas** (CSS moderno alcanza; ver `docs/PROGRESO-LOOP.md` §8).
+- Clases:
+  - `.mo-ink`: tinta desde el punto de toque. Opt-in porque usa `overflow:hidden` y hay botones con badges afuera; el delegado `manejarTinta` va en `onPointerDown` de cada raíz.
+  - `.mo-lift`, `.mo-tilt` (solo puntero fino, `manejarTilt`), `.mo-reveal` (`animation-timeline: view()` con `@supports`), `.mo-aparece` (`@starting-style`), `.mo-brillo`, `.mo-palabra`/`.mo-linea` (con `PalabrasCineticas`), `.mo-flap` y `.mo-caer`.
+- Helpers: `conTransicion(fn)` (View Transitions con fallback directo) y `vibrar(ms)` (háptica atada al opt-in de sonido).
+- La regla global de reduced-motion ahora fuerza `animation-iteration-count:1`. `html,body{margin:0}` arregla el margen blanco de 8 px que tenía la app del cliente.
+- **Esta PC de desarrollo tiene las animaciones de Windows apagadas**: Chrome reporta reduced-motion y la app se ve quieta a propósito. Para verificar motion por CDP hay que emular `prefers-reduced-motion: no-preference`.
+
 ## Reunión 05/sept (rama `quadro-feature-reunion-05sept`, 2026-09-18, retomada tras apagón)
 
 El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 11, 12, 13, 14 y 15. Los puntos 5, 6 y 9 están diferidos y van con presupuesto aparte. Carta y Cart/Checkout son módulos production-stable con una excepción autorizada para esta reunión. `/#barra` solo recibe la pastilla del comprobante. **No se hace merge a `main` sin la aprobación explícita de Reiner.**

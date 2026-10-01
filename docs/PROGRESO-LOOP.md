@@ -228,3 +228,22 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
    - Verificado en Chrome: red caída → "Sin conexión"; red de vuelta + Reintentar → selector. Tests actualizados (25/25).
 3. **(Bajo) `html,body{background:var(--eq-tinta)}` nunca aplicaba**: las variables viven en un descendiente.
    - Fix: el valor del token se inyecta directo (`PALETAS.oscuro.tinta`). Verificado: `rgb(11,15,13)` en `html` y `body`.
+
+## Iteración 8 — UI premium con motion: capa transversal "Fase 8" (01/oct/2026)
+- **Decisión sobre librerías: 0 nuevas.**
+  - Todo lo que pide la fase (tinta al tocar, inclinación, revelado por scroll, tipografía cinética, split-flap, View Transitions, entradas con `@starting-style`) sale con CSS/HTML moderno y ~1.5 KB gzip.
+  - `motion` (LazyMotion + domAnimation, ~20–43 KB gzip según el issue motiondivision/motion#1585, ya evaluado en la Fase 2) y `@formkit/auto-animate` (~3 KB) quedan disponibles si una pantalla los pide de verdad. Hoy no hace falta ninguno.
+- **Archivos**: `src/App.jsx`. El bloque `CSS_MOTION_V2(C)` queda **centralizado** y lo inyecta `buildCss`; los colores salen de `PALETAS` (cero hex).
+  - Clases: `.mo-ink` (tinta en el punto de toque), `.mo-lift`, `.mo-tilt` (solo puntero fino), `.mo-reveal` (`animation-timeline: view()` con `@supports`), `.mo-aparece` (`@starting-style`), `.mo-brillo`, `.mo-palabra`/`.mo-linea`, `.mo-flap` y `.mo-caer`, más tokens para `::view-transition-*`.
+  - Delegados únicos por raíz: `manejarTinta` (pointerdown) y `manejarTilt`/`soltarTilt`.
+  - Helpers: `conTransicion` (View Transitions con fallback directo; lo usa también `/equipo`) y `PalabrasCineticas`.
+  - Háptica opt-in (`vibrar`, atada al mismo toggle que el sonido; iOS no la expone).
+  - Arreglos de paso:
+    - **margen blanco de 8 px del `body` en la app del cliente** (preexistente): `html,body{margin:0}` con el fondo del tema;
+    - la regla global de reduced-motion ahora fuerza `animation-iteration-count:1`. Antes, las animaciones infinitas (`.pulse`, `.drip`, `.mo-skeleton`…) seguían en bucle a .001 s con reduced-motion.
+- **Hallazgo de entorno (importante para Reiner)**: Chrome en esta PC reporta `prefers-reduced-motion: reduce` porque **Windows tiene las animaciones apagadas** (Configuración → Accesibilidad → Efectos visuales). En este equipo la app se ve **sin animaciones** a propósito. Para ver el motion hay que activar "Efectos de animación". Desde aquí las verificaciones de motion emulan `no-preference` y el modo reducido se prueba aparte.
+- **Verificación**:
+  - test 25/25; lint 0 errores; build OK (bundle **154.43 KB**, +1.46 KB por toda la capa; tope 170).
+  - Tinta: un pointerdown real en el botón "Entrar" escribe `--tx: 40px`, `data-ink=a` y la animación `qc-ink-a 0.56s`.
+  - Cliente: `body` con margen 0 y fondo del tema.
+  - Sin errores de consola.

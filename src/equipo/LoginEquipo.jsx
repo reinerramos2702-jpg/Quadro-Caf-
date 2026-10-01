@@ -308,7 +308,7 @@ export function LoginEquipo({ inicial = "login", onClaveNueva, onEntrando }) {
         <p className="eq-sub" role="status">
           Si ese correo pertenece al equipo, te enviamos un enlace para elegir una contraseña nueva.
         </p>
-        <button type="button" className="eq-boton" onClick={() => cambiar("login")} ref={primerCampoRef}><span>Volver a entrar</span></button>
+        <button type="button" className="eq-boton mo-ink" onClick={() => cambiar("login")} ref={primerCampoRef}><span>Volver a entrar</span></button>
       </div>
     );
   } else if (modo === "recuperar") {
@@ -318,7 +318,7 @@ export function LoginEquipo({ inicial = "login", onClaveNueva, onEntrando }) {
         <p className="eq-sub">Escribe tu email y te mandamos un enlace.</p>
         {campoEmail}
         {errorUI}
-        <button type="submit" className="eq-boton" disabled={cargando} data-cargando={cargando ? "1" : "0"} aria-busy={cargando}>
+        <button type="submit" className="eq-boton mo-ink" disabled={cargando} data-cargando={cargando ? "1" : "0"} aria-busy={cargando}>
           <span>{cargando ? "Enviando…" : "Enviar enlace"}</span>
         </button>
         <div className="eq-pie">
@@ -336,7 +336,7 @@ export function LoginEquipo({ inicial = "login", onClaveNueva, onEntrando }) {
         {campoClave("eq-clave-nueva", clave, setClave, "Contraseña nueva", "new-password", primerCampoRef)}
         {campoClave("eq-clave-repite", clave2, setClave2, "Repite la contraseña", "new-password")}
         {errorUI}
-        <button type="submit" className="eq-boton" disabled={cargando} data-cargando={cargando ? "1" : "0"} aria-busy={cargando}>
+        <button type="submit" className="eq-boton mo-ink" disabled={cargando} data-cargando={cargando ? "1" : "0"} aria-busy={cargando}>
           <span>{cargando ? "Guardando…" : "Guardar contraseña"}</span>
         </button>
       </form>
@@ -349,7 +349,7 @@ export function LoginEquipo({ inicial = "login", onClaveNueva, onEntrando }) {
         {campoEmail}
         {campoClave("eq-clave", clave, setClave, "Contraseña", "current-password")}
         {errorUI}
-        <button type="submit" className="eq-boton" disabled={cargando} data-cargando={cargando ? "1" : "0"} aria-busy={cargando}>
+        <button type="submit" className="eq-boton mo-ink" disabled={cargando} data-cargando={cargando ? "1" : "0"} aria-busy={cargando}>
           <span>{cargando ? "Entrando…" : "Entrar"}</span>
         </button>
         <div className="eq-pie">

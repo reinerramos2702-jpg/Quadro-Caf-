@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { flushSync } from "react-dom";
 import { Coffee, LayoutDashboard, LogOut, ShieldAlert } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import { PALETAS, ThemeCtx, buildCss, Admin, BarraDashboard } from "../App.jsx";
+import { PALETAS, ThemeCtx, buildCss, Admin, BarraDashboard, manejarTinta, conTransicion } from "../App.jsx";
 import { resolverRol, vistaInicial } from "./rol";
 import { CSS_EQUIPO, EscenaEquipo, LogoEquipo, LoginEquipo, variablesEquipo } from "./LoginEquipo.jsx";
 
@@ -18,15 +17,8 @@ import { CSS_EQUIPO, EscenaEquipo, LogoEquipo, LoginEquipo, variablesEquipo } fr
    Solo usa la publishable key (src/lib/supabase.js); no crea usuarios ni
    guarda claves ni tokens (la sesión la maneja supabase-js). */
 
-const reduceMotion = () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-
-// Cambios de vista con View Transitions donde existan; si no, cambio directo
-// (cada vista trae su propia entrada CSS).
-function transicion(fn) {
-  if (typeof document !== "undefined" && document.startViewTransition && !reduceMotion()) {
-    document.startViewTransition(() => flushSync(fn));
-  } else fn();
-}
+// Cambios de vista con View Transitions (helper compartido con la app).
+const transicion = conTransicion;
 
 function leerTema() {
   try {
@@ -129,7 +121,7 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
             <p className="eq-sub" role="alert">
               No pudimos verificar tu acceso. Revisa la conexión e intenta de nuevo.
             </p>
-            <button type="button" className="eq-boton" onClick={() => setIntento((n) => n + 1)}><span>Reintentar</span></button>
+            <button type="button" className="eq-boton mo-ink" onClick={() => setIntento((n) => n + 1)}><span>Reintentar</span></button>
             <div className="eq-pie">
               <button type="button" className="eq-link" onClick={salir}>
                 <LogOut size={13} style={{ verticalAlign: "-2px", marginRight: 6 }} />Cerrar sesión
@@ -150,7 +142,7 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
               <ShieldAlert size={14} style={{ verticalAlign: "-2px", marginRight: 6 }} />
               Tu cuenta no tiene acceso al equipo. Si crees que es un error, avisa al administrador.
             </p>
-            <button type="button" className="eq-boton" onClick={salir}><span>Cerrar sesión</span></button>
+            <button type="button" className="eq-boton mo-ink" onClick={salir}><span>Cerrar sesión</span></button>
           </div>
         </section>
       </>
@@ -164,11 +156,11 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
             <h1 id="eq-titulo" className="eq-titulo">Hola, equipo</h1>
             <p className="eq-sub">¿Dónde trabajas ahora?</p>
             <div className="eq-opciones">
-              <button type="button" className="eq-opcion" onClick={() => ir("barra")}>
+              <button type="button" className="eq-opcion mo-ink" onClick={() => ir("barra")}>
                 <span className="eq-opcion-icono"><Coffee size={22} /></span>
                 <span><b>Barra</b><small>Pedidos en vivo y comprobantes</small></span>
               </button>
-              <button type="button" className="eq-opcion" onClick={() => ir("admin")}>
+              <button type="button" className="eq-opcion mo-ink" onClick={() => ir("admin")}>
                 <span className="eq-opcion-icono"><LayoutDashboard size={22} /></span>
                 <span><b>Panel Admin</b><small>Carta, precios y disponibilidad</small></span>
               </button>
@@ -186,7 +178,7 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
 
   return (
     <ThemeCtx.Provider value={{ tema: "oscuro", setTema: () => {}, C: N }}>
-      <div className="qc" style={variablesEquipo(N)}>
+      <div className="qc" onPointerDown={manejarTinta} style={variablesEquipo(N)}>
         <style>{cssEscena}</style>
         <EscenaEquipo>{contenido}</EscenaEquipo>
       </div>
@@ -204,7 +196,7 @@ function AdminEquipo({ onVolver }) {
   const css = useMemo(() => buildCss(C), [C]);
   return (
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
-      <div className="qc" style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: C.shell }}>
+      <div className="qc" onPointerDown={manejarTinta} style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: C.shell }}>
         <style>{css}</style>
         <div className="mo-enter" style={{
           position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940,
