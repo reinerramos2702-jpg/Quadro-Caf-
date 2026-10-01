@@ -958,16 +958,19 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, log
   );
 }
 
-function Chip({ children, active, onClick, tone, onTone }) {
+// `tactil` (Carta premium · PR-1): alto mínimo de 44 px para que el chip sea
+// un objetivo táctil completo. Sin él, el chip conserva su alto de siempre.
+function Chip({ children, active, onClick, tone, onTone, tactil = false, ...resto }) {
   const { C } = useTheme();
   const bg = tone || C.brand;
   const fg = onTone || C.onBrand;
   return (
-    <button onClick={onClick} className="press mono mo-ink" style={{
+    <button type="button" onClick={onClick} className="press mono mo-ink" aria-pressed={active} {...resto} style={{
       // flexShrink 0: .mo-ink pone overflow:hidden, y en un ítem flex eso
       // vuelve min-width a 0 — sin esto el chip se encogía y se cortaba.
       flexShrink: 0,
-      padding: "7px 13px", borderRadius: 999, fontSize: 11, letterSpacing: ".08em",
+      ...(tactil ? { minHeight: 44, padding: "0 16px" } : { padding: "7px 13px" }),
+      borderRadius: 999, fontSize: 11, letterSpacing: ".06em",
       textTransform: "uppercase", whiteSpace: "nowrap", cursor: "pointer",
       border: `1px solid ${active ? bg : C.line}`,
       background: active ? bg : "transparent",
@@ -1003,19 +1006,28 @@ function Meter({ label, value, tone, delay = 0, triggerKey }) {
   );
 }
 
-function Header({ titulo, sub, right, onBack }) {
+// `compacto` (Carta premium · PR-1): etiqueta con tracking ≤ .06em, título
+// fluido que nunca desborda y botón de volver de 44 px con su propio texto
+// (`backLabel`). Las demás pantallas siguen viéndose igual que antes.
+function Header({ titulo, sub, right, onBack, compacto = false, backLabel = "Volver a inicio" }) {
   const { C } = useTheme();
   return (
     <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "22px 20px 14px", gap: 12 }}>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 10, minWidth: 0 }}>
         {onBack && (
-          <button onClick={onBack} className="press" aria-label="Volver a inicio" style={{ ...btnMiniStyle(C), flexShrink: 0, marginBottom: 3 }}>
-            <ArrowLeft size={15} />
+          <button type="button" onClick={onBack} className="press" aria-label={backLabel} style={{
+            ...btnMiniStyle(C), flexShrink: 0, marginBottom: 3,
+            ...(compacto ? { width: 44, height: 44, borderRadius: 12, marginBottom: 0 } : {}),
+          }}>
+            <ArrowLeft size={compacto ? 18 : 15} />
           </button>
         )}
         <div style={{ minWidth: 0 }}>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6 }}>{sub}</div>
-          <h1 className="disp" style={{ fontSize: 30, lineHeight: .95, margin: 0 }}>{titulo}</h1>
+          <div className="mono" style={{ fontSize: compacto ? 11 : 10, letterSpacing: compacto ? ".06em" : ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6, overflowWrap: "anywhere" }}>{sub}</div>
+          <h1 className="disp" style={{
+            fontSize: compacto ? "clamp(24px, 7.5vw, 30px)" : 30, lineHeight: compacto ? 1 : .95, margin: 0,
+            ...(compacto ? { overflowWrap: "anywhere" } : {}),
+          }}>{titulo}</h1>
         </div>
       </div>
       {right}
@@ -1565,6 +1577,10 @@ function vibrar(ms) {
 /* ============================ MENÚ ============================ */
 
 /* Carta premium · PR-1 (01/oct/2026): estilos de la tarjeta de producto.
+   .qc-raiz/.qc-marco: alto de la app en dvh (100vh queda solo de respaldo
+   para navegadores viejos). Con 100vh, en Chrome móvil el marco medía más
+   que la pantalla visible y el documento hacía scroll: eso "escondía" el
+   nav inferior.
    Van en CSS y no inline porque necesitan ::after (toda la tarjeta abre el
    detalle sin anidar botones dentro de otro botón) y line-clamp.
    - .pc-abrir: el nombre es el <button> que abre el detalle; su ::after se
@@ -1574,6 +1590,8 @@ function vibrar(ms) {
      ninguna palabra larga empuja la tarjeta fuera de la pantalla. */
 function CSS_CARTA(C) {
   return `
+.qc-raiz{min-height:100vh;min-height:100dvh}
+.qc-marco{height:100vh;height:100dvh}
 .pc-card{position:relative;min-width:0}
 .pc-card *{min-width:0}
 .pc-abrir{display:block;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
@@ -1817,7 +1835,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
-      <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} />
+      <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} compacto />
       {import.meta.env.DEV && fuente === "local" && (
         <div className="mono" style={{
           margin: "0 20px 12px", padding: "8px 12px", borderRadius: 10, fontSize: 10.5,
@@ -1903,7 +1921,7 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
-      <Header sub={m.cat} titulo={m.nombre} onBack={onBack} />
+      <Header sub="Carta" titulo={m.cat} onBack={onBack} compacto backLabel="Volver a la carta" />
       <div style={{ padding: "0 20px" }}>
         {foto && (
           <ResponsiveImg id={foto} alt={m.nombre} sizes="(max-width: 430px) calc(100vw - 40px), 390px" style={{
@@ -3442,10 +3460,11 @@ export default function QuadroCafe() {
 
   return (
     <ThemeCtx.Provider value={{ tema, setTema, C }}>
-      <div className="qc" onClick={manejarTapSonido} onPointerDown={manejarTinta} onPointerMove={manejarTilt} onPointerOut={soltarTilt} style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
+      <div className="qc qc-raiz" onClick={manejarTapSonido} onPointerDown={manejarTinta} onPointerMove={manejarTilt} onPointerOut={soltarTilt} style={{ display: "grid", placeItems: "center", background: PALETAS.oscuro.shell, padding: 0 }}>
         <style>{css}</style>
-        <div style={{
-          position: "relative", width: "100%", maxWidth: 430, height: "100vh", maxHeight: 940,
+        <div className="qc-marco" style={{
+          // Alto en la clase .qc-marco (100dvh, con 100vh solo de respaldo).
+          position: "relative", width: "100%", maxWidth: 430, maxHeight: 940,
           background: C.surface, overflow: "hidden", display: "flex", flexDirection: "column",
         }}>
           {splash ? (
@@ -3470,7 +3489,7 @@ export default function QuadroCafe() {
             </div>
           ) : null}
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px 0", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "max(14px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 0 max(20px, env(safe-area-inset-left))", flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
               <Marca size={26} />
               <span className="disp" style={{ fontSize: 15 }}>Quadro Café</span>
