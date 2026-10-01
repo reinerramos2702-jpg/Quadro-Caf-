@@ -1,20 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { resolverRol, esTablaStaffAusente, vistaInicial } from "../src/equipo/rol.js";
+import { resolverRol, vistaInicial } from "../src/equipo/rol.js";
 
 // Respuesta real de Supabase (01/oct/2026, GET /rest/v1/staff sin la tabla).
 const PGRST205_STAFF = { code: "PGRST205", details: null, hint: null, message: "Could not find the table 'public.staff' in the schema cache" };
 
-test("tabla staff ausente con PGRST205 → fallback admin (legacy)", () => {
-  assert.ok(esTablaStaffAusente(PGRST205_STAFF));
-  assert.deepEqual(resolverRol({ error: PGRST205_STAFF }), { rol: "admin", legacy: true, error: false, motivo: "tabla staff ausente (0008 sin aplicar)" });
-});
-
-test("tabla staff ausente con 42P01 → fallback admin (legacy)", () => {
-  for (const message of ['relation "public.staff" does not exist', 'relation "staff" does not exist']) {
-    const r = resolverRol({ error: { code: "42P01", message } });
-    assert.equal(r.rol, "admin");
-    assert.equal(r.legacy, true);
+// El fallback TODO(0008) se retiró con 0008 en producción: una tabla staff
+// ausente ya no da admin, es un error de lectura más (deniega + reintentar).
+test("tabla staff ausente (PGRST205 o 42P01) → acceso denegado, sin fallback", () => {
+  for (const error of [PGRST205_STAFF, { code: "42P01", message: 'relation "public.staff" does not exist' }]) {
+    assert.deepEqual(resolverRol({ error }), { rol: null, error: true, motivo: "error al leer el rol" });
   }
 });
 
@@ -26,20 +21,7 @@ test("error de red → acceso denegado", () => {
   ]) {
     const r = resolverRol({ error });
     assert.equal(r.rol, null, JSON.stringify(error));
-    assert.equal(r.legacy, false);
     assert.equal(r.error, true, "error de lectura → la UI ofrece reintentar");
-  }
-});
-
-test("PGRST205 o 42P01 de OTRA tabla → acceso denegado", () => {
-  for (const error of [
-    { code: "PGRST205", message: "Could not find the table 'public.ordenes' in the schema cache" },
-    { code: "PGRST205", message: "Could not find the table 'public.staff_viejo' in the schema cache" },
-    { code: "PGRST205", message: "Could not find the table 'public.mi_staff' in the schema cache" },
-    { code: "42P01", message: 'relation "public.staffing" does not exist' },
-  ]) {
-    assert.equal(esTablaStaffAusente(error), false, error.message);
-    assert.equal(resolverRol({ error }).rol, null, error.message);
   }
 });
 
@@ -49,7 +31,7 @@ test("permisos u otro código que nombre staff → acceso denegado", () => {
 });
 
 test("con la tabla: rol según la fila; sin fila o rol raro → denegado", () => {
-  assert.deepEqual(resolverRol({ data: { rol: "admin" } }), { rol: "admin", legacy: false, error: false, motivo: "staff" });
+  assert.deepEqual(resolverRol({ data: { rol: "admin" } }), { rol: "admin", error: false, motivo: "staff" });
   assert.equal(resolverRol({ data: null }).error, false, "sin fila = sin acceso real, no error");
   assert.equal(resolverRol({ data: { rol: "barista" } }).rol, "barista");
   assert.equal(resolverRol({ data: null }).rol, null);

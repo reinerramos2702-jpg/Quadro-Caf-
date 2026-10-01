@@ -23,6 +23,8 @@ Hay que aplicarlo **uno por uno, en este orden**, verificando cada paso por lect
 | 7 | `0003_categoria_bolleria.sql` | Panadería → Bollería en la base | Solo **después** del deploy del merge | `select distinct cat from productos;` | `update productos set cat='Panadería' where cat='Bollería' and id in ('m9','m10');` |
 | 8 | Retirar el fallback `TODO(0008)` | Borrar la rama legacy de `resolverRol` y su test | Ninguno con 0008 aplicada | `npm test` | — |
 
+**Avance (01/oct, 19:05 UTC, verificado por SELECT)**: pasos **1–4 aplicados por Reiner** (siembra `admin · reinerramos2702@gmail.com` OK, policies por rol activas, advisors sin hallazgos nuevos inesperados) y **paso 8 hecho** en la rama (23/23 tests). Quedan 5 (redeploy, sigue en v3), 6 (merge) y 7 (0003).
+
 ---
 
 ## Iteración 0 — P0: precio comentado en `useCarta` (01/oct/2026)

@@ -8,37 +8,17 @@
 
 export const ROLES = ["admin", "barista"];
 
-/* ¿El error dice que la tabla `staff` no existe? Solo dos códigos significan
-   eso — PGRST205 (PostgREST: "Could not find the table 'public.staff' in the
-   schema cache", lo que devuelve Supabase hoy por la API) y 42P01 (Postgres:
-   relation "public.staff" does not exist) — y además el mensaje/detalle
-   tiene que nombrar ESA tabla. Cualquier otra cosa (red, permisos, timeout,
-   otra tabla ausente) no es "tabla ausente". */
-const NOMBRA_STAFF = /(^|[\s'"`(])(public\.)?staff(?=['"`)\s]|$)/i;
-
-export function esTablaStaffAusente(error) {
-  if (!error || (error.code !== "PGRST205" && error.code !== "42P01")) return false;
-  const texto = `${error.message || ""} ${error.details || ""}`;
-  return NOMBRA_STAFF.test(texto);
-}
-
-/* → { rol: "admin" | "barista" | null, legacy: boolean, error: boolean, motivo }
+/* → { rol: "admin" | "barista" | null, error: boolean, motivo }
    `error: true` = no se pudo LEER el rol (red, timeout, 5xx, permisos): el
    acceso se niega igual, pero la UI ofrece reintentar en vez de decir "tu
    cuenta no tiene acceso" (hallazgo del code review: con Wi-Fi inestable,
-   un fallo transitorio dejaba al barista en un "Sin acceso" definitivo). */
+   un fallo transitorio dejaba al barista en un "Sin acceso" definitivo).
+   Todo error deniega, sin excepciones: el fallback provisional para "tabla
+   staff ausente" se retiró el 01/oct/2026, con 0008 ya en producción. */
 export function resolverRol({ data, error } = {}) {
-  if (error) {
-    // TODO(0008): retirar este fallback en cuanto 0008_staff_roles.sql esté
-    // aplicada en producción (ver docs/PROGRESO-LOOP.md, iteración 5). Existe
-    // solo para que el merge no deje a Reiner sin Barra/Admin si llega antes
-    // que la migración: sin la tabla, la RLS vigente sigue siendo la de
-    // siempre ("cualquier authenticated"), así que esto no abre nada nuevo.
-    if (esTablaStaffAusente(error)) return { rol: "admin", legacy: true, error: false, motivo: "tabla staff ausente (0008 sin aplicar)" };
-    return { rol: null, legacy: false, error: true, motivo: "error al leer el rol" };
-  }
-  if (data && ROLES.includes(data.rol)) return { rol: data.rol, legacy: false, error: false, motivo: "staff" };
-  return { rol: null, legacy: false, error: false, motivo: "sin fila en staff" };
+  if (error) return { rol: null, error: true, motivo: "error al leer el rol" };
+  if (data && ROLES.includes(data.rol)) return { rol: data.rol, error: false, motivo: "staff" };
+  return { rol: null, error: false, motivo: "sin fila en staff" };
 }
 
 /* A qué vista va cada rol. `pedido` sale de la URL (#barra / #admin). */

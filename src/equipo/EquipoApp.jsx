@@ -62,9 +62,7 @@ export default function EquipoApp({ pedido = null, recuperacion = false }) {
       .then((res) => res, (error) => ({ data: null, error }))
       .then((res) => {
         if (cancelado) return;
-        const info = resolverRol(res);
-        if (info.legacy) console.warn("[Equipo] Tabla staff ausente: 0008 sin aplicar. Acceso de admin provisional (TODO retirar).");
-        setRolInfo(info);
+        setRolInfo(resolverRol(res));
       });
     return () => { cancelado = true; };
   }, [uid, intento]);

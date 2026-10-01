@@ -796,3 +796,10 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
   - Escena de marca verde sobre los fondos nocturnos, con contraste AA medido en píxeles (peor caso 5.5) y verde en el 98–99.5% de los píxeles con color.
   - Gate verificado con respuestas simuladas, más un 401 real y la red caída. El login con la cuenta real queda para Reiner.
 - Estado real de Supabase el 01/oct (solo lectura): `productos` 12 filas, `ordenes` 15 (la última del 18/ago), 0 comprobantes. 0004 y 0005 están aplicadas; la edge function va en la v3.
+
+## 01/oct/2026 (tarde) — Reiner aplicó 0006–0009; se retira el fallback TODO(0008)
+- **Verificado por SELECT (19:05 UTC)**: tabla `public.staff` con `admin · reinerramos2702@gmail.com`; trigger `ordenes_validar_total`; funciones `obtener_orden`, `es_staff`, `es_admin`, `validar_total_orden`; policies por rol (`productos_escritura_admin`, `ordenes_actualizacion_staff`, `staff_lectura_propia`, `comprobantes_lectura_staff`). `ordenes_lectura_publica` sigue (el cierre es otro bloque). Edge function **todavía v3** (falta el redeploy). `productos.cat` sigue con "Panadería" (0003 va después del merge). `list_migrations` vacío: se aplicó por SQL Editor, no por CLI.
+- Una primera lectura de la sesión (≈18:19 UTC) no veía nada aplicado: Reiner lo aplicó entre medio. Repetir la verificación antes de concluir.
+- Advisors tras 0009: solo quedan los esperados (`obtener_orden` ejecutable por anon a propósito, `es_staff`/`es_admin` por authenticated porque la RLS los usa, `ordenes_contador` sin policies a propósito) + la protección de contraseñas filtradas apagada (Auth, la activa Reiner).
+- **Fallback retirado**: `resolverRol` ya no tiene la excepción `PGRST205`/`42P01` de `staff`; todo error al leer el rol deniega con Reintentar. Se borraron `esTablaStaffAusente`, el campo `legacy` y el `console.warn` de `EquipoApp`. `npm test` 23/23.
+- **Decisiones de Reiner**: los dígitos en títulos (`V60`, `#0xx`) **se quedan como están**; `ALLOWED_ORIGINS` **no se configura**: solo hay `workers.dev`, que ya está en la lista por defecto de `origen.js`.
