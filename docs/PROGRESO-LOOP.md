@@ -266,3 +266,17 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
   - mouse sobre la tarjeta → `--rx 1.80deg / --ry 2.45deg`;
   - abrir Cortado dispara 1 View Transition con `foto-m5`; la captura a mitad muestra la foto creciendo.
   - Sin errores. Bundle 154.69 KB.
+
+### 8.3 Carrito y Ticket
+- **Carrito**:
+  - las filas entran escalonadas;
+  - el total "late" al cambiar (`useRetriggerAnim(total, "mo-late")`);
+  - "Enviar a barra" con tinta y **llenado** (`.mo-llenado`: una lámina sube mientras envía, `aria-busy`);
+  - los métodos de pago con tinta.
+- **Ticket**:
+  - el número de orden entra en **split-flap**, dígito por dígito (`.mo-flap`, `aria-label` con el número entero);
+  - una **línea de vertido** une los pasos y crece con `scaleY(paso/total)` según el estado real de Realtime;
+  - los checks entran con pop.
+- **Conflicto evitado**: animar cada fila de pasos con `.rise` (fill both → `opacity: 1`) pisaba el `opacity: .35` de los pasos pendientes. La entrada va en el contenedor.
+- Verificado con el pedido **interceptado** en el navegador (POST a `ordenes` respondido en local, nada insertado), en los dos temas: total 10.2, 4 dígitos con aria, opacidades 1/1/.35/.35, línea `scaleY(1/3)` en "moliendo", sin errores.
+- La lógica de pedido, precios y Supabase no cambió.

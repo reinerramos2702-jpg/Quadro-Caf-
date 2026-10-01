@@ -351,11 +351,16 @@ html,body{margin:0;background:${C.shell}}
 .mo-flap{display:inline-block;transform-origin:50% 0;animation:qc-flap 620ms var(--ease-spring) both;animation-delay:calc(var(--i,0) * 110ms + 200ms)}
 @keyframes qc-flap{0%{transform:perspective(300px) rotateX(-92deg);opacity:0}60%{opacity:1}100%{transform:perspective(300px) rotateX(0);opacity:1}}
 .mo-caer{animation:qc-caer 640ms var(--ease-spring) both}
+.mo-llenado::before{content:"";position:absolute;inset:0;z-index:-1;background:${C.onBrand};opacity:.18;transform:translateY(101%);pointer-events:none}
+.mo-llenado[data-cargando="1"]::before{animation:qc-llenado 1.3s var(--ease-in-out) infinite}
+@keyframes qc-llenado{0%{transform:translateY(101%)}70%,100%{transform:translateY(0)}}
+.mo-late{animation:qc-late 420ms var(--ease-spring)}
+@keyframes qc-late{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes qc-caer{0%{transform:translateY(-26px) scale(.96);opacity:0}70%{transform:translateY(3px) scale(1.005);opacity:1}100%{transform:none;opacity:1}}
 ::view-transition-group(*){animation-duration:var(--motion-slow);animation-timing-function:var(--ease-out)}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:var(--motion-base)}
 @media (prefers-reduced-motion:reduce){
-  .mo-ink::after,.mo-brillo::before,.mo-reveal,.mo-palabra,.mo-flap,.mo-caer{animation:none!important;opacity:1}
+  .mo-ink::after,.mo-brillo::before,.mo-reveal,.mo-palabra,.mo-flap,.mo-caer,.mo-llenado::before,.mo-late{animation:none!important;opacity:1}
   .mo-tilt{transform:none!important}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
@@ -2967,6 +2972,7 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState("");
   const elegido = METODOS_PAGO.find((m) => m.id === metodo);
+  const totalRef = useRetriggerAnim(total, "mo-late"); // Fase 8: el total "late" al cambiar
 
   // Comprobante opcional — solo tiene sentido para pagos que dejan captura
   // (todo menos efectivo). Nunca es obligatorio para enviar el pedido.
@@ -3021,8 +3027,8 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
           </p>
         ) : (
           <>
-            {filas.map((f) => (
-              <div key={f.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 0", borderBottom: `1px solid ${C.line}` }}>
+            {filas.map((f, i) => (
+              <div key={f.id} className="rise" style={{ animationDelay: `${80 + i * 55}ms`, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 0", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 600 }}>{f.n}× {f.nombre}</div>
                   {f.finca && <div className="mono" style={{ fontSize: 10, color: C.textMuted, marginTop: 3 }}>{lote.finca} · taza {taza.nombre.toLowerCase()}</div>}
@@ -3072,7 +3078,7 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
                 // ocupa las dos columnas en vez de quedar huérfano a la izquierda.
                 const ultimoSolo = i === METODOS_PAGO.length - 1 && METODOS_PAGO.length % 2 === 1;
                 return (
-                  <button key={m.id} onClick={() => setMetodo(m.id)} className="press" style={{
+                  <button key={m.id} onClick={() => setMetodo(m.id)} className="press mo-ink" style={{
                     gridColumn: ultimoSolo ? "1 / -1" : undefined,
                     display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: 12,
                     border: `1px solid ${on ? C.brand : C.line}`, background: on ? `${C.brand}14` : "transparent",
@@ -3120,11 +3126,11 @@ function Carrito({ carrito, cerrar, quitar, lote, taza, enviarABarra }) {
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", margin: "18px 0 16px" }}>
               <span className="mono" style={{ fontSize: 11, letterSpacing: ".16em", color: C.textMuted, textTransform: "uppercase" }}>Total</span>
-              <span className="disp" style={{ fontSize: 30 }}><AnimatedNumber value={total} format={money} /></span>
+              <span ref={totalRef} className="disp" style={{ fontSize: 30, display: "inline-block", transformOrigin: "100% 60%" }}><AnimatedNumber value={total} format={money} /></span>
             </div>
 
             {error && <p style={{ fontSize: 12, color: C.warn, marginTop: 14, marginBottom: -6 }}>{error}</p>}
-            <button onClick={onEnviar} disabled={enviando} className="press" style={{
+            <button onClick={onEnviar} disabled={enviando} className="press mo-ink mo-llenado" data-cargando={enviando ? "1" : "0"} aria-busy={enviando} style={{
               marginTop: 18, width: "100%", padding: 15, borderRadius: 14, border: "none",
               background: C.brand, color: C.onBrand, fontWeight: 700, fontSize: 15, cursor: "pointer",
               opacity: enviando ? .65 : 1,
@@ -3241,7 +3247,13 @@ function Ticket({ orden, envioComprobante, cerrar }) {
           </div>
         </div>
         <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase" }}>Orden</div>
-        <div className="disp" style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px" }}>#{String(orden.numero_orden).padStart(3, "0")}</div>
+        {/* Fase 8: el número entra dígito por dígito, tipo split-flap
+           (aria-label con el número entero para lectores de pantalla). */}
+        <div className="disp" aria-label={`Orden número ${orden.numero_orden}`} style={{ fontSize: 52, lineHeight: 1, margin: "6px 0 20px" }}>
+          {("#" + String(orden.numero_orden).padStart(3, "0")).split("").map((d, i) => (
+            <span key={i} className="mo-flap" aria-hidden="true" style={{ "--i": i }}>{d}</span>
+          ))}
+        </div>
         {elegido && (
           <div className="mono" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 11, color: C.textMuted, marginTop: -12, marginBottom: 20 }}>
             <elegido.icono size={13} /> {elegido.nombre}
@@ -3249,19 +3261,28 @@ function Ticket({ orden, envioComprobante, cerrar }) {
         )}
         <EstadoComprobante estado={comprobante} envio={envioComprobante} demorado={demorado} C={C} />
 
-        <div style={{ textAlign: "left", maxWidth: 260, margin: "0 auto" }}>
+        {/* Fase 8: una línea de "vertido" une los pasos y crece (scaleY, solo
+           transform) hasta el paso real que manda la barra por Realtime. */}
+        <div className="rise" style={{ animationDelay: "260ms", textAlign: "left", maxWidth: 260, margin: "0 auto", position: "relative" }}>
+          <span aria-hidden="true" style={{ position: "absolute", left: 9.5, top: 10, bottom: 24, width: 1, background: C.line }} />
+          <span aria-hidden="true" style={{
+            position: "absolute", left: 9, top: 10, bottom: 24, width: 2, borderRadius: 2, background: C.brand,
+            transformOrigin: "50% 0", transform: `scaleY(${lista ? paso / lista : 1})`,
+            transition: "transform var(--motion-slow) var(--ease-in-out)",
+          }} />
           {ESTADOS_ORDEN.map((p, i) => (
-            <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, opacity: i <= paso ? 1 : .35, transition: "opacity .4s" }}>
+            <div key={p.id} style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, marginBottom: 14, opacity: i <= paso ? 1 : .35, transition: "opacity .4s" }}>
               <span style={{
                 width: 20, height: 20, borderRadius: 6, display: "grid", placeItems: "center",
-                background: i <= paso ? C.brand : "transparent", border: `1px solid ${i <= paso ? C.brand : C.line}`, color: C.onBrand,
-              }}>{i <= paso && <Check size={12} />}</span>
+                background: i <= paso ? C.brand : C.surface, border: `1px solid ${i <= paso ? C.brand : C.line}`, color: C.onBrand,
+                transition: "background-color var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out)",
+              }}>{i <= paso && <Check size={12} className="pop" />}</span>
               <span style={{ fontSize: 14, fontWeight: i === paso ? 700 : 400 }}>{p.label}</span>
             </div>
           ))}
         </div>
 
-        <button onClick={cerrar} className="press" style={{
+        <button onClick={cerrar} className="press mo-ink" style={{
           marginTop: 22, padding: "13px 26px", borderRadius: 99, cursor: "pointer",
           border: `1px solid ${C.line}`, background: "transparent", color: C.text, fontSize: 14,
         }}>
