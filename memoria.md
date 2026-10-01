@@ -778,4 +778,5 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 
 ## 01/oct/2026 — Loop largo: seguridad + login del equipo + UI (bitácora en `docs/PROGRESO-LOOP.md`)
 - **P0 corregido (iteración 0)**: en `91dc218`, el comentario de compat de `useCarta` quedó en la misma línea que `precio: Number(p.precio),` y lo comentaba. Con Supabase activo, la Carta mostraba `$NaN` y los pedidos fallaban, porque `total` llegaba NaN y se serializaba como null. El mapeo pasó a `src/lib/carta.js` (`mapearProducto`), cubierto por `test/carta.test.js` (`npm test`). Verificado con Supabase real y con el POST de la orden interceptado (nada insertado).
+- **Iteración 0b**: fondos del login commiteados aparte (`54eccee`), ESLint mínimo + CI de GitHub Actions. `npm audit`: 8 altas + 2 moderadas, preexistentes y solo de tooling (no cambian al sumar lint). Quedan como deuda en el ROADMAP.
 - Estado real de Supabase el 01/oct (solo lectura): `productos` 12 filas, `ordenes` 15 (la última del 18/ago), 0 comprobantes. 0004 y 0005 están aplicadas; la edge function va en la v3.

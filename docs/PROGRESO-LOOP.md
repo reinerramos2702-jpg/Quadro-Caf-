@@ -26,3 +26,16 @@ Línea base del bundle principal: **153.73 KB gzip** (`index-*.js`, medido en la
   - Único error de consola: el registro de `sw.js` en local (no se genera por el mismo apóstrofo; en Cloudflare sí existe).
 - **Hallazgos**: ninguno nuevo.
 - **Siguiente**: 0b. Assets del login en commit propio y base de lint/CI.
+
+## Iteración 0b — assets del login + lint + CI (01/oct/2026)
+- **Objetivo**: dejar `npm test`, `npm run lint` y `npm run build` como bucle de verificación, con CI que los corra.
+- **Archivos**:
+  - Commit propio `54eccee`: "assets: fondos del login" (4 `.webp` de `public/img/`, sin tocar).
+  - `eslint.config.js` (nuevo): mínimo a propósito, con `no-undef`, `react-hooks/rules-of-hooks` y parseo JSX.
+  - `.github/workflows/ci.yml` (nuevo): `npm ci` → test → lint → build en Node 22. Corre en cada push y PR, sin deploy.
+  - `package.json`: script `lint` y devDeps con **versión fija**: `eslint@10.11.0`, `eslint-plugin-react-hooks@7.1.1`, `globals@17.13.0`. Las tres son MIT, sin scripts de instalación y con publicación en septiembre/octubre de 2026.
+- **Verificación**:
+  - test 5/5; lint 0 errores; build OK (153.73 KB gzip, sin cambios: son devDeps).
+  - Lockfile: las 26 entradas `@img/sharp*` (binarios opcionales por plataforma) siguen todas.
+- **Hallazgo — deuda de dependencias (preexistente)**: `npm audit` da 10 (2 moderadas, 8 altas) **idénticas antes y después** de agregar lint, comparando contra el lockfile previo. Todas son tooling de build/dev: `wrangler`/`miniflare`/`undici`, `sharp` (libvips), `vite`/`postcss`/`nanoid`, `browserslist`, `brace-expansion`, `fast-uri`, `baseline-browser-mapping`. Ninguna entra al bundle del cliente. No corrí `npm audit fix` porque sube majors de tooling (wrangler/sharp) sin pedido. Queda como deuda en el ROADMAP.
+- **Siguiente**: 1. Fusión de placeholders en `useCarta`.

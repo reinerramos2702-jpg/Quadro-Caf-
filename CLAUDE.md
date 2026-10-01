@@ -12,7 +12,8 @@ A mobile-first web app for Quadro Café, a real coffee shop at 4ª Av. de Los Pa
 - Icons: `lucide-react`
 - Single-file component pattern: the entire app lives in `src/App.jsx` (mounted by `src/main.jsx`).
 - Deploy: GitHub → **Cloudflare Workers Builds** (not Pages — see `wrangler.toml`, which serves `./dist` as static assets with SPA fallback). Auto-deploys on push to `main`; `README.md` documents the build-time env vars. Note `VITE_*` variables must exist in Cloudflare's *build* environment, not as Worker runtime bindings.
-- `npm run dev` / `npm run build` / `npm run preview`
+- `npm run dev` / `npm run build` / `npm run preview` / `npm test` (`node --test test/`) / `npm run lint` (ESLint mínimo: `no-undef` + `rules-of-hooks`)
+- CI: `.github/workflows/ci.yml` corre test → lint → build en cada push y PR (sin deploy). DevDeps de tooling con versión fija.
 
 ## Theme system
 
