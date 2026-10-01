@@ -309,3 +309,18 @@ Verificó que están bien: el formato de líneas que espera 0006, que 0009 cubre
 - **Admin**: la perilla del switch "Disponible hoy" pasa de animar `left` a `translateX` con spring, y el botón ahora es `role="switch"` con `aria-checked` (lo anuncia bien un lector de pantalla).
 - Verificado con sesión inventada y **datos simulados en el navegador**: `staff`/`ordenes`/`productos` interceptados, Realtime bloqueado, nada real leído ni escrito. Barra a 1280×800 y Admin a 390×844, en los dos temas: 2 órdenes animadas, "Volver" presente, switches `aria-checked` true/false con `translateX(16px)`/`none` y foco de teclado OK. Sin errores. Bundle 155.30 KB.
 - Lógica de órdenes, precios y Supabase sin cambios.
+
+### 8.8 Regresión final de la fase UI
+- **36 capturas** (9 pantallas × 2 temas × 390×844 y 1440×900) con **0 errores de consola**, más la pasada con `prefers-reduced-motion: reduce` (contenido visible y quieto, 0 errores).
+- Revelado por scroll: en Postres, la última tarjeta arranca con opacidad 0 y queda en 1 al llegar con el scroll (no se queda invisible).
+- CI de GitHub en verde en todos los commits de la fase.
+- Login (8.0, iteración 5): AA medido sobre píxeles (peor caso 5.5) y verde ≥ 98%.
+- **Bundle final: 155.30 KB gzip** (línea base 153.73; tope 170). Chunk de `/equipo`: 7.68 KB, diferido.
+- **Pantallas pendientes de la fase: ninguna** de la lista (Inicio, Carta, Carrito, Ticket, Fincas, Aula, Barra/Admin, Login). Lab no estaba en la lista y no se tocó, más allá de lo transversal: chips y reduced-motion.
+
+---
+
+## Cierre del loop (01/oct/2026)
+- **META**: build OK; cliente implementado; migraciones preparadas y **no aplicadas**; login del equipo funcionando contra Supabase Auth sin crear usuarios (verificado el camino de error real); paleta verde verificada; docs sincronizados; deuda de seguridad actualizada. **Cumplida.**
+- Tareas bloqueadas: **ninguna**.
+- Lo que queda es de Reiner: ver el "Lote de migraciones" arriba y el Bloque 2 del reporte final.

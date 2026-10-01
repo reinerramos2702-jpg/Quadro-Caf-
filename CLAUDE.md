@@ -132,6 +132,17 @@ Capa transversal **nueva y centralizada** en `CSS_MOTION_V2(C)` (la inyecta `bui
   - `.mo-lift`, `.mo-tilt` (solo puntero fino, `manejarTilt`), `.mo-reveal` (`animation-timeline: view()` con `@supports`), `.mo-aparece` (`@starting-style`), `.mo-brillo`, `.mo-palabra`/`.mo-linea` (con `PalabrasCineticas`), `.mo-flap` y `.mo-caer`.
 - Helpers: `conTransicion(fn)` (View Transitions con fallback directo) y `vibrar(ms)` (háptica atada al opt-in de sonido).
 - La regla global de reduced-motion ahora fuerza `animation-iteration-count:1`. `html,body{margin:0}` arregla el margen blanco de 8 px que tenía la app del cliente.
+- **Por pantalla** (cada una en su commit):
+  - Inicio: titular cinético y destello en el banner del Club.
+  - Carta: foto/nombre compartidos con el detalle por View Transitions (`view-transition-name: foto-<id>`/`nombre-<id>`), inclinación con puntero fino y revelado por scroll en un wrapper aparte. No poner `.mo-reveal` y `.mo-tilt` en el mismo nodo: la animación con fill fija `transform:none`.
+  - Carrito: filas escalonadas, total con `mo-late` y CTA con `mo-llenado`.
+  - Ticket: número split-flap y línea de vertido (`scaleY(paso/total)`).
+  - Fincas: Ken Burns en el retrato.
+  - Aula: barra de avance con `scaleX`, chispas en la racha y destello en la insignia.
+  - Tienda: destello desfasado.
+  - Barra: `.mo-caer` y estado con pop.
+  - Admin: switch con `translateX` y `role="switch"`.
+- **Trampas ya encontradas**: `.mo-ink` pone `overflow:hidden`, que vuelve `min-width` a 0 en ítems flex (por eso `Chip` lleva `flexShrink:0`). Animar con `fill: both` sobre un nodo con `opacity` inline la pisa (los pasos del Ticket).
 - **Esta PC de desarrollo tiene las animaciones de Windows apagadas**: Chrome reporta reduced-motion y la app se ve quieta a propósito. Para verificar motion por CDP hay que emular `prefers-reduced-motion: no-preference`.
 
 ## Reunión 05/sept (rama `quadro-feature-reunion-05sept`, 2026-09-18, retomada tras apagón)

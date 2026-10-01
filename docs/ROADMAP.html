@@ -509,6 +509,7 @@
           <div class="qa"><b>Datos técnicos del lote</b> (bloquean la ficha, no se pueden inventar): proceso de beneficio, puntaje SCA, notas de cata de la Geisha, altitud exacta, disponibilidad/cantidad, precio de referencia.</div>
           <div class="qa"><b>Encuadre del avatar:</b> ¿aprueba foto estática + botón "Hablar con José Tomás"?</div>
           <div class="qa"><b>Texto del "Ver guion":</b> confirmar que no hay errores de datos/nombres.</div>
+          <div class="qa"><b>Dígitos en títulos (01/oct):</b> la fuente VIOLA no trae números, así que "V60" en la Carta y el "#0xx" de la Barra se ven más grandes que el texto. ¿Normalizarlos (recomendado), pasarlos a Nexa o dejarlos así? En el Ticket ya está corregido.</div>
           <div class="qa"><b>Otras confirmaciones sin resolver:</b> rol "Caficultor" para Falsir Dúran (Los Naranjos) correcto; a qué finca referenciar ahora el postre "m11" (Santa Cruz de Mora ya no es válida); si ajustar copy de Quadro Club al tono newsletter.</div>
           <div class="qa"><b>Resuelto 30/sept — 45 productos placeholder de Carta:</b> faltan nombre definitivo (donde dice "variante 1/2" o "por confirmar"), precio y descripción/receta real para sacarlos de estado "Próximamente". Se reúne con el dueño jueves/viernes (ver PDF de recolección de datos, Bloque 11).</div>
         </div>
@@ -528,6 +529,18 @@
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 9 — Pipeline de fotos de producto (DALL-E + ChatGPT Work)</div><div class="tl-desc">48 fotos originales curadas en 8 categorías, editadas en batch por ChatGPT Work (DALL-E) con prompt genérico validado, procesadas a JPG (mozjpeg) + 3 WebP (480/900/1170) y cargadas a <span class="mono">src/assets/</span> + <span class="mono">assetManifest.js</span>. Auditoría de seguridad hecha sobre las skills candidatas (4 limpias, 1 excluida — <span class="mono">browser-use</span>, requiere API key de pago y daemon en la nube de un tercero). Proceso completo guardado como skill reusable <span class="mono">pipeline-imagenes-work-dalle</span>. Avatar real de José Tomás (Agua Fría) reemplazó el placeholder — commit <span class="mono">c979f9b</span>.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 10 — Carta con foto + vista de producto completa (30/sept)</div><div class="tl-desc">Mapeo <span class="mono">id</span>→foto cerrado en <span class="mono">FOTO_PRODUCTO</span> (3 productos reales + 45 nuevos placeholder, categoría <span class="mono">Infusiones</span> agregada). Nueva pantalla <span class="mono">DetalleProducto</span> (mismo patrón full-screen que Admin/Fincas, con <span class="mono">Header</span>+<span class="mono">onBack</span>): tocar cualquier tarjeta de la Carta abre foto grande, descripción completa, precio y botones de carrito. Patrón "Próximamente" (badge + "Por confirmar" + sin botón de carrito) para los 45 placeholder, distinto de "Agotado hoy" para no confundir al cliente. Validado con <span class="mono">acorn-jsx</span> (parse OK, sin poder correr el build real desde la VM Linux contra <span class="mono">node_modules</span> de Windows). Commit <span class="mono">221ba2b</span>, sobre <span class="mono">552d04d</span>.</div></div></div>
           <div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 11 — Ficha de recolección de datos para el dueño (30/sept)</div><div class="tl-desc">PDF <span class="mono">docs/Quadro_Cafe_Ficha_Productos_Nuevos.pdf</span> con los 45 productos placeholder agrupados por categoría (Espresso 9, Frío 8, Bollería 4, Postres 14, Infusiones 10), con columnas en blanco para nombre real/precio/descripción — para completar con el dueño en la reunión del 2-3 de octubre. Incluye nota de cierre sobre el Cheesecake de cascarilla (decidido: se queda sin foto).</div></div></div>
+          <div class="tl-item warn"><div class="tl-dot"></div><div class="tl-body"><div class="tl-title">Bloque 12 — Loop largo: seguridad + login del equipo + UI premium (01/oct)</div><div class="tl-desc">Todo en la rama, CI en verde, <strong>nada aplicado en Supabase ni mergeado</strong>. Lo que se hizo:
+<ul>
+<li><strong>P0 corregido:</strong> la Carta con Supabase perdía los precios.</li>
+<li>Los 45 placeholders vuelven a verse en producción.</li>
+<li>Migraciones 0006–0009 escritas y probadas en Postgres local: total en el servidor, lectura por id, roles y RLS por rol con candado.</li>
+<li>Login del equipo en <span class="mono">/equipo</span>, con roles barista/admin.</li>
+<li>Edge function con CORS por allowlist y tope de OCR.</li>
+<li>CI de GitHub (test, lint y build).</li>
+<li>UI premium con motion en todas las pantallas, sin librerías nuevas (bundle 155 KB).</li>
+<li>Fraunces nunca cargaba: arreglado.</li>
+</ul>
+Detalle en <span class="mono">docs/PROGRESO-LOOP.md</span>.</div></div></div>
         </div>
       </section>
 
