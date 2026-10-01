@@ -6,11 +6,16 @@ import {
   Mail, Lock, ArrowLeft, Sun, Moon, Settings, LogOut,
   Banknote, Smartphone, Landmark, DollarSign, Coins, ImagePlus, Receipt, Clock,
   Volume2, VolumeX, Bell, XCircle, Home, Package, User, Mic, Flame, Store, ExternalLink,
+  Hourglass,
 } from "lucide-react";
 
 import { supabase } from "./lib/supabase";
 import { parsearAgenteDid, cargarSdkDid } from "./lib/did";
 import { fusionarCarta } from "./lib/carta";
+import {
+  estadoProducto, vistaTarjeta, fotoDeProducto,
+  guardarPosicion, leerPosicion, borrarPosicion, scrollRestaurable,
+} from "./lib/productoCard";
 import { ASSET_MANIFEST } from "./data/assetManifest";
 import logo from "./assets/logo.png";
 import clubBox from "./assets/club-box.jpg";
@@ -295,6 +300,7 @@ ${FONTS}
 .mo-skeleton{background:linear-gradient(90deg, ${C.line} 25%, ${C.surface} 50%, ${C.line} 75%);background-size:200% 100%;animation:qc-shimmer 1.1s ease-in-out infinite}
 :focus-visible{outline:2px solid ${C.brand};outline-offset:2px;border-radius:6px}
 ${CSS_MOTION_V2(C)}
+${CSS_CARTA(C)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}}
 `;
 }
@@ -890,7 +896,7 @@ function SonidoToggle() {
    dibujado — hoy `lab-tubos`; las demás lo traen integrado en el producto
    (el bowl, el plato, la caja, el vaso) o en la propia escena, y una segunda
    marca encima quedaría duplicada. */
-function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, logo = false, sizes = "(max-width: 430px) calc(100vw - 56px), 374px" }) {
+function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, logo = false, sizes = "(max-width: 430px) calc(100vw - 56px), 374px", ancho, alto }) {
   const asset = ASSET_MANIFEST[id];
   if (!asset) return null;
   const { objectFit, objectPosition, ...wrapperStyle } = style;
@@ -920,7 +926,10 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, log
       <source type="image/webp"
         srcSet={asset.webp.map(([src, w]) => `${src} ${w}w`).join(", ")}
         sizes={sizes} />
-      <img src={asset.jpg} alt={alt} loading={eager ? "eager" : "lazy"} style={{
+      {/* ancho/alto (opcionales): atributos explícitos para que el navegador
+         reserve la caja antes de cargar (miniaturas de la Carta, PR-1). */}
+      <img src={asset.jpg} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async"
+        width={ancho} height={alto} style={{
         width: "100%", height: "100%", display: "block",
         objectFit: objectFit || "cover",
         ...(objectPosition ? { objectPosition } : {}),
@@ -1555,6 +1564,197 @@ function vibrar(ms) {
 
 /* ============================ MENÚ ============================ */
 
+/* Carta premium · PR-1 (01/oct/2026): estilos de la tarjeta de producto.
+   Van en CSS y no inline porque necesitan ::after (toda la tarjeta abre el
+   detalle sin anidar botones dentro de otro botón) y line-clamp.
+   - .pc-abrir: el nombre es el <button> que abre el detalle; su ::after se
+     estira sobre la tarjeta entera. Los controles (.pc-ctl) quedan encima.
+   - .pc-clamp: máx. 2 líneas; el nombre completo sigue en el detalle.
+   - Todo hijo de flex/grid con min-width:0 y textos con overflow-wrap:
+     ninguna palabra larga empuja la tarjeta fuera de la pantalla. */
+function CSS_CARTA(C) {
+  return `
+.pc-card{position:relative;min-width:0}
+.pc-card *{min-width:0}
+.pc-abrir{display:block;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.pc-abrir::after{content:"";position:absolute;inset:0;border-radius:16px}
+.pc-abrir:focus-visible{outline:none}
+.pc-abrir:focus-visible::after{outline:2px solid ${C.brand};outline-offset:2px}
+.pc-ctl{position:relative;z-index:1}
+.pc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.pc-nombre{font-size:clamp(16px,4.6vw,20px);line-height:1.12}
+.pc-desc{font-size:clamp(13px,3.5vw,14px);line-height:1.4;color:${C.textMuted};margin:4px 0 0}
+.pc-etiqueta{font-size:11px;letter-spacing:.06em;color:${C.brandAlt};margin-bottom:3px;overflow-wrap:anywhere}
+.pc-pill{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:4px 9px;border-radius:999px;font-size:12px;line-height:1.25;letter-spacing:.01em;font-weight:700;overflow-wrap:break-word;hyphens:auto}
+`;
+}
+
+/* Foto 1:1 de la tarjeta, o el monograma de marca si el producto no tiene
+   foto (nunca un hueco ni una foto inventada). `pill` va sobre la esquina de
+   la foto y nunca en la línea del nombre. */
+function FotoProducto({ m, foto, pill, pillTono, desaturar, lado = 96 }) {
+  const { C } = useTheme();
+  const tono = pillTono === "warn" ? { background: C.warn, color: C.onBrandAlt } : { background: C.brand, color: C.onBrand };
+  return (
+    <div style={{ position: "relative", width: lado, height: lado, flexShrink: 0, borderRadius: 12, overflow: "hidden", background: C.surface }}>
+      {foto ? (
+        <ResponsiveImg id={foto} alt={m.nombre} sizes={`${lado}px`} ancho={lado} alto={lado} style={{
+          width: lado, height: lado, aspectRatio: "1 / 1", borderRadius: 12,
+          viewTransitionName: `foto-${m.id}`,
+          filter: desaturar ? "grayscale(.4)" : undefined,
+        }} />
+      ) : (
+        <div role="img" aria-label={`${m.nombre} · sin foto todavía`} style={{
+          width: "100%", height: "100%", display: "grid", placeItems: "center",
+          border: `1px solid ${C.line}`, borderRadius: 12, boxSizing: "border-box",
+          viewTransitionName: `foto-${m.id}`,
+          filter: desaturar ? "grayscale(.4)" : undefined,
+        }}>
+          <span style={{ opacity: .85 }}><Marca size={Math.round(lado * .46)} /></span>
+        </div>
+      )}
+      {pill && (
+        <span className="pc-pill" style={{
+          position: "absolute", top: 4, left: 4, maxWidth: "calc(100% - 8px)",
+          padding: "2px 5px", fontSize: 11, letterSpacing: 0, ...tono,
+        }}>{pill}</span>
+      )}
+    </div>
+  );
+}
+
+/* La única etiqueta "por confirmar" de la tarjeta: compacta, en el flujo
+   normal (nunca absolute), capitalización normal, borde punteado tenue. */
+function PrecioPorConfirmar() {
+  const { C } = useTheme();
+  return (
+    <span className="pc-pill" style={{
+      border: `1px dashed ${C.brandAlt}99`, background: `${C.brandAlt}14`, color: C.text,
+    }}>
+      <Hourglass size={14} strokeWidth={1.75} aria-hidden style={{ color: C.brandAlt, flexShrink: 0 }} />
+      Precio por confirmar
+    </span>
+  );
+}
+
+/* Tarjeta única de producto (Carta premium · PR-1). Jerarquía: foto >
+   nombre > precio/estado. El estado sale de estadoProducto() y qué se pinta
+   de vistaTarjeta() (src/lib/productoCard.js), así no hay dos caminos que
+   puedan mostrar dos etiquetas a la vez. La lógica del carrito (add/quitar)
+   no cambia. */
+function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoBtnRef, lote, setLote, taza, setTaza }) {
+  const { C } = useTheme();
+  const estado = estadoProducto(m);
+  const v = vistaTarjeta(estado);
+  const foto = fotoDeProducto(m.id, FOTO_PRODUCTO, ASSET_MANIFEST);
+  const boton44 = { ...btnMiniStyle(C), width: 44, height: 44, borderRadius: 12, flexShrink: 0 };
+  const agregar = (e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); };
+  // Personalizable (V60…): el "+" primero abre el selector de finca y taza
+  // que ya existía; con el selector abierto, agrega con esa elección.
+  const mas = (e) => { if (v.abreSelector && !abierto) onSelector(); else agregar(e); };
+
+  return (
+    <article className="pc-card mo-tilt" data-producto={m.id} data-estado={estado} style={{
+      background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
+      borderRadius: 16, padding: 12, marginBottom: 10,
+      transition: "border-color .25s, transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out)",
+    }}>
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <FotoProducto m={m} foto={foto} pill={v.pillFoto} pillTono={estado === "agotado" ? "warn" : "brand"} desaturar={v.desaturar} />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 96 }}>
+          {m.tag && estado !== "proximamente" && (
+            <div className="mono pc-etiqueta">{m.tag}</div>
+          )}
+          <h3 style={{ margin: 0, fontWeight: 400 }}>
+            <button type="button" className="pc-abrir" onClick={onAbrir}>
+              <span className="disp pc-clamp pc-nombre" title={m.nombre} style={{ viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</span>
+            </button>
+          </h3>
+          {m.desc && <p className="pc-clamp pc-desc">{m.desc}</p>}
+
+          <div style={{ marginTop: "auto", paddingTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+            {v.precio ? (
+              <span className="mono" style={{ fontSize: 15, letterSpacing: ".02em", color: C.text, fontWeight: 700 }}>{money(m.precio)}</span>
+            ) : <span />}
+            {v.porConfirmar && <PrecioPorConfirmar />}
+            {v.agregar && (
+              <div className="pc-ctl" style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
+                {n > 0 && (
+                  <>
+                    <button type="button" onClick={() => quitar(m.id)} className="mo-press" aria-label={`Quitar un ${m.nombre}`} style={boton44}><Minus size={16} /></button>
+                    <span className="mono" aria-live="polite" style={{ minWidth: 20, textAlign: "center", fontSize: 14 }}><AnimatedNumber value={n} /></span>
+                  </>
+                )}
+                <button
+                  type="button" onClick={mas} className="mo-press" data-sonido={v.abreSelector && !abierto ? undefined : "carrito"}
+                  aria-label={v.abreSelector && !abierto ? `Elegir finca y taza para ${m.nombre}` : `Agregar ${m.nombre}`}
+                  aria-expanded={v.abreSelector ? abierto : undefined}
+                  style={{ ...boton44, background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                  <Plus size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {v.abreSelector && (
+        <>
+          <button type="button" onClick={onSelector} className="mo-press mono pc-ctl" aria-expanded={abierto} style={{
+            minHeight: 44, marginTop: 4, padding: "0 2px", fontSize: 11, letterSpacing: ".06em", color: C.brand,
+            background: "none", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center",
+          }}>
+            {abierto ? "Ocultar opciones" : "Elegir finca y taza"}
+          </button>
+          <div className="pc-ctl" style={{ display: "grid", gridTemplateRows: abierto ? "1fr" : "0fr", transition: "grid-template-rows var(--motion-base) var(--ease-in-out)" }} aria-hidden={!abierto} inert={abierto ? undefined : ""}>
+            <div style={{ overflow: "hidden" }}>
+              <div style={{ marginTop: 6, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
+                <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", marginBottom: 8 }}>Finca</div>
+                <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
+                  {FINCAS_EN_BARRA.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
+                </div>
+                <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", margin: "14px 0 8px" }}>Taza</div>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                  {TAZAS.map((t) => (
+                    <button key={t.id} type="button" onClick={() => setTaza(t)} className="mo-press" aria-label={`Taza ${t.nombre}`} aria-pressed={taza.id === t.id} style={{
+                      width: 44, height: 44, borderRadius: 10, background: t.hex, cursor: "pointer",
+                      border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
+                    }} />
+                  ))}
+                </div>
+                <p style={{ fontSize: 13, color: C.textMuted, marginTop: 10, lineHeight: 1.45, overflowWrap: "anywhere" }}>
+                  <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </article>
+  );
+}
+
+/* Detalle de un producto "por confirmar": que se lea como algo en
+   preparación, no como un error. Sin botón de agregar. */
+function PorConfirmarDetalle() {
+  const { C } = useTheme();
+  return (
+    <div style={{
+      display: "flex", gap: 14, alignItems: "flex-start",
+      background: C.card, border: `1px dashed ${C.brandAlt}80`, borderRadius: 16, padding: 16,
+    }}>
+      <span aria-hidden style={{
+        width: 40, height: 40, flexShrink: 0, borderRadius: 12, display: "grid", placeItems: "center",
+        background: `${C.brandAlt}14`, color: C.brandAlt,
+      }}><Hourglass size={18} strokeWidth={1.75} /></span>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 4, overflowWrap: "anywhere" }}>Estamos afinando este producto</div>
+        <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.5, margin: 0, overflowWrap: "anywhere" }}>Precio y receta por confirmar. Pronto en la carta.</p>
+      </div>
+    </div>
+  );
+}
+
 function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carritoBtnRef }) {
   const { C } = useTheme();
   const [cat, setCat] = useState("Filtrado");
@@ -1563,6 +1763,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   const { items: carta, fuente } = useCarta();
   const items = carta.filter((m) => m.cat === cat);
   const imgCategoria = CAT_IMG[cat];
+  const abrirDetalle = (m) => conTransicion(() => setDetalle(m));
 
   // Underline animado que se desliza al chip de categoría activo — se mide
   // la posición real del chip tocado (offsetLeft/offsetWidth, en vez de
@@ -1664,113 +1865,22 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
             ))
           ) : (
             <div className="slide">
-              {items.map((m) => {
-              const n = carrito.filter((x) => x.id === m.id).length;
-              const open = abierto === m.id;
-              const agotado = m.disponible === false;
-              const proximamente = m.nuevo === true;
-              return (
+              {items.map((m) => (
                 // Fase 8: el revelado por scroll va en este wrapper y la
                 // inclinación en la tarjeta — una animación con fill fija
                 // transform:none y anularía la inclinación si fueran el mismo nodo.
                 <div key={m.id} className="mo-reveal">
-                <div className="mo-tilt" style={{
-                  background: C.card, border: `1px solid ${n ? C.brand : C.line}`,
-                  borderRadius: 16, padding: 14, marginBottom: 10,
-                  transition: "border-color .25s, transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out)",
-                  opacity: agotado ? .55 : 1,
-                }}>
-                  <div
-                    onClick={() => conTransicion(() => setDetalle(m))}
-                    style={{ display: "flex", justifyContent: "space-between", gap: 12, cursor: "pointer" }}
-                  >
-                    {FOTO_PRODUCTO[m.id] && (
-                      <ResponsiveImg id={FOTO_PRODUCTO[m.id]} alt={m.nombre} sizes="64px" style={{
-                        width: 64, height: 64, aspectRatio: "1 / 1", borderRadius: 12, flexShrink: 0,
-                        viewTransitionName: `foto-${m.id}`,
-                      }} />
-                    )}
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                        <span className="disp" style={{ fontSize: 15, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</span>
-                        {proximamente ? (
-                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Próximamente</span>
-                        ) : agotado ? (
-                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>Agotado hoy</span>
-                        ) : m.tag && (
-                          <span className="mono" style={{ fontSize: 9, padding: "2px 7px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600, display: "inline-grid", placeItems: "center" }}>{m.tag}</span>
-                        )}
-                      </div>
-                      <p style={{ fontSize: 12.5, color: C.textMuted, margin: "5px 0 0", lineHeight: 1.45 }}>{m.desc}</p>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      {proximamente ? (
-                        <div className="mono" style={{ fontSize: 11, color: C.textMuted, fontWeight: 600 }}>Por confirmar</div>
-                      ) : (
-                        <div className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-                    {agotado ? <span /> : m.finca ? (
-                      <button onClick={() => setAbierto(open ? null : m.id)} className="mo-press mono" style={{
-                        fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: C.brand,
-                        background: "none", border: "none", cursor: "pointer", padding: 0,
-                      }}>
-                        {open ? "Ocultar opciones" : "Elegir finca y taza"}
-                      </button>
-                    ) : <span />}
-                    {proximamente ? (
-                      <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Precio y receta por confirmar</span>
-                    ) : agotado ? (
-                      <span className="mono" style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: C.textMuted }}>Vuelve mañana</span>
-                    ) : (
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        {n > 0 && (
-                          <>
-                            <button onClick={() => quitar(m.id)} className="mo-press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={14} /></button>
-                            <span className="mono" style={{ width: 16, textAlign: "center", fontSize: 13 }}><AnimatedNumber value={n} /></span>
-                          </>
-                        )}
-                        <button
-                          onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
-                          className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
-                          style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand }}>
-                          <Plus size={14} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {!agotado && m.finca && (
-                    <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows var(--motion-base) var(--ease-in-out)" }} aria-hidden={!open}>
-                      <div style={{ overflow: "hidden" }}>
-                        <div style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
-                          <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 8 }}>Finca</div>
-                          <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
-                            {FINCAS_EN_BARRA.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
-                          </div>
-                          <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", textTransform: "uppercase", margin: "14px 0 8px" }}>Taza</div>
-                          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                            {TAZAS.map((t) => (
-                              <button key={t.id} onClick={() => setTaza(t)} className="mo-press" aria-label={`Taza ${t.nombre}`} style={{
-                                width: 30, height: 30, borderRadius: 8, background: t.hex, cursor: "pointer",
-                                border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
-                              }} />
-                            ))}
-                          </div>
-                          <p style={{ fontSize: 12, color: C.textMuted, marginTop: 10, lineHeight: 1.45 }}>
-                            <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <ProductCard
+                    m={m}
+                    n={carrito.filter((x) => x.id === m.id).length}
+                    abierto={abierto === m.id}
+                    onSelector={() => setAbierto(abierto === m.id ? null : m.id)}
+                    onAbrir={() => abrirDetalle(m)}
+                    add={add} quitar={quitar} carritoBtnRef={carritoBtnRef}
+                    lote={lote} setLote={setLote} taza={taza} setTaza={setTaza}
+                  />
                 </div>
-                </div>
-              );
-            })}
+              ))}
           </div>
           )}
         </div>
@@ -1785,9 +1895,11 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
 function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
   const { C } = useTheme();
   const n = carrito.filter((x) => x.id === m.id).length;
-  const agotado = m.disponible === false;
-  const proximamente = m.nuevo === true;
-  const foto = FOTO_PRODUCTO[m.id];
+  // Mismo estado y misma vista que la tarjeta (src/lib/productoCard.js).
+  const estado = estadoProducto(m);
+  const v = vistaTarjeta(estado);
+  const foto = fotoDeProducto(m.id, FOTO_PRODUCTO, ASSET_MANIFEST);
+  const boton44 = { ...btnMiniStyle(C), width: 44, height: 44, borderRadius: 12, flexShrink: 0 };
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
@@ -1797,53 +1909,49 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
           <ResponsiveImg id={foto} alt={m.nombre} sizes="(max-width: 430px) calc(100vw - 40px), 390px" style={{
             width: "100%", aspectRatio: "1 / 1", borderRadius: 18, marginBottom: 16,
             viewTransitionName: `foto-${m.id}`,
+            filter: v.desaturar ? "grayscale(.4)" : undefined,
           }} />
         )}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-          {proximamente ? (
-            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>Próximamente</span>
-          ) : agotado ? (
-            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.warn, color: C.onBrandAlt, fontWeight: 600 }}>Agotado hoy</span>
-          ) : m.tag && (
-            <span className="mono" style={{ fontSize: 10, padding: "3px 9px", borderRadius: 99, background: C.brandAlt, color: C.onBrandAlt, fontWeight: 600 }}>{m.tag}</span>
-          )}
-        </div>
-        <h2 style={{ fontFamily: "inherit", fontSize: 22, fontWeight: 700, margin: "0 0 6px", color: C.text, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
-        <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px" }}>{m.desc}</p>
-
-        <div style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
-        }}>
-          <div>
-            <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 4 }}>Precio</div>
-            {proximamente ? (
-              <div className="mono" style={{ fontSize: 16, color: C.textMuted, fontWeight: 600 }}>Por confirmar</div>
+        {(v.pillFoto || m.tag) && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+            {v.pillFoto ? (
+              <span className="pc-pill" style={estado === "agotado" ? { background: C.warn, color: C.onBrandAlt } : { background: C.brand, color: C.onBrand }}>{v.pillFoto}</span>
             ) : (
-              <div className="mono" style={{ fontSize: 20, color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
+              <span className="mono pc-etiqueta" style={{ margin: 0 }}>{m.tag}</span>
             )}
           </div>
-          {proximamente || agotado ? (
-            <span className="mono" style={{ fontSize: 11, color: C.textMuted, textTransform: "uppercase", letterSpacing: ".06em" }}>
-              {proximamente ? "Aún no disponible" : "Vuelve mañana"}
-            </span>
-          ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {n > 0 && (
-                <>
-                  <button onClick={() => quitar(m.id)} className="mo-press" aria-label="Quitar uno" style={btnMiniStyle(C)}><Minus size={16} /></button>
-                  <span className="mono" style={{ width: 18, textAlign: "center", fontSize: 15 }}><AnimatedNumber value={n} /></span>
-                </>
-              )}
-              <button
-                onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
-                className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
-                style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand, width: 40, height: 40 }}>
-                <Plus size={18} />
-              </button>
+        )}
+        <h2 style={{ fontFamily: "inherit", fontSize: 22, fontWeight: 700, margin: "0 0 6px", color: C.text, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
+        {m.desc && <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px" }}>{m.desc}</p>}
+
+        {v.porConfirmar ? <PorConfirmarDetalle /> : (
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
+            background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
+          }}>
+            <div style={{ minWidth: 0 }}>
+              <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", marginBottom: 4 }}>Precio</div>
+              <div className="mono" style={{ fontSize: 20, letterSpacing: ".02em", color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
             </div>
-          )}
-        </div>
+            {v.agregar && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
+                {n > 0 && (
+                  <>
+                    <button type="button" onClick={() => quitar(m.id)} className="mo-press" aria-label={`Quitar un ${m.nombre}`} style={boton44}><Minus size={16} /></button>
+                    <span className="mono" aria-live="polite" style={{ minWidth: 22, textAlign: "center", fontSize: 15 }}><AnimatedNumber value={n} /></span>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
+                  className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
+                  style={{ ...boton44, background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                  <Plus size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
