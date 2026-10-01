@@ -1592,7 +1592,7 @@ function CSS_CARTA(C) {
   return `
 .qc-raiz{min-height:100vh;min-height:100dvh}
 .qc-marco{height:100vh;height:100dvh}
-.pc-card{position:relative;min-width:0}
+.pc-card{position:relative;min-width:0;scroll-margin-top:calc(var(--chips-alto,0px) + 8px);scroll-margin-bottom:calc(var(--nav-alto,80px) + 8px)}
 .pc-card *{min-width:0}
 .pc-abrir{display:block;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .pc-abrir::after{content:"";position:absolute;inset:0;border-radius:16px}
@@ -1786,12 +1786,28 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   // Underline animado que se desliza al chip de categoría activo — se mide
   // la posición real del chip tocado (offsetLeft/offsetWidth, en vez de
   // asumir un ancho fijo) porque cada nombre de categoría mide distinto.
+  // PR-1 · T4: el indicador vive DENTRO de la fila que hace scroll (se mueve
+  // con los chips) y se anima solo con transform (translateX + scaleX sobre
+  // una barra de 100 px), nunca con left/width.
   const chipRefs = useRef({});
+  const filaChipsRef = useRef(null);
+  const barraChipsRef = useRef(null);
+  const scrollRef = useRef(null);
+  const contenidoRef = useRef(null);
   const [indicador, setIndicador] = useState(null);
+  const [altoChips, setAltoChips] = useState(0);
   useLayoutEffect(() => {
     const el = chipRefs.current[cat];
     if (el) setIndicador({ left: el.offsetLeft, width: el.offsetWidth });
-  }, [cat]);
+    if (barraChipsRef.current) setAltoChips(barraChipsRef.current.offsetHeight);
+  }, [cat, detalle]);
+  // El chip activo se centra en su fila (scroll suave salvo reduced-motion).
+  useEffect(() => {
+    const fila = filaChipsRef.current, el = chipRefs.current[cat];
+    if (!fila || !el) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    fila.scrollTo({ left: el.offsetLeft - (fila.clientWidth - el.offsetWidth) / 2, behavior: reduce ? "auto" : "smooth" });
+  }, [cat, detalle]);
 
   // Skeleton breve al cambiar de categoría. useCarta() ya tiene todo en
   // memoria (no hay fetch por categoría, es un filtro local), así que esto
@@ -1813,6 +1829,10 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
     if (c === cat) return;
     setCambiando(true);
     setCat(c);
+    // Si la lista ya pasó por debajo de los chips, la categoría nueva arranca
+    // justo bajo ellos (scroll-margin-top = alto de los chips sticky).
+    const sc = scrollRef.current, cont = contenidoRef.current;
+    if (sc && cont && sc.scrollTop > cont.offsetTop - altoChips) sc.scrollTop = cont.offsetTop - altoChips;
   };
   useEffect(() => {
     if (!cambiando) return;
@@ -1834,7 +1854,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
   }
 
   return (
-    <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120 }}>
+    <div ref={scrollRef} className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: 120, scrollPaddingTop: altoChips, "--chips-alto": `${altoChips}px` }}>
       <Header sub="Carta viva" titulo="Pedir en barra" onBack={onBack} compacto />
       {import.meta.env.DEV && fuente === "local" && (
         <div className="mono" style={{
@@ -1844,24 +1864,35 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
           ⚠ Modo dev: mostrando MENU local — Supabase no respondió. Revisa la consola.
         </div>
       )}
-      <div style={{ position: "relative", padding: "0 20px 14px" }}>
-        <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto" }}>
+      {/* Chips sticky (PR-1 · T4): pegados arriba del contenedor que hace
+         scroll, que ya empieza justo debajo de la cabecera de la app — la
+         cabecera nunca los tapa. Fila a todo el ancho con padding propio al
+         inicio y al final (antes el padding era del padre y los recortaba). */}
+      <div ref={barraChipsRef} style={{ position: "sticky", top: 0, zIndex: 2, background: C.surface }}>
+        <nav aria-label="Categorías de la carta" ref={filaChipsRef} className="qc-scroll" style={{
+          position: "relative", display: "flex", gap: 8, overflowX: "auto", overscrollBehaviorX: "contain",
+          padding: "6px 20px 12px", scrollPaddingInline: 20,
+        }}>
           {CATS.map((c) => (
-            <div key={c} ref={(el) => { chipRefs.current[c] = el; }}>
-              <Chip active={c === cat} onClick={() => cambiarCategoria(c)}>{c}</Chip>
+            <div key={c} ref={(el) => { chipRefs.current[c] = el; }} style={{ flexShrink: 0 }}>
+              <Chip tactil active={c === cat} onClick={() => cambiarCategoria(c)}>{c}</Chip>
             </div>
           ))}
-        </div>
-        {indicador && (
-          <span style={{
-            position: "absolute", bottom: 8, left: indicador.left, width: indicador.width,
-            height: 2, borderRadius: 99, background: C.brand, pointerEvents: "none",
-            transition: "left var(--motion-base) var(--ease-in-out), width var(--motion-base) var(--ease-in-out)",
-          }} />
-        )}
+          {/* Espaciador final: algunos WebKit ignoran el padding derecho
+             de un contenedor flex con scroll. */}
+          <span aria-hidden style={{ flex: "0 0 1px" }} />
+          {indicador && (
+            <span aria-hidden style={{
+              position: "absolute", left: 0, bottom: 6, width: 100, height: 2, borderRadius: 99,
+              background: C.brand, pointerEvents: "none", transformOrigin: "0 0",
+              transform: `translateX(${indicador.left}px) scaleX(${indicador.width / 100})`,
+              transition: "transform var(--motion-base) var(--ease-in-out)",
+            }} />
+          )}
+        </nav>
       </div>
 
-      <div style={{ padding: "0 20px" }}>
+      <div ref={contenidoRef} style={{ padding: "0 20px", scrollMarginTop: altoChips }}>
         {/* Un solo wrapper con key={cat} en vez de dos hermanos con su
            propia key cada uno (el banner por un lado, el slide de items
            por el otro) — con dos keys independientes en el mismo nivel,
@@ -1879,7 +1910,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
           )}
           {cambiando ? (
             [0, 1, 2].map((i) => (
-              <div key={i} className="mo-skeleton" style={{ height: 92, borderRadius: 16, marginBottom: 10 }} />
+              <div key={i} className="mo-skeleton" style={{ height: 122, borderRadius: 16, marginBottom: 10 }} />
             ))
           ) : (
             <div className="slide">
