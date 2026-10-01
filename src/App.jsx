@@ -2023,8 +2023,8 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
             )}
           </div>
         )}
-        <h2 style={{ fontFamily: "inherit", fontSize: 22, fontWeight: 700, margin: "0 0 6px", color: C.text, viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
-        {m.desc && <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px" }}>{m.desc}</p>}
+        <h2 style={{ fontFamily: "inherit", fontSize: "clamp(20px, 6vw, 24px)", lineHeight: 1.2, fontWeight: 700, margin: "0 0 6px", color: C.text, overflowWrap: "anywhere", viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
+        {m.desc && <p style={{ fontSize: "clamp(14px, 3.8vw, 15px)", color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px", overflowWrap: "anywhere" }}>{m.desc}</p>}
 
         {v.porConfirmar ? <PorConfirmarDetalle /> : (
           <div style={{
