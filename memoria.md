@@ -859,3 +859,5 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
   - Con 15 px el recorte de "V60" seguía (40 px de tinta). Se resolvió con el paso 2 de la consigna: `line-height:1.2` (el mínimo) y `padding-block:.25em`.
   - **No hizo falta tocar la escala de los dígitos**: `font-size-adjust` sigue igual.
   - `audit:visual`: 0 fallos. Capturas de main y de la rama a 360/390/412 idénticas en la lista, y "86.5" y los precios sin recorte.
+- **(c) El detalle usa la misma tipografía que la lista**: el nombre pasó de un h2 en Nexa Bold (`fontFamily: inherit`, 700) a `className="disp-m"` (VIOLA 22/28, el token que ya existía). Tag, pill y precio ya usaban las clases de la tarjeta. Queda un único texto suelto sin token equivalente: el título "Estamos afinando este producto" (16 px, Nexa Bold) de `PorConfirmarDetalle`. Se dejó como está y se reporta.
+  - La estructura del detalle (cabecera con la categoría, nombre una sola vez debajo de la foto) la eligió Reiner el 06/oct.
