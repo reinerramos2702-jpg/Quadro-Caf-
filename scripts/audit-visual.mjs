@@ -155,18 +155,25 @@ function medirPantalla([producto, pantalla]) {
       // Rectángulo táctil real: el del ::after de .qc-tactil si existe.
       let t = { x: r.left, y: r.top, w: r.width, h: r.height };
       if (b.classList.contains("qc-tactil") || b.classList.contains("qc-tactil-y")) {
+        // El ::after se posiciona contra la caja de padding (dentro del borde).
         const a = getComputedStyle(b, "::after");
         const px = (v) => parseFloat(v) || 0;
-        t = { x: r.left + px(a.left), y: r.top + px(a.top), w: r.width - px(a.left) - px(a.right), h: r.height - px(a.top) - px(a.bottom) };
+        t = {
+          x: r.left + b.clientLeft + px(a.left), y: r.top + b.clientTop + px(a.top),
+          w: b.clientWidth - px(a.left) - px(a.right), h: b.clientHeight - px(a.top) - px(a.bottom),
+        };
       }
       rectsTactiles[grupo].push({ id: `${grupo}[${i}]`, ...t });
-      const puntos = [[cx, cy - 21], [cx, cy + 21], [cx - 21, cy], [cx + 21, cy]];
-      const fallan = puntos.filter(([x, y]) => {
-        if (x < 0 || y < 0 || x > vw || y > vh) return false;
+      const puntos = [["arriba", cx, cy - 21], ["abajo", cx, cy + 21], ["izq.", cx - 21, cy], ["der.", cx + 21, cy]];
+      const fallan = puntos.filter(([, x, y]) => {
+        if (x < 1 || y < 1 || x > vw - 1 || y > vh - 1) return false; // borde del viewport
         const el = document.elementFromPoint(x, y);
         return !el || el.closest("button") !== b;
+      }).map(([lado, x, y]) => {
+        const el = document.elementFromPoint(x, y);
+        return `${lado} → ${el ? (el.getAttribute("aria-label") || el.tagName.toLowerCase() + (el.className && typeof el.className === "string" ? "." + el.className.split(" ")[0] : "")) : "nada"}`;
       });
-      tactil.push({ id: `${grupo}[${i}]`, visual: `${Math.round(r.width)}×${Math.round(r.height)}`, tactil: `${Math.round(t.w)}×${Math.round(t.h)}`, puntosFallidos: fallan.length });
+      tactil.push({ id: `${grupo}[${i}]`, visual: `${Math.round(r.width)}×${Math.round(r.height)}`, tactil: `${Math.round(t.w)}×${Math.round(t.h)}`, puntosFallidos: fallan.length, detalle: fallan.join(", ") });
     });
   }
 
@@ -286,7 +293,7 @@ for (const [ancho, alto] of VIEWPORTS) {
     (resultado.tactil[ancho] ||= {})[pantalla] = r.tactil;
     const recortes = await revisarRecortes(page, r.candidatos);
     (resultado.recortes[ancho] ||= {})[pantalla] = recortes;
-    for (const t of r.tactil) if (t.puntosFallidos) fallosTactil.push(`${pantalla} · ${ancho} px · ${t.id}: visual ${t.visual}, táctil ${t.tactil}, ${t.puntosFallidos} punto(s) a 21 px fuera del botón`);
+    for (const t of r.tactil) if (t.puntosFallidos) fallosTactil.push(`${pantalla} · ${ancho} px · ${t.id}: visual ${t.visual}, táctil ${t.tactil}, ${t.puntosFallidos} punto(s) a 21 px fuera del botón (${t.detalle})`);
     for (const [grupo, rects] of Object.entries(r.rectsTactiles)) {
       for (const [a, b, px] of solapes(rects)) fallosTactil.push(`${pantalla} · ${ancho} px · ${grupo}: ${a} y ${b} se pisan ${px} px`);
     }

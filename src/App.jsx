@@ -299,6 +299,16 @@ ${FONTS}
 .mo-bounce{animation:qc-badge-bounce var(--motion-base) var(--ease-spring)}
 .mo-skeleton{background:linear-gradient(90deg, ${C.line} 25%, ${C.surface} 50%, ${C.line} 75%);background-size:200% 100%;animation:qc-shimmer 1.1s ease-in-out infinite}
 :focus-visible{outline:2px solid ${C.brand};outline-offset:2px;border-radius:6px}
+/* Área táctil de 44 px sin cambiar el tamaño visual ni el layout (06/oct):
+   el ::after se estira solo en el eje donde el control mide menos de 44 px
+   (inset negativo = (tamaño − 44) / 2; con 44 o más queda en 0).
+   .qc-tactil-y solo crece en vertical: para vecinos con poca separación
+   horizontal (muestras de taza), cuyas áreas se pisarían. No usar en un
+   nodo con overflow:hidden (.mo-ink): recortaría el propio ::after. */
+.qc-tactil,.qc-tactil-y{position:relative}
+.qc-tactil::after,.qc-tactil-y::after{content:"";position:absolute;top:min(0px,calc((100% - 44px) / 2));bottom:min(0px,calc((100% - 44px) / 2))}
+.qc-tactil::after{left:min(0px,calc((100% - 44px) / 2));right:min(0px,calc((100% - 44px) / 2))}
+.qc-tactil-y::after{left:0;right:0}
 ${CSS_MOTION_V2(C)}
 ${CSS_CARTA(C)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}}
@@ -834,7 +844,7 @@ function ThemeToggle() {
   const { tema, setTema, C } = useTheme();
   const oscuro = tema === "oscuro";
   return (
-    <button onClick={() => setTema(oscuro ? "claro" : "oscuro")} className="mo-tap" aria-label="Cambiar tema" style={{
+    <button onClick={() => setTema(oscuro ? "claro" : "oscuro")} className="mo-tap qc-tactil" aria-label="Cambiar tema" style={{
       display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 11,
       border: `1px solid ${C.line}`, background: "transparent", color: C.text, cursor: "pointer", position: "relative",
     }}>
@@ -875,7 +885,7 @@ function SonidoToggle() {
     });
   };
   return (
-    <button onClick={alternar} className="mo-tap" aria-label={on ? "Silenciar sonidos" : "Activar sonidos"} aria-pressed={on} style={{
+    <button onClick={alternar} className="mo-tap qc-tactil" aria-label={on ? "Silenciar sonidos" : "Activar sonidos"} aria-pressed={on} style={{
       display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 11,
       border: `1px solid ${C.line}`, background: "transparent", color: on ? C.brand : C.text, cursor: "pointer",
     }}>
@@ -958,23 +968,38 @@ function ResponsiveImg({ id, alt = "", style = {}, className, eager = false, log
   );
 }
 
-// `tactil` (Carta premium · PR-1): alto mínimo de 44 px para que el chip sea
-// un objetivo táctil completo. Sin él, el chip conserva su alto de siempre.
+// `tactil` (Carta premium · PR-1, 06/oct): mismo pill que siempre (29 px de
+// alto, como en main), con área táctil de 44 px por el ::after de
+// .qc-tactil. El pill visual pasa a un span interno porque .mo-ink usa su
+// propio ::after (la tinta) y pone overflow:hidden, que recortaría el área
+// táctil si viviera en el mismo nodo. El botón no tiene caja propia: mide
+// lo mismo que el pill y no cambia el layout.
 function Chip({ children, active, onClick, tone, onTone, tactil = false, ...resto }) {
   const { C } = useTheme();
   const bg = tone || C.brand;
   const fg = onTone || C.onBrand;
+  const pill = {
+    padding: "7px 13px",
+    borderRadius: 999, fontSize: 11, letterSpacing: ".08em",
+    textTransform: "uppercase", whiteSpace: "nowrap",
+    border: `1px solid ${active ? bg : C.line}`,
+    background: active ? bg : "transparent",
+    color: active ? fg : C.textMuted, fontWeight: 600,
+  };
+  if (tactil) {
+    return (
+      <button type="button" onClick={onClick} className="press qc-tactil" aria-pressed={active} {...resto} style={{
+        flexShrink: 0, display: "flex", padding: 0, margin: 0, border: 0, background: "none", cursor: "pointer",
+      }}>
+        <span className="mono mo-ink" style={{ ...pill, display: "block" }}>{children}</span>
+      </button>
+    );
+  }
   return (
     <button type="button" onClick={onClick} className="press mono mo-ink" aria-pressed={active} {...resto} style={{
       // flexShrink 0: .mo-ink pone overflow:hidden, y en un ítem flex eso
       // vuelve min-width a 0 — sin esto el chip se encogía y se cortaba.
-      flexShrink: 0,
-      ...(tactil ? { minHeight: 44, padding: "0 16px" } : { padding: "7px 13px" }),
-      borderRadius: 999, fontSize: 11, letterSpacing: ".06em",
-      textTransform: "uppercase", whiteSpace: "nowrap", cursor: "pointer",
-      border: `1px solid ${active ? bg : C.line}`,
-      background: active ? bg : "transparent",
-      color: active ? fg : C.textMuted, fontWeight: 600,
+      flexShrink: 0, cursor: "pointer", ...pill,
     }}>
       {children}
     </button>
@@ -1006,26 +1031,25 @@ function Meter({ label, value, tone, delay = 0, triggerKey }) {
   );
 }
 
-// `compacto` (Carta premium · PR-1): etiqueta con tracking ≤ .06em, título
-// fluido que nunca desborda y botón de volver de 44 px con su propio texto
-// (`backLabel`). Las demás pantallas siguen viéndose igual que antes.
+// `compacto` (Carta premium · PR-1): título que nunca desborda y botón de
+// volver con su propio texto (`backLabel`). Mismos tamaños que en main (06/oct):
+// flecha visual de 30 px y área táctil de 44 px por el ::after de .qc-tactil.
 function Header({ titulo, sub, right, onBack, compacto = false, backLabel = "Volver a inicio" }) {
   const { C } = useTheme();
   return (
     <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "22px 20px 14px", gap: 12 }}>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 10, minWidth: 0 }}>
         {onBack && (
-          <button type="button" onClick={onBack} className="press" aria-label={backLabel} style={{
+          <button type="button" onClick={onBack} className="press qc-tactil" aria-label={backLabel} style={{
             ...btnMiniStyle(C), flexShrink: 0, marginBottom: 3,
-            ...(compacto ? { width: 44, height: 44, borderRadius: 12, marginBottom: 0 } : {}),
           }}>
-            <ArrowLeft size={compacto ? 18 : 15} />
+            <ArrowLeft size={15} />
           </button>
         )}
         <div style={{ minWidth: 0 }}>
-          <div className="mono" style={{ fontSize: compacto ? 11 : 10, letterSpacing: compacto ? ".06em" : ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6, overflowWrap: "anywhere" }}>{sub}</div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: ".22em", color: C.brandAlt, textTransform: "uppercase", marginBottom: 6, overflowWrap: "anywhere" }}>{sub}</div>
           <h1 className="disp" style={{
-            fontSize: compacto ? "clamp(24px, 7.5vw, 30px)" : 30, lineHeight: compacto ? 1 : .95, margin: 0,
+            fontSize: 30, lineHeight: .95, margin: 0,
             ...(compacto ? { overflowWrap: "anywhere" } : {}),
           }}>{titulo}</h1>
         </div>
@@ -1688,7 +1712,9 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
   const estado = estadoProducto(m);
   const v = vistaTarjeta(estado);
   const foto = fotoDeProducto(m.id, FOTO_PRODUCTO, ASSET_MANIFEST);
-  const boton44 = { ...btnMiniStyle(C), width: 44, height: 44, borderRadius: 12, flexShrink: 0 };
+  // Mismo tamaño visual que en main (30 px); el área táctil de 44 px la da
+  // el ::after de .qc-tactil (06/oct).
+  const mini = { ...btnMiniStyle(C), flexShrink: 0 };
   const agregar = (e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); };
   // Personalizable (V60…): el "+" primero abre el selector de finca y taza
   // que ya existía; con el selector abierto, agrega con esa elección.
@@ -1754,19 +1780,19 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
             ) : <span />}
             {v.porConfirmar && <PrecioPorConfirmar />}
             {v.agregar && (
-              <div className="pc-ctl" style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
+              <div className="pc-ctl" style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: "auto" }}>
                 {n > 0 && (
                   <>
-                    <button type="button" onClick={() => quitar(m.id)} className="mo-press" aria-label={`Quitar un ${m.nombre}`} style={boton44}><Minus size={16} /></button>
-                    <span className="mono" aria-live="polite" style={{ minWidth: 20, textAlign: "center", fontSize: 14 }}><AnimatedNumber value={n} /></span>
+                    <button type="button" onClick={() => quitar(m.id)} className="mo-press qc-tactil" aria-label={`Quitar un ${m.nombre}`} style={mini}><Minus size={14} /></button>
+                    <span className="mono" aria-live="polite" style={{ width: 16, textAlign: "center", fontSize: 14 }}><AnimatedNumber value={n} /></span>
                   </>
                 )}
                 <button
-                  type="button" onClick={mas} className="mo-press" data-sonido={v.abreSelector && !abierto ? undefined : "carrito"}
+                  type="button" onClick={mas} className="mo-press qc-tactil" data-sonido={v.abreSelector && !abierto ? undefined : "carrito"}
                   aria-label={v.abreSelector && !abierto ? `Elegir finca y taza para ${m.nombre}` : `Agregar ${m.nombre}`}
                   aria-expanded={v.abreSelector ? abierto : undefined}
-                  style={{ ...boton44, background: C.brand, color: C.onBrand, borderColor: C.brand }}>
-                  <Plus size={18} />
+                  style={{ ...mini, background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                  <Plus size={14} />
                 </button>
               </div>
             )}
@@ -1776,8 +1802,8 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
 
       {v.abreSelector && (
         <>
-          <button type="button" onClick={onSelector} className="mo-press mono pc-ctl" aria-expanded={abierto} style={{
-            minHeight: 44, marginTop: 4, padding: "0 2px", fontSize: 11, letterSpacing: ".06em", color: C.brand,
+          <button type="button" onClick={onSelector} className="mo-press mono pc-ctl qc-tactil" aria-expanded={abierto} style={{
+            marginTop: 12, padding: 0, fontSize: 11, letterSpacing: ".06em", color: C.brand,
             background: "none", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center",
           }}>
             {abierto ? "Ocultar opciones" : "Elegir finca y taza"}
@@ -1790,10 +1816,10 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
                   {FINCAS_EN_BARRA.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
                 </div>
                 <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", margin: "14px 0 8px" }}>Taza</div>
-                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                   {TAZAS.map((t) => (
-                    <button key={t.id} type="button" onClick={() => setTaza(t)} className="mo-press" aria-label={`Taza ${t.nombre}`} aria-pressed={taza.id === t.id} style={{
-                      width: 44, height: 44, borderRadius: 10, background: t.hex, cursor: "pointer",
+                    <button key={t.id} type="button" onClick={() => setTaza(t)} className="mo-press qc-tactil-y" aria-label={`Taza ${t.nombre}`} aria-pressed={taza.id === t.id} style={{
+                      width: 30, height: 30, borderRadius: 8, background: t.hex, cursor: "pointer",
                       border: `2px solid ${taza.id === t.id ? C.brand : "transparent"}`,
                     }} />
                   ))}
@@ -1971,10 +1997,13 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
          scroll, que ya empieza justo debajo de la cabecera de la app — la
          cabecera nunca los tapa. Fila a todo el ancho con padding propio al
          inicio y al final (antes el padding era del padre y los recortaba). */}
-      <div ref={barraChipsRef} style={{ position: "sticky", top: 0, zIndex: 2, background: C.surface }}>
+      {/* 06/oct: padding vertical ≥ 8 px para que el ::after táctil de los
+         chips (7,5 px arriba y abajo) no quede recortado por el overflow de
+         la fila; el marginTop negativo devuelve los chips a la altura de main. */}
+      <div ref={barraChipsRef} style={{ position: "sticky", top: 0, zIndex: 2, background: C.surface, marginTop: -9 }}>
         <nav aria-label="Categorías de la carta" ref={filaChipsRef} className="qc-scroll" style={{
-          position: "relative", display: "flex", gap: 8, overflowX: "auto", overscrollBehaviorX: "contain",
-          padding: "6px 20px 12px", scrollPaddingInline: 20,
+          position: "relative", display: "flex", gap: 7, overflowX: "auto", overscrollBehaviorX: "contain",
+          padding: "9px 20px 14px", scrollPaddingInline: 20,
         }}>
           {CATS.map((c) => (
             <div key={c} ref={(el) => { chipRefs.current[c] = el; }} style={{ flexShrink: 0 }}>
@@ -1986,7 +2015,7 @@ function Menu({ carrito, add, quitar, lote, setLote, taza, setTaza, onBack, carr
           <span aria-hidden style={{ flex: "0 0 1px" }} />
           {indicador && (
             <span aria-hidden style={{
-              position: "absolute", left: 0, bottom: 6, width: 100, height: 2, borderRadius: 99,
+              position: "absolute", left: 0, bottom: 8, width: 100, height: 2, borderRadius: 99,
               background: C.brand, pointerEvents: "none", transformOrigin: "0 0",
               transform: `translateX(${indicador.left}px) scaleX(${indicador.width / 100})`,
               transition: "transform var(--motion-base) var(--ease-in-out)",
@@ -2053,7 +2082,6 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
   const estado = estadoProducto(m);
   const v = vistaTarjeta(estado);
   const foto = fotoDeProducto(m.id, FOTO_PRODUCTO, ASSET_MANIFEST);
-  const boton44 = { ...btnMiniStyle(C), width: 44, height: 44, borderRadius: 12, flexShrink: 0 };
 
   return (
     <div className="qc-scroll" style={{ overflowY: "auto", height: "100%", paddingBottom: "calc(var(--nav-alto, 80px) + 24px)" }}>
@@ -2088,18 +2116,18 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
               <div className="mono" style={{ fontSize: 20, letterSpacing: ".02em", color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
             </div>
             {v.agregar && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
                 {n > 0 && (
                   <>
-                    <button type="button" onClick={() => quitar(m.id)} className="mo-press" aria-label={`Quitar un ${m.nombre}`} style={boton44}><Minus size={16} /></button>
-                    <span className="mono" aria-live="polite" style={{ minWidth: 22, textAlign: "center", fontSize: 15 }}><AnimatedNumber value={n} /></span>
+                    <button type="button" onClick={() => quitar(m.id)} className="mo-press qc-tactil" aria-label={`Quitar un ${m.nombre}`} style={btnMiniStyle(C)}><Minus size={16} /></button>
+                    <span className="mono" aria-live="polite" style={{ width: 18, textAlign: "center", fontSize: 15 }}><AnimatedNumber value={n} /></span>
                   </>
                 )}
                 <button
                   type="button"
                   onClick={(e) => { volarAlCarrito(e.currentTarget, carritoBtnRef?.current, C.brand); add(m); }}
-                  className="mo-press" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
-                  style={{ ...boton44, background: C.brand, color: C.onBrand, borderColor: C.brand }}>
+                  className="mo-press qc-tactil" aria-label={`Agregar ${m.nombre}`} data-sonido="carrito"
+                  style={{ ...btnMiniStyle(C), background: C.brand, color: C.onBrand, borderColor: C.brand, width: 40, height: 40 }}>
                   <Plus size={18} />
                 </button>
               </div>
@@ -3692,7 +3720,11 @@ export default function QuadroCafe() {
             </div>
           ) : null}
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "max(14px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 0 max(20px, env(safe-area-inset-left))", flexShrink: 0 }}>
+          {/* position/zIndex (06/oct): el ::after táctil de los botones de
+             cabecera baja 4 px sobre <main>; sin esto, main (posicionado y
+             posterior en el DOM) lo tapaba. El nav (10) está abajo y no se
+             cruzan; carrito, ticket y overlays (40+) siguen por encima. */}
+          <div style={{ position: "relative", zIndex: 11, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "max(14px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 0 max(20px, env(safe-area-inset-left))", flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
               <Marca size={26} />
               <span className="disp" style={{ fontSize: 15 }}>Quadro Café</span>
@@ -3700,7 +3732,7 @@ export default function QuadroCafe() {
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <SonidoToggle />
               <ThemeToggle />
-              <button ref={carritoBtnRef} onClick={() => setVerCarrito(true)} className="press" aria-label="Ver pedido" style={{
+              <button ref={carritoBtnRef} onClick={() => setVerCarrito(true)} className="press qc-tactil" aria-label="Ver pedido" style={{
                 position: "relative", ...btnMiniStyle(C), width: 36, height: 36, borderRadius: 11,
                 borderColor: carrito.length ? C.brand : C.line,
               }}>

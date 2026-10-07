@@ -194,6 +194,12 @@ Brief en `docs/BRIEF-CARTA-PREMIUM-PR1.md`; bitácora en `docs/PROGRESO-LOOP.md`
   - se oculta solo con el teclado abierto;
   - pasa a solo íconos (`navCompacto`, medido con canvas) si las etiquetas no entran.
 - **Chips de la Carta**: sticky dentro del `.qc-scroll`, fila a todo el ancho con su propio padding, activo centrado e indicador solo con `transform`.
+- **Tamaños de main + área táctil por `::after` (06/oct)**: los chips, el "+", el "−", la flecha atrás, los botones de cabecera y las muestras de taza miden lo mismo que en `main` (pill de 29 px, 30 px, 30/40 px en el detalle, 36 px, 30 px). Los 44 px táctiles los da `.qc-tactil` (`buildCss`): un `::after` con inset negativo `(tamaño − 44) / 2`, solo en el eje que mide menos de 44. `.qc-tactil-y` solo crece en vertical (muestras de taza, separadas 10 px).
+  - **No agrandes la caja visual para llegar a 44 px**: así se habían agrandado en PR-1, y Reiner lo vio en la vista previa.
+  - **No lo pongas en un nodo con `overflow:hidden`**, porque recorta su propio `::after`. Por eso `Chip tactil` lleva el pill visual (`.mo-ink`) en un span dentro del botón.
+  - Los recortes por `overflow` de un ancestro también lo anulan. La fila de chips tiene 9 px de padding vertical con `marginTop:-9`, y la fila de cabecera de la app va en `position:relative; zIndex:11` (si no, `<main>` tapaba los 4 px de abajo).
+  - Lo verifica `audit:visual` (`elementFromPoint` a 21 px del centro y solapes entre vecinos).
+  - Los chips de Fincas, Lab e Inicio siguen como en `main` (fuera del alcance de PR-1).
 - **Volver del detalle**:
   - `abrirDetalle` guarda la posición (ref + `guardarPosicion` en sessionStorage) y hace `pushState({tab:"menu", detalle:id})`;
   - `popstate` cierra el detalle y un `useLayoutEffect` restaura el `scrollTop` antes de pintar;

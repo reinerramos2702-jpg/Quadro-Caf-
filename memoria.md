@@ -834,3 +834,6 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
   - Un `Range` sobre el dígito **no** detecta el recorte (usa las métricas de la fuente principal). Por eso el chequeo es de píxeles.
 - Los botones de cabecera (sonido, tema, carrito) miden 36 px en main y en la rama: no habían cambiado.
 - En main, AeroPress campeonato está "Agotado hoy" (dato de Supabase) y su tag "86.5" no se ve. Por eso la etiqueta se compara con "Firma" (V60).
+- **(a) Tamaños de main + área táctil por `::after`**: los chips de la Carta vuelven a 29 px de alto (eran 44) y a `.08em` en todos los `Chip`. El "+" y el "−" de la lista vuelven a 30 px (eran 44), y en el detalle a 30/40 px. La flecha atrás vuelve a 30 px y el h1/etiqueta de la cabecera compacta a 30 px y 10 px/`.22em`. Las muestras de taza vuelven a 30 px. El área de 44 px la da `.qc-tactil`/`.qc-tactil-y`.
+  - Trampas encontradas: el `::after` de `.mo-ink` y su `overflow:hidden` (el pill de los chips pasó a un span interno); el `overflow` de la fila de chips (padding vertical de 9 px); `<main>` tapando los 4 px de abajo de los botones de cabecera (`zIndex:11` en la fila de cabecera).
+  - Resultado de `audit:visual`: 0 fallos táctiles y 0 diferencias de tamaño en chips, "+", flecha, cabecera y nav.
