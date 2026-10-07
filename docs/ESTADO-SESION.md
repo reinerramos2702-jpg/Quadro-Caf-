@@ -1,47 +1,74 @@
 # Estado de sesión — Quadro Café
-Última actualización: 1 oct 2026, noche (sesión Claude Code, Carta premium · PR-1). Detalle histórico en `memoria.md` y `docs/PROGRESO-LOOP.md`.
+Última actualización: 6 oct 2026 (sesión Claude Code, Carta premium · PR-1, vuelta a las medidas de main). Detalle histórico en `memoria.md` y `docs/PROGRESO-LOOP.md`.
 
-## Hecho en la última sesión
-**Carta premium · PR-1**, completo en la rama `quadro-feature-carta-premium` (brief: `docs/BRIEF-CARTA-PREMIUM-PR1.md`). Un commit por tarea. PR contra `main` **sin merge**.
-- **T1, `ProductCard` único con 4 estados**:
-  - disponible, agotado hoy, próximamente/precio por confirmar y personalizable;
-  - foto de 96 px o monograma de marca;
-  - una sola pill "Precio por confirmar", dentro de la tarjeta;
-  - toda la tarjeta abre el detalle.
-  - Lógica pura en `src/lib/productoCard.js` (14 tests). El detalle "por confirmar" muestra "Estamos afinando este producto".
-- **T2**: la miniatura de 480 px de la cookie choco-nuez bajó de 48,4 a 38,9 KB. Las 48 miniaturas quedan ≤ 40 KB.
-- **T3**: `100dvh`, safe-area, tipografía con `clamp()`, objetivos de 44 px y `min-width:0`.
-- **T4**: chips sticky, centrados, sin recorte; indicador animado solo con `transform`.
-- **T5**: nav inferior siempre fijo. **No había JS que lo ocultara: la causa era el marco a `100vh`.**
-- **T6**: al volver del detalle, la lista queda en el mismo lugar (botón, gesto de Android y swipe de iOS). Se corrigió además un `replaceState` que pisaba el historial al abrir el carrito o el ticket.
-- **T6b**: detalle responsive.
-- **Auditoría `npm run audit:carta`**: 57 productos × 5 anchos × 3 tamaños de fuente.
-  - Rama: **0/855 fallos**. Main: **743/855**.
-  - Encontró y obligó a corregir tres cosas: la pill recortada con fuente grande, el nav desbordado al 130–200 % y los dígitos de la 3.ª línea asomando en el nombre.
-  - Informe y capturas en `docs/capturas-pr1/`.
-- Tests 51/51, lint limpio, build OK (falla solo el SW por el apóstrofo).
-- **Chunk principal 154,65 → 158,44 KB gzip (+3,79)**; `/equipo` 14,35 KB.
+## Hecho en la última sesión (06/oct)
+Rama `quadro-feature-carta-premium`, **PR #9 abierto y sin merge**. El merge lo aprueba Reiner.
+
+**Disparador**: en la vista previa de la rama, "V60 DE ORIGEN" se veía más grande que en producción y con los dígitos recortados. Chips, "+", flecha atrás y botones de cabecera, también más grandes.
+
+- **(e) `npm run audit:visual` y `scripts/baseline-medidas.json`**, medido desde `main@f7d8aba` en un worktree temporal (ya borrado).
+  - Mide en px chips, "+", flecha atrás, botones de cabecera, nombre, miniatura, precio, etiqueta, nav y h1. Pantallas: Carta (lista, Bollería, detalle de V60), Inicio, Fincas, Tienda, Lab y Aula. Anchos: 360/390/412.
+  - Compara contra el baseline. Además comprueba el área táctil de 44 px y el recorte de letra VIOLA, este último en píxeles.
+- **(a) Tamaños de main + área táctil por `::after`**:
+  - Chips, "+"/"−", flecha atrás, cabecera compacta y muestras de taza vuelven a sus medidas de main.
+  - El área de 44 px la da `.qc-tactil`/`.qc-tactil-y`, sin cambiar caja ni layout. Los `::after` de vecinos no se pisan (lo verifica `audit:visual`).
+  - Los chips de Fincas, Lab e Inicio recuperan el tracking de main (`.08em`).
+- **(b) Nombre y textos display al tamaño de main**:
+  - El nombre queda en 15 px en la lista y 22 px en el detalle. Precio, tag, pills, descripciones y rótulos también vuelven a main (tabla en `memoria.md`).
+  - El recorte de "V60" lo causaba el `overflow:hidden` del line-clamp. Se corrigió con `line-height:1.2` + `padding-block:.25em`.
+  - **No se tocó la escala de los dígitos** (`font-size-adjust`).
+- **(c) El detalle usa la tipografía de la lista**: el nombre pasó a `.disp-m` (VIOLA 22/28). La cabecera muestra la categoría y el nombre aparece una sola vez (decisión de Reiner).
+- **(d) Otras pantallas**: `audit:visual` no encontró diferencias no intencionales en Inicio, Fincas, Tienda, Lab ni Aula. La barra inferior fija es intencional y mide igual que en main (66 px).
+- **Verificación**:
+  - `audit:visual` 0 fallos y `audit:carta` 0/855.
+  - Tests 58/58 y lint limpio.
+  - Build de Vite OK. En local falla solo el service worker, por el apóstrofo de la ruta; en CI (Linux) no.
+  - Chunk principal 158,70 KB gzip (+0,26).
+
+### Medidas: main → rama antes de corregir → rama ahora (igual a 360, 390 y 412 px)
+| Elemento | main | rama (a60a713) | rama ahora |
+|---|---|---|---|
+| Chip de categoría (visual) | 90,66 × 29 | 94,91 × 44 | 90,66 × 29 (táctil 90,66 × 44) |
+| "+" de la tarjeta | 30 × 30 | 44 × 44 | 30 × 30 (táctil 44 × 44) |
+| "+" del detalle | 40 × 40 | 44 × 44 | 40 × 40 (táctil 44 × 44) |
+| Flecha atrás | 30 × 30 | 44 × 44 | 30 × 30 (táctil 44 × 44) |
+| Botones de cabecera | 36 × 36 | 36 × 36 | 36 × 36 (táctil 44 × 44) |
+| Miniatura (Bollería) | 64 × 64 | 96 × 96 | 96 × 96 (pedida) |
+| Nombre en la lista: font-size / line-height | 15 px / normal | 16,56–18,95 px / 1,2 | 15 px / 18 px (1,2) + padding .25em |
+| Nombre en el detalle: font-size / line-height | 22 px / normal (Nexa Bold) | 21,6–24 px / 1,2 (Nexa Bold) | 22 px / 28 px (VIOLA, `.disp-m`) |
+
+### Cómo correr `audit:visual`
+- `npm run audit:visual`: levanta Vite en la rama, mide y compara contra `scripts/baseline-medidas.json`. Imprime el diff (`pantalla · ancho · elemento · prop: main → rama`) y sale con 1 si hay algo no intencional, un fallo táctil o letra recortada.
+- `npm run audit:visual -- --capturas --salida <carpeta>`: además guarda recortes de "V60", "86.5" y precios, fuera del repo.
+- Regenerar el baseline:
+  1. `git worktree add .worktrees/main-baseline main` (`.worktrees/` está en `.git/info/exclude`).
+  2. Ahí: `npm ci`, copiar `.env` y `npx vite --port 5181 --strictPort`.
+  3. Desde la rama: `node scripts/audit-visual.mjs --baseline --url http://localhost:5181`.
+  4. Apagar Vite por PID y `git worktree remove --force .worktrees/main-baseline`.
+- `audit:carta` escribe en `docs/capturas-pr1/` (archivos versionados): para verificar, `npm run audit:carta -- --salida <carpeta temporal>`.
 
 ## Decisiones tomadas
-- **Toda la tarjeta abre el detalle**: el nombre es un botón con un `::after` estirado. Se descartó un `div onClick` porque no es accesible por teclado, y un `role=button` envolvente porque anidaría controles.
-- **Personalizable**: el "+" abre el selector existente; con el selector abierto, agrega. Se descartó agregar directo porque el brief lo prohíbe. El link "Elegir finca y taza" se mantiene.
-- **"Vuelve mañana" ya no se muestra**: era un texto fijo, no un dato, y el brief pide mostrarlo solo si existe en los datos.
-- **Nav `absolute` en un marco `100dvh` que no hace scroll**, en vez de `position: fixed` literal: en escritorio el marco está topado a 940 px y un nav fijo se despegaría. En móvil es equivalente.
-- **Pills con fondo de marca**: "Próximamente" en `brand`/`onBrand` y "Agotado" en `warn`. Se descartó `brandAlt` sobre crema porque daba ~4:1 y no pasa AA a 11 px.
-- **Nombre truncado**: se oculta el sobrante con `visibility:hidden` en vez de una máscara CSS (la máscara cortaba el pie de las letras). Los dígitos 1,6× no se tocan (decisión de Reiner).
-- **Auditoría con `playwright-core` (devDependency, versión fija) contra el Chrome del sistema**: no descarga navegadores.
+- **Detalle**: se mantiene la estructura de la rama (cabecera = categoría, nombre una vez debajo de la foto, en VIOLA 22 px). La eligió Reiner el 06/oct.
+- **Área táctil sin agrandar**: `::after` con inset negativo en vez de cajas de 44 px. El pill del chip táctil va en un span dentro del botón, porque `.mo-ink` usa `overflow:hidden` y su propio `::after`.
+- **Recorte de "V60"**: alcanzó con `padding-block`. No se redujo la escala de los dígitos (decisión de Reiner del 01/oct: los dígitos 1,6× se quedan).
+- **Etiqueta**: queda en su lugar de la rama (texto sobre el nombre), con el tamaño de main (9 px; 10 en el detalle).
 
-## Archivos/módulos tocados
-- `src/App.jsx`: `ProductCard`, `FotoProducto`, `PrecioPorConfirmar`, `PorConfirmarDetalle`, `CSS_CARTA`, `Menu`, `DetalleProducto`, `Chip`, `Header`, `ResponsiveImg`, nav y historial de `QuadroCafe`.
-- `src/lib/productoCard.js` (nuevo), `test/productoCard.test.js` (nuevo), `scripts/audit-carta.mjs` (nuevo), `package.json` (`audit:carta`, `playwright-core`).
-- `src/assets/producto-choco-nuez-cookie-1-480.webp` (re-encodada).
-- `docs/capturas-pr1/` (nuevo), `CLAUDE.md`, `memoria.md`, `docs/PROGRESO-LOOP.md`, este archivo y el bloque "Carta premium · PR-1" de `docs/ROADMAP.html`. El resto del roadmap es de Reiner y va tal cual lo dejó.
-- No se tocaron: carrito/checkout, Supabase, edge functions, `/equipo`, Admin, Barra, D-ID ni push. Tampoco `.agents/`, `AGENTS.md` ni los respaldos del roadmap.
+## Dudoso (para que Reiner lo mire)
+- La etiqueta y las pills de estado ("Agotado hoy", "Próximamente") vuelven al tamaño de main (9 px), que es chico. Si se quieren más grandes, hay que aprobarlo.
+- "Precio por confirmar" (elemento nuevo de PR-1) va a 11 px, el tamaño del "Por confirmar" de main.
+- El título "Estamos afinando este producto" (`PorConfirmarDetalle`, 16 px Nexa Bold) no tiene un token equivalente. Se dejó como está.
+- `audit:visual` no mide el "−", el selector de finca y taza ni las muestras de taza: con el carrito vacío y el acordeón cerrado no se ven. Sí están en código con `.qc-tactil`/`.qc-tactil-y` y los tamaños de main.
+
+## Archivos/módulos tocados (06/oct)
+- `src/App.jsx`: `.qc-tactil` en `buildCss`, `Chip`, `Header`, botones de cabecera y fila de cabecera (`zIndex:11`), `ProductCard`, `PrecioPorConfirmar`, `FotoProducto` (pill), `CSS_CARTA`, `Menu` (fila de chips), `DetalleProducto`.
+- `scripts/audit-visual.mjs`, `scripts/lib/medidas.js`, `scripts/baseline-medidas.json`, `test/medidas.test.js` y `package.json` (nuevos o modificados).
+- `CLAUDE.md`, `memoria.md`, `docs/PROGRESO-LOOP.md` y este archivo.
+- No se tocaron: carrito/checkout, Supabase, edge functions, `/equipo`, Barra, D-ID, `.agents/`, `AGENTS.md`, los respaldos del roadmap, `reuniones/` ni `.worktrees/pagos` (worktree de otra sesión).
 
 ## Pendiente para la próxima sesión
 **De Reiner (Carta premium · PR-1)**:
-- Probar en el celular real con el checklist del PR. El nav fijo **solo se validó en Playwright de escritorio** (emulación móvil); falta Chrome de Android real con la barra de URL visible y colapsada.
-- Aprobar o no el merge del PR.
+- Mirar la vista previa nueva y probar en el celular real con el checklist del PR. El nav fijo y el área táctil solo se validaron en Playwright (emulación móvil).
+- Aprobar o no el merge del PR #9.
 - Pasar fotos para los 9 productos sin foto: V60 de origen, AeroPress campeonato, Sifón a la mesa, Latte de cascarilla, Cold brew 18 h, Tónica de cascarilla, Pan de masa madre, Tarta de café y nuez, Cheesecake de cascarilla.
 - Confirmar la foto de "Cookie de chispas de chocolate — variante 2": hoy es una vitrina completa, no una cookie.
 
@@ -53,13 +80,13 @@
 - Decidir el bloque de cierre de la lectura pública de `ordenes`.
 
 **Oportunidades anotadas (no implementadas, van en PR-2/PR-3)**:
-- Con 45 "Próximamente", las categorías Postres e Infusiones son listas largas de tarjetas iguales; agrupar "Próximamente" colapsado ya está planeado.
+- Con 45 "Próximamente", Postres e Infusiones son listas largas de tarjetas iguales; agrupar "Próximamente" colapsado ya está planeado.
 - Infusiones no tiene banner de categoría (no hay asset).
 - Las 6 variantes Brookie/Cookie repiten "por confirmar" en su descripción (es el dato real); con nombres definitivos se resuelve solo.
-- El `scrollTo` del chip activo podría coordinarse con el motion de PR-2.
+- Área táctil de 44 px para los chips de Fincas, Lab e Inicio (hoy siguen como en main).
 
 ## Riesgos
 - Mientras exista `ordenes_lectura_publica`, cualquiera con la anon key puede listar órdenes (nombre + items).
-- `npm audit`: altas y moderadas de tooling (preexistentes; `playwright-core` no suma vulnerabilidades conocidas).
+- `npm audit`: altas y moderadas de tooling (preexistentes).
 - Esta PC tiene reduced-motion a nivel Windows: para verificar motion por CDP, emular `no-preference`.
 - En Chrome de Windows, `hyphens:auto` no cortaba "Próximamente": se usa un guion blando explícito.

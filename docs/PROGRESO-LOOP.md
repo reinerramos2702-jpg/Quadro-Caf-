@@ -360,3 +360,30 @@ Brief: `docs/BRIEF-CARTA-PREMIUM-PR1.md`. Línea base del chunk principal en `ma
 - Auditoría: rama **0 / 855**; main **743 / 855** tarjetas con fallo + 36 fallos de nav.
 - Tests 51/51, lint limpio, build OK (solo falla el SW por el apóstrofo).
 - **Chunk principal 158.44 KB gzip (+3.79 KB)**; `/equipo` 14.35 KB.
+
+## Carta premium · PR-1 — vuelta a las medidas de main (06/oct/2026)
+
+**Disparador**
+- Reiner, en la vista previa de la rama: el nombre del producto ("V60 DE ORIGEN") se veía más grande que en producción y con los dígitos recortados. Chips, "+", flecha atrás y botones de cabecera, también más grandes. En main todo se veía bien.
+
+**Pasos (un commit cada uno)**
+1. `test(visual)`: `npm run audit:visual` + `scripts/baseline-medidas.json`, medido desde `main@f7d8aba` en un worktree temporal.
+2. `fix(carta)` (a): tamaños de main + `.qc-tactil` (área de 44 px por `::after`).
+3. `fix(carta)` (b): textos al tamaño de main y `padding-block:.25em` en el nombre.
+4. `fix(carta)` (c): nombre del detalle con `.disp-m`.
+
+En (d) no hubo commit: no apareció ninguna diferencia no intencional en Inicio, Fincas, Tienda, Lab ni Aula.
+
+**Trampas (anotadas para no repetirlas)**
+1. `Range` no ve los dígitos de respaldo: sus métricas son las de la fuente principal. El recorte se mide en píxeles con tres capturas: tal cual, sin overflow, y sin overflow ni texto.
+2. Un `::after` táctil se anula en tres casos:
+   - con `overflow:hidden` en el propio nodo (`.mo-ink`);
+   - con `overflow` en la fila que lo contiene;
+   - con un hermano posicionado que viene después en el DOM (`<main>` sobre la fila de cabecera).
+3. Para medir el rectángulo de un `::after` hay que sumar el borde del botón: se posiciona contra la caja de padding.
+4. `audit:carta` escribe en `docs/capturas-pr1/` (archivos versionados). Para verificar, `--salida <carpeta temporal>`.
+
+**Resultado**
+- `audit:visual`: 0 fallos. `audit:carta`: 0 / 855.
+- Tests 58/58, lint limpio, build de Vite OK (el SW sigue fallando en local por el apóstrofo de la ruta).
+- **Chunk principal 158.70 KB gzip (+0.26 KB)**.
