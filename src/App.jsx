@@ -1629,9 +1629,9 @@ function CSS_CARTA(C) {
 .pc-abrir:focus-visible::after{outline:2px solid ${C.brand};outline-offset:2px}
 .pc-ctl{position:relative;z-index:1}
 .pc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
-.pc-nombre{font-size:clamp(16px,4.6vw,20px);line-height:1.2}
-.pc-desc{font-size:clamp(13px,3.5vw,14px);line-height:1.4;color:${C.textMuted};margin:4px 0 0}
-.pc-etiqueta{font-size:11px;letter-spacing:.06em;color:${C.brandAlt};margin-bottom:3px;overflow-wrap:anywhere}
+.pc-nombre{font-size:15px;line-height:1.2;padding-block:.25em}
+.pc-desc{font-size:12.5px;line-height:1.45;color:${C.textMuted};margin:5px 0 0}
+.pc-etiqueta{font-size:9px;font-weight:600;color:${C.brandAlt};margin-bottom:3px;overflow-wrap:anywhere}
 .pc-pill{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:4px 9px;border-radius:10px;font-size:12px;line-height:1.25;letter-spacing:.01em;font-weight:700;overflow-wrap:break-word;hyphens:auto}
 `;
 }
@@ -1677,7 +1677,7 @@ function FotoProducto({ m, foto, pill, pillTono, desaturar, lado = 96 }) {
           // Solapa la foto en proporción a su propio texto (em): en una línea
           // queda dentro de la esquina; con fuente grande baja y no la tapa.
           position: "relative", zIndex: 1, marginTop: "calc(-1.25em - 10px)", marginLeft: 3, maxWidth: lado - 6,
-          padding: "2px 5px", fontSize: 11, letterSpacing: 0, overflowWrap: "anywhere",
+          padding: "2px 5px", fontSize: 9, fontWeight: 600, letterSpacing: 0, overflowWrap: "anywhere",
           boxShadow: `0 0 0 2px ${C.card}`, ...tono,
         }}>
           {/* Guion blando: si "Próximamente" no entra, corta "Próxima-mente". */}
@@ -1694,7 +1694,8 @@ function PrecioPorConfirmar() {
   const { C } = useTheme();
   return (
     <span className="pc-pill" style={{
-      border: `1px dashed ${C.brandAlt}99`, background: `${C.brandAlt}14`, color: C.text,
+      // 11 px: el tamaño del "Por confirmar" de main (06/oct).
+      fontSize: 11, border: `1px dashed ${C.brandAlt}99`, background: `${C.brandAlt}14`, color: C.text,
     }}>
       <Hourglass size={14} strokeWidth={1.75} aria-hidden style={{ color: C.brandAlt, flexShrink: 0 }} />
       Precio por confirmar
@@ -1730,7 +1731,9 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
     const medir = () => {
       const lh = parseFloat(getComputedStyle(el).lineHeight);
       if (!lh) return;
-      const limite = el.getBoundingClientRect().top + 2 * lh - 1;
+      // padding-block (06/oct): deja aire a los dígitos de respaldo dentro
+      // de la caja que recorta; las 2 líneas empiezan después del padding.
+      const limite = el.getBoundingClientRect().top + (parseFloat(getComputedStyle(el).paddingTop) || 0) + 2 * lh - 1;
       const rango = document.createRange();
       const recorre = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
       let i = 0;
@@ -1776,7 +1779,7 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
 
           <div style={{ marginTop: "auto", paddingTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
             {v.precio ? (
-              <span className="mono" style={{ fontSize: 15, letterSpacing: ".02em", color: C.text, fontWeight: 700 }}>{money(m.precio)}</span>
+              <span className="mono" style={{ fontSize: 14, color: C.text, fontWeight: 600 }}>{money(m.precio)}</span>
             ) : <span />}
             {v.porConfirmar && <PrecioPorConfirmar />}
             {v.agregar && (
@@ -1784,7 +1787,7 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
                 {n > 0 && (
                   <>
                     <button type="button" onClick={() => quitar(m.id)} className="mo-press qc-tactil" aria-label={`Quitar un ${m.nombre}`} style={mini}><Minus size={14} /></button>
-                    <span className="mono" aria-live="polite" style={{ width: 16, textAlign: "center", fontSize: 14 }}><AnimatedNumber value={n} /></span>
+                    <span className="mono" aria-live="polite" style={{ width: 16, textAlign: "center", fontSize: 13 }}><AnimatedNumber value={n} /></span>
                   </>
                 )}
                 <button
@@ -1803,7 +1806,7 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
       {v.abreSelector && (
         <>
           <button type="button" onClick={onSelector} className="mo-press mono pc-ctl qc-tactil" aria-expanded={abierto} style={{
-            marginTop: 12, padding: 0, fontSize: 11, letterSpacing: ".06em", color: C.brand,
+            marginTop: 12, padding: 0, fontSize: 10, letterSpacing: ".1em", color: C.brand,
             background: "none", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center",
           }}>
             {abierto ? "Ocultar opciones" : "Elegir finca y taza"}
@@ -1811,11 +1814,11 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
           <div className="pc-ctl" style={{ display: "grid", gridTemplateRows: abierto ? "1fr" : "0fr", transition: "grid-template-rows var(--motion-base) var(--ease-in-out)" }} aria-hidden={!abierto} inert={abierto ? undefined : ""}>
             <div style={{ overflow: "hidden" }}>
               <div style={{ marginTop: 6, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
-                <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", marginBottom: 8 }}>Finca</div>
+                <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", marginBottom: 8 }}>Finca</div>
                 <div className="qc-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4 }}>
                   {FINCAS_EN_BARRA.map((f) => <Chip key={f.id} active={f.id === lote.id} onClick={() => setLote(f)} tone={C.brandAlt} onTone={C.onBrandAlt}>{f.finca}</Chip>)}
                 </div>
-                <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", margin: "14px 0 8px" }}>Taza</div>
+                <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".14em", margin: "14px 0 8px" }}>Taza</div>
                 <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                   {TAZAS.map((t) => (
                     <button key={t.id} type="button" onClick={() => setTaza(t)} className="mo-press qc-tactil-y" aria-label={`Taza ${t.nombre}`} aria-pressed={taza.id === t.id} style={{
@@ -1824,7 +1827,7 @@ function ProductCard({ m, n, abierto, onSelector, onAbrir, add, quitar, carritoB
                     }} />
                   ))}
                 </div>
-                <p style={{ fontSize: 13, color: C.textMuted, marginTop: 10, lineHeight: 1.45, overflowWrap: "anywhere" }}>
+                <p style={{ fontSize: 12, color: C.textMuted, marginTop: 10, lineHeight: 1.45, overflowWrap: "anywhere" }}>
                   <strong style={{ color: C.text }}>{taza.nombre}:</strong> {taza.efecto}
                 </p>
               </div>
@@ -2097,14 +2100,14 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
         {(v.pillFoto || m.tag) && (
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
             {v.pillFoto ? (
-              <span className="pc-pill" style={estado === "agotado" ? { background: C.warn, color: C.onBrandAlt } : { background: C.brand, color: C.onBrand }}>{v.pillFoto}</span>
+              <span className="pc-pill" style={{ fontSize: 10, fontWeight: 600, ...(estado === "agotado" ? { background: C.warn, color: C.onBrandAlt } : { background: C.brand, color: C.onBrand }) }}>{v.pillFoto}</span>
             ) : (
-              <span className="mono pc-etiqueta" style={{ margin: 0 }}>{m.tag}</span>
+              <span className="mono pc-etiqueta" style={{ margin: 0, fontSize: 10 }}>{m.tag}</span>
             )}
           </div>
         )}
-        <h2 style={{ fontFamily: "inherit", fontSize: "clamp(20px, 6vw, 24px)", lineHeight: 1.2, fontWeight: 700, margin: "0 0 6px", color: C.text, overflowWrap: "anywhere", viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
-        {m.desc && <p style={{ fontSize: "clamp(14px, 3.8vw, 15px)", color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px", overflowWrap: "anywhere" }}>{m.desc}</p>}
+        <h2 style={{ fontFamily: "inherit", fontSize: 22, lineHeight: 1.2, fontWeight: 700, margin: "0 0 6px", color: C.text, overflowWrap: "anywhere", viewTransitionName: `nombre-${m.id}` }}>{m.nombre}</h2>
+        {m.desc && <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.55, margin: "0 0 18px", overflowWrap: "anywhere" }}>{m.desc}</p>}
 
         {v.porConfirmar ? <PorConfirmarDetalle /> : (
           <div style={{
@@ -2112,8 +2115,8 @@ function DetalleProducto({ m, onBack, carrito, add, quitar, carritoBtnRef }) {
             background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16,
           }}>
             <div style={{ minWidth: 0 }}>
-              <div className="mono" style={{ fontSize: 11, color: C.textMuted, letterSpacing: ".06em", marginBottom: 4 }}>Precio</div>
-              <div className="mono" style={{ fontSize: 20, letterSpacing: ".02em", color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
+              <div className="mono" style={{ fontSize: 10, color: C.textMuted, letterSpacing: ".1em", marginBottom: 4 }}>Precio</div>
+              <div className="mono" style={{ fontSize: 20, color: C.text, fontWeight: 700 }}>{money(m.precio)}</div>
             </div>
             {v.agregar && (
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>

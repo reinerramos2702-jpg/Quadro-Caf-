@@ -837,3 +837,25 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 - **(a) Tamaños de main + área táctil por `::after`**: los chips de la Carta vuelven a 29 px de alto (eran 44) y a `.08em` en todos los `Chip`. El "+" y el "−" de la lista vuelven a 30 px (eran 44), y en el detalle a 30/40 px. La flecha atrás vuelve a 30 px y el h1/etiqueta de la cabecera compacta a 30 px y 10 px/`.22em`. Las muestras de taza vuelven a 30 px. El área de 44 px la da `.qc-tactil`/`.qc-tactil-y`.
   - Trampas encontradas: el `::after` de `.mo-ink` y su `overflow:hidden` (el pill de los chips pasó a un span interno); el `overflow` de la fila de chips (padding vertical de 9 px); `<main>` tapando los 4 px de abajo de los botones de cabecera (`zIndex:11` en la fila de cabecera).
   - Resultado de `audit:visual`: 0 fallos táctiles y 0 diferencias de tamaño en chips, "+", flecha, cabecera y nav.
+- **(b) Nombre y textos display al tamaño de main**:
+
+  | Texto | Rama | Main y ahora |
+  |---|---|---|
+  | Nombre en la lista | `clamp(16px,4.6vw,20px)` = 16.56/17.94/18.95 px a 360/390/412 | 15 px |
+  | Nombre en el detalle | `clamp(20px,6vw,24px)` = 21.6/23.4/24 px | 22 px |
+  | Precio en la lista | 15/700/`.02em` | 14/600 |
+  | Precio en el detalle | `.02em` | tracking del `.mono` |
+  | Tag | 11/700 | 9/600 en la lista, 10/600 en el detalle |
+  | Pill sobre la foto | 11 | 9 |
+  | Pill del detalle | 12 | 10 |
+  | Descripción | `clamp(13..14)` en la lista, `clamp(14..15)` en el detalle | 12.5 y 14 |
+  | Rótulos Finca/Taza | 11/`.06em` | 10/`.14em` |
+  | "Elegir finca y taza" | 11/`.06em` | 10/`.1em` |
+  | Texto de la taza | 13 | 12 |
+  | Contador | 14 | 13 |
+  | "Precio" | 11/`.06em` | 10/`.1em` |
+  | "Precio por confirmar" | 12 | 11 |
+
+  - Con 15 px el recorte de "V60" seguía (40 px de tinta). Se resolvió con el paso 2 de la consigna: `line-height:1.2` (el mínimo) y `padding-block:.25em`.
+  - **No hizo falta tocar la escala de los dígitos**: `font-size-adjust` sigue igual.
+  - `audit:visual`: 0 fallos. Capturas de main y de la rama a 360/390/412 idénticas en la lista, y "86.5" y los precios sin recorte.

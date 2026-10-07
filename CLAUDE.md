@@ -186,6 +186,8 @@ Brief en `docs/BRIEF-CARTA-PREMIUM-PR1.md`; bitácora en `docs/PROGRESO-LOOP.md`
   - La pill de estado va **en el flujo**, montada sobre la esquina inferior de la foto. No la vuelvas `absolute` dentro de la caja con `overflow:hidden`: con la fuente del sistema grande quedaba recortada.
   - Toda la tarjeta abre el detalle: el nombre es un `<button class="pc-abrir">` con `::after` estirado, y los controles van en `.pc-ctl`.
   - Lo que el `line-clamp` deja fuera del nombre se envuelve en un span `visibility:hidden` (`corte`), porque los dígitos 1,6× de la 3.ª línea asomaban. No se tocó `font-size-adjust`.
+  - **Nombre a 15 px, como en main (06/oct)**, con `line-height:1.2` y `padding-block:.25em` en `.pc-nombre`. El clamp exige `overflow:hidden`, y sin ese padding la caja le cortaba la parte de arriba a los dígitos de respaldo ("V60"). En main no pasaba porque el nombre no tenía clamp y su `line-height: normal` crecía con el respaldo. `corte` suma el `paddingTop` al calcular el límite de las 2 líneas.
+  - Los textos de la tarjeta y del detalle usan los tamaños de main: descripción 12.5/14, precio 14/20 (600/700, tracking del `.mono`), tag 9/10, rótulos Finca/Taza 10/`.14em`, taza 12 y "Precio" 10/`.1em`. "Precio por confirmar" usa 11 px, el tamaño del "Por confirmar" de main.
 - **Estilos**: `CSS_CARTA(C)`, dentro de `buildCss`.
 - **Alto de la app**: `.qc-marco`/`.qc-raiz` en `100dvh`. **No vuelvas a `100vh`**: era la causa de que el nav "se escondiera" (el documento hacía scroll). `.qc-scroll` lleva `overscroll-behavior: contain`.
 - **Nav inferior**:
