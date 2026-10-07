@@ -1,0 +1,1852 @@
+{
+ "generado": "2026-10-07T03:21:30.894Z",
+ "origen": "main@f7d8aba",
+ "url": "http://localhost:5181",
+ "viewports": [
+  [
+   360,
+   800
+  ],
+  [
+   390,
+   844
+  ],
+  [
+   412,
+   915
+  ]
+ ],
+ "producto": "V60 de origen",
+ "medidas": {
+  "360": {
+   "inicio": {
+    "chip": {
+     "w": 152.27,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": null,
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 320,
+     "h": 154.83,
+     "fontSize": "44px",
+     "lineHeight": "44.88px",
+     "letterSpacing": "0.528px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-lista": {
+    "chip": {
+     "w": 90.66,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": {
+     "w": 132.44,
+     "h": 30,
+     "fontSize": "15px",
+     "lineHeight": "normal",
+     "letterSpacing": "-0.15px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    },
+    "miniatura": null,
+    "precio": {
+     "w": 45.38,
+     "h": 17,
+     "fontSize": "14px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.84px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "etiqueta": {
+     "w": 46.41,
+     "h": 15,
+     "fontSize": "9px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.54px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 258.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-bolleria": {
+    "chip": {
+     "w": 90.66,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": {
+     "w": 64,
+     "h": 64,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 258.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-detalle": {
+    "chip": null,
+    "mas": {
+     "w": 40,
+     "h": 40,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": {
+     "w": 320,
+     "h": 27,
+     "fontSize": "22px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "700"
+    },
+    "miniatura": null,
+    "precio": {
+     "w": 64.81,
+     "h": 24,
+     "fontSize": "20px",
+     "lineHeight": "normal",
+     "letterSpacing": "1.2px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "700"
+    },
+    "etiqueta": {
+     "w": 54,
+     "h": 18,
+     "fontSize": "10px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.6px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 264.11,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "fincas": {
+    "chip": {
+     "w": 101.13,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 114.8,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "tienda": {
+    "chip": null,
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 121.66,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "lab": {
+    "chip": {
+     "w": 152.27,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 241.86,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "aula": {
+    "chip": null,
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 360,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 173.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   }
+  },
+  "390": {
+   "inicio": {
+    "chip": {
+     "w": 152.27,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": null,
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 350,
+     "h": 154.83,
+     "fontSize": "44px",
+     "lineHeight": "44.88px",
+     "letterSpacing": "0.528px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-lista": {
+    "chip": {
+     "w": 90.66,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": {
+     "w": 132.44,
+     "h": 30,
+     "fontSize": "15px",
+     "lineHeight": "normal",
+     "letterSpacing": "-0.15px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    },
+    "miniatura": null,
+    "precio": {
+     "w": 45.38,
+     "h": 17,
+     "fontSize": "14px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.84px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "etiqueta": {
+     "w": 46.41,
+     "h": 15,
+     "fontSize": "9px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.54px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 258.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-bolleria": {
+    "chip": {
+     "w": 90.66,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": {
+     "w": 64,
+     "h": 64,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 258.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-detalle": {
+    "chip": null,
+    "mas": {
+     "w": 40,
+     "h": 40,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": {
+     "w": 350,
+     "h": 27,
+     "fontSize": "22px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "700"
+    },
+    "miniatura": null,
+    "precio": {
+     "w": 64.81,
+     "h": 24,
+     "fontSize": "20px",
+     "lineHeight": "normal",
+     "letterSpacing": "1.2px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "700"
+    },
+    "etiqueta": {
+     "w": 54,
+     "h": 18,
+     "fontSize": "10px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.6px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 264.11,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "fincas": {
+    "chip": {
+     "w": 101.13,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 114.8,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "tienda": {
+    "chip": null,
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 121.66,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "lab": {
+    "chip": {
+     "w": 152.27,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 241.86,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "aula": {
+    "chip": null,
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 390,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 173.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   }
+  },
+  "412": {
+   "inicio": {
+    "chip": {
+     "w": 152.27,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": null,
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 372,
+     "h": 154.83,
+     "fontSize": "44px",
+     "lineHeight": "44.88px",
+     "letterSpacing": "0.528px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-lista": {
+    "chip": {
+     "w": 90.66,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": {
+     "w": 132.44,
+     "h": 30,
+     "fontSize": "15px",
+     "lineHeight": "normal",
+     "letterSpacing": "-0.15px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    },
+    "miniatura": null,
+    "precio": {
+     "w": 45.38,
+     "h": 17,
+     "fontSize": "14px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.84px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "etiqueta": {
+     "w": 46.41,
+     "h": 15,
+     "fontSize": "9px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.54px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 258.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-bolleria": {
+    "chip": {
+     "w": 90.66,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": {
+     "w": 64,
+     "h": 64,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 258.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "carta-detalle": {
+    "chip": null,
+    "mas": {
+     "w": 40,
+     "h": 40,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": {
+     "w": 372,
+     "h": 27,
+     "fontSize": "22px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "700"
+    },
+    "miniatura": null,
+    "precio": {
+     "w": 64.81,
+     "h": 24,
+     "fontSize": "20px",
+     "lineHeight": "normal",
+     "letterSpacing": "1.2px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "700"
+    },
+    "etiqueta": {
+     "w": 54,
+     "h": 18,
+     "fontSize": "10px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.6px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 264.11,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "fincas": {
+    "chip": {
+     "w": 101.13,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 114.8,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "tienda": {
+    "chip": null,
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 121.66,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "lab": {
+    "chip": {
+     "w": 152.27,
+     "h": 29,
+     "fontSize": "11px",
+     "lineHeight": "normal",
+     "letterSpacing": "0.88px",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "600"
+    },
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 241.86,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   },
+   "aula": {
+    "chip": null,
+    "mas": null,
+    "flecha": {
+     "w": 30,
+     "h": 30,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "sonido": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "tema": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "carrito": {
+     "w": 36,
+     "h": 36,
+     "fontSize": "13.3333px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Arial",
+     "fontWeight": "400"
+    },
+    "nombre": null,
+    "miniatura": null,
+    "precio": null,
+    "etiqueta": null,
+    "nav": {
+     "w": 412,
+     "h": 66,
+     "fontSize": "16px",
+     "lineHeight": "normal",
+     "letterSpacing": "normal",
+     "fontFamily": "Nexa, \"Inter Tight\", system-ui, sans-serif",
+     "fontWeight": "300"
+    },
+    "h1": {
+     "w": 173.42,
+     "h": 28.5,
+     "fontSize": "30px",
+     "lineHeight": "28.5px",
+     "letterSpacing": "-0.3px",
+     "fontFamily": "VIOLA, \"VIOLA Acentos\", Fraunces, serif",
+     "fontWeight": "400"
+    }
+   }
+  }
+ }
+}

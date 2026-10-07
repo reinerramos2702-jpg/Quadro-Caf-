@@ -12,7 +12,8 @@
     "fuente:acentos": "node scripts/generar-acentos-viola.mjs",
     "modelo:comprimir": "node scripts/comprimir-espiral-glb.mjs",
     "assets:generar": "node scripts/generar-asset.mjs",
-    "audit:carta": "node scripts/audit-carta.mjs"
+    "audit:carta": "node scripts/audit-carta.mjs",
+    "audit:visual": "node scripts/audit-visual.mjs"
   },
   "dependencies": {
     "@google/model-viewer": "^4.3.1",

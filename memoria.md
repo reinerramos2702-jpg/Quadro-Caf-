@@ -826,3 +826,11 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
   - lo que el clamp deja fuera del nombre va en `visibility:hidden`, porque los dígitos 1,6× de la 3.ª línea asomaban.
 - `npm run audit:carta` (`playwright-core` + Chrome del sistema): rama 0/855, main 743/855.
 - Fotos: 48 mapeadas y 0 huérfanas. 9 productos sin foto, con monograma. La foto de "Cookie… variante 2" es una vitrina, pregunta abierta para Reiner.
+
+## 06/oct/2026 — Carta premium · PR-1: vuelta a las medidas de main
+- Hallazgo de Reiner en la vista previa: "V60 DE ORIGEN" más grande que en producción y con los dígitos recortados. Chips, "+", flecha atrás y botones de cabecera, también más grandes. En main todo se veía bien.
+- **`npm run audit:visual`** + `scripts/baseline-medidas.json`, medido desde `main@f7d8aba` en un worktree temporal (ya borrado). Primera corrida contra la rama sin cambios: 101 diferencias no intencionales y "V60" recortado (54–72 px de tinta) a 360/390/412. En main, 0 recortes.
+  - Causa del recorte: `.pc-clamp` necesita `overflow:hidden` para el line-clamp, y con `line-height:1.2` los dígitos de respaldo (1,6×) se salen de la caja de línea. En main el nombre no tenía clamp y su `line-height: normal` crecía con el respaldo (caja de 30 px para letra de 15).
+  - Un `Range` sobre el dígito **no** detecta el recorte (usa las métricas de la fuente principal). Por eso el chequeo es de píxeles.
+- Los botones de cabecera (sonido, tema, carrito) miden 36 px en main y en la rama: no habían cambiado.
+- En main, AeroPress campeonato está "Agotado hoy" (dato de Supabase) y su tag "86.5" no se ve. Por eso la etiqueta se compara con "Firma" (V60).

@@ -202,6 +202,12 @@ Brief en `docs/BRIEF-CARTA-PREMIUM-PR1.md`; bitácora en `docs/PROGRESO-LOOP.md`
 - **Auditoría**: `npm run audit:carta` (`scripts/audit-carta.mjs`, `playwright-core` + Chrome del sistema) cubre 57 productos × 5 anchos × 3 tamaños de fuente.
   - Córrela después de tocar la Carta. Debe dar 0 fallos.
   - `--url … --etiqueta antes` audita otra versión.
+  - Escribe en `docs/capturas-pr1/` (archivos versionados): para verificar sin ensuciar el repo, `npm run audit:carta -- --salida <carpeta temporal>`.
+- **Auditoría visual contra main (06/oct)**: `npm run audit:visual` (`scripts/audit-visual.mjs`, lógica pura en `scripts/lib/medidas.js`, testeada).
+  - Mide chips, "+", flecha, botones de cabecera, nombre, miniatura, precio, etiqueta, nav y h1 en Carta (lista, Bollería y detalle de "V60 de origen"), Inicio, Fincas, Tienda, Lab y Aula, a 360/390/412 px.
+  - Compara contra `scripts/baseline-medidas.json` (medido desde `main`) e imprime el diff. Sale con 1 ante una diferencia no intencional (la lista `INTENCIONALES` está en el script), un control sin su área de 44 px o con el área pisada por la del vecino, o letra VIOLA recortada.
+  - El recorte se mide en píxeles (A tal cual, B sin overflow, C sin overflow y sin texto). **No uses `Range`**: sus métricas son las de la fuente principal y no ven los dígitos de respaldo. Así se encontró que `.pc-clamp` cortaba la parte de arriba de "V60".
+  - Regenerar el baseline: worktree de `main` en `.worktrees/` (excluido en `.git/info/exclude`), `npx vite --port 5181 --strictPort` ahí y `node scripts/audit-visual.mjs --baseline --url http://localhost:5181`. `--capturas --salida DIR` guarda los recortes de "V60", "86.5" y precios fuera del repo.
 - **Bundle**: 154.65 → 158.44 KB gzip.
 
 ## Real-data policy
