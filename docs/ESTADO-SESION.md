@@ -1,47 +1,92 @@
 # Estado de sesión — Quadro Café
-Última actualización: 1 oct 2026, noche (sesión Claude Code). Detalle histórico en `memoria.md` y `docs/PROGRESO-LOOP.md`.
+Última actualización: 6 oct 2026 (sesión Claude Code, Carta premium · PR-1, vuelta a las medidas de main). Detalle histórico en `memoria.md` y `docs/PROGRESO-LOOP.md`.
 
-## Hecho en la última sesión
-- **Lote de migraciones verificado (solo lectura, 19:05 UTC)**: Reiner aplicó 0006–0009 por SQL Editor. `staff` = `admin · reinerramos2702@gmail.com`, trigger `ordenes_validar_total`, RPC `obtener_orden`, RLS por rol. Edge function `verificar-comprobante` sigue en **v3**.
-- **Fallback TODO(0008) retirado** (`1e52550`): `src/equipo/rol.js` deniega todo error al leer el rol.
-- **Avatar José Tomás** (`4a35d70`): D-ID ahora manda `frame-ancestors 'self'` y el iframe quedaba en blanco. El overlay usa el SDK oficial (`src/lib/did.js`, `DID_AGENT_INIT` modo `full`), con capa de respaldo y "Abrir en pestaña nueva" siempre visibles.
-- **Login /equipo con autocompletado** (`4a35d70`): sombra inset opaca en `:-webkit-autofill`; antes dependía de una transición que reduced-motion anulaba.
-- **Panel Admin responsive** (`30a9044`): `src/equipo/AdminPanel.jsx` + `adminLogica.js`. Tarjetas en móvil, 2 columnas en tablet, tabla con cabecera fija, buscador y chips en escritorio; precio inline (Enter/Esc), switch accesible, estados visibles, alta en panel lateral.
-- **"Bollería" en todos lados** (`c1dacd1`): `normalizarCategoria` en `src/lib/carta.js`, compartida por la Carta y el Admin.
-- Tests 37/37, lint limpio, build OK (falla solo el SW por el apóstrofo de `App's`). Bundle principal 154.64 KB, chunk `/equipo` 14.31 KB. Todo pusheado a la rama; `main` sin tocar.
+## Hecho en la última sesión (06/oct)
+Rama `quadro-feature-carta-premium`, **PR #9 abierto y sin merge**. El merge lo aprueba Reiner.
+
+**Disparador**: en la vista previa de la rama, "V60 DE ORIGEN" se veía más grande que en producción y con los dígitos recortados. Chips, "+", flecha atrás y botones de cabecera, también más grandes.
+
+- **(e) `npm run audit:visual` y `scripts/baseline-medidas.json`**, medido desde `main@f7d8aba` en un worktree temporal (ya borrado).
+  - Mide en px chips, "+", flecha atrás, botones de cabecera, nombre, miniatura, precio, etiqueta, nav y h1. Pantallas: Carta (lista, Bollería, detalle de V60), Inicio, Fincas, Tienda, Lab y Aula. Anchos: 360/390/412.
+  - Compara contra el baseline. Además comprueba el área táctil de 44 px y el recorte de letra VIOLA, este último en píxeles.
+- **(a) Tamaños de main + área táctil por `::after`**:
+  - Chips, "+"/"−", flecha atrás, cabecera compacta y muestras de taza vuelven a sus medidas de main.
+  - El área de 44 px la da `.qc-tactil`/`.qc-tactil-y`, sin cambiar caja ni layout. Los `::after` de vecinos no se pisan (lo verifica `audit:visual`).
+  - Los chips de Fincas, Lab e Inicio recuperan el tracking de main (`.08em`).
+- **(b) Nombre y textos display al tamaño de main**:
+  - El nombre queda en 15 px en la lista y 22 px en el detalle. Precio, tag, pills, descripciones y rótulos también vuelven a main (tabla en `memoria.md`).
+  - El recorte de "V60" lo causaba el `overflow:hidden` del line-clamp. Se corrigió con `line-height:1.2` + `padding-block:.25em`.
+  - **No se tocó la escala de los dígitos** (`font-size-adjust`).
+- **(c) El detalle usa la tipografía de la lista**: el nombre pasó a `.disp-m` (VIOLA 22/28). La cabecera muestra la categoría y el nombre aparece una sola vez (decisión de Reiner).
+- **(d) Otras pantallas**: `audit:visual` no encontró diferencias no intencionales en Inicio, Fincas, Tienda, Lab ni Aula. La barra inferior fija es intencional y mide igual que en main (66 px).
+- **Verificación**:
+  - `audit:visual` 0 fallos y `audit:carta` 0/855.
+  - Tests 58/58 y lint limpio.
+  - Build de Vite OK. En local falla solo el service worker, por el apóstrofo de la ruta; en CI (Linux) no.
+  - Chunk principal 158,70 KB gzip (+0,26).
+
+### Medidas: main → rama antes de corregir → rama ahora (igual a 360, 390 y 412 px)
+| Elemento | main | rama (a60a713) | rama ahora |
+|---|---|---|---|
+| Chip de categoría (visual) | 90,66 × 29 | 94,91 × 44 | 90,66 × 29 (táctil 90,66 × 44) |
+| "+" de la tarjeta | 30 × 30 | 44 × 44 | 30 × 30 (táctil 44 × 44) |
+| "+" del detalle | 40 × 40 | 44 × 44 | 40 × 40 (táctil 44 × 44) |
+| Flecha atrás | 30 × 30 | 44 × 44 | 30 × 30 (táctil 44 × 44) |
+| Botones de cabecera | 36 × 36 | 36 × 36 | 36 × 36 (táctil 44 × 44) |
+| Miniatura (Bollería) | 64 × 64 | 96 × 96 | 96 × 96 (pedida) |
+| Nombre en la lista: font-size / line-height | 15 px / normal | 16,56–18,95 px / 1,2 | 15 px / 18 px (1,2) + padding .25em |
+| Nombre en el detalle: font-size / line-height | 22 px / normal (Nexa Bold) | 21,6–24 px / 1,2 (Nexa Bold) | 22 px / 28 px (VIOLA, `.disp-m`) |
+
+### Cómo correr `audit:visual`
+- `npm run audit:visual`: levanta Vite en la rama, mide y compara contra `scripts/baseline-medidas.json`. Imprime el diff (`pantalla · ancho · elemento · prop: main → rama`) y sale con 1 si hay algo no intencional, un fallo táctil o letra recortada.
+- `npm run audit:visual -- --capturas --salida <carpeta>`: además guarda recortes de "V60", "86.5" y precios, fuera del repo.
+- Regenerar el baseline:
+  1. `git worktree add .worktrees/main-baseline main` (`.worktrees/` está en `.git/info/exclude`).
+  2. Ahí: `npm ci`, copiar `.env` y `npx vite --port 5181 --strictPort`.
+  3. Desde la rama: `node scripts/audit-visual.mjs --baseline --url http://localhost:5181`.
+  4. Apagar Vite por PID y `git worktree remove --force .worktrees/main-baseline`.
+- `audit:carta` escribe en `docs/capturas-pr1/` (archivos versionados): para verificar, `npm run audit:carta -- --salida <carpeta temporal>`.
 
 ## Decisiones tomadas
-- Dígitos en títulos (`V60`, `#0xx`): **se quedan como están** (Reiner). Alternativa descartada: `fontSizeAdjust:none` o dígitos en Nexa.
-- `ALLOWED_ORIGINS` **no se configura**: solo hay `workers.dev`, ya en la lista por defecto de `origen.js`.
-- D-ID por SDK y no por iframe: el iframe es imposible desde cualquier dominio (headers de D-ID). La client key del link solo vale para `studio.d-id.com`; se deja `avatar.didClientKey` opcional para la key del snippet de Embed.
-- Admin movido al chunk diferido de `/equipo` (el principal baja) en vez de seguir en `App.jsx`. Si Supabase rechaza un cambio, la fila vuelve al valor previo (antes quedaba mostrando un cambio no guardado). Filas agotadas con texto "Agotado" en vez de opacidad 50% (no pasaba AA).
-- "Panadería" se traduce al leer (solo visual) hasta correr 0003; el Admin nunca escribe `cat` al editar.
-- **Nunca usar `npx kill-port`** en esta PC: su regex mató el Chrome de Reiner. Los dev servers se apagan solo por su PID exacto.
+- **Detalle**: se mantiene la estructura de la rama (cabecera = categoría, nombre una vez debajo de la foto, en VIOLA 22 px). La eligió Reiner el 06/oct.
+- **Área táctil sin agrandar**: `::after` con inset negativo en vez de cajas de 44 px. El pill del chip táctil va en un span dentro del botón, porque `.mo-ink` usa `overflow:hidden` y su propio `::after`.
+- **Recorte de "V60"**: alcanzó con `padding-block`. No se redujo la escala de los dígitos (decisión de Reiner del 01/oct: los dígitos 1,6× se quedan).
+- **Etiqueta**: queda en su lugar de la rama (texto sobre el nombre), con el tamaño de main (9 px; 10 en el detalle).
 
-## Archivos/módulos tocados
-- `src/equipo/rol.js`, `src/equipo/EquipoApp.jsx`, `src/equipo/LoginEquipo.jsx`, `src/equipo/AdminPanel.jsx` (nuevo), `src/equipo/adminLogica.js` (nuevo)
-- `src/App.jsx` (overlay D-ID; sin Admin; exporta `CATS`/`slugify`), `src/lib/did.js` (nuevo), `src/lib/carta.js`
-- `test/rol.test.js`, `test/did.test.js`, `test/login-autofill.test.js`, `test/admin.test.js`
-- `CLAUDE.md`, `memoria.md`, `docs/PROGRESO-LOOP.md`, este archivo
-- No son míos y quedan sin commitear: `docs/ROADMAP.html` (modificado), `docs/ROADMAP.backup-01oct*.html`, `AGENTS.md`, `.agents/`.
+## Dudoso (para que Reiner lo mire)
+- La etiqueta y las pills de estado ("Agotado hoy", "Próximamente") vuelven al tamaño de main (9 px), que es chico. Si se quieren más grandes, hay que aprobarlo.
+- "Precio por confirmar" (elemento nuevo de PR-1) va a 11 px, el tamaño del "Por confirmar" de main.
+- El título "Estamos afinando este producto" (`PorConfirmarDetalle`, 16 px Nexa Bold) no tiene un token equivalente. Se dejó como está.
+- `audit:visual` no mide el "−", el selector de finca y taza ni las muestras de taza: con el carrito vacío y el acordeón cerrado no se ven. Sí están en código con `.qc-tactil`/`.qc-tactil-y` y los tamaños de main.
+
+## Archivos/módulos tocados (06/oct)
+- `src/App.jsx`: `.qc-tactil` en `buildCss`, `Chip`, `Header`, botones de cabecera y fila de cabecera (`zIndex:11`), `ProductCard`, `PrecioPorConfirmar`, `FotoProducto` (pill), `CSS_CARTA`, `Menu` (fila de chips), `DetalleProducto`.
+- `scripts/audit-visual.mjs`, `scripts/lib/medidas.js`, `scripts/baseline-medidas.json`, `test/medidas.test.js` y `package.json` (nuevos o modificados).
+- `CLAUDE.md`, `memoria.md`, `docs/PROGRESO-LOOP.md` y este archivo.
+- No se tocaron: carrito/checkout, Supabase, edge functions, `/equipo`, Barra, D-ID, `.agents/`, `AGENTS.md`, los respaldos del roadmap, `reuniones/` ni `.worktrees/pagos` (worktree de otra sesión).
 
 ## Pendiente para la próxima sesión
-**De Reiner:**
-- D-ID Studio → agente → Embed → Allowed domains: `https://quadro-cafe.reinerramos2702.workers.dev` (+ `http://localhost:5173`). Si el snippet trae otra `data-client-key`, pasarla.
-- Confirmar cuál foto es José Tomás: `jose-tomas.jpg` (lentes, polo azul) ≠ la persona que muestra hoy el agente de D-ID (sombrero).
-- Probar `/equipo` con su cuenta real: Admin (cambiar y restaurar un precio, apagar/prender un producto) y Barra. Es la prueba real de 0009.
-- Decidir si +6.5 KB del chunk `/equipo` es aceptable o se recorta el CSS del panel.
-- Revisar `docs/ROADMAP.html` y sus backups (cambios ajenos).
-- Redeploy de `verificar-comprobante` (→ v4): `npx supabase@latest functions deploy verificar-comprobante --no-verify-jwt --use-api --project-ref wckufllomfmuwxptegvm`.
-- Supabase Auth: confirmar signup público apagado y activar protección de contraseñas filtradas.
-- Merge del PR a `main` (lo hace Reiner) → después correr `0003_categoria_bolleria.sql` (**nunca antes**: el código de producción filtra por "Panadería").
-- Decidir si se hace el bloque de cierre de la lectura pública de `ordenes` (RPC `crear_orden` + Ticket por `obtener_orden` + drop de `ordenes_lectura_publica`).
+**De Reiner (Carta premium · PR-1)**:
+- Mirar la vista previa nueva y probar en el celular real con el checklist del PR. El nav fijo y el área táctil solo se validaron en Playwright (emulación móvil).
+- Aprobar o no el merge del PR #9.
+- Pasar fotos para los 9 productos sin foto: V60 de origen, AeroPress campeonato, Sifón a la mesa, Latte de cascarilla, Cold brew 18 h, Tónica de cascarilla, Pan de masa madre, Tarta de café y nuez, Cheesecake de cascarilla.
+- Confirmar la foto de "Cookie de chispas de chocolate — variante 2": hoy es una vitrina completa, no una cookie.
 
-**Míos, cuando Reiner responda:**
-- Verificar el avatar D-ID por CDP con un **token nuevo** (el authorizer de D-ID cachea el primer 200 por token).
-- Si llega la key del Embed, ponerla en `avatar.didClientKey` (Agua Fría en `FINCAS`).
+**De Reiner (de antes, siguen abiertos)**:
+- D-ID Studio → agente → Embed → Allowed domains: `https://quadro-cafe.reinerramos2702.workers.dev` (+ `http://localhost:5173`). Si el snippet trae otra `data-client-key`, pasarla.
+- Confirmar cuál foto es José Tomás.
+- Probar `/equipo` con su cuenta real (Admin y Barra).
+- Supabase Auth: confirmar que el signup público está apagado y activar la protección de contraseñas filtradas.
+- Decidir el bloque de cierre de la lectura pública de `ordenes`.
+
+**Oportunidades anotadas (no implementadas, van en PR-2/PR-3)**:
+- Con 45 "Próximamente", Postres e Infusiones son listas largas de tarjetas iguales; agrupar "Próximamente" colapsado ya está planeado.
+- Infusiones no tiene banner de categoría (no hay asset).
+- Las 6 variantes Brookie/Cookie repiten "por confirmar" en su descripción (es el dato real); con nombres definitivos se resuelve solo.
+- Área táctil de 44 px para los chips de Fincas, Lab e Inicio (hoy siguen como en main).
 
 ## Riesgos
-- Mientras `ordenes_lectura_publica` exista, cualquiera con la anon key puede listar órdenes (nombre + items).
-- `npm audit`: 8 altas + 2 moderadas, todas de tooling (preexistentes).
+- Mientras exista `ordenes_lectura_publica`, cualquiera con la anon key puede listar órdenes (nombre + items).
+- `npm audit`: altas y moderadas de tooling (preexistentes).
 - Esta PC tiene reduced-motion a nivel Windows: para verificar motion por CDP, emular `no-preference`.
+- En Chrome de Windows, `hyphens:auto` no cortaba "Próximamente": se usa un guion blando explícito.

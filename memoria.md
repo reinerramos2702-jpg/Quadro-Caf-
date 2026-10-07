@@ -812,3 +812,52 @@ No se aplicó ningún fix todavía — esta sesión fue solo diagnóstico, segú
 - **Panel Admin responsive**: `src/equipo/AdminPanel.jsx` (+ `adminLogica.js`, `test/admin.test.js`). Antes era la columna de 430 px del teléfono centrada en cualquier pantalla. Mismas consultas a Supabase; ahora revierte la fila si el UPDATE falla. Hallazgos en el camino: la fila no disponible al 50% de opacidad no pasaba AA (reemplazada por el texto "Agotado"); `textMuted` sobre `surface` en claro da 4.15:1; `mo-enter` en la raíz rompía el `position: fixed` del panel de alta. Verificado con Supabase simulado por CDP (sesión inventada, fixture con los 12 productos reales leídos por SELECT).
 - **"Bollería" en todos lados (pedido de Reiner)**: el Admin nuevo mostraba "Panadería" (la base todavía la tiene porque 0003 no corre hasta el merge). `normalizarCategoria` en `carta.js`, compartida por la Carta y el Admin (`filasParaAdmin`); solo cambia lo que se muestra, el Admin nunca escribe `cat` al editar. Test nuevo en `admin.test.js`. La corrección definitiva en la base sigue siendo 0003, después del merge.
 - **Login /equipo con autocompletado en blanco**: la regla `:-webkit-autofill` solo "retrasaba" el fondo celeste con `transition 9999s`, y la regla global de reduced-motion la baja a .001s → celeste + texto hueso. Fix: sombra inset opaca del color de la caja + text-fill/caret hueso en hover/focus/active y `:autofill`. Verificado con simulación fiel del estilo UA de Chrome (`#E8F0FE !important` + `FieldText`) con y sin reduced-motion; `test/login-autofill.test.js` falla con el CSS viejo.
+
+## 01/oct/2026 (noche) — Carta premium · PR-1 (rama `quadro-feature-carta-premium`)
+- Brief de Reiner en `docs/BRIEF-CARTA-PREMIUM-PR1.md`. Detalle por commit en `docs/PROGRESO-LOOP.md` § "Carta premium · PR-1".
+- **`ProductCard`**: un solo componente con 4 estados. La lógica pura vive en `src/lib/productoCard.js` (`estadoProducto`, `vistaTarjeta`, `fotoDeProducto`, posición en sessionStorage).
+  - Precio 0 o inválido cuenta como "por confirmar": nunca muestra $0.00.
+  - "Vuelve mañana" ya no se muestra: era un texto fijo, no un dato.
+- **Nav "que se escondía"**: no había JS. La causa era el marco a `100vh`; ahora es `100dvh` con `overscroll-behavior: contain`.
+- **Atrás**: el detalle hace `pushState`. Se corrigió que `replaceState({tab:"inicio"})` se repitiera al abrir carrito o ticket.
+- **Fuente del sistema grande**:
+  - la pill de estado va en el flujo, montada sobre la esquina de la foto;
+  - el nav pasa a solo íconos si las etiquetas no entran;
+  - lo que el clamp deja fuera del nombre va en `visibility:hidden`, porque los dígitos 1,6× de la 3.ª línea asomaban.
+- `npm run audit:carta` (`playwright-core` + Chrome del sistema): rama 0/855, main 743/855.
+- Fotos: 48 mapeadas y 0 huérfanas. 9 productos sin foto, con monograma. La foto de "Cookie… variante 2" es una vitrina, pregunta abierta para Reiner.
+
+## 06/oct/2026 — Carta premium · PR-1: vuelta a las medidas de main
+- Hallazgo de Reiner en la vista previa: "V60 DE ORIGEN" más grande que en producción y con los dígitos recortados. Chips, "+", flecha atrás y botones de cabecera, también más grandes. En main todo se veía bien.
+- **`npm run audit:visual`** + `scripts/baseline-medidas.json`, medido desde `main@f7d8aba` en un worktree temporal (ya borrado). Primera corrida contra la rama sin cambios: 101 diferencias no intencionales y "V60" recortado (54–72 px de tinta) a 360/390/412. En main, 0 recortes.
+  - Causa del recorte: `.pc-clamp` necesita `overflow:hidden` para el line-clamp, y con `line-height:1.2` los dígitos de respaldo (1,6×) se salen de la caja de línea. En main el nombre no tenía clamp y su `line-height: normal` crecía con el respaldo (caja de 30 px para letra de 15).
+  - Un `Range` sobre el dígito **no** detecta el recorte (usa las métricas de la fuente principal). Por eso el chequeo es de píxeles.
+- Los botones de cabecera (sonido, tema, carrito) miden 36 px en main y en la rama: no habían cambiado.
+- En main, AeroPress campeonato está "Agotado hoy" (dato de Supabase) y su tag "86.5" no se ve. Por eso la etiqueta se compara con "Firma" (V60).
+- **(a) Tamaños de main + área táctil por `::after`**: los chips de la Carta vuelven a 29 px de alto (eran 44) y a `.08em` en todos los `Chip`. El "+" y el "−" de la lista vuelven a 30 px (eran 44), y en el detalle a 30/40 px. La flecha atrás vuelve a 30 px y el h1/etiqueta de la cabecera compacta a 30 px y 10 px/`.22em`. Las muestras de taza vuelven a 30 px. El área de 44 px la da `.qc-tactil`/`.qc-tactil-y`.
+  - Trampas encontradas: el `::after` de `.mo-ink` y su `overflow:hidden` (el pill de los chips pasó a un span interno); el `overflow` de la fila de chips (padding vertical de 9 px); `<main>` tapando los 4 px de abajo de los botones de cabecera (`zIndex:11` en la fila de cabecera).
+  - Resultado de `audit:visual`: 0 fallos táctiles y 0 diferencias de tamaño en chips, "+", flecha, cabecera y nav.
+- **(b) Nombre y textos display al tamaño de main**:
+
+  | Texto | Rama | Main y ahora |
+  |---|---|---|
+  | Nombre en la lista | `clamp(16px,4.6vw,20px)` = 16.56/17.94/18.95 px a 360/390/412 | 15 px |
+  | Nombre en el detalle | `clamp(20px,6vw,24px)` = 21.6/23.4/24 px | 22 px |
+  | Precio en la lista | 15/700/`.02em` | 14/600 |
+  | Precio en el detalle | `.02em` | tracking del `.mono` |
+  | Tag | 11/700 | 9/600 en la lista, 10/600 en el detalle |
+  | Pill sobre la foto | 11 | 9 |
+  | Pill del detalle | 12 | 10 |
+  | Descripción | `clamp(13..14)` en la lista, `clamp(14..15)` en el detalle | 12.5 y 14 |
+  | Rótulos Finca/Taza | 11/`.06em` | 10/`.14em` |
+  | "Elegir finca y taza" | 11/`.06em` | 10/`.1em` |
+  | Texto de la taza | 13 | 12 |
+  | Contador | 14 | 13 |
+  | "Precio" | 11/`.06em` | 10/`.1em` |
+  | "Precio por confirmar" | 12 | 11 |
+
+  - Con 15 px el recorte de "V60" seguía (40 px de tinta). Se resolvió con el paso 2 de la consigna: `line-height:1.2` (el mínimo) y `padding-block:.25em`.
+  - **No hizo falta tocar la escala de los dígitos**: `font-size-adjust` sigue igual.
+  - `audit:visual`: 0 fallos. Capturas de main y de la rama a 360/390/412 idénticas en la lista, y "86.5" y los precios sin recorte.
+- **(c) El detalle usa la misma tipografía que la lista**: el nombre pasó de un h2 en Nexa Bold (`fontFamily: inherit`, 700) a `className="disp-m"` (VIOLA 22/28, el token que ya existía). Tag, pill y precio ya usaban las clases de la tarjeta. Queda un único texto suelto sin token equivalente: el título "Estamos afinando este producto" (16 px, Nexa Bold) de `PorConfirmarDetalle`. Se dejó como está y se reporta.
+  - La estructura del detalle (cabecera con la categoría, nombre una sola vez debajo de la foto) la eligió Reiner el 06/oct.
