@@ -41,7 +41,7 @@ export default defineConfig({
       },
       workbox: {
         // Precache the built app shell (JS/CSS/HTML/manifest/icons).
-        globPatterns: ["**/*.{js,css,html,svg,png,ico,woff,woff2}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,woff,woff2,mp3}"],
         runtimeCaching: [
           {
             // Runtime-cache the larger reference/render JPEGs in src/assets —
