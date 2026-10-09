@@ -2703,6 +2703,7 @@ function Academia({ taza, setTaza, onBack }) {
 const TIENDA_PROXIMAMENTE = [
   { id: "grano", tipo: "Café en grano", detalle: "Bolsas para preparar en casa.", icono: Coffee },
   { id: "accesorios", tipo: "Accesorios", detalle: "Para preparar café como en la barra.", icono: Package },
+  { id: "merch", tipo: "Merch", detalle: "Ropa, gorras y mercancía de Quadro.", icono: Package },
 ];
 
 function Tienda({ onBack }) {
