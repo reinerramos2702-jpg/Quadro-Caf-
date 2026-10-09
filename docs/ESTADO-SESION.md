@@ -45,3 +45,10 @@
 - Mientras `ordenes_lectura_publica` exista, cualquiera con la anon key puede listar órdenes (nombre + items).
 - `npm audit`: 8 altas + 2 moderadas, todas de tooling (preexistentes).
 - Esta PC tiene reduced-motion a nivel Windows: para verificar motion por CDP, emular `no-preference`.
+
+## Estado 09/oct/2026 — merge del sonido de gota
+- **Sonido de gota**: mergeado a `main` (PR #10, merge commit `1f462d8`). Regla única: todo suena salvo `localStorage["qc-sonido"] === "0"`; `SonidoToggle` arranca encendido. `vibrar()` sigue opt-in (`=== "1"`, como en main). `public/sonidos/gota.mp3` pesa 38846 B: lleva una cabecera ID3 de ~5.8 KB (inofensiva).
+- **Pagos**: PAUSADOS hasta que el desarrollador de Papagayo avise que el BNC autorizó la cuenta. Fase 0 verificada; Fase 1 no iniciada.
+- **PR #9 (carta premium)**: pendiente de que Reiner lo revise y decida el merge. Tras el merge del #10 quedó **en conflicto** (`CONFLICTING`/`DIRTY`, verificado 09/oct); hay que resolverlo (probablemente `src/App.jsx`) antes de mergear. No se tocó.
+- **Merch (Tienda)**: pendiente. Rama prevista `quadro-feature-merch` desde `main`, en modo plan, sin código.
+- **Reunión con el dueño**: lunes 12/oct.

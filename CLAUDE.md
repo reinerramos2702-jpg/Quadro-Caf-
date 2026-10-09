@@ -159,7 +159,7 @@ El alcance sale de `docs/ROADMAP.html` y tiene 12 puntos: 1, 2, 3, 4, 7, 8, 10, 
 - **Punto 3, roster de Fincas**: ver "Roster actual" en Real-data policy más abajo.
 - **Punto 8, ficha técnica**: `FichaLote` ("Ficha técnica") muestra siempre Altura/Varietal/Proceso/Puntaje con "Por confirmar" para lo que falte, más Extensión (`hectareas`) si existe. Nunca se rellena con cifras inventadas.
 - **Punto 7, comparar**: sin código; se queda en `FichaLote`.
-- **Punto 10, Tienda**: tab nuevo después de Fincas (`Tienda`, `TIENDA_PROXIMAMENTE`). El nav inferior tiene ahora **6** pestañas. Solo tarjetas "Próximamente" por tipo (Café en grano, Accesorios) hasta que haya catálogo real.
+- **Punto 10, Tienda**: tab nuevo después de Fincas (`Tienda`, `TIENDA_PROXIMAMENTE`). El nav inferior tiene ahora **6** pestañas. Solo tarjetas "Próximamente" por tipo (Café en grano, Accesorios) hasta que haya catálogo real. Desde el 09/oct se suma **Merch** ("Ropa, gorras y mercancía de Quadro.") como tercera tarjeta "Próximamente"; catálogo real pendiente de datos de Reiner.
 - **Punto 4, Club**: la tarjeta de captura de correo muestra el texto exacto "Suscríbete a la Newsletter para recibir premios o descuentos especiales." No parafrasear.
 - **Punto 1, pulido**: pasada acotada. Un guion de una sola línea (las fincas en preparación) ya no muestra dots, "Ver guion" ni transcripción. La pill del nav se acota al ancho del nav (con 6 pestañas se salía 4px).
 - **Punto 15, "É" de "Quadro Café"**: **no reproducible** en Chrome ni en WebKit (métricas de `VIOLA`/`VIOLA Acentos` idénticas, captura ×4 correcta). No tocar la tipografía sin una captura del dispositivo afectado. Sospecha: iOS Safari + `font-size-adjust` + la falta del glifo "x" en `VIOLA Acentos`.
