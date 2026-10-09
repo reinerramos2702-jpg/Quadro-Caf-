@@ -859,7 +859,7 @@ function ThemeToggle() {
 function SonidoToggle() {
   const { C } = useTheme();
   const [on, setOn] = useState(() => {
-    try { return localStorage.getItem("qc-sonido") === "1"; } catch { return false; }
+    try { return localStorage.getItem("qc-sonido") !== "0"; } catch { return false; }
   });
   const alternar = () => {
     setOn((v) => {
@@ -1515,7 +1515,7 @@ function volarAlCarrito(desdeEl, haciaEl, color) {
 let sonidoCtx = null;
 function sonar(freq, dur, vol) {
   try {
-    if (localStorage.getItem("qc-sonido") !== "1") return;
+    if (localStorage.getItem("qc-sonido") === "0") return;
     if (!sonidoCtx) sonidoCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (sonidoCtx.state === "suspended") sonidoCtx.resume();
     const osc = sonidoCtx.createOscillator(), gain = sonidoCtx.createGain();
@@ -1529,7 +1529,17 @@ function sonar(freq, dur, vol) {
   } catch { /* Web Audio no disponible/bloqueado — silencioso a propósito */ }
 }
 const sonarTap = () => sonar(680, .045, .045);
-const sonarCarrito = () => sonar(880, .09, .06);
+// Gota al agregar (archivo en public/sonidos, precacheado por el SW): un único
+// Audio perezoso; currentTime=0 deja que los toques rápidos lo reinicien.
+let audioGota = null;
+function sonarCarrito() {
+  try {
+    if (localStorage.getItem("qc-sonido") === "0") return;
+    if (!audioGota) { audioGota = new Audio("/sonidos/gota.mp3"); audioGota.preload = "auto"; audioGota.volume = .5; }
+    audioGota.currentTime = 0;
+    audioGota.play()?.catch(() => { /* autoplay bloqueado — silencioso */ });
+  } catch { /* sin Audio disponible */ }
+}
 // Delegado en un único listener (en vez de uno por botón) sobre el `.qc`
 // raíz: cualquier tap dentro de `.press`/`.mo-press`/`.mo-tap` suena el tono
 // genérico, salvo que el propio botón marque `data-sonido="carrito"` (el
