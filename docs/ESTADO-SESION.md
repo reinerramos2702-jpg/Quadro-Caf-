@@ -23,7 +23,7 @@
 - `src/App.jsx` (overlay D-ID; sin Admin; exporta `CATS`/`slugify`), `src/lib/did.js` (nuevo), `src/lib/carta.js`
 - `test/rol.test.js`, `test/did.test.js`, `test/login-autofill.test.js`, `test/admin.test.js`
 - `CLAUDE.md`, `memoria.md`, `docs/PROGRESO-LOOP.md`, este archivo
-- No son míos y quedan sin commitear: `docs/ROADMAP.html` (modificado), `docs/ROADMAP.backup-01oct*.html`, `AGENTS.md`, `.agents/`.
+- ROADMAP.html fusionado y actualizado el 09/oct; backups eliminados por Reiner. No son míos y quedan sin commitear: `AGENTS.md`, `.agents/`.
 
 ## Pendiente para la próxima sesión
 **De Reiner:**
@@ -31,7 +31,7 @@
 - Confirmar cuál foto es José Tomás: `jose-tomas.jpg` (lentes, polo azul) ≠ la persona que muestra hoy el agente de D-ID (sombrero).
 - Probar `/equipo` con su cuenta real: Admin (cambiar y restaurar un precio, apagar/prender un producto) y Barra. Es la prueba real de 0009.
 - Decidir si +6.5 KB del chunk `/equipo` es aceptable o se recorta el CSS del panel.
-- Revisar `docs/ROADMAP.html` y sus backups (cambios ajenos).
+- ROADMAP.html fusionado y actualizado el 09/oct; backups eliminados por Reiner.
 - Redeploy de `verificar-comprobante` (→ v4): `npx supabase@latest functions deploy verificar-comprobante --no-verify-jwt --use-api --project-ref wckufllomfmuwxptegvm`.
 - Supabase Auth: confirmar signup público apagado y activar protección de contraseñas filtradas.
 - Merge del PR a `main` (lo hace Reiner) → después correr `0003_categoria_bolleria.sql` (**nunca antes**: el código de producción filtra por "Panadería").
@@ -50,5 +50,5 @@
 - **Sonido de gota**: mergeado a `main` (PR #10, merge commit `1f462d8`). Regla única: todo suena salvo `localStorage["qc-sonido"] === "0"`; `SonidoToggle` arranca encendido. `vibrar()` sigue opt-in (`=== "1"`, como en main). `public/sonidos/gota.mp3` pesa 38846 B: lleva una cabecera ID3 de ~5.8 KB (inofensiva).
 - **Pagos**: PAUSADOS hasta que el desarrollador de Papagayo avise que el BNC autorizó la cuenta. Fase 0 verificada; Fase 1 no iniciada.
 - **PR #9 (carta premium)**: pendiente de que Reiner lo revise y decida el merge. Tras el merge del #10 quedó **en conflicto** (`CONFLICTING`/`DIRTY`, verificado 09/oct); hay que resolverlo (probablemente `src/App.jsx`) antes de mergear. No se tocó.
-- **Merch (Tienda)**: pendiente. Rama prevista `quadro-feature-merch` desde `main`, en modo plan, sin código.
+- **Merch (Tienda)**: mergeado a `main` (PR #11, merge commit `3fd59da`). Tercera tarjeta "Próximamente" en `TIENDA_PROXIMAMENTE`; sin precios, fotos ni catálogo. Catálogo real pendiente de datos de Reiner.
 - **Reunión con el dueño**: lunes 12/oct.
